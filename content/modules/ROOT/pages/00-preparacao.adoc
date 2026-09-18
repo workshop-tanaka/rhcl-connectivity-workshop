@@ -8,12 +8,15 @@ que falta é o repositório da demo, que é quem executa cada ato.
 
 [source,bash,role="execute"]
 ----
-git clone --branch {demo_ref} {demo_repo_url} ~/rhcl-connectivity-demo
-cd ~/rhcl-connectivity-demo
+git clone --branch {demo_ref} {demo_repo_url} /home/lab-user/rhcl-connectivity-demo
+cd /home/lab-user/rhcl-connectivity-demo
 ----
 
 Tudo daqui em diante roda **de dentro desse diretório**. Os scripts descobrem
 hostname, chaves e rotas do cluster na hora -- não há nada para configurar.
+
+NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
+`/data`, que não é gravável; `/home/lab-user` é o volume persistente.
 
 == 2. O veredito
 

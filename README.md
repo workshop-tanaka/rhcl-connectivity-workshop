@@ -55,6 +55,35 @@ PERMISSIVE) e `selfHeal` os reverteria em segundos.
 Mude `demo.ref` em `values.yaml` para a tag nova e faça commit. O Job nunca
 clona `main`.
 
+## Se o Job falhar: corrigir e fazer push não basta
+
+O Job é um *hook* de Sync do Argo, e hook não entra na comparação de estado:
+depois de uma falha a Application aparece `Synced/Healthy` e o auto-sync
+**não** reexecuta nada, mesmo com commit novo (medido em 2026-09-18, três
+vezes). Depois do push, dispare o sync à mão:
+
+```bash
+argocd app sync rhcl-workshop            # ou, sem o CLI:
+oc patch application rhcl-workshop -n openshift-gitops --type merge \
+  -p '{"operation":{"sync":{"revision":"main","prune":true}}}'
+```
+
+Como o `provision.sh` é idempotente, a reexecução leva ~3 min.
+
+## Medido no primeiro deploy (cluster-nsvz5, OCP 4.22.13, 2026-09-18)
+
+| etapa | tempo |
+| --- | --- |
+| operators → dashboards, do zero | 6 min |
+| reexecução (idempotente) | 2 min |
+| Showroom (clone + Antora + pull das imagens) | 2 min |
+| Job inteiro, do zero | ~12 min |
+
+Dentro do terminal do Showroom: `oc whoami` é a SA `showroom` com cluster-admin,
+`oc whoami -t` devolve token, e `git`, `python3` e `curl` existem — tudo que o
+`demo.sh` precisa. `~` aponta para `/data` (não gravável); o volume persistente
+é `/home/lab-user`.
+
 ## Testar localmente
 
 ```bash

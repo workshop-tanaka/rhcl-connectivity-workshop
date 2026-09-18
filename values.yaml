@@ -29,10 +29,13 @@ namespace:
 # mudar 'ref'. Nunca 'main': a demo evolui, o workshop nao pode quebrar junto.
 demo:
   repoUrl: "https://github.com/workshop-tanaka/rhcl-connectivity-demo.git"
-  ref: "workshop-v0.1"
+  ref: "workshop-v0.2"
   # etapas do provision.sh, na ordem. Sem 'gitlab', 'gitops' (o Field Content
   # CI ja instala o GitOps) e sem os pesados (cicd, registry, security).
-  stages: "operators mesh platform gateway devportal demo tracing dashboards"
+  # 'consoles' entra pelo Kiali e pelos PodMonitors do Service Mesh (sem eles
+  # o preflight avisa 8 vezes e o ato 5 abre vazio); o build da console
+  # customizada fica fora por CUSTOM_CONSOLE=0 (workshop-v0.2+).
+  stages: "operators mesh platform gateway devportal demo consoles tracing dashboards"
   # OPTIONAL=1 instala kiali, tempo, otel e grafana -- sem eles os atos 4 e 5
   # ficam sem tela
   optional: "1"
