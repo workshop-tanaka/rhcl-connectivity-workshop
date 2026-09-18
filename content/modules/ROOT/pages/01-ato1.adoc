@@ -23,7 +23,7 @@ inválida -- e o motivo no **cabeçalho**, não no corpo:
 
 == Navegador
 
-Abra https://{api_host}/travels[`+https://{api_host}/travels+`^] com a aba *Rede* das ferramentas de
+Abra https://{api_host}/travels[https://{api_host}/travels^] com a aba *Rede* das ferramentas de
 desenvolvedor aberta **antes**. A tela fica em branco: a recusa vem com zero
 bytes de corpo. O ponto do ato é que o motivo está no cabeçalho.
 

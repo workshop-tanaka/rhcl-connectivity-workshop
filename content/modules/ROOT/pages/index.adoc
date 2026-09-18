@@ -55,7 +55,7 @@ URLs -- foi lido do cluster na hora do deploy, nunca copiado de arquivo.
 
 [cols="1,3"]
 |===
-| API | https://{api_host}/travels[`+{api_host}+`^]
+| API | https://{api_host}/travels[{api_host}/travels^]
 | Console | {openshift_console_url}[console do OpenShift^]
 | Grafana | {grafana_url}[Grafana^]
 | Kiali | {kiali_url}[Kiali^]
