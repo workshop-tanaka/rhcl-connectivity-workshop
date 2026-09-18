@@ -79,6 +79,14 @@ Como o `provision.sh` é idempotente, a reexecução leva ~3 min.
 | Showroom (clone + Antora + pull das imagens) | 2 min |
 | Job inteiro, do zero | ~12 min |
 
+Veredito do `demo.sh check` **de dentro do terminal do Showroom**, no fim da
+fase 0: `[OK]` com 3 avisos, todos da mesma família — RHDH e GitLab não
+instalados (fora de propósito) e *OpenAPI não sincronizado*, porque o
+APIProduct da camada de release aponta o spec para o catalog-server do RHDH,
+que não existe aqui. Efeito: a aba *Definition* do API Catalog no console diz
+"not yet synced"; nenhum ato depende dela. Apontar o spec para outro lugar é
+assunto da fase 2, junto com o ato 6.
+
 Dentro do terminal do Showroom: `oc whoami` é a SA `showroom` com cluster-admin,
 `oc whoami -t` devolve token, e `git`, `python3` e `curl` existem — tudo que o
 `demo.sh` precisa. `~` aponta para `/data` (não gravável); o volume persistente
