@@ -36,9 +36,9 @@ spec:
         - name: CLUSTER_API_URL
           value: {{ .Values.deployer.apiUrl | quote }}
         - name: ANSIBLE_CONFIG
-          value: "/work/ansible.cfg"
+          value: "/tmp/work/ansible.cfg"
         - name: KUBECONFIG
-          value: "/work/kubeconfig"
+          value: "/tmp/work/kubeconfig"
         - name: GIT_REPO_URL
           value: {{ .Values.ansible.repository.url | quote }}
         - name: GIT_REPO_BRANCH
@@ -70,11 +70,11 @@ spec:
           set -euo pipefail
           echo "=== rhcl-workshop: inicio ==="
           echo "dominio: ${CLUSTER_DOMAIN}   demo: ${DEMO_REPO_URL}@${DEMO_REF}"
-          mkdir -p /work && cd /work
-          cp /config/ansible.cfg /config/inventory.yaml /work/
+          mkdir -p /tmp/work && cd /tmp/work
+          cp /config/ansible.cfg /config/inventory.yaml /tmp/work/
 
           # kubeconfig da propria SA. O provision.sh usa 'oc' com este arquivo.
-          cat > /work/kubeconfig <<'EOF'
+          cat > /tmp/work/kubeconfig <<'EOF'
           apiVersion: v1
           kind: Config
           clusters:
@@ -95,11 +95,11 @@ spec:
           # 'oc' do proprio cluster: o Service 'downloads' de openshift-console
           # serve o binario da MESMA versao do cluster, sem sair para a internet.
           echo "=== oc ==="
-          mkdir -p /work/bin
-          curl -sf http://downloads.openshift-console.svc/amd64/linux/oc.tar | tar x -C /work/bin \
+          mkdir -p /tmp/work/bin
+          curl -sf http://downloads.openshift-console.svc/amd64/linux/oc.tar | tar x -C /tmp/work/bin \
             || { echo "downloads.openshift-console indisponivel; tentando o mirror publico"; \
-                 curl -sfL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz | tar xz -C /work/bin oc; }
-          export PATH=/work/bin:$PATH
+                 curl -sfL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz | tar xz -C /tmp/work/bin oc; }
+          export PATH=/tmp/work/bin:$PATH
           oc version --client | head -1
           oc whoami
 
@@ -109,10 +109,10 @@ spec:
           while read -r c; do [ -z "$c" ] || ansible-galaxy collection install "$c" --force >/dev/null; done < /config/collections.txt
 
           echo "=== playbooks ==="
-          git clone --quiet --branch "${GIT_REPO_BRANCH}" "${GIT_REPO_URL}" /work/workshop
-          cd /work/workshop/{{ .Values.ansible.repository.path }}
+          git clone --quiet --branch "${GIT_REPO_BRANCH}" "${GIT_REPO_URL}" /tmp/work/workshop
+          cd /tmp/work/workshop/{{ .Values.ansible.repository.path }}
 
-          ansible-playbook -i /work/inventory.yaml "${PLAYBOOK_PATH}" \
+          ansible-playbook -i /tmp/work/inventory.yaml "${PLAYBOOK_PATH}" \
             -e "cluster_domain=${CLUSTER_DOMAIN}" \
             -e "cluster_api_url=${CLUSTER_API_URL}" \
             -e "demo_repo_url=${DEMO_REPO_URL}" \

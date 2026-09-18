@@ -21,7 +21,7 @@
   gather_facts: false
 
   vars:
-    _demo_dir: /work/demo
+    _demo_dir: /tmp/work/demo
     _showroom_ns: "showroom-{{ showroom_guid }}"
 
   tasks:
