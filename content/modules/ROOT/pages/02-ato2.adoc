@@ -33,7 +33,7 @@ oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
 
 == Navegador
 
-{openshift_console_url}/kuadrant/apiproducts -- Connectivity Link → API
+{openshift_console_url}/kuadrant/apiproducts[API Products no console^] -- Connectivity Link → API
 Products e API Keys: os parceiros com plano e solicitante.
 
 WARNING: **Não aprove nada em API Key Approvals.** Aprovar cunha um Secret com
@@ -42,7 +42,7 @@ perde o fio.
 
 == Evidência
 
-Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia.
+Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia[Evidência dos atos^].
 Os três planos como barras. Se você rodou pelo Postman, aparece uma quarta
 série `sistema-teste`, isolada dos parceiros da história.
 

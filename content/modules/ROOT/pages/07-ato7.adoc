@@ -37,13 +37,13 @@ Três movimentos, sequenciais:
 
 == Navegador
 
-{kiali_url}/console/graph/namespaces?namespaces=travel-agency&duration=300
+{kiali_url}/console/graph/namespaces?namespaces=travel-agency&duration=300[Traffic Graph: travel-agency, janela de 5 min^]
 em *Versioned app graph*: depois do terceiro movimento, a divisão entre v1 e
 v2 no `discounts`. A versão não aparece na resposta -- só na métrica e no grafo.
 
 == Evidência
 
-Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia.
+Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência dos atos^].
 
 == Configuração
 

@@ -25,7 +25,7 @@ sozinho: um contador por tier no Limitador e os predicados no filtro do Envoy.
 
 == Navegador
 
-{openshift_console_url}/kuadrant/policy-topology -- o listener bifurca para
+{openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o listener bifurca para
 as rotas e as policies chegam tracejadas. **Não procure o vencedor aqui**: o
 grafo faz a pergunta, o status do terminal responde.
 

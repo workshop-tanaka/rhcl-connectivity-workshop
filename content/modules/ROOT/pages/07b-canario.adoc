@@ -13,7 +13,7 @@ movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
 == Terminal
 
 Abra **antes** o painel *A.7 · Peso efetivo do canário* em
-{grafana_url}/d/rhcl-evidencia -- é a única tela do workshop que se mexe
+{grafana_url}/d/rhcl-evidencia[Evidência dos atos^] -- é a única tela do workshop que se mexe
 enquanto você fala.
 
 [source,bash,role="execute"]

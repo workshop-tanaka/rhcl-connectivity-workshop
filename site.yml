@@ -1,7 +1,6 @@
 ---
 site:
-  title: Connectivity Link -- a API como plataforma
-  url: https://github.com/workshop-tanaka/rhcl-connectivity-workshop
+  title: Connectivity Link
   start_page: modules::index.adoc
 
 content:

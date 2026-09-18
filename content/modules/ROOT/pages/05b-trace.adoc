@@ -31,7 +31,7 @@ serviços atrás do `travels`, e o trace alcança **dois**.
 
 == Navegador
 
-{tempo_url} -- abra um trace de `200` e compare os dois spans do mesmo salto.
+{tempo_url}[Tempo^] -- abra um trace de `200` e compare os dois spans do mesmo salto.
 
 == Configuração
 

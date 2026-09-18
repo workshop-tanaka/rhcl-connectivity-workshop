@@ -26,7 +26,7 @@ restante de cada plano. Depois, a mesma consulta direto no Thanos:
 
 == Navegador
 
-{grafana_url}/d/rhcl-negocio-planos -- dashboard **Planos comerciais**. Os
+{grafana_url}/d/rhcl-negocio-planos[Planos comerciais^] -- o dashboard do ato. Os
 quatro primeiros painéis são a rajada; o quinto é a cota diária consumida por
 plano. Confira o seletor de datasource no topo: **Thanos**.
 
@@ -36,7 +36,7 @@ TelemetryPolicy. Não prometa tier neles.
 == Evidência
 
 Aqui a tela **é** a evidência. Para o consumo por parceiro, onde o tráfego de
-teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros.
+teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros[Consumo por parceiro^].
 
 == Configuração
 

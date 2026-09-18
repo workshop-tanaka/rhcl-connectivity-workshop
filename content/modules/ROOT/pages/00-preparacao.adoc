@@ -6,7 +6,7 @@ que falta é o repositório da demo, que é quem executa cada ato.
 
 == 1. O repositório da demo
 
-[source,bash,role="execute"]
+[source,bash,subs="attributes+",role="execute"]
 ----
 git clone --branch {demo_ref} {demo_repo_url} /home/lab-user/rhcl-connectivity-demo
 cd /home/lab-user/rhcl-connectivity-demo
@@ -41,9 +41,9 @@ abertas:
 
 [cols="1,3"]
 |===
-| Grafana | {grafana_url}/d/rhcl-evidencia -- *Evidência dos atos*, um painel por ato
-| Kiali | {kiali_url} -- o grafo de tráfego (atos 5 e 7)
-| Console | {openshift_console_url}/kuadrant/policy-topology -- Policy Topology (ato 3)
+| Grafana | {grafana_url}/d/rhcl-evidencia[Evidência dos atos^] -- um painel por ato
+| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (atos 5 e 7)
+| Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork do ato 3
 |===
 
 == 4. Como o `demo.sh` funciona

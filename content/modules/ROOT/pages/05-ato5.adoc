@@ -26,7 +26,7 @@ Deixa tráfego de fan-out rodando em segundo plano por 4 min. A coleta leva
 
 == Navegador
 
-{kiali_url}/console/graph/namespaces?namespaces=ingress-gateway,travel-agency,travel-db&duration=300
+{kiali_url}/console/graph/namespaces?namespaces=ingress-gateway,travel-agency,travel-db&duration=300[Traffic Graph: os três namespaces, janela de 5 min^]
 
 Traffic Graph, namespaces **ingress-gateway + travel-agency + travel-db**,
 janela **Last 5m**. O grafo fecha assim:
@@ -40,7 +40,7 @@ prod-web (ingress-gateway)
               └─ insurances ─┴─ mysqldb (travel-db)
 ----
 
-Traces: {tempo_url} -- serviço `prod-web-istio.ingress-gateway`. Abra um
+Traces: {tempo_url}[Tempo^] -- serviço `prod-web-istio.ingress-gateway`. Abra um
 trace: a decisão do gateway e a chamada de aplicação no mesmo timeline. As
 duas chamadas gRPC de auth e rate limit aparecem ali -- e são a resposta para
 "quanto custa em latência".

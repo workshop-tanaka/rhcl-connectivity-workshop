@@ -50,16 +50,16 @@ roda o pré-ato quando falta.
 == O ambiente
 
 Este cluster foi provisionado pelo `provision.sh` do repositório da demo
-({demo_repo_url}, tag `{demo_ref}`). Tudo que o conteúdo cita -- hosts, chaves,
+({demo_repo_url}[rhcl-connectivity-demo^], tag `{demo_ref}`). Tudo que o conteúdo cita -- hosts, chaves,
 URLs -- foi lido do cluster na hora do deploy, nunca copiado de arquivo.
 
 [cols="1,3"]
 |===
-| API | `https://{api_host}/travels`
-| Console | {openshift_console_url}
-| Grafana | {grafana_url}
-| Kiali | {kiali_url}
-| Traces | {tempo_url}
+| API | https://{api_host}/travels[`+{api_host}+`^]
+| Console | {openshift_console_url}[console do OpenShift^]
+| Grafana | {grafana_url}[Grafana^]
+| Kiali | {kiali_url}[Kiali^]
+| Traces | {tempo_url}[Tempo^]
 |===
 
 **Tempo:** 20 min para os atos 1–5; 30 min com o 7; ~50 min com os extras.
