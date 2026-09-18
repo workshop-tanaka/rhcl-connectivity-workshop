@@ -1,6 +1,22 @@
 ---
+# Painel direito do Showroom. Cada aba e um IFRAME -- e e isso que decide o
+# que pode entrar aqui.
+#
+# O QUE NAO PODE SER ABA (medido no cluster-nsvz5 em 2026-09-18, com curl -I):
+#
+#   console do OpenShift   x-frame-options: DENY
+#   Grafana                x-frame-options: deny
+#   Kiali                  x-frame-options: DENY
+#
+# Os tres recusam ser embutidos, e o navegador bloqueia sem dizer nada: a aba
+# fica EM BRANCO. Nao ha configuracao do lado deles que afrouxe isso, e nem se
+# deve procurar -- o cabecalho existe para impedir clickjacking. O exemplo de
+# 'OCP Console' na documentacao do nookbag e anterior a esse endurecimento.
+#
+# Por isso as telas de fora vivem nos LINKS do roteiro, que abrem em aba do
+# navegador (o '^' da macro do AsciiDoc), e nao aqui.
 type: showroom
-default_width: 35
+default_width: 38
 persist_url_state: true
 
 view_switcher:
@@ -8,8 +24,13 @@ view_switcher:
   default_mode: split
 
 tabs:
+  # O terminal do proprio pod. O traefik roteia /terminal -> ttyd:7681 com
+  # stripPrefix (ver /etc/traefik/dynamic.yml no container traefik).
   - name: Terminal
     path: /terminal/
     port: 443
-  - name: Console
-    url: 'https://console-openshift-console.${DOMAIN}'
+
+  # A unica tela externa da demo que aceita iframe: o Tempo nao manda
+  # x-frame-options. Serve aos atos 5 e 5b sem tirar o participante do guia.
+  - name: Traces
+    url: 'https://tempo-tempo-jaegerui-tracing-system.${DOMAIN}'

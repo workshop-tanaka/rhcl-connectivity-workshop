@@ -37,7 +37,10 @@ bash scripts/demo.sh telas --auto
 ----
 
 Imprime a URL de cada aba que o roteiro abre, resolvida deste cluster. Deixe
-abertas:
+abertas **em abas do navegador** -- o console, o Grafana e o Kiali mandam
+`X-Frame-Options: DENY` e por isso não podem ser embutidos no painel à
+direita; todos os links deste guia já abrem em aba nova. No painel ficam o
+**Terminal** e o **Traces**, que é a única tela que aceita ser embutida.
 
 [cols="1,3"]
 |===
