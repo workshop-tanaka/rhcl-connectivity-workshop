@@ -181,29 +181,26 @@
           demo_repo_url: "{{ demo_repo_url }}"
           demo_ref: "{{ demo_ref }}"
 
-    - name: Publicar o Showroom
-      vars:
-        showroom_deployer_domain: "{{ cluster_domain }}"
-        showroom_content_git_repo: "{{ showroom_repo_url }}"
-        showroom_content_git_repo_ref: "{{ showroom_repo_ref }}"
-        showroom_content_antora_playbook: "{{ showroom_playbook }}"
-        showroom_namespace: "{{ _showroom_ns }}"
-        showroom_user_data: "{{ _user_data }}"
-      ansible.builtin.include_role:
-        name: deploy-showroom
-
     # O terminal do Showroom roda o demo.sh, que le Secrets em kuadrant-system,
     # escala o Limitador e faz patch em travel-agency. O chart do Showroom da
-    # 'edit' so no proprio namespace; aqui a SA do pod ganha cluster-admin --
-    # e um lab de um participante, e o cluster morre com ele.
-    - name: Descobrir a SA do pod do Showroom
-      kubernetes.core.k8s_info:
-        api_version: v1
-        kind: Pod
-        namespace: "{{ _showroom_ns }}"
-        label_selectors:
-          - app.kubernetes.io/name=showroom
-      register: r_showroom_pod
+    # 'edit' so no proprio namespace; aqui a SA ganha cluster-admin -- e um lab
+    # de um participante, e o cluster morre com ele.
+    #
+    # ANTES do pod nascer, e nao depois: com cluster-admin a SA passa a poder
+    # usar a SCC 'anyuid', e o pod muda de uid (1000920000 -> 1000) no primeiro
+    # restart. Os arquivos que o participante clonou no volume ficam de outro
+    # dono e 'rm' falha (medido no nsvz5, 2026-09-18). Com o binding primeiro,
+    # o pod ja nasce como uid 1000 e o volume e consistente para sempre.
+    - name: Namespace do Showroom (para o binding poder nascer antes do pod)
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ _showroom_ns }}"
+            labels:
+              demo.redhat.com/application: showroom
 
     - name: cluster-admin para o terminal do Showroom
       kubernetes.core.k8s:
@@ -221,8 +218,19 @@
             name: cluster-admin
           subjects:
             - kind: ServiceAccount
-              name: "{{ r_showroom_pod.resources[0].spec.serviceAccountName }}"
+              name: showroom   # showroom_name da role deploy-showroom
               namespace: "{{ _showroom_ns }}"
+
+    - name: Publicar o Showroom
+      vars:
+        showroom_deployer_domain: "{{ cluster_domain }}"
+        showroom_content_git_repo: "{{ showroom_repo_url }}"
+        showroom_content_git_repo_ref: "{{ showroom_repo_ref }}"
+        showroom_content_antora_playbook: "{{ showroom_playbook }}"
+        showroom_namespace: "{{ _showroom_ns }}"
+        showroom_user_data: "{{ _user_data }}"
+      ansible.builtin.include_role:
+        name: deploy-showroom
 
     # ------------------------------------------------------------------ 7
     - name: userinfo para o RHDP
