@@ -1,0 +1,67 @@
+= Connectivity Link -- a API como plataforma
+
+A mesma API de viagens servida em três planos comerciais (`free`, `silver`,
+`gold`), com o efeito visível na tela e mensurável no Grafana. A tese que cada
+ato defende: **o Red Hat Connectivity Link é uma plataforma de API, não um
+gateway** -- e nenhuma linha da aplicação muda para provar isso.
+
+== O que você vai fazer
+
+* Ver a API recusar quem não tem credencial, sem código de autenticação na aplicação (ato 1)
+* Servir três clientes com três cotas a partir de **um label** num Secret (ato 2)
+* Ler no status do cluster qual policy venceu, sem arqueologia (ato 3)
+* Transformar `429` em "o tier free está saturando", no Grafana (ato 4)
+* Seguir uma requisição do gateway até o banco, no grafo e no trace (ato 5)
+* Provar que a chave de API abre a porta da rua, não o cofre: mTLS e identidade de serviço (ato 7)
+
+Os extras (4b, 5b, 7b, 7c) respondem às perguntas que sempre aparecem: e se o
+componente cair? quanto custa em latência? como é uma promoção de versão ao
+vivo? e o que o Service Mesh **não** demonstra com fault injection.
+
+== Para quem
+
+Cada ato diz a **persona** que reconhece o problema na primeira frase --
+Segurança, Engenheiro de Plataforma, Produto, Operação/SRE, Desenvolvedor.
+Monte o seu roteiro pela sala, não pela numeração: uma sala de operação
+dispensa pouco; uma de desenvolvedores começa no 1 e vai direto ao 5.
+
+== A ordem importa
+
+Os atos rodam soltos. O risco não é a ordem: é um ato que **lê** o que outro
+**produziu** sair com painel vazio e sem erro. Cada página abre com um bloco
+*Antes* dizendo o que pressupõe -- e o `demo.sh` confere e **pergunta** se
+roda o pré-ato quando falta.
+
+[cols="1,3,2",options="header"]
+|===
+| Ato | Precisa | Persona
+| 1 | nada | Segurança · Plataforma
+| 2 | cota do dia; 11 s desde a última rajada | Produto · Plataforma
+| 3 | nada | Plataforma
+| **4** | **ato 2 nos últimos 15 min** | Negócio · Operação
+| 4b | Limitador de pé | Operação/SRE
+| 5 | nada -- gera o próprio fan-out | Operação · Dev
+| **5b** | **ato 5 na última hora** | Operação · Dev
+| **7** | **mesh no estado base** (STRICT, 90/10, sem fault) | Segurança · Plataforma
+| 7b | discounts em 90/10 | Dev · Plataforma
+| 7c | DestinationRule base | Operação/SRE
+|===
+
+== O ambiente
+
+Este cluster foi provisionado pelo `provision.sh` do repositório da demo
+({demo_repo_url}, tag `{demo_ref}`). Tudo que o conteúdo cita -- hosts, chaves,
+URLs -- foi lido do cluster na hora do deploy, nunca copiado de arquivo.
+
+[cols="1,3"]
+|===
+| API | `https://{api_host}/travels`
+| Console | {openshift_console_url}
+| Grafana | {grafana_url}
+| Kiali | {kiali_url}
+| Traces | {tempo_url}
+|===
+
+**Tempo:** 20 min para os atos 1–5; 30 min com o 7; ~50 min com os extras.
+
+Comece pela xref:00-preparacao.adoc[Preparação].

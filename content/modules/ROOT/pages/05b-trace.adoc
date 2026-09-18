@@ -1,0 +1,50 @@
+= 5b. O que um contador não responde
+:navtitle: 5b. O que um contador não responde
+
+**Persona:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois do ato 5**
+
+[WARNING.antes]
+====
+**Antes: o ato 5** (ou `bash scripts/traffic.sh mesh`) na última hora, para
+o terceiro movimento, que procura traces de fan-out do `travels`. Os dois
+primeiros geram as próprias chamadas. Se faltar, o script pergunta se dispara
+o ato 5 agora.
+====
+
+O ato 4 mostrou a métrica, que **agrega**. O trace **correlaciona**: amarra
+os pedaços de uma requisição. Quando alguém pergunta "quanto essa policy me
+custa em latência?", nenhum contador responde.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh trace
+----
+
+Gera seis chamadas, espera ~25 s pela indexação e imprime o span de borda e o
+de aplicação de cada uma, lado a lado: **a diferença é o custo da policy,
+medido** -- neste cluster, com estas policies.
+
+O terceiro movimento é a parte que quase ninguém mostra: o fan-out tem seis
+serviços atrás do `travels`, e o trace alcança **dois**.
+
+== Navegador
+
+{tempo_url} -- abra um trace de `200` e compare os dois spans do mesmo salto.
+
+== Configuração
+
+[source,bash,role="execute"]
+----
+oc get istio default -o jsonpath='{.spec.values.meshConfig.extensionProviders}'
+----
+
+Para onde os spans vão. O nome do provider é do cluster, não do repositório.
+
+== O que dizer
+
+"O Service Mesh instrumenta o transporte -- a metade difícil. Só a aplicação
+pode levar o cabeçalho de correlação de uma chamada que recebeu para a próxima
+que faz. São três linhas por serviço, e é melhor combinar isso na sala hoje
+do que descobrir na primeira semana."

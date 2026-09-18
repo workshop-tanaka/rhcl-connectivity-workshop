@@ -1,0 +1,54 @@
+= 3. Precedência de policies é explícita
+:navtitle: 3. Precedência
+
+**Persona:** Engenheiro de Plataforma -- quem responde "qual policy venceu?" sem arqueologia. · **4 min**
+
+[NOTE.antes]
+====
+**Antes:** nada -- só lê status de policy. A narração cita "os tiers do ato
+2", mas nenhum comando depende dele.
+====
+
+O par aqui é Gateway contra rota. As policies que miram o `prod-web` valem
+para toda rota anexada, e **cedem** onde a rota declara a sua.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ato3
+----
+
+O que tem de aparecer: `Enforced=False`, e a mensagem **nomeia** quem venceu
+-- as policies das duas rotas. Depois, os artefatos que o PlanPolicy gerou
+sozinho: um contador por tier no Limitador e os predicados no filtro do Envoy.
+
+== Navegador
+
+{openshift_console_url}/kuadrant/policy-topology -- o listener bifurca para
+as rotas e as policies chegam tracejadas. **Não procure o vencedor aqui**: o
+grafo faz a pergunta, o status do terminal responde.
+
+== Evidência
+
+[source,bash,role="execute"]
+----
+oc get limitador limitador -n kuadrant-system -o jsonpath='{.spec.limits}' | python3 -m json.tool | head -30
+----
+
+Um contador por tier, gerado pela policy. É a prova material de que a
+declaração virou configuração de data plane sem ninguém escrever.
+
+== Configuração
+
+A precedência não está num arquivo: está no **status**.
+
+[source,bash,role="execute"]
+----
+oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{range .status.conditions[*]}{.type}={.status} ({.message}){"\n"}{end}'
+----
+
+== O que dizer
+
+"O cluster declara quem prevaleceu. Numa stack de anotações de ingress ou
+EnvoyFilter solto, descobrir isso é arqueologia. Aqui é um campo de status."

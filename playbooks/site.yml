@@ -1,0 +1,253 @@
+---
+# rhcl-connectivity-workshop -- o playbook do Job.
+#
+# Sete passos, e a ordem e a do provision.sh:
+#   1. pre-flight de RBAC (falha cedo, com a mensagem certa)
+#   2. clone do repositorio da demo na TAG pedida
+#   3. new-env.sh: a camada de hostname deste cluster (o RHDP injeta o dominio)
+#   4. provision.sh com as etapas de values.yaml
+#   5. preflight.sh core: o Job so termina bem se o caminho de dados responde
+#   6. Showroom, com os hosts, URLs e chaves de teste lidos DO CLUSTER como
+#      atributos do Antora -- nada e copiado de arquivo
+#   7. ConfigMap userinfo para a pagina do pedido no RHDP
+#
+# Variaveis vindas do Job (env -> -e): cluster_domain, cluster_api_url,
+# demo_repo_url, demo_ref, demo_stages, demo_optional, demo_timeout,
+# showroom_repo_url, showroom_repo_ref, showroom_playbook, showroom_guid.
+
+- name: Provisionar o workshop de Connectivity Link
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    _demo_dir: /work/demo
+    _showroom_ns: "showroom-{{ showroom_guid }}"
+
+  tasks:
+    # ------------------------------------------------------------------ 1
+    - name: "PRE-FLIGHT: a SA consegue criar namespace?"
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "rhcl-rbac-test-{{ 99999 | random }}"
+      register: r_rbac
+      ignore_errors: true
+
+    - name: "PRE-FLIGHT: limpar o namespace de teste"
+      kubernetes.core.k8s:
+        state: absent
+        api_version: v1
+        kind: Namespace
+        name: "{{ r_rbac.result.metadata.name }}"
+      when: r_rbac is succeeded
+
+    - name: "PRE-FLIGHT: falhar se faltar RBAC"
+      ansible.builtin.fail:
+        msg: >-
+          A SA do Job nao tem cluster-admin. O chart cria o ClusterRoleBinding;
+          se o Argo nao conseguiu aplica-lo, e o proprio Argo que esta sem
+          cluster-admin (ver o README do field-sourced-content-template).
+      when: r_rbac is failed
+
+    # ------------------------------------------------------------------ 2
+    - name: Clonar o repositorio da demo na tag {{ demo_ref }}
+      ansible.builtin.git:
+        repo: "{{ demo_repo_url }}"
+        dest: "{{ _demo_dir }}"
+        version: "{{ demo_ref }}"
+        depth: 1
+
+    # ------------------------------------------------------------------ 3
+    # O provision.sh le DOMAIN do cluster quando nao vem do ambiente; aqui ele
+    # vem do RHDP e os dois tem de coincidir, entao passa explicito.
+    - name: Gerar a camada de hostname deste cluster (new-env.sh)
+      ansible.builtin.command:
+        cmd: bash scripts/new-env.sh --force
+        chdir: "{{ _demo_dir }}"
+      environment:
+        DOMAIN: "{{ cluster_domain }}"
+      register: r_newenv
+      changed_when: true
+
+    - name: new-env.sh
+      ansible.builtin.debug:
+        msg: "{{ r_newenv.stdout_lines }}"
+
+    # ------------------------------------------------------------------ 4
+    # Uma etapa por task, para o log do Job dizer ONDE parou. O provision.sh e
+    # idempotente: um Job reexecutado retoma sem refazer o que ja esta.
+    - name: "provision.sh {{ item }}"
+      ansible.builtin.command:
+        cmd: "bash scripts/provision.sh {{ item }}"
+        chdir: "{{ _demo_dir }}"
+      environment:
+        DOMAIN: "{{ cluster_domain }}"
+        OPTIONAL: "{{ demo_optional }}"
+        TIMEOUT: "{{ demo_timeout }}"
+      loop: "{{ demo_stages | split }}"
+      register: r_stage
+      changed_when: true
+
+    # ------------------------------------------------------------------ 5
+    - name: "preflight.sh core -- o caminho de dados responde?"
+      ansible.builtin.command:
+        cmd: bash scripts/preflight.sh core
+        chdir: "{{ _demo_dir }}"
+      register: r_preflight
+      changed_when: false
+      failed_when: r_preflight.rc != 0
+
+    - name: preflight
+      ansible.builtin.debug:
+        msg: "{{ r_preflight.stdout_lines[-12:] }}"
+
+    # ------------------------------------------------------------------ 6
+    # Tudo que o conteudo cita vem do cluster, na hora. Chaves de TESTE de
+    # proposito: o trafego do participante nasce filtravel nas metricas
+    # (user-id 'sistema-teste'), separado dos parceiros da historia.
+    - name: Ler a HTTPRoute do travel-agency
+      kubernetes.core.k8s_info:
+        api_version: gateway.networking.k8s.io/v1
+        kind: HTTPRoute
+        name: travel-agency
+        namespace: travel-agency
+      register: r_route
+
+    - name: Ler as chaves de teste
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        namespace: kuadrant-system
+        label_selectors:
+          - app=partner
+          - rhcl.demo/finalidade=teste
+      register: r_keys
+
+    - name: Ler as rotas das telas
+      kubernetes.core.k8s_info:
+        api_version: route.openshift.io/v1
+        kind: Route
+        name: "{{ item.name }}"
+        namespace: "{{ item.ns }}"
+      loop:
+        - { name: grafana-route, ns: monitoring }
+        - { name: kiali, ns: istio-system }
+        - { name: tempo-tempo-jaegerui, ns: tracing-system }
+      register: r_telas
+
+    # Loops em vez de zip/map: a chave do label tem ponto ('kuadrant.io/plan-id')
+    # e 'map(attribute=...)' a partiria; e uma rota ausente devolve lista vazia,
+    # que 'first' recusa. O '+ ['']' e o default.
+    - name: Chave por plano
+      ansible.builtin.set_fact:
+        _keys: "{{ _keys | default({}) | combine({item.metadata.labels['kuadrant.io/plan-id']: (item.data.api_key | b64decode)}) }}"
+      loop: "{{ r_keys.resources }}"
+      loop_control:
+        label: "{{ item.metadata.name }}"
+
+    - name: Host por tela
+      ansible.builtin.set_fact:
+        _telas: "{{ _telas | default({}) | combine({item.item.name: ((item.resources | map(attribute='spec.host') | list) + ['']) | first}) }}"
+      loop: "{{ r_telas.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+
+    - name: Atributos que o conteudo vai usar
+      ansible.builtin.set_fact:
+        _user_data:
+          cluster_domain: "{{ cluster_domain }}"
+          openshift_console_url: "https://console-openshift-console.{{ cluster_domain }}"
+          api_host: "{{ r_route.resources[0].spec.hostnames[0] }}"
+          api_key_free: "{{ _keys.free | default('') }}"
+          api_key_silver: "{{ _keys.silver | default('') }}"
+          api_key_gold: "{{ _keys.gold | default('') }}"
+          grafana_url: "https://{{ _telas['grafana-route'] }}"
+          kiali_url: "https://{{ _telas['kiali'] }}"
+          tempo_url: "https://{{ _telas['tempo-tempo-jaegerui'] }}"
+          demo_repo_url: "{{ demo_repo_url }}"
+          demo_ref: "{{ demo_ref }}"
+
+    - name: Publicar o Showroom
+      vars:
+        showroom_deployer_domain: "{{ cluster_domain }}"
+        showroom_content_git_repo: "{{ showroom_repo_url }}"
+        showroom_content_git_repo_ref: "{{ showroom_repo_ref }}"
+        showroom_content_antora_playbook: "{{ showroom_playbook }}"
+        showroom_namespace: "{{ _showroom_ns }}"
+        showroom_user_data: "{{ _user_data }}"
+      ansible.builtin.include_role:
+        name: deploy-showroom
+
+    # O terminal do Showroom roda o demo.sh, que le Secrets em kuadrant-system,
+    # escala o Limitador e faz patch em travel-agency. O chart do Showroom da
+    # 'edit' so no proprio namespace; aqui a SA do pod ganha cluster-admin --
+    # e um lab de um participante, e o cluster morre com ele.
+    - name: Descobrir a SA do pod do Showroom
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ _showroom_ns }}"
+        label_selectors:
+          - app.kubernetes.io/name=showroom
+      register: r_showroom_pod
+
+    - name: cluster-admin para o terminal do Showroom
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: "showroom-{{ showroom_guid }}-terminal-cluster-admin"
+            labels:
+              demo.redhat.com/application: showroom
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+          subjects:
+            - kind: ServiceAccount
+              name: "{{ r_showroom_pod.resources[0].spec.serviceAccountName }}"
+              namespace: "{{ _showroom_ns }}"
+
+    # ------------------------------------------------------------------ 7
+    - name: userinfo para o RHDP
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: rhcl-workshop-userinfo
+            namespace: "{{ _showroom_ns }}"
+            labels:
+              demo.redhat.com/userinfo: ""
+              demo.redhat.com/application: "rhcl-workshop"
+          data:
+            demo_title: "Red Hat Connectivity Link -- a API como plataforma"
+            access_instructions: >-
+              Abra o Showroom em {{ showroom_url }}. O terminal embutido ja esta
+              autenticado no cluster; o modulo 0 clona o repositorio da demo e
+              roda a verificacao.
+            showroom_url: "{{ showroom_url }}"
+            openshift_console_url: "{{ _user_data.openshift_console_url }}"
+            api_host: "{{ _user_data.api_host }}"
+            api_key_free: "{{ _user_data.api_key_free }}"
+            api_key_silver: "{{ _user_data.api_key_silver }}"
+            api_key_gold: "{{ _user_data.api_key_gold }}"
+            grafana_url: "{{ _user_data.grafana_url }}"
+            kiali_url: "{{ _user_data.kiali_url }}"
+            tempo_url: "{{ _user_data.tempo_url }}"
+            demo_repo: "{{ demo_repo_url }}@{{ demo_ref }}"
+            cluster_domain: "{{ cluster_domain }}"
+
+    - name: Pronto
+      ansible.builtin.debug:
+        msg:
+          - "Showroom: {{ showroom_url }}"
+          - "API:      https://{{ _user_data.api_host }}/travels"
+          - "Grafana:  {{ _user_data.grafana_url }}"

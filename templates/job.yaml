@@ -1,0 +1,137 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ansible-runner.fullname" . }}
+  namespace: {{ .Values.namespace.name }}
+  labels:
+    {{- include "ansible-runner.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.syncWave.job | quote }}
+    # Hook de Sync: o Argo so da o Application por sincronizado quando o Job
+    # termina -- e o que faz o RHDP esperar o provisionamento em vez de
+    # declarar "pronto" com o cluster ainda vazio.
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: {{ .Values.job.activeDeadlineSeconds }}
+  {{- if gt (.Values.job.ttlSecondsAfterFinished | int) 0 }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "ansible-runner.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      restartPolicy: {{ .Values.job.restartPolicy }}
+      containers:
+      - name: ansible-runner
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: CLUSTER_DOMAIN
+          value: {{ .Values.deployer.domain | quote }}
+        - name: CLUSTER_API_URL
+          value: {{ .Values.deployer.apiUrl | quote }}
+        - name: ANSIBLE_CONFIG
+          value: "/work/ansible.cfg"
+        - name: KUBECONFIG
+          value: "/work/kubeconfig"
+        - name: GIT_REPO_URL
+          value: {{ .Values.ansible.repository.url | quote }}
+        - name: GIT_REPO_BRANCH
+          value: {{ .Values.ansible.repository.branch | quote }}
+        - name: PLAYBOOK_PATH
+          value: {{ .Values.ansible.playbook | quote }}
+        - name: DEMO_REPO_URL
+          value: {{ .Values.demo.repoUrl | quote }}
+        - name: DEMO_REF
+          value: {{ .Values.demo.ref | quote }}
+        - name: DEMO_STAGES
+          value: {{ .Values.demo.stages | quote }}
+        - name: DEMO_OPTIONAL
+          value: {{ .Values.demo.optional | quote }}
+        - name: DEMO_TIMEOUT
+          value: {{ .Values.demo.timeout | quote }}
+        - name: SHOWROOM_REPO_URL
+          value: {{ .Values.showroom.content.repoUrl | quote }}
+        - name: SHOWROOM_REPO_REF
+          value: {{ .Values.showroom.content.repoRef | quote }}
+        - name: SHOWROOM_PLAYBOOK
+          value: {{ .Values.showroom.content.antoraPlaybook | quote }}
+        - name: SHOWROOM_GUID
+          value: {{ .Values.showroom.guid | quote }}
+        command:
+        - /bin/bash
+        - -c
+        - |
+          set -euo pipefail
+          echo "=== rhcl-workshop: inicio ==="
+          echo "dominio: ${CLUSTER_DOMAIN}   demo: ${DEMO_REPO_URL}@${DEMO_REF}"
+          mkdir -p /work && cd /work
+          cp /config/ansible.cfg /config/inventory.yaml /work/
+
+          # kubeconfig da propria SA. O provision.sh usa 'oc' com este arquivo.
+          cat > /work/kubeconfig <<'EOF'
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: default
+            cluster:
+              certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              server: https://kubernetes.default.svc
+          contexts:
+          - name: default
+            context: {cluster: default, user: default}
+          current-context: default
+          users:
+          - name: default
+            user:
+              tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+          EOF
+
+          # 'oc' do proprio cluster: o Service 'downloads' de openshift-console
+          # serve o binario da MESMA versao do cluster, sem sair para a internet.
+          echo "=== oc ==="
+          mkdir -p /work/bin
+          curl -sf http://downloads.openshift-console.svc/amd64/linux/oc.tar | tar x -C /work/bin \
+            || { echo "downloads.openshift-console indisponivel; tentando o mirror publico"; \
+                 curl -sfL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz | tar xz -C /work/bin oc; }
+          export PATH=/work/bin:$PATH
+          oc version --client | head -1
+          oc whoami
+
+          echo "=== ansible ==="
+          pip install --quiet --upgrade pip
+          pip install --quiet -r /config/requirements.txt
+          while read -r c; do [ -z "$c" ] || ansible-galaxy collection install "$c" --force >/dev/null; done < /config/collections.txt
+
+          echo "=== playbooks ==="
+          git clone --quiet --branch "${GIT_REPO_BRANCH}" "${GIT_REPO_URL}" /work/workshop
+          cd /work/workshop/{{ .Values.ansible.repository.path }}
+
+          ansible-playbook -i /work/inventory.yaml "${PLAYBOOK_PATH}" \
+            -e "cluster_domain=${CLUSTER_DOMAIN}" \
+            -e "cluster_api_url=${CLUSTER_API_URL}" \
+            -e "demo_repo_url=${DEMO_REPO_URL}" \
+            -e "demo_ref=${DEMO_REF}" \
+            -e "demo_stages='${DEMO_STAGES}'" \
+            -e "demo_optional=${DEMO_OPTIONAL}" \
+            -e "demo_timeout=${DEMO_TIMEOUT}" \
+            -e "showroom_repo_url=${SHOWROOM_REPO_URL}" \
+            -e "showroom_repo_ref=${SHOWROOM_REPO_REF}" \
+            -e "showroom_playbook=${SHOWROOM_PLAYBOOK}" \
+            -e "showroom_guid=${SHOWROOM_GUID}"
+          echo "=== rhcl-workshop: fim ==="
+        volumeMounts:
+        - name: config
+          mountPath: /config
+          readOnly: true
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "ansible-runner.fullname" . }}-config

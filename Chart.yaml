@@ -1,0 +1,11 @@
+apiVersion: v2
+name: rhcl-connectivity-workshop
+description: >-
+  Workshop Red Hat Connectivity Link sobre a travel-agency, para o RHDP Field
+  Sourced Content. Um Job ansible-runner provisiona a plataforma com o
+  provision.sh do repositorio rhcl-connectivity-demo e sobe o Showroom.
+type: application
+version: 0.1.0
+appVersion: "workshop-v0.1"
+maintainers:
+  - name: Sandro Tanaka

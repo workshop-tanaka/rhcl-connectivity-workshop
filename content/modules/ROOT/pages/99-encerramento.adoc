@@ -1,0 +1,37 @@
+= Encerramento
+:navtitle: Encerramento
+
+== O fecho
+
+Seis policies, um alvo. Autenticação, limite, plano, telemetria -- e, onde há
+DNS público, certificado e DNS -- todas mirando o mesmo Gateway, todas com
+status próprio, nenhuma escondida num campo de anotação. Uma plataforma de
+API governa a borda inteira, não só o que passa por ela.
+
+== O que ficou para trás
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh pos --auto
+----
+
+Procura o que a sessão deixou (PERMISSIVE, fault injection, canário fora de
+90/10, cota baixa), ajusta, e revalida. É o que se roda **depois** de
+apresentar. Para reapresentar no mesmo dia, `bash scripts/demo.sh reset`
+devolve as cotas.
+
+== Perguntas que sempre aparecem
+
+[cols="1,2"]
+|===
+| JWT/OIDC em vez de API key? | Sim -- a AuthPolicy aceita os dois; a demo usa chave porque cabe numa tela.
+| Cobrança por consumidor? | É por **plano**, e o motivo é técnico: o contador é por tier, e o label do parceiro é dimensão de métrica, não de limite.
+| E se o Limitador cair? | `failureMode: allow` -- o ato 4b mede isso. A autenticação é o oposto.
+| Quanto custa em latência? | Duas chamadas gRPC, visíveis no trace -- o ato 5b mede isso.
+|===
+
+== Para levar
+
+* O repositório da demo: {demo_repo_url} (tag `{demo_ref}`) -- `docs/RUNBOOK.md`
+  tem o porquê de cada ato e as 13 armadilhas.
+* Este workshop: https://github.com/workshop-tanaka/rhcl-connectivity-workshop

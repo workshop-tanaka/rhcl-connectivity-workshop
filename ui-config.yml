@@ -1,0 +1,15 @@
+---
+type: showroom
+default_width: 35
+persist_url_state: true
+
+view_switcher:
+  enabled: true
+  default_mode: split
+
+tabs:
+  - name: Terminal
+    path: /terminal/
+    port: 443
+  - name: Console
+    url: 'https://console-openshift-console.${DOMAIN}'

@@ -1,0 +1,50 @@
+= 4. Isso vira número de negócio
+:navtitle: 4. Número de negócio
+
+**Persona:** Negócio (a pergunta é dele) e Operação (quem mantém a cadeia que responde). · **4 min** · **depois do ato 2**
+
+[WARNING.antes]
+====
+**Antes: o ato 2 (ou o aquecimento) nos últimos 15 min.** Este ato só lê.
+Sem tráfego com chave, o painel sai vazio e nada avisa -- por isso o script
+consulta o Thanos ao começar e diz quantas chamadas há na janela. Se for zero,
+ele **pergunta** se roda o ato 2 agora e volta.
+====
+
+Até aqui foi código de status. Agora é a pergunta que a área comercial faz.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ato4
+----
+
+O que tem de aparecer: as séries quebradas por `plan` e a cota diária
+restante de cada plano. Depois, a mesma consulta direto no Thanos:
+`sum by (plan) (authorized_calls)`.
+
+== Navegador
+
+{grafana_url}/d/rhcl-negocio-planos -- dashboard **Planos comerciais**. Os
+quatro primeiros painéis são a rajada; o quinto é a cota diária consumida por
+plano. Confira o seletor de datasource no topo: **Thanos**.
+
+Os dashboards de fábrica agregam sem quebrar por plano: são anteriores ao
+TelemetryPolicy. Não prometa tier neles.
+
+== Evidência
+
+Aqui a tela **é** a evidência. Para o consumo por parceiro, onde o tráfego de
+teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros.
+
+== Configuração
+
+`base/policies-telemetry/prod-web-telemetry.yaml` -- a policy que injeta o
+label `plan` na métrica. Sem ela a série responde "quantos 429 houve"; com
+ela responde "o tier free está saturando", que é outra conversa.
+
+== O que dizer
+
+"A cadeia inteira -- PlanPolicy → TelemetryPolicy → Limitador → Prometheus →
+Grafana -- já estava de pé. A demo só acrescentou a dimensão de negócio."

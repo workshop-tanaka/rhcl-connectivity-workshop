@@ -1,0 +1,24 @@
+name: modules
+title: Connectivity Link
+version: ~
+nav:
+  - modules/ROOT/nav.adoc
+
+# Os valores abaixo sao PLACEHOLDERS para build local. No cluster, o Showroom
+# os substitui pelo user_data que o playbook le do cluster na hora -- ver
+# playbooks/site.yml, passo 6. Nunca versionar valor real aqui.
+asciidoc:
+  attributes:
+    experimental: true
+    page-pagination: true
+    cluster_domain: apps.cluster-guid.dominio.exemplo
+    openshift_console_url: https://console-openshift-console.apps.cluster-guid.dominio.exemplo
+    api_host: api-travels.apps.cluster-guid.dominio.exemplo
+    api_key_free: teste-free-xxxxxx
+    api_key_silver: teste-silver-xxxxxx
+    api_key_gold: teste-gold-xxxxxx
+    grafana_url: https://grafana-route-monitoring.apps.cluster-guid.dominio.exemplo
+    kiali_url: https://kiali-istio-system.apps.cluster-guid.dominio.exemplo
+    tempo_url: https://tempo-tempo-jaegerui-tracing-system.apps.cluster-guid.dominio.exemplo
+    demo_repo_url: https://github.com/workshop-tanaka/rhcl-connectivity-demo.git
+    demo_ref: workshop-v0.1

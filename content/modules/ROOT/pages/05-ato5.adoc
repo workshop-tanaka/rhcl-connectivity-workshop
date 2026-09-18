@@ -1,0 +1,64 @@
+= 5. O caminho todo é rastreável
+:navtitle: 5. Rastreável
+
+**Persona:** Operação/SRE e Desenvolvedor -- a mesma tela serve a incidente e a debug. · **3 min**
+
+[NOTE.antes]
+====
+**Antes:** nada -- gera o próprio tráfego de fan-out, e não precisa do ato 2.
+O que ele gera, o ato 5b aproveita.
+====
+
+O tráfego de `/travels` **não** atravessa o Service Mesh: a resposta é local
+ao `travels`. Quem provoca o fan-out é `/travels/<cidade>` com o header
+`user` -- e só com a chave gold, porque `429` é recusado na borda e nunca
+entra no mesh.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ato5
+----
+
+Deixa tráfego de fan-out rodando em segundo plano por 4 min. A coleta leva
+~1 min (raspagem a cada 30 s): fale enquanto isso.
+
+== Navegador
+
+{kiali_url}/console/graph/namespaces?namespaces=ingress-gateway,travel-agency,travel-db&duration=300
+
+Traffic Graph, namespaces **ingress-gateway + travel-agency + travel-db**,
+janela **Last 5m**. O grafo fecha assim:
+
+[source,text]
+----
+prod-web (ingress-gateway)
+  └─ travels ─┬─ flights ────┬─ discounts (v1, v2)
+              ├─ hotels ─────┤
+              ├─ cars ───────┤
+              └─ insurances ─┴─ mysqldb (travel-db)
+----
+
+Traces: {tempo_url} -- serviço `prod-web-istio.ingress-gateway`. Abra um
+trace: a decisão do gateway e a chamada de aplicação no mesmo timeline. As
+duas chamadas gRPC de auth e rate limit aparecem ali -- e são a resposta para
+"quanto custa em latência".
+
+== Configuração
+
+`platform-reference/mesh-control-plane/telemetry-tracing.yaml` -- a ordem de
+emitir span.
+
+[source,bash,role="execute"]
+----
+oc get telemetry -A
+----
+
+CAUTION: Telemetry no namespace do workload **substitui** a do namespace raiz
+(não mescla). Foi assim que a demo apagou o próprio tracing uma vez.
+
+== O que dizer
+
+"Policy Topology, Traffic Graph e Traces: três telas, nenhuma ferramenta nova
+entrou na conversa."

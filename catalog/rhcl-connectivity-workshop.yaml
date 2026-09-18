@@ -1,0 +1,20 @@
+# Stub para o catalogo do rhpds/field-sourced-content-template (catalog/tested/).
+# Mesmo formato dos exemplos de la: aponta para o chart na raiz deste repo.
+name: rhcl-connectivity-workshop
+displayName: Red Hat Connectivity Link -- a API como plataforma
+description: >-
+  Workshop de ~50 min sobre OpenShift 4.21: a mesma API (travel-agency)
+  servida em tres planos comerciais com Connectivity Link 1.4 e Service Mesh
+  3. Autenticacao, planos, precedencia de policy, metrica por plano, traces,
+  mTLS e identidade de servico, canario ao vivo e disjuntor -- sem mudar uma
+  linha da aplicacao. Single-user; Route passthrough (sem LoadBalancer nem DNS
+  publico). Chart na raiz do repositorio.
+owner: Sandro Tanaka (@sandrotanaka)
+repoURL: https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git
+revision: main
+chartPath: "."
+requires:
+  virt: false
+  rhoai: false
+  aap: false
+  clusterSize: multinode

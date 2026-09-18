@@ -1,0 +1,64 @@
+= 7. A borda não é a única fronteira
+:navtitle: 7. Não é a única fronteira
+
+**Persona:** Segurança e Engenheiro de Plataforma -- identidade de serviço, não de cliente. · **8 min** · mesh no estado base
+
+[WARNING.antes]
+====
+**Antes: o estado base do Service Mesh** -- mTLS `STRICT`, `discounts` em
+90/10, sem fault injection. Nenhum ato antes; mas 7b, 7c e `falha` mexem
+nesse estado e o devolvem ao sair, e um Ctrl-C no meio deles não. O script
+confere os três ao começar e oferece o pré-ato `mesh_base` (~5 s) se algo
+estiver fora.
+====
+
+Este ato é do Service Mesh, não do RHCL, e existe porque a pergunta vem
+sozinha depois do ato 1: "então a chave de API protege tudo?". Não protege --
+ela abre a porta da rua. E o argumento fecha porque é o **mesmo** Envoy nas
+duas pontas.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ato7
+----
+
+Três movimentos, sequenciais:
+
+. **Ninguém fala em texto claro** -- uma sonda sem sidecar, de fora do mesh:
+  `HTTP=000 exit=56`. Conexão resetada, **não houve HTTP**. Em `PERMISSIVE`
+  seria `403`.
+. **A chave abriu a porta da rua, não o cofre** -- `travels` recebe `403`, os
+  quatro vendedores `200`. A recusa vem do sidecar; o que compara é o SPIFFE
+  ID que o mTLS provou.
+. **Versão é decisão de plataforma** -- ~90/10 medido. Antes do
+  VirtualService o mesmo comando media ~50/50.
+
+== Navegador
+
+{kiali_url}/console/graph/namespaces?namespaces=travel-agency&duration=300
+em *Versioned app graph*: depois do terceiro movimento, a divisão entre v1 e
+v2 no `discounts`. A versão não aparece na resposta -- só na métrica e no grafo.
+
+== Evidência
+
+Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia.
+
+== Configuração
+
+`base/mesh/` -- quatro arquivos, um por movimento: `peerauthentication-strict.yaml`,
+`authorizationpolicy-discounts.yaml`, e o par `virtualservice` + `destinationrule`.
+
+[source,bash,role="execute"]
+----
+oc get peerauthentication,authorizationpolicy,virtualservice,destinationrule -n travel-agency
+----
+
+**Nenhum destes é do RHCL.** Dizer isso em voz alta é o que dá honestidade ao ato.
+
+== O que dizer
+
+"O RHCL respondeu quem entra, quanto pode e quanto custa. O Service Mesh
+respondeu quem fala com quem, em qual versão, e o que acontece quando quebra.
+Nenhuma linha de aplicação mudou em nenhum dos dois."

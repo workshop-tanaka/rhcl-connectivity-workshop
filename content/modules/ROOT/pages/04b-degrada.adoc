@@ -1,0 +1,49 @@
+= 4b. O que acontece quando a policy cai
+:navtitle: 4b. Quando a policy cai
+
+**Persona:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
+
+[NOTE.antes]
+====
+**Antes:** o Limitador de pé (é o que cai e volta). Gera as próprias rajadas;
+a narração pressupõe que a plateia viu o 429 do ato 2. Depois dele, o ato 2
+é a confirmação de que tudo voltou.
+====
+
+O que se mede: o rate limit **falha aberto**. Com o Limitador fora, a
+requisição passa em vez de ser recusada. Perde-se a contagem, não a venda. A
+autenticação faz o oposto, e de propósito.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh degrada
+----
+
+Escala o Limitador a zero e o restaura ao sair, inclusive com Ctrl-C. Peça a
+sala antes. O que tem de aparecer: com o Limitador de pé, o tier free corta
+na quarta; sem ele, **as 14 passam**.
+
+== Evidência
+
+A evidência é a comparação das duas rajadas na tela, lado a lado. Não há
+painel para isso, e não precisa. Depois:
+
+[source,bash,role="execute"]
+----
+bash scripts/traffic.sh metrics
+----
+
+confirma que a cota não se perdeu no processo.
+
+== Configuração
+
+Não há arquivo: o comportamento de falha vive dentro do plugin do gateway, e
+não há campo para exibir. Foi por isso que o ato mede em vez de ler.
+
+== O que dizer
+
+"Um gateway que falha fechado no rate limit transforma um incidente de
+telemetria em indisponibilidade. Este falha aberto, e isso é uma decisão de
+produto, não um descuido."

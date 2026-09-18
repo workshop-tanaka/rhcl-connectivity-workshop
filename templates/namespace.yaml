@@ -1,0 +1,11 @@
+{{- if .Values.namespace.create }}
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace.name }}
+  labels:
+    demo.redhat.com/application: "rhcl-workshop"
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+{{- end }}

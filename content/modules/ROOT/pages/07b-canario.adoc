@@ -1,0 +1,45 @@
+= 7b. A promoção acontecendo, ao vivo
+:navtitle: 7b. Promoção ao vivo
+
+**Persona:** Desenvolvedor e Engenheiro de Plataforma -- quem promove, e quem decide o peso. · **3 min** · **muda estado** · depois do 7
+
+[NOTE.antes]
+====
+**Antes:** o ato 7 na narrativa (ele mostra o 90/10 parado; este o põe em
+movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
+90/10 -- ponto de partida e de retorno, e o script confere.
+====
+
+== Terminal
+
+Abra **antes** o painel *A.7 · Peso efetivo do canário* em
+{grafana_url}/d/rhcl-evidencia -- é a única tela do workshop que se mexe
+enquanto você fala.
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh canario
+----
+
+Cinco passos, 10 → 25 → 50 → 75 → 100, com tráfego em cada um e reversão
+automática para 90/10 no fim, inclusive com Ctrl-C.
+
+[source,bash]
+----
+LOGS=1 bash scripts/demo.sh canario     # segunda tela: o log das duas versões, verde v1 / amarelo v2
+----
+
+== Evidência
+
+O medidor indo de 10 a 100 % é a evidência. E, com os logs ligados, o amarelo
+acelerando enquanto o verde esvazia.
+
+== Configuração
+
+`base/mesh/virtualservice-discounts.yaml` -- o peso é uma linha neste arquivo.
+
+== O que dizer
+
+"Promover uma versão não é um deploy: é uma linha de peso num YAML. O binário
+da v2 já estava no ar desde o primeiro passo -- o que mudou foi quanto do
+tráfego chega nele. E quem decide esse número não é quem escreveu o código."

@@ -1,0 +1,57 @@
+= 2. Nem todo cliente é igual
+:navtitle: 2. Nem todo cliente é igual
+
+**Persona:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **5 min** · alimenta o ato 4
+
+[NOTE.antes]
+====
+**Antes:** cota do dia com folga e 11 s desde a última rajada. Nenhum ato
+antes -- mas **é este que produz o que o ato 4 lê**: sem ele (ou o
+aquecimento) nos 15 min anteriores, o Grafana do 4 sai vazio.
+====
+
+Mesma rota, mesma aplicação, mesmo path. Três chaves diferentes, três
+resultados.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ato2
+----
+
+Leva ~45 s: o script espera 11 s entre as rajadas para a janela de 10 s do
+contador anterior fechar. O que tem de aparecer: **free ~3 servidas, silver
+~10, gold 14 de 14** -- o corte aparece na tela.
+
+Depois, o que muda entre as três linhas é **um label** no Secret da chave:
+
+[source,bash,role="execute"]
+----
+oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
+----
+
+== Navegador
+
+{openshift_console_url}/kuadrant/apiproducts -- Connectivity Link → API
+Products e API Keys: os parceiros com plano e solicitante.
+
+WARNING: **Não aprove nada em API Key Approvals.** Aprovar cunha um Secret com
+o plano em *annotation* em vez de *label*; o predicado aguenta, mas o ato
+perde o fio.
+
+== Evidência
+
+Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia.
+Os três planos como barras. Se você rodou pelo Postman, aparece uma quarta
+série `sistema-teste`, isolada dos parceiros da história.
+
+== Configuração
+
+`base/policies-plans/travels-plans.yaml` -- **é este arquivo que o ato
+defende**. Trinta linhas que declaram free, silver e gold com janela e cota.
+
+== O que dizer
+
+"Criar um tier novo é adicionar um bloco no YAML. Mover um cliente de plano é
+editar um label."

@@ -1,0 +1,18 @@
+* xref:index.adoc[Sobre este workshop]
+* xref:00-preparacao.adoc[0. Preparação]
+
+.O roteiro
+* xref:01-ato1.adoc[1. A API está fechada por padrão]
+* xref:02-ato2.adoc[2. Nem todo cliente é igual]
+* xref:03-ato3.adoc[3. Precedência de policies é explícita]
+* xref:04-ato4.adoc[4. Isso vira número de negócio]
+* xref:05-ato5.adoc[5. O caminho todo é rastreável]
+* xref:07-ato7.adoc[7. A borda não é a única fronteira]
+
+.Extras
+* xref:04b-degrada.adoc[4b. O que acontece quando a policy cai]
+* xref:05b-trace.adoc[5b. O que um contador não responde]
+* xref:07b-canario.adoc[7b. A promoção acontecendo, ao vivo]
+* xref:07c-resiliencia.adoc[7c. O disjuntor, e o que não dá para demonstrar]
+
+* xref:99-encerramento.adoc[Encerramento]

@@ -1,0 +1,76 @@
+= 0. Preparação
+:navtitle: 0. Preparação
+
+Três minutos, uma vez. O terminal ao lado já está autenticado no cluster; o
+que falta é o repositório da demo, que é quem executa cada ato.
+
+== 1. O repositório da demo
+
+[source,bash,role="execute"]
+----
+git clone --branch {demo_ref} {demo_repo_url} ~/rhcl-connectivity-demo
+cd ~/rhcl-connectivity-demo
+----
+
+Tudo daqui em diante roda **de dentro desse diretório**. Os scripts descobrem
+hostname, chaves e rotas do cluster na hora -- não há nada para configurar.
+
+== 2. O veredito
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh check --auto
+----
+
+Percorre a cadeia inteira na ordem do roteiro (~45 s) e termina em
+`[OK] demo pronta.`. Um `✗` vermelho é bloqueante e vem com a correção ao
+lado; avisos amarelos degradam um ato, não impedem o workshop.
+
+== 3. As telas
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh telas --auto
+----
+
+Imprime a URL de cada aba que o roteiro abre, resolvida deste cluster. Deixe
+abertas:
+
+[cols="1,3"]
+|===
+| Grafana | {grafana_url}/d/rhcl-evidencia -- *Evidência dos atos*, um painel por ato
+| Kiali | {kiali_url} -- o grafo de tráfego (atos 5 e 7)
+| Console | {openshift_console_url}/kuadrant/policy-topology -- Policy Topology (ato 3)
+|===
+
+== 4. Como o `demo.sh` funciona
+
+Cada passo **pausa antes de executar**: `Enter` segue, `p` pula, `Ctrl-C` sai.
+Ele mostra o comando na tela antes de rodar, roda, e diz o que olhar na saída.
+
+Três coisas que valem saber antes do ato 1:
+
+[cols="1,3"]
+|===
+| `◇ depende:` | a linha abaixo do título diz o que o ato pressupõe. Quando falta, o script **pergunta** se roda o pré-ato agora e volta.
+| Desvio | na pausa, digite o nome de outro ato (`ato5`, `trace`, ou só `5`): ele roda inteiro e **volta à mesma pausa**. É para a pergunta fora de ordem.
+| `◇ persona:` | para quem o ato fala. Use para escolher o que mostrar.
+|===
+
+[source,bash]
+----
+bash scripts/demo.sh --list      # todos os passos, a ordem, e as dependências
+----
+
+== 5. (Opcional) Aquecimento
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh aquece --auto
+----
+
+Três minutos de tráfego de fundo e **depois** o reset das cotas. Sem ele o
+Grafana do ato 4 mostra linha achatada. A ordem soak → reset é obrigatória:
+o aquecimento queima cota diária, e o reset a devolve.
+
+Pronto. Siga para o xref:01-ato1.adoc[ato 1].

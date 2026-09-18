@@ -1,0 +1,96 @@
+# rhcl-connectivity-workshop -- valores do chart
+#
+# O que este chart faz: um Job (ansible-runner) que clona o repositorio da demo
+# numa TAG, roda o provision.sh dele (operadores, Service Mesh, plataforma,
+# gateway, camada de demo, tracing, dashboards), publica o Showroom e escreve o
+# ConfigMap 'userinfo' que o RHDP mostra na pagina do pedido.
+#
+# Por que o padrao Ansible e nao o Helm puro: o provisionamento tem ordem com
+# espera (CR do Kuadrant so depois da CRD; Route so depois do Service do
+# Gateway), le o certificado wildcard do cluster e gera a camada de hostname.
+# Nada disso e templating.
+#
+# Por que a camada de demo NAO e um Application do Argo: quatro atos editam
+# objetos ao vivo (canario, fault injection, Limitador a zero, PERMISSIVE), e
+# selfHeal os reverteria em segundos. O Job aplica 'oc apply -k' uma vez.
+
+job:
+  name: rhcl-workshop
+  ttlSecondsAfterFinished: 3600
+  restartPolicy: Never
+  # o provisionamento completo leva ~25-40 min; o teto e generoso de proposito
+  activeDeadlineSeconds: 5400
+
+namespace:
+  name: rhcl-workshop-runner
+  create: true
+
+# O repositorio DA DEMO (o motor), clonado numa tag. Promover o workshop e
+# mudar 'ref'. Nunca 'main': a demo evolui, o workshop nao pode quebrar junto.
+demo:
+  repoUrl: "https://github.com/workshop-tanaka/rhcl-connectivity-demo.git"
+  ref: "workshop-v0.1"
+  # etapas do provision.sh, na ordem. Sem 'gitlab', 'gitops' (o Field Content
+  # CI ja instala o GitOps) e sem os pesados (cicd, registry, security).
+  stages: "operators mesh platform gateway devportal demo tracing dashboards"
+  # OPTIONAL=1 instala kiali, tempo, otel e grafana -- sem eles os atos 4 e 5
+  # ficam sem tela
+  optional: "1"
+  timeout: "900"
+
+# O repositorio DESTE workshop: o Showroom clona daqui o conteudo Antora.
+ansible:
+  repository:
+    url: "https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git"
+    branch: "main"
+    path: "playbooks"
+  playbook: "site.yml"
+  requirements:
+    - ansible-core
+    - kubernetes
+    - PyYAML
+    - requests
+  collections:
+    - kubernetes.core:==3.2.0
+    - community.general:==9.5.0
+
+showroom:
+  content:
+    repoUrl: "https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git"
+    repoRef: "main"
+    antoraPlaybook: "site.yml"
+  # guid entra no nome do namespace (showroom-<guid>) e no titulo
+  guid: "rhcl"
+
+# ubi9/python-311 traz git, curl e python3; o 'oc' vem do proprio cluster
+# (Service downloads em openshift-console), sem depender de mirror externo.
+image:
+  repository: registry.redhat.io/ubi9/python-311
+  tag: latest
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: "200m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+serviceAccount:
+  name: rhcl-workshop-runner
+
+# cluster-admin, sem rodeio: o provision.sh cria Subscriptions, CRs do Istio,
+# edita o cluster-monitoring-config e copia o certificado do router. Uma
+# ClusterRole enumerada aqui seria uma lista que envelhece a cada etapa nova.
+rbac:
+  create: true
+
+syncWave:
+  rbac: "1"
+  job: "2"
+
+# Injetados pelo Field Content workload (nao editar)
+deployer:
+  domain: ""
+  apiUrl: ""

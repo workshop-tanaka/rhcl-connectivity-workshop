@@ -1,0 +1,60 @@
+= 1. A API está fechada por padrão
+:navtitle: 1. Fechada por padrão
+
+**Persona:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **2 min**
+
+[NOTE.antes]
+====
+**Antes:** nada. Roda sozinho, a qualquer hora.
+====
+
+Esta é a API de viagens que já rodava. Vamos chamá-la sem credencial nenhuma.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ato1
+----
+
+O que tem de aparecer: `401` nas duas chamadas -- sem chave e com chave
+inválida -- e o motivo no **cabeçalho**, não no corpo:
+`x-ext-auth-reason: credential not found`.
+
+== Navegador
+
+Abra `https://{api_host}/travels` com a aba *Rede* das ferramentas de
+desenvolvedor aberta **antes**. A tela fica em branco: a recusa vem com zero
+bytes de corpo. O ponto do ato é que o motivo está no cabeçalho.
+
+O contraste: `https://{api_host}/travels?APIKEY={api_key_gold}` responde
+`200` com JSON.
+
+== Evidência
+
+Painel **A.1 · 401 na borda: quem foi o destino?** em {grafana_url}/d/rhcl-evidencia.
+
+[source,promql]
+----
+sum by (response_code, destination_workload) (increase(istio_requests_total{response_code="401"}[15m]))
+----
+
+O resultado é `destination_workload=unknown`: o destino é desconhecido
+**porque não houve destino**. A recusa foi contada na borda e a aplicação
+nunca foi acordada.
+
+== Configuração
+
+`base/policies-security/travel-agency-authpolicy.yaml` -- a policy que recusa.
+São vinte linhas, e não há código de aplicação nenhum ali. O par é
+`prod-web-deny-all.yaml`: o teto do gateway que ela sobrepõe.
+
+[source,bash,role="execute"]
+----
+oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml | head -40
+----
+
+== O que dizer
+
+"A equipe de aplicação não escreveu isso. A plataforma escreveu, e vale para
+qualquer rota que passe por aqui."

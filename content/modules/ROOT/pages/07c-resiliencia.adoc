@@ -1,0 +1,59 @@
+= 7c. O disjuntor, e o que não dá para demonstrar
+:navtitle: 7c. O disjuntor
+
+**Persona:** Operação/SRE -- flags do Envoy, ejeção, e o que fault injection não prova. · **5 min** · **muda estado** · depois do 7
+
+[NOTE.antes]
+====
+**Antes:** o ato 7 na narrativa -- a carga sai do `cars` porque a
+AuthorizationPolicy dele só aceita os vendedores. Tecnicamente roda sozinho:
+DestinationRule como `base/mesh/` declara e pods v1 e v2 de pé.
+====
+
+O Service Mesh tem duas respostas para "e quando o serviço do outro lado
+começa a falhar?", e as duas devolvem `503`. O que as distingue é o
+`response_flag` do Envoy: `UO` (fila cheia) e `UH` (instância **ejetada**).
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh resiliencia
+----
+
+Cinco movimentos: antes, o disjuntor entra, carga concorrente, a tabela de
+flags, e a parte honesta. Reversão automática.
+
+IMPORTANT: **Diga em voz alta** que os limites do manifesto são absurdos de
+propósito -- uma conexão, uma pendente. Senão vem a pergunta "vocês
+recomendam uma conexão?".
+
+== Evidência
+
+A tabela que o script imprime:
+
+[source,text]
+----
+CODIGO FLAG   QUANTAS   O QUE E
+503    UH         ...   no healthy upstream -> outlierDetection EJETOU o pod
+503    UO         ...   upstream overflow   -> connectionPool recusou por fila
+----
+
+== Configuração
+
+`platform-reference/mesh/destinationrule-discounts-circuitbreaker.yaml` --
+fora do kustomization de propósito.
+
+== A parte honesta
+
+Timeout e retry estão configurados no VirtualService e são legítimos de
+produção. Mas **não se demonstram com fault injection**, e isto foi medido:
+`delay 5s` com `timeout 3s` devolve `200` em 5,03 s; `abort 503 em 50%`
+falha ~55 % mesmo com retry. O delay acontece antes da chamada upstream; o
+abort é um *local reply* que o retry não vê.
+
+== O que dizer
+
+"Fault injection provoca o cenário; ela não prova o retry. Muito tutorial
+encadeia as duas coisas como se compusessem, e no cliente isso vira uma
+promessa que o ambiente não cumpre."
