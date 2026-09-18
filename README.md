@@ -84,6 +84,14 @@ Dentro do terminal do Showroom: `oc whoami` é a SA `showroom` com cluster-admin
 `demo.sh` precisa. `~` aponta para `/data` (não gravável); o volume persistente
 é `/home/lab-user`.
 
+**SCC fixada de propósito.** Com cluster-admin a SA do pod passa a poder usar a
+SCC `anyuid`, que vence a `restricted-v2` por prioridade: o pod nasce (ou
+renasce num restart) como uid 1000 e o volume, montado `root:755` sem
+`fsGroup`, deixa de ser gravável — e os arquivos que o participante já tinha
+ficam de outro dono. O playbook anota o Deployment com
+`openshift.io/required-scc: restricted-v2`, então o uid é sempre o mesmo e o
+`fsGroup` torna `/home/lab-user` gravável. Medido nas duas ordens no nsvz5.
+
 ## Testar localmente
 
 ```bash

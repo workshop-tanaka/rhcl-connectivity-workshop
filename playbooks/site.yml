@@ -186,11 +186,15 @@
     # 'edit' so no proprio namespace; aqui a SA ganha cluster-admin -- e um lab
     # de um participante, e o cluster morre com ele.
     #
-    # ANTES do pod nascer, e nao depois: com cluster-admin a SA passa a poder
-    # usar a SCC 'anyuid', e o pod muda de uid (1000920000 -> 1000) no primeiro
-    # restart. Os arquivos que o participante clonou no volume ficam de outro
-    # dono e 'rm' falha (medido no nsvz5, 2026-09-18). Com o binding primeiro,
-    # o pod ja nasce como uid 1000 e o volume e consistente para sempre.
+    # A armadilha (medida duas vezes no nsvz5, 2026-09-18): com cluster-admin a
+    # SA passa a poder usar a SCC 'anyuid', que tem prioridade sobre a
+    # restricted-v2. Binding DEPOIS do pod: o pod nasce restricted (uid
+    # 1000920000, volume gravavel via fsGroup) e no primeiro restart renasce
+    # anyuid (uid 1000) -- os arquivos do participante ficam de outro dono.
+    # Binding ANTES: nasce anyuid e o volume, montado root:755 sem fsGroup,
+    # nem e gravavel. A ordem nao resolve; o que resolve e FIXAR a SCC do pod
+    # (openshift.io/required-scc, abaixo, depois do deploy). O binding fica
+    # aqui antes so para o namespace e o subject existirem de uma vez.
     - name: Namespace do Showroom (para o binding poder nascer antes do pod)
       kubernetes.core.k8s:
         state: present
@@ -231,6 +235,39 @@
         showroom_user_data: "{{ _user_data }}"
       ansible.builtin.include_role:
         name: deploy-showroom
+
+    # Fixa a SCC: o pod e SEMPRE restricted-v2, com ou sem cluster-admin na SA.
+    # uid estavel entre restarts e /home/lab-user gravavel pelo fsGroup. O
+    # patch muda o template e provoca um rollout -- o segundo e ultimo.
+    - name: Fixar a SCC restricted-v2 no pod do Showroom
+      kubernetes.core.k8s:
+        state: patched
+        api_version: apps/v1
+        kind: Deployment
+        name: showroom
+        namespace: "{{ _showroom_ns }}"
+        definition:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  openshift.io/required-scc: restricted-v2
+
+    - name: Esperar o rollout do Showroom com a SCC fixada
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: showroom
+        namespace: "{{ _showroom_ns }}"
+      register: r_dep
+      retries: 60
+      delay: 10
+      until:
+        - r_dep.resources | length > 0
+        - r_dep.resources[0].status.observedGeneration | default(0) >= r_dep.resources[0].metadata.generation
+        - r_dep.resources[0].status.updatedReplicas | default(0) == 1
+        - r_dep.resources[0].status.readyReplicas | default(0) == 1
+        - r_dep.resources[0].status.replicas | default(0) == 1
 
     # ------------------------------------------------------------------ 7
     - name: userinfo para o RHDP
