@@ -26,10 +26,10 @@ Deixa tráfego de fan-out rodando em segundo plano por 4 min. A coleta leva
 
 == Navegador
 
-{kiali_url}/console/graph/namespaces?namespaces=ingress-gateway,travel-agency,travel-db&duration=300[Traffic Graph: os três namespaces, janela de 5 min^]
+{kiali_url}/console/graph/namespaces?namespaces=ingress-gateway,travel-agency&duration=300[Traffic Graph: os dois namespaces, janela de 5 min^]
 
-Traffic Graph, namespaces **ingress-gateway + travel-agency + travel-db**,
-janela **Last 5m**. O grafo fecha assim:
+Traffic Graph, namespaces **ingress-gateway + travel-agency**, janela
+**Last 5m**. O grafo fecha assim:
 
 [source,text]
 ----
@@ -37,13 +37,17 @@ prod-web (ingress-gateway)
   └─ travels ─┬─ flights ────┬─ discounts (v1, v2)
               ├─ hotels ─────┤
               ├─ cars ───────┤
-              └─ insurances ─┴─ mysqldb (travel-db)
+              └─ insurances ─┴─ mysqldb
 ----
 
 Traces: {tempo_url}[Tempo^] -- serviço `prod-web-istio.ingress-gateway`. Abra um
 trace: a decisão do gateway e a chamada de aplicação no mesmo timeline. As
 duas chamadas gRPC de auth e rate limit aparecem ali -- e são a resposta para
 "quanto custa em latência".
+
+CAUTION: Não acrescente `travel-db` à lista de namespaces. Ele foi aposentado
+em 2026-08-31 -- o `mysqldb` mora em `travel-agency` -- e o Kiali responde
+`403 namespace is not accessible` para o grafo **inteiro**, não só para ele.
 
 == Configuração
 
