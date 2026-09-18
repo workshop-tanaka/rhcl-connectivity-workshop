@@ -80,7 +80,7 @@
     # ------------------------------------------------------------------ 4
     # Uma etapa por task, para o log do Job dizer ONDE parou. O provision.sh e
     # idempotente: um Job reexecutado retoma sem refazer o que ja esta.
-    - name: "provision.sh {{ item }}"
+    - name: provision.sh, uma etapa por vez
       ansible.builtin.command:
         cmd: "bash scripts/provision.sh {{ item }}"
         chdir: "{{ _demo_dir }}"
@@ -89,8 +89,17 @@
         OPTIONAL: "{{ demo_optional }}"
         TIMEOUT: "{{ demo_timeout }}"
       loop: "{{ demo_stages | split }}"
+      loop_control:
+        label: "{{ item }}"
       register: r_stage
       changed_when: true
+
+    - name: provision.sh -- as ultimas linhas de cada etapa
+      ansible.builtin.debug:
+        msg: "{{ item.item }}: {{ item.stdout_lines[-3:] }}"
+      loop: "{{ r_stage.results }}"
+      loop_control:
+        label: "{{ item.item }}"
 
     # ------------------------------------------------------------------ 5
     - name: "preflight.sh core -- o caminho de dados responde?"
