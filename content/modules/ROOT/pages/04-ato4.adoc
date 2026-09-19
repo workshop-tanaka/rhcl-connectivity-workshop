@@ -41,8 +41,8 @@ teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros[Consumo por parcei
 
 == Configuração
 
-`base/policies-telemetry/prod-web-telemetry.yaml` -- a policy que injeta o
-label `plan` na métrica. Sem ela a série responde "quantos 429 houve"; com
+{config_url}/base/policies-telemetry/prod-web-telemetry.yaml[prod-web-telemetry.yaml^]
+-- a policy que injeta o label `plan` na métrica. Sem ela a série responde "quantos 429 houve"; com
 ela responde "o tier free está saturando", que é outra conversa.
 
 == O que isso prova

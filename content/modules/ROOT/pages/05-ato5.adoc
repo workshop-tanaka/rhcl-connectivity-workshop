@@ -53,7 +53,8 @@ em 2026-08-31 -- o `mysqldb` mora em `travel-agency` -- e o Kiali responde
 == Configuração
 
 `platform-reference/mesh-control-plane/telemetry-tracing.yaml` -- a ordem de
-emitir span.
+emitir span. Este é da camada de **plataforma**, não da camada de policies:
+abra no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
 
 [source,bash,role="execute"]
 ----

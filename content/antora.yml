@@ -23,6 +23,8 @@ asciidoc:
     traces_url: https://console-openshift-console.apps.cluster-guid.dominio.exemplo/observe/traces
     interconnect_console_url: https://rede-de-servicos-network-observer-travel-db.apps.cluster-guid.dominio.exemplo
     repo_no_ambiente: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/base/rhcl-connectivity-demo
-    ide_url: https://devspaces.apps.cluster-guid.dominio.exemplo/#https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/base/rhcl-connectivity-demo
+    repo_policies: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
+    config_url: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies/-/blob/main
+    ide_url: https://devspaces.apps.cluster-guid.dominio.exemplo/#https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
     demo_repo_url: https://github.com/workshop-tanaka/rhcl-connectivity-demo.git
     demo_ref: workshop-v0.1

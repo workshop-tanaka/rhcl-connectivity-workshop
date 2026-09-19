@@ -48,8 +48,9 @@ série `sistema-teste`, isolada dos parceiros da história.
 
 == Configuração
 
-`base/policies-plans/travels-plans.yaml` -- **é este arquivo que o ato
-defende**. Trinta linhas que declaram free, silver e gold com janela e cota.
+{config_url}/base/policies-plans/travels-plans.yaml[travels-plans.yaml^] --
+**é este arquivo que o ato defende**. Trinta linhas que declaram free, silver
+e gold com janela e cota.
 
 {ide_url}[Abrir o repositório no Dev Spaces^] -- o IDE sobe no próprio cluster,
 com o repositório que o ambiente hospeda. Abra

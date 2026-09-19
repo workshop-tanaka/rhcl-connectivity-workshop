@@ -42,7 +42,10 @@ CODIGO FLAG   QUANTAS   O QUE E
 == Configuração
 
 `platform-reference/mesh/destinationrule-discounts-circuitbreaker.yaml` --
-fora do kustomization de propósito.
+fora do kustomization de propósito, para não entrar sem alguém pedir. Está no
+terminal, em `/home/lab-user/rhcl-connectivity-demo`; a DestinationRule que ele
+sobrepõe é a
+{config_url}/base/mesh/destinationrule-discounts.yaml[destinationrule-discounts.yaml^].
 
 == A parte honesta
 

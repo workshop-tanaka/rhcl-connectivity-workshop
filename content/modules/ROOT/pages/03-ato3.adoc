@@ -44,10 +44,15 @@ declaração virou configuração de data plane sem ninguém escrever.
 A precedência não está num arquivo: está no **status**. Mas os dois lados do
 par estão, e vale vê-los lado a lado no editor:
 
-{ide_url}[Abrir no Dev Spaces^] -- compare
-`base/policies-security/prod-web-deny-all.yaml` (o teto, que mira o **Gateway**)
-com `base/policies-security/travel-agency-authpolicy.yaml` (a exceção, que mira
-a **rota**). A diferença entre os dois é uma linha: o `targetRef`.
+Compare os dois lados do par:
+{config_url}/base/policies-security/prod-web-deny-all.yaml[prod-web-deny-all.yaml^]
+(o teto, que mira o **Gateway**) e
+{config_url}/base/policies-security/travel-agency-authpolicy.yaml[travel-agency-authpolicy.yaml^]
+(a exceção, que mira a **rota**). A diferença entre os dois é uma linha: o
+`targetRef`.
+
+{ide_url}[Abrir o repositório de policies no Dev Spaces^] se preferir os dois
+lado a lado num editor.
 
 E a precedência não está em nenhum dos dois arquivos:
 

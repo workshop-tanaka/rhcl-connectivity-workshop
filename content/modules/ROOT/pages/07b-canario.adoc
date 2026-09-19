@@ -37,7 +37,8 @@ acelerando enquanto o verde esvazia.
 
 == Configuração
 
-`base/mesh/virtualservice-discounts.yaml` -- o peso é uma linha neste arquivo.
+{config_url}/base/mesh/virtualservice-discounts.yaml[virtualservice-discounts.yaml^]
+-- o peso é uma linha neste arquivo, e mudá-la é o que o ato faz cinco vezes.
 
 == O que isso prova
 

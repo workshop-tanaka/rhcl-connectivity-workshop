@@ -18,10 +18,42 @@ nada para baixar.
 NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
 `/data`, que não é gravável; `/home/lab-user` é o volume persistente.
 
-O mesmo código está publicado no GitLab **deste cluster**, em
-{repo_no_ambiente}[rhcl/base/rhcl-connectivity-demo^], e é de lá que o
-{ide_url}[Dev Spaces^] o abre quando você quiser ler os YAMLs num editor de
-verdade. Nada aqui depende de repositório fora do ambiente.
+=== Onde a configuração vive
+
+Tudo o que os atos citam está publicado no GitLab **deste cluster**, e cada
+página linka o arquivo exato. Vale saber o mapa:
+
+[cols="2,3",options="header"]
+|===
+| Projeto | O que tem
+
+| {repo_policies}[rhcl/policies/rhcl-policies^]
+| a camada de policies -- AuthPolicy, PlanPolicy, TelemetryPolicy, e o
+  `base/mesh/` com VirtualService, DestinationRule, PeerAuthentication e
+  AuthorizationPolicy. É o que os atos 1 a 4, 7 e 7b abrem.
+
+| {repo_no_ambiente}[rhcl/base/rhcl-connectivity-demo^]
+| a documentação, os templates do portal e os workloads da aplicação
+
+| `rhcl/travel/*`
+| um projeto por serviço (travels, flights, hotels, cars, insurances,
+  discounts) -- é o que o Argo CD aplica
+|===
+
+{ide_url}[Abrir as policies no Dev Spaces^] sobe um IDE no próprio cluster com
+esse repositório. Nada aqui depende de repositório fora do ambiente.
+
+[NOTE]
+====
+Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
+
+* **o `Gateway prod-web`** é *gerado* no provisionamento, porque o hostname
+  depende do cluster -- fixá-lo num manifesto quebraria o próximo ambiente.
+  Veja o objeto real com `oc get gateway prod-web -n ingress-gateway -o yaml`.
+* **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o disjuntor
+  do ato 7c) é a plataforma que a demo *pressupõe*, não o que ela governa.
+  Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
+====
 
 == 2. O veredito
 

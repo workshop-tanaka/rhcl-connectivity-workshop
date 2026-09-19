@@ -216,12 +216,24 @@
           interconnect_console_url: "https://{{ _telas['rede-de-servicos-network-observer'] }}"
           # O Dev Spaces le o devfile do REMOTO. O remoto aqui e o espelho no
           # GitLab do proprio ambiente -- nada aponta para fora.
+          # O espelho e SELETIVO e mora em dois projetos diferentes:
+          #   rhcl/policies/rhcl-policies      a camada base/ -- todas as
+          #                                    policies, o mesh e as chaves
+          #   rhcl/base/rhcl-connectivity-demo docs, rhdh e os workloads
+          # Apontar o IDE para o 'base' procurando policy nao acha nada.
           repo_no_ambiente: >-
             {{ ('https://' ~ _gitlab_host ~ '/rhcl/base/rhcl-connectivity-demo')
                if _gitlab_host else '' }}
+          repo_policies: >-
+            {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies')
+               if _gitlab_host else '' }}
+          # Prefixo pronto para linkar UM arquivo: {config_url}/<caminho>
+          config_url: >-
+            {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies/-/blob/main')
+               if _gitlab_host else '' }}
           ide_url: >-
             {{ ('https://' ~ _telas['devspaces'] ~ '/#https://' ~ _gitlab_host
-                ~ '/rhcl/base/rhcl-connectivity-demo')
+                ~ '/rhcl/policies/rhcl-policies')
                if (_telas['devspaces'] and _gitlab_host) else '' }}
           demo_repo_url: "{{ demo_repo_url }}"
           demo_ref: "{{ demo_ref }}"

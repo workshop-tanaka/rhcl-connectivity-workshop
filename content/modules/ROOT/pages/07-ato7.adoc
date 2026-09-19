@@ -47,8 +47,13 @@ Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência do
 
 == Configuração
 
-`base/mesh/` -- quatro arquivos, um por movimento: `peerauthentication-strict.yaml`,
-`authorizationpolicy-discounts.yaml`, e o par `virtualservice` + `destinationrule`.
+{repo_policies}/-/tree/main/base/mesh[base/mesh/^] -- quatro arquivos, um por
+movimento:
+
+* {config_url}/base/mesh/peerauthentication-strict.yaml[peerauthentication-strict.yaml^] -- exige mTLS
+* {config_url}/base/mesh/authorizationpolicy-discounts.yaml[authorizationpolicy-discounts.yaml^] -- compara a identidade provada
+* {config_url}/base/mesh/virtualservice-discounts.yaml[virtualservice-discounts.yaml^] -- a divisão 90/10
+* {config_url}/base/mesh/destinationrule-discounts.yaml[destinationrule-discounts.yaml^] -- os subsets v1 e v2
 
 [source,bash,role="execute"]
 ----

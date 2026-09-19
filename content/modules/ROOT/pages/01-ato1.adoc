@@ -45,9 +45,14 @@ nunca foi acordada.
 
 == Configuração
 
-`base/policies-security/travel-agency-authpolicy.yaml` -- a policy que recusa.
-São vinte linhas, e não há código de aplicação nenhum ali. O par é
-`prod-web-deny-all.yaml`: o teto do gateway que ela sobrepõe.
+{config_url}/base/policies-security/travel-agency-authpolicy.yaml[travel-agency-authpolicy.yaml^]
+-- a policy que recusa. São vinte linhas, e não há código de aplicação nenhum
+ali. O par é
+{config_url}/base/policies-security/prod-web-deny-all.yaml[prod-web-deny-all.yaml^]:
+o teto do gateway que ela sobrepõe.
+
+Os dois arquivos vivem no GitLab **deste cluster**, com histórico e autoria --
+não é um link para documentação, é a configuração que está no ar.
 
 [source,bash,role="execute"]
 ----
