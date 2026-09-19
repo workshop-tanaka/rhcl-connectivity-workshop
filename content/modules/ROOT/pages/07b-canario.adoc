@@ -43,3 +43,8 @@ acelerando enquanto o verde esvazia.
 "Promover uma versão não é um deploy: é uma linha de peso num YAML. O binário
 da v2 já estava no ar desde o primeiro passo -- o que mudou foi quanto do
 tráfego chega nele. E quem decide esse número não é quem escreveu o código."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

@@ -57,3 +57,8 @@ abort é um *local reply* que o retry não vê.
 "Fault injection provoca o cenário; ela não prova o retry. Muito tutorial
 encadeia as duas coisas como se compusessem, e no cliente isso vira uma
 promessa que o ambiente não cumpre."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

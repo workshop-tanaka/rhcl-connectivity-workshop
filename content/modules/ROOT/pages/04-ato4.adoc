@@ -48,3 +48,8 @@ ela responde "o tier free está saturando", que é outra conversa.
 
 "A cadeia inteira -- PlanPolicy → TelemetryPolicy → Limitador → Prometheus →
 Grafana -- já estava de pé. A demo só acrescentou a dimensão de negócio."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

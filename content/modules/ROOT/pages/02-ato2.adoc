@@ -55,3 +55,8 @@ defende**. Trinta linhas que declaram free, silver e gold com janela e cota.
 
 "Criar um tier novo é adicionar um bloco no YAML. Mover um cliente de plano é
 editar um label."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

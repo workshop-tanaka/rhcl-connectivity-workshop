@@ -285,6 +285,48 @@
         - r_dep.resources[0].status.readyReplicas | default(0) == 1
         - r_dep.resources[0].status.replicas | default(0) == 1
 
+    - name: Descobrir o pod do Showroom ja com a SCC fixada
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ _showroom_ns }}"
+        label_selectors:
+          - app.kubernetes.io/name=showroom
+        field_selectors:
+          - status.phase=Running
+      register: r_showroom_pod2
+      retries: 30
+      delay: 10
+      until:
+        - r_showroom_pod2.resources | length > 0
+        - (r_showroom_pod2.resources[0].status.containerStatuses | selectattr('ready','equalto',true) | list | length) == (r_showroom_pod2.resources[0].status.containerStatuses | length)
+
+    # O modulo 0 nao manda mais clonar nada: o participante encontra a demo
+    # pronta no volume do terminal. Alem de um passo a menos, tira do material
+    # a referencia a um repositorio de fora do ambiente.
+    - name: Deixar a demo pronta no volume do terminal
+      kubernetes.core.k8s_exec:
+        namespace: "{{ _showroom_ns }}"
+        pod: "{{ r_showroom_pod2.resources[0].metadata.name }}"
+        container: terminal
+        command: >-
+          bash -lc "test -d /home/lab-user/rhcl-connectivity-demo/.git ||
+          git clone --quiet --branch {{ demo_ref }} {{ demo_repo_url }}
+          /home/lab-user/rhcl-connectivity-demo"
+      register: r_clone
+      retries: 5
+      delay: 10
+      until: r_clone is not failed
+
+    - name: Conferir que os scripts chegaram
+      kubernetes.core.k8s_exec:
+        namespace: "{{ _showroom_ns }}"
+        pod: "{{ r_showroom_pod2.resources[0].metadata.name }}"
+        container: terminal
+        command: bash -lc "ls /home/lab-user/rhcl-connectivity-demo/scripts/demo.sh"
+      register: r_conf
+      failed_when: r_conf.rc != 0
+
     # ------------------------------------------------------------------ 7
     - name: userinfo para o RHDP
       kubernetes.core.k8s:

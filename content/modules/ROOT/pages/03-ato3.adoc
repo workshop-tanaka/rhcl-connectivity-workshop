@@ -52,3 +52,8 @@ oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{range .stat
 
 "O cluster declara quem prevaleceu. Numa stack de anotações de ingress ou
 EnvoyFilter solto, descobrir isso é arqueologia. Aqui é um campo de status."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

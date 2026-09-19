@@ -1,19 +1,19 @@
 = 0. Preparação
 :navtitle: 0. Preparação
 
-Três minutos, uma vez. O terminal ao lado já está autenticado no cluster; o
-que falta é o repositório da demo, que é quem executa cada ato.
+Três minutos, uma vez. O terminal ao lado já está autenticado no cluster e já
+tem tudo o que os atos executam.
 
-== 1. O repositório da demo
+== 1. Onde você vai trabalhar
 
-[source,bash,subs="attributes+",role="execute"]
+[source,bash,role="execute"]
 ----
-git clone --branch {demo_ref} {demo_repo_url} /home/lab-user/rhcl-connectivity-demo
-cd /home/lab-user/rhcl-connectivity-demo
+cd /home/lab-user/rhcl-connectivity-demo && ls scripts/
 ----
 
 Tudo daqui em diante roda **de dentro desse diretório**. Os scripts descobrem
-hostname, chaves e rotas do cluster na hora -- não há nada para configurar.
+hostname, chaves e rotas do cluster na hora -- não há nada para configurar e
+nada para baixar.
 
 NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
 `/data`, que não é gravável; `/home/lab-user` é o volume persistente.
@@ -80,3 +80,8 @@ Grafana do ato 4 mostra linha achatada. A ordem soak → reset é obrigatória:
 o aquecimento queima cota diária, e o reset a devolve.
 
 Pronto. Siga para o xref:01-ato1.adoc[ato 1].
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

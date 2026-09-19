@@ -32,6 +32,16 @@ devolve as cotas.
 
 == Para levar
 
-* O repositório da demo: {demo_repo_url}[rhcl-connectivity-demo^] (tag `{demo_ref}`) -- `docs/RUNBOOK.md`
-  tem o porquê de cada ato e as 13 armadilhas.
-* Este workshop: https://github.com/workshop-tanaka/rhcl-connectivity-workshop[rhcl-connectivity-workshop^]
+O ambiente inteiro fica de pé até o fim da sua reserva: repita os atos quantos
+quiser. No terminal, `bash scripts/demo.sh --list` mostra todos os passos, o
+que cada um pressupõe e para quem ele fala.
+
+* `docs/RUNBOOK.md`, no diretório da demo, tem o porquê de cada ato, as
+  perguntas que sempre aparecem e as armadilhas já medidas.
+* `docs/DEMO-PASSO-A-PASSO.md` é este roteiro na forma de sequência, com a
+  saída esperada de cada comando.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

@@ -58,3 +58,8 @@ oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml | head -40
 
 "A equipe de aplicação não escreveu isso. A plataforma escreveu, e vale para
 qualquer rota que passe por aqui."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

@@ -53,3 +53,8 @@ Para onde os spans vão. O nome do provider é do cluster, não do repositório.
 pode levar o cabeçalho de correlação de uma chamada que recebeu para a próxima
 que faz. São três linhas por serviço, e é melhor combinar isso na sala hoje
 do que descobrir na primeira semana."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

@@ -47,3 +47,8 @@ não há campo para exibir. Foi por isso que o ato mede em vez de ler.
 "Um gateway que falha fechado no rate limit transforma um incidente de
 telemetria em indisponibilidade. Este falha aberto, e isso é uma decisão de
 produto, não um descuido."
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
