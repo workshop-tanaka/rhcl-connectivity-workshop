@@ -147,6 +147,7 @@
         - { name: grafana-route, ns: monitoring }
         - { name: kiali, ns: istio-system }
         - { name: tempo-tempo-jaegerui, ns: tracing-system }
+        - { name: rede-de-servicos-network-observer, ns: travel-db }
       register: r_telas
 
     # Loops em vez de zip/map: a chave do label tem ponto ('kuadrant.io/plan-id')
@@ -194,6 +195,7 @@
             {{ 'https://console-openshift-console.' ~ cluster_domain ~ '/observe/traces'
                if (r_coo.resources | length) > 0
                else 'https://' ~ _telas['tempo-tempo-jaegerui'] ~ '/' ~ (tempo_tenant | default('dev')) }}
+          interconnect_console_url: "https://{{ _telas['rede-de-servicos-network-observer'] }}"
           demo_repo_url: "{{ demo_repo_url }}"
           demo_ref: "{{ demo_ref }}"
 

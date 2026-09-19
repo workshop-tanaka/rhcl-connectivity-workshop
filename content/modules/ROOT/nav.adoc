@@ -15,4 +15,7 @@
 * xref:07b-canario.adoc[7b. A promoção acontecendo, ao vivo]
 * xref:07c-resiliencia.adoc[7c. O disjuntor, e o que não dá para demonstrar]
 
+.A terceira fronteira
+* xref:08-interconnect.adoc[8. A dependência que não mora aqui]
+
 * xref:99-encerramento.adoc[Encerramento]

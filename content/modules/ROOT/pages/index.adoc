@@ -18,6 +18,7 @@ gateway** -- e nenhuma linha da aplicação muda para provar isso.
 * Transformar `429` em "o tier free está saturando", no Grafana (ato 4)
 * Seguir uma requisição do gateway até o banco, no grafo e no trace (ato 5)
 * Provar que a chave de API abre a porta da rua, não o cofre: mTLS e identidade de serviço (ato 7)
+* Alcançar um banco que **não está no cluster**, sem VPN e sem abrir porta nenhuma (ato 8)
 
 Os extras (4b, 5b, 7b, 7c) respondem às perguntas que sempre aparecem: e se o
 componente cair? quanto custa em latência? como é uma promoção de versão ao
@@ -51,6 +52,7 @@ roda o pré-ato quando falta.
 | **7** | **mesh no estado base** (STRICT, 90/10, sem fault) | Segurança · Plataforma
 | 7b | discounts em 90/10 | Dev · Plataforma
 | 7c | DestinationRule base | Operação/SRE
+| 8 | a rede de serviços provisionada | Arquitetura · Operação
 |===
 
 == O ambiente
@@ -68,7 +70,8 @@ os endereços abaixo são **deste** ambiente.
 | Traces | {traces_url}[a tela de traces^]
 |===
 
-**Tempo:** 20 min para os atos 1–5; 30 min com o 7; ~50 min com os extras.
+**Tempo:** 20 min para os atos 1–5; 30 min com o 7; ~55 min com os extras e a
+terceira fronteira.
 
 Comece pela xref:00-preparacao.adoc[Preparação].
 

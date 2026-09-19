@@ -1,0 +1,136 @@
+= 8. A dependência que não mora aqui
+:navtitle: 8. A dependência que não mora aqui
+
+**A quem pertence:** Arquitetura e Operação -- e a quem já ouviu "esse banco não vai para o Kubernetes". · **5 min**
+
+[NOTE.antes]
+====
+**Antes:** nenhum ato. Precisa da rede de serviços provisionada -- se
+`bash scripts/interconnect.sh status` responder, você pode seguir.
+====
+
+Os atos anteriores cobriram duas fronteiras. O Connectivity Link governou a
+**borda**: quem entra, quanto passa, quanto custa. O Service Mesh governou o
+**leste-oeste**: quem fala com quem, em qual versão, o que acontece quando
+quebra.
+
+Falta a terceira, que nenhum dos dois cobre: **o que está fora do cluster**. E
+quase sempre é o banco de dados -- o componente que ninguém quer mover, que
+tem licença, auditoria, janela de manutenção e um time que não é o seu.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh interconnect
+----
+
+Cinco movimentos. Os três primeiros valem parar e olhar:
+
+=== 1. O banco não está aqui
+
+[source,bash,role="execute"]
+----
+oc get pods -n travel-agency -l app=mysqldb
+oc get endpoints mysqldb -n travel-db
+----
+
+Nenhum pod de banco no namespace da aplicação. E o `Service` que ela consulta
+aponta para o endereço de um **roteador**, não para um pod de MySQL. Mesmo
+assim, `/travels` devolve 45 destinos e o fan-out traz voos, hotéis, carros e
+seguros -- você viu isso nos atos 1 e 5.
+
+=== 2. Quem ligou para quem
+
+[source,bash,role="execute"]
+----
+oc logs -n travel-db-remoto deploy/skupper-router -c router | grep -m1 'Connection Opened'
+----
+
+A linha traz `dir=out`, `encrypted=TLSv1.3` e `auth=EXTERNAL`. Leia com
+atenção, porque é o argumento inteiro:
+
+* **`dir=out`** -- a conexão **parte do lado do banco**. Ele não abre porta, não
+  publica rota, não entra em VPN e não aparece em regra de firewall de entrada.
+* **`auth=EXTERNAL`** -- os dois lados se autenticam por certificado. Não há
+  senha de túnel, nem chave compartilhada para rotacionar à mão.
+
+A superfície de entrada do lado do banco continua sendo **zero**. É o oposto de
+"liberar o banco para a rede".
+
+=== 3. O que mudou na aplicação
+
+[source,bash,role="execute"]
+----
+oc get deploy flights-v1 -n travel-agency -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="MYSQL_SERVICE")].value}{"\n"}'
+----
+
+Uma variável de ambiente. Nenhuma biblioteca de cliente, nenhum agente,
+nenhum sidecar novo, nenhum certificado no código. Para o processo,
+`mysqldb.travel-db` é um `Service` de Kubernetes como outro qualquer.
+
+== Evidência
+
+[source,bash,role="execute"]
+----
+bash scripts/interconnect.sh status
+----
+
+Olhe a última seção, **tráfego no túnel**. O contador `in` sobe a cada
+requisição que atravessa.
+
+[WARNING]
+====
+Esta é a lição mais cara deste material, e ela custou um diagnóstico inteiro
+num ambiente real. Quando o banco do outro lado **não está de pé**, tudo
+continua verde: `Site` `Ready`, `Listener` `Ready`, `Connector` `Matched`. E o
+contador não sai do zero.
+
+Pior: a borda segue impecável -- `401` sem chave, `429` no tier free, os planos
+medindo 3/10/14. **Os atos 1 a 4 passam inteiros.** O que morre é o fan-out.
+
+`Ready` diz que a configuração casou. Só o contador diz que passou byte.
+====
+
+== A console da rede de serviços
+
+{interconnect_console_url}[Console do Service Interconnect^] -- entra com o
+login do OpenShift.
+
+Ela **não** é o Kiali, e vale entender a diferença: o Kiali desenha o que passa
+pelo Service Mesh **dentro** do cluster; esta desenha os **sites**, o link
+entre eles e os serviços publicados pela chave de roteamento. Duas telas, duas
+perguntas -- e a sua topologia real tem as duas.
+
+== Configuração
+
+[source,bash,role="execute"]
+----
+oc get site -A
+oc get connector -n travel-db-remoto -o yaml | head -30
+oc get listener -n travel-db -o yaml | head -30
+----
+
+O par `Connector` + `Listener` é o que publica o banco, e os dois se acham por
+uma única string: `routingKey: appconn`. Não há DNS entre os sites, não há
+rota, não há IP roteável de um lado para o outro.
+
+NOTE: O site do lado do cluster mora em `travel-db`, e não em `travel-agency`,
+por um motivo técnico: o namespace da aplicação tem injeção de sidecar, e o
+sidecar interceptaria o protocolo próprio do roteador. A aplicação alcança o
+banco por DNS normal de Kubernetes, que é tráfego leste-oeste comum.
+
+== O que isso prova
+
+Três fronteiras, três produtos, um argumento só: **conectividade é política
+declarada, não configuração espalhada**. A borda com o Connectivity Link, o
+leste-oeste com o Service Mesh, e o que está fora com o Service Interconnect
+-- e em nenhuma das três a aplicação precisou saber.
+
+O componente que "não vai para o Kubernetes" não precisa ir. Ele precisa ser
+alcançável, e isso é um par de objetos declarativos de dez linhas.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
