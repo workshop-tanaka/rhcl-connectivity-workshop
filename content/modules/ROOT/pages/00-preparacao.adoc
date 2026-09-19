@@ -18,6 +18,11 @@ nada para baixar.
 NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
 `/data`, que não é gravável; `/home/lab-user` é o volume persistente.
 
+O mesmo código está publicado no GitLab **deste cluster**, em
+{repo_no_ambiente}[rhcl/base/rhcl-connectivity-demo^], e é de lá que o
+{ide_url}[Dev Spaces^] o abre quando você quiser ler os YAMLs num editor de
+verdade. Nada aqui depende de repositório fora do ambiente.
+
 == 2. O veredito
 
 [source,bash,role="execute"]

@@ -51,6 +51,15 @@ série `sistema-teste`, isolada dos parceiros da história.
 `base/policies-plans/travels-plans.yaml` -- **é este arquivo que o ato
 defende**. Trinta linhas que declaram free, silver e gold com janela e cota.
 
+{ide_url}[Abrir o repositório no Dev Spaces^] -- o IDE sobe no próprio cluster,
+com o repositório que o ambiente hospeda. Abra
+`base/policies-plans/travels-plans.yaml` e leia as trinta linhas: é mais
+honesto que qualquer descrição delas.
+
+NOTE: O workspace leva 1 a 2 minutos para subir na primeira vez. Se você
+estiver com pouco tempo, o `oc get planpolicy travels-plans -n travel-agency -o yaml`
+mostra o mesmo conteúdo no terminal.
+
 == O que isso prova
 
 Você acabou de ver três contratos comerciais diferentes saírem de **um label**

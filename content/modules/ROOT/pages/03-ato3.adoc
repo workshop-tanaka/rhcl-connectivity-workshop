@@ -41,7 +41,15 @@ declaração virou configuração de data plane sem ninguém escrever.
 
 == Configuração
 
-A precedência não está num arquivo: está no **status**.
+A precedência não está num arquivo: está no **status**. Mas os dois lados do
+par estão, e vale vê-los lado a lado no editor:
+
+{ide_url}[Abrir no Dev Spaces^] -- compare
+`base/policies-security/prod-web-deny-all.yaml` (o teto, que mira o **Gateway**)
+com `base/policies-security/travel-agency-authpolicy.yaml` (a exceção, que mira
+a **rota**). A diferença entre os dois é uma linha: o `targetRef`.
+
+E a precedência não está em nenhum dos dois arquivos:
 
 [source,bash,role="execute"]
 ----
