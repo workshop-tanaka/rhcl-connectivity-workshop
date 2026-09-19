@@ -1,0 +1,137 @@
+= 3b. Quem pode o quê
+:navtitle: 3b. Quem pode o quê
+
+**A quem pertence:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **6 min**
+
+[NOTE.antes]
+====
+**Antes:** nenhum ato. Faz muito mais sentido logo depois do 3, que mostra a
+precedência no status; aqui ela deixa de ser afirmação.
+====
+
+A especificação do Gateway API não define só recursos: define **papéis**. E o
+Connectivity Link herda os três. Dois deles aparecem neste exercício:
+
+[cols="1,2,3",options="header"]
+|===
+| Papel na especificação | Aqui | Governa
+
+| Cluster Operator
+| `plat-eng`
+| o `Gateway` e as policies que miram o **gateway** -- o teto: `deny-all`,
+  limite baixo, TLS, DNS
+
+| Application Developer
+| `app-dev`
+| a `HTTPRoute` do próprio serviço e as policies que miram **essa rota** --
+  autenticação, plano comercial, telemetria
+|===
+
+O ato 3 mostrou a precedência num campo de status. Aqui quem responde é o
+**apiserver**.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh papeis
+----
+
+O passo tem duas camadas. Vale entender a diferença entre elas.
+
+=== Camada 1: a matriz, perguntada ao cluster
+
+[source,bash,role="execute"]
+----
+oc auth can-i patch authpolicy -n ingress-gateway --as=app-dev
+oc auth can-i patch authpolicy -n ingress-gateway --as=plat-eng
+----
+
+`oc auth can-i --as=` pergunta ao apiserver o que **outra** pessoa poderia
+fazer, sem virar ela. O resultado, lado a lado:
+
+[cols="3,1,1",options="header"]
+|===
+| Ação | `app-dev` | `plat-eng`
+
+| editar a AuthPolicy do **gateway** | no | yes
+| editar a RateLimitPolicy do **gateway** | no | yes
+| mudar o próprio `Gateway` | no | yes
+| **ver** o `Gateway` a que se anexa | **yes** | yes
+| criar a própria `HTTPRoute` | yes | yes
+| criar a policy da **própria rota** | yes | yes
+| ler segredos da plataforma | no | yes
+|===
+
+Repare na linha do meio, que é a que costuma passar despercebida: o
+desenvolvedor **pode ver** o Gateway. Sem essa leitura ele não descobre o nome
+para o `parentRefs`, e o modelo viraria "abra um ticket para a plataforma" --
+exatamente o que o Gateway API existe para eliminar.
+
+=== Camada 2: você entra como o desenvolvedor
+
+O passo faz um `oc login` real, pelo Keycloak, que é o provedor de identidade
+deste cluster.
+
+IMPORTANT: A sessão do desenvolvedor vai para um `KUBECONFIG` temporário --
+**a sua continua intacta**. O passo termina imprimindo com qual usuário você
+segue. Nada de `oc login` de volta no meio do workshop.
+
+Agora, como `app-dev`, o exercício tenta tocar no teto da plataforma:
+
+[source,text]
+----
+Error from server (Forbidden): authpolicies.kuadrant.io "prod-web-deny-all"
+is forbidden: User "app-dev" cannot get resource "authpolicies"
+in API group "kuadrant.io" in the namespace "ingress-gateway"
+----
+
+Leia a mensagem inteira. Ela traz o **nome do usuário**. Isso não é convenção
+de equipe, nem revisão de código, nem um combinado que alguém pode furar com
+pressa: é o apiserver recusando.
+
+E, na mesma sessão, a policy da rota dele:
+
+[source,text]
+----
+planpolicy.extensions.kuadrant.io/travels-plans patched
+----
+
+== Evidência
+
+[source,bash,role="execute"]
+----
+oc get gateway prod-web -n ingress-gateway -o jsonpath='{.spec.listeners[0].allowedRoutes.namespaces.from}{"\n"}'
+----
+
+A resposta é `All`. **A delegação não é um combinado verbal: está escrita no
+próprio Gateway.** O operador da plataforma declarou que qualquer namespace
+pode anexar rota ao `prod-web` -- e é por isso que o desenvolvedor publica sem
+pedir nada a ninguém.
+
+== Configuração
+
+[source,bash,role="execute"]
+----
+oc get role,rolebinding -n travel-agency | grep app-dev
+oc describe role app-dev-dono-da-rota -n travel-agency
+----
+
+Um `Role` no namespace da aplicação e um `ClusterRole` de leitura só para
+`gateways`. Nada além disso.
+
+== O que isso prova
+
+**Precedência sem privilégio.** O desenvolvedor governa o que é dele e não
+alcança o que não é -- e a policy dele *prevalece* sobre a do gateway na rota
+dele, que foi o que o ato 3 mostrou no status.
+
+Ninguém precisou escrever um processo, um checklist de revisão ou um acordo
+entre times para isso funcionar. O cluster é quem recusa. É essa a diferença
+entre uma plataforma de API e um gateway com um documento de boas práticas ao
+lado.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
