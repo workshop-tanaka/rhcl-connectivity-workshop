@@ -51,10 +51,12 @@ série `sistema-teste`, isolada dos parceiros da história.
 `base/policies-plans/travels-plans.yaml` -- **é este arquivo que o ato
 defende**. Trinta linhas que declaram free, silver e gold com janela e cota.
 
-== O que dizer
+== O que isso prova
 
-"Criar um tier novo é adicionar um bloco no YAML. Mover um cliente de plano é
-editar um label."
+Você acabou de ver três contratos comerciais diferentes saírem de **um label**
+num Secret. Criar um tier novo é acrescentar um bloco de trinta linhas; mover
+um cliente de plano é editar esse label. Nenhum dos dois passa por build,
+deploy ou mudança de código.
 
 '''
 

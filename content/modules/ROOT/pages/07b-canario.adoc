@@ -13,8 +13,9 @@ movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
 == Terminal
 
 Abra **antes** o painel *A.7 · Peso efetivo do canário* em
-{grafana_url}/d/rhcl-evidencia[Evidência dos atos^] -- é a única tela do workshop que se mexe
-enquanto você fala.
+{grafana_url}/d/rhcl-evidencia[Evidência dos atos^]. Deixe-o visível ao lado do
+terminal: é a única tela do workshop que se move sozinha, acompanhando os
+cinco passos.
 
 [source,bash,role="execute"]
 ----
@@ -38,11 +39,12 @@ acelerando enquanto o verde esvazia.
 
 `base/mesh/virtualservice-discounts.yaml` -- o peso é uma linha neste arquivo.
 
-== O que dizer
+== O que isso prova
 
-"Promover uma versão não é um deploy: é uma linha de peso num YAML. O binário
-da v2 já estava no ar desde o primeiro passo -- o que mudou foi quanto do
-tráfego chega nele. E quem decide esse número não é quem escreveu o código."
+Promover uma versão não foi um deploy: foi uma linha de peso num YAML. O
+binário da v2 já estava no ar desde o primeiro passo -- o que mudou foi quanto
+do tráfego chega nele. E quem decide esse número não é quem escreveu o código:
+é quem opera a plataforma, no mesmo arquivo onde moram o timeout e o retry.
 
 '''
 

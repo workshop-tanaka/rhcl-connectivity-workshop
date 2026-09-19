@@ -54,10 +54,12 @@ São vinte linhas, e não há código de aplicação nenhum ali. O par é
 oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml | head -40
 ----
 
-== O que dizer
+== O que isso prova
 
-"A equipe de aplicação não escreveu isso. A plataforma escreveu, e vale para
-qualquer rota que passe por aqui."
+Nenhuma linha da aplicação trata autenticação -- o binário do `travels` é o
+mesmo de antes de existir policy. Quem recusou foi o gateway, e a regra vale
+para qualquer rota anexada a ele. É essa a diferença entre uma plataforma de
+API e uma biblioteca de autenticação dentro de cada serviço.
 
 '''
 

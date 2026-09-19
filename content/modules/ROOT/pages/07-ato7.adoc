@@ -55,13 +55,16 @@ Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência do
 oc get peerauthentication,authorizationpolicy,virtualservice,destinationrule -n travel-agency
 ----
 
-**Nenhum destes é do RHCL.** Dizer isso em voz alta é o que dá honestidade ao ato.
+**Nenhum destes objetos é do Connectivity Link.** São todos do Service Mesh --
+e é justamente esse o ponto do exercício: a fronteira leste-oeste tem outro
+dono.
 
-== O que dizer
+== O que isso prova
 
-"O RHCL respondeu quem entra, quanto pode e quanto custa. O Service Mesh
-respondeu quem fala com quem, em qual versão, e o que acontece quando quebra.
-Nenhuma linha de aplicação mudou em nenhum dos dois."
+O Connectivity Link respondeu quem entra, quanto pode e quanto custa. O
+Service Mesh respondeu quem fala com quem, em qual versão, e o que acontece
+quando quebra. São duas fronteiras diferentes, com produtos diferentes -- e
+nenhuma linha de aplicação mudou em nenhuma das duas.
 
 '''
 

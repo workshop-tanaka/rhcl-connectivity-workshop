@@ -26,12 +26,13 @@ restante de cada plano. Depois, a mesma consulta direto no Thanos:
 
 == Navegador
 
-{grafana_url}/d/rhcl-negocio-planos[Planos comerciais^] -- o dashboard do ato. Os
+{grafana_url}/d/rhcl-negocio-planos[Planos comerciais^] -- o dashboard deste ato. Os
 quatro primeiros painéis são a rajada; o quinto é a cota diária consumida por
 plano. Confira o seletor de datasource no topo: **Thanos**.
 
-Os dashboards de fábrica agregam sem quebrar por plano: são anteriores ao
-TelemetryPolicy. Não prometa tier neles.
+Os dashboards de fábrica do RHCL agregam **sem** quebrar por plano: são
+anteriores ao TelemetryPolicy. Se você abrir um deles procurando os tiers, não
+vai achar -- e o motivo é esse, não um defeito de coleta.
 
 == Evidência
 
@@ -44,10 +45,12 @@ teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros[Consumo por parcei
 label `plan` na métrica. Sem ela a série responde "quantos 429 houve"; com
 ela responde "o tier free está saturando", que é outra conversa.
 
-== O que dizer
+== O que isso prova
 
-"A cadeia inteira -- PlanPolicy → TelemetryPolicy → Limitador → Prometheus →
-Grafana -- já estava de pé. A demo só acrescentou a dimensão de negócio."
+A cadeia que você percorreu -- PlanPolicy → TelemetryPolicy → Limitador →
+Prometheus → Thanos → Grafana -- já existia no cluster. O que a camada de demo
+acrescentou foi **uma dimensão**: o label `plan`. É a diferença entre saber
+quantos 429 houve e saber que o tier free está saturando.
 
 '''
 

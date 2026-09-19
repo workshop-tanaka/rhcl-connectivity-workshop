@@ -47,12 +47,14 @@ oc get istio default -o jsonpath='{.spec.values.meshConfig.extensionProviders}'
 
 Para onde os spans vão. O nome do provider é do cluster, não do repositório.
 
-== O que dizer
+== O que isso prova
 
-"O Service Mesh instrumenta o transporte -- a metade difícil. Só a aplicação
-pode levar o cabeçalho de correlação de uma chamada que recebeu para a próxima
-que faz. São três linhas por serviço, e é melhor combinar isso na sala hoje
-do que descobrir na primeira semana."
+O Service Mesh instrumenta o **transporte**, que é a metade difícil: abre um
+span em cada salto que passa pelo proxy, sem tocar no código. A outra metade
+só a aplicação pode fazer -- levar o cabeçalho de correlação de uma chamada
+que recebeu para a próxima que faz. São três linhas por serviço, e saber disso
+**antes** é o que separa uma adoção que entrega a árvore completa de uma que
+descobre o buraco na primeira semana.
 
 '''
 

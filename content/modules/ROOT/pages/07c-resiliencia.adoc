@@ -24,9 +24,9 @@ bash scripts/demo.sh resiliencia
 Cinco movimentos: antes, o disjuntor entra, carga concorrente, a tabela de
 flags, e a parte honesta. Reversão automática.
 
-IMPORTANT: **Diga em voz alta** que os limites do manifesto são absurdos de
-propósito -- uma conexão, uma pendente. Senão vem a pergunta "vocês
-recomendam uma conexão?".
+IMPORTANT: Os limites do manifesto são **absurdos de propósito** -- uma
+conexão, uma pendente. É o que faz o disjuntor abrir no tempo de um
+exercício; nenhum ambiente real roda assim.
 
 == Evidência
 
@@ -52,11 +52,13 @@ produção. Mas **não se demonstram com fault injection**, e isto foi medido:
 falha ~55 % mesmo com retry. O delay acontece antes da chamada upstream; o
 abort é um *local reply* que o retry não vê.
 
-== O que dizer
+== O que isso prova
 
-"Fault injection provoca o cenário; ela não prova o retry. Muito tutorial
-encadeia as duas coisas como se compusessem, e no cliente isso vira uma
-promessa que o ambiente não cumpre."
+Fault injection **provoca** o cenário; ela não **prova** o retry. Muito
+tutorial encadeia as duas coisas como se compusessem, e o que parece uma
+demonstração vira uma promessa que o ambiente não cumpre. Os dois mecanismos
+que você mediu -- `UO` e `UH` -- esses sim são visíveis, e são decisões de
+plataforma opostas com o mesmo código de erro.
 
 '''
 

@@ -5,9 +5,9 @@
 
 [NOTE.antes]
 ====
-**Antes:** o Limitador de pé (é o que cai e volta). Gera as próprias rajadas;
-a narração pressupõe que a plateia viu o 429 do ato 2. Depois dele, o ato 2
-é a confirmação de que tudo voltou.
+**Antes:** o Limitador de pé -- é ele que cai e volta. O exercício gera as
+próprias rajadas, mas faz muito mais sentido depois de você ter visto o `429`
+do ato 2. Ao terminar, rodar o ato 2 de novo confirma que tudo voltou.
 ====
 
 O que se mede: o rate limit **falha aberto**. Com o Limitador fora, a
@@ -21,9 +21,9 @@ autenticação faz o oposto, e de propósito.
 bash scripts/demo.sh degrada
 ----
 
-Escala o Limitador a zero e o restaura ao sair, inclusive com Ctrl-C. Peça a
-sala antes. O que tem de aparecer: com o Limitador de pé, o tier free corta
-na quarta; sem ele, **as 14 passam**.
+Escala o Limitador a zero e o restaura ao sair, inclusive com Ctrl-C. O que
+tem de aparecer: com o Limitador de pé, o tier free corta na quarta
+requisição; sem ele, **as 14 passam**.
 
 == Evidência
 
@@ -42,11 +42,14 @@ confirma que a cota não se perdeu no processo.
 Não há arquivo: o comportamento de falha vive dentro do plugin do gateway, e
 não há campo para exibir. Foi por isso que o ato mede em vez de ler.
 
-== O que dizer
+== O que isso prova
 
-"Um gateway que falha fechado no rate limit transforma um incidente de
-telemetria em indisponibilidade. Este falha aberto, e isso é uma decisão de
-produto, não um descuido."
+Um gateway que falha **fechado** no rate limit transforma um incidente de
+telemetria em indisponibilidade: o contador cai e a venda para junto. Este
+falha **aberto** -- perde-se a contagem, não a receita. A autenticação faz o
+oposto, e as duas escolhas estão certas, porque respondem a perguntas
+diferentes: "quem é você" não admite dúvida, "quantas vezes você já veio"
+admite.
 
 '''
 

@@ -15,12 +15,12 @@ API governa a borda inteira, não só o que passa por ela.
 bash scripts/demo.sh pos --auto
 ----
 
-Procura o que a sessão deixou (PERMISSIVE, fault injection, canário fora de
-90/10, cota baixa), ajusta, e revalida. É o que se roda **depois** de
-apresentar. Para reapresentar no mesmo dia, `bash scripts/demo.sh reset`
-devolve as cotas.
+Procura o que os exercícios deixaram para trás (mTLS em PERMISSIVE, fault
+injection, canário fora de 90/10, cota baixa), ajusta, e revalida. Rode-o
+quando quiser recomeçar do zero. Para repetir os atos no mesmo dia,
+`bash scripts/demo.sh reset` devolve as cotas diárias.
 
-== Perguntas que sempre aparecem
+== As quatro perguntas que este workshop existe para responder
 
 [cols="1,2"]
 |===

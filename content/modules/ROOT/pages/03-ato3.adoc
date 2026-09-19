@@ -5,8 +5,8 @@
 
 [NOTE.antes]
 ====
-**Antes:** nada -- só lê status de policy. A narração cita "os tiers do ato
-2", mas nenhum comando depende dele.
+**Antes:** nada -- este ato só lê status de policy. O texto se refere aos
+tiers do ato 2, mas nenhum comando aqui depende dele.
 ====
 
 O par aqui é Gateway contra rota. As policies que miram o `prod-web` valem
@@ -48,10 +48,12 @@ A precedência não está num arquivo: está no **status**.
 oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{range .status.conditions[*]}{.type}={.status} ({.message}){"\n"}{end}'
 ----
 
-== O que dizer
+== O que isso prova
 
-"O cluster declara quem prevaleceu. Numa stack de anotações de ingress ou
-EnvoyFilter solto, descobrir isso é arqueologia. Aqui é um campo de status."
+O cluster **declara** quem prevaleceu, num campo de status que você acabou de
+ler. Numa pilha de anotações de ingress ou de `EnvoyFilter` solto, responder
+"qual regra valeu para esta rota?" é arqueologia -- e costuma terminar em
+tentativa e erro no ambiente de produção.
 
 '''
 

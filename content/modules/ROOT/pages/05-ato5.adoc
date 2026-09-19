@@ -22,7 +22,8 @@ bash scripts/demo.sh ato5
 ----
 
 Deixa tráfego de fan-out rodando em segundo plano por 4 min. A coleta leva
-~1 min (raspagem a cada 30 s): fale enquanto isso.
+cerca de 1 min, porque a raspagem é a cada 30 s -- abra as telas abaixo e
+espere o grafo encher.
 
 == Navegador
 
@@ -62,10 +63,11 @@ oc get telemetry -A
 CAUTION: Telemetry no namespace do workload **substitui** a do namespace raiz
 (não mescla). Foi assim que a demo apagou o próprio tracing uma vez.
 
-== O que dizer
+== O que isso prova
 
-"Policy Topology, Traffic Graph e Traces: três telas, nenhuma ferramenta nova
-entrou na conversa."
+Policy Topology, Traffic Graph e Traces: três telas para a mesma requisição,
+e nenhuma ferramenta nova entrou na conta. São as do OpenShift e as dos
+operadores que já sustentam o Service Mesh.
 
 '''
 
