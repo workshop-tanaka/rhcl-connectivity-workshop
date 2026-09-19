@@ -19,6 +19,7 @@ asciidoc:
     api_key_gold: teste-gold-xxxxxx
     grafana_url: https://grafana-route-monitoring.apps.cluster-guid.dominio.exemplo
     kiali_url: https://kiali-istio-system.apps.cluster-guid.dominio.exemplo
-    tempo_url: https://tempo-tempo-jaegerui-tracing-system.apps.cluster-guid.dominio.exemplo
+    tempo_url: https://tempo-tempo-jaegerui-tracing-system.apps.cluster-guid.dominio.exemplo/dev
+    traces_url: https://console-openshift-console.apps.cluster-guid.dominio.exemplo/observe/traces
     demo_repo_url: https://github.com/workshop-tanaka/rhcl-connectivity-demo.git
     demo_ref: workshop-v0.1

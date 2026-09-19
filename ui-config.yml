@@ -7,14 +7,19 @@
 #   console do OpenShift   x-frame-options: DENY
 #   Grafana                x-frame-options: deny
 #   Kiali                  x-frame-options: DENY
+#   Tempo (UI do Jaeger)   a raiz nao manda o cabecalho, mas e so o gateway
+#                          do observatorium devolvendo um JSON de caminhos;
+#                          a UI de verdade e /<tenant>, que redireciona para
+#                          o login do OpenShift -- e o OAuth manda DENY.
 #
 # Os tres recusam ser embutidos, e o navegador bloqueia sem dizer nada: a aba
 # fica EM BRANCO. Nao ha configuracao do lado deles que afrouxe isso, e nem se
 # deve procurar -- o cabecalho existe para impedir clickjacking. O exemplo de
 # 'OCP Console' na documentacao do nookbag e anterior a esse endurecimento.
 #
-# Por isso as telas de fora vivem nos LINKS do roteiro, que abrem em aba do
-# navegador (o '^' da macro do AsciiDoc), e nao aqui.
+# Nenhuma tela de fora entra aqui, entao: elas vivem nos LINKS do roteiro,
+# que abrem em aba do navegador (o '^' da macro do AsciiDoc). No painel fica
+# o terminal, que e do proprio pod.
 type: showroom
 default_width: 38
 persist_url_state: true
@@ -29,8 +34,3 @@ tabs:
   - name: Terminal
     path: /terminal/
     port: 443
-
-  # A unica tela externa da demo que aceita iframe: o Tempo nao manda
-  # x-frame-options. Serve aos atos 5 e 5b sem tirar o participante do guia.
-  - name: Traces
-    url: 'https://tempo-tempo-jaegerui-tracing-system.${DOMAIN}'

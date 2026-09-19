@@ -59,7 +59,7 @@ URLs -- foi lido do cluster na hora do deploy, nunca copiado de arquivo.
 | Console | {openshift_console_url}[console do OpenShift^]
 | Grafana | {grafana_url}[Grafana^]
 | Kiali | {kiali_url}[Kiali^]
-| Traces | {tempo_url}[Tempo^]
+| Traces | {traces_url}[a tela de traces^]
 |===
 
 **Tempo:** 20 min para os atos 1–5; 30 min com o 7; ~50 min com os extras.

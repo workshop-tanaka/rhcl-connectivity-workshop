@@ -166,6 +166,18 @@
       loop_control:
         label: "{{ item.item.name }}"
 
+    # A tela de traces muda com o cluster, e a raiz do Tempo NAO serve: no
+    # TempoMonolithic com multitenancy ela e o gateway do observatorium e
+    # responde um JSON de caminhos. Com o Cluster Observability Operator a
+    # aba do console vence; sem ele, a UI do Jaeger em /<tenant>. Mesma
+    # decisao do _traces_url() no demo.sh.
+    - name: O Cluster Observability Operator esta instalado?
+      kubernetes.core.k8s_info:
+        api_version: apiextensions.k8s.io/v1
+        kind: CustomResourceDefinition
+        name: uiplugins.observability.openshift.io
+      register: r_coo
+
     - name: Atributos que o conteudo vai usar
       ansible.builtin.set_fact:
         _user_data:
@@ -177,7 +189,11 @@
           api_key_gold: "{{ _keys.gold | default('') }}"
           grafana_url: "https://{{ _telas['grafana-route'] }}"
           kiali_url: "https://{{ _telas['kiali'] }}"
-          tempo_url: "https://{{ _telas['tempo-tempo-jaegerui'] }}"
+          tempo_url: "https://{{ _telas['tempo-tempo-jaegerui'] }}/{{ tempo_tenant | default('dev') }}"
+          traces_url: >-
+            {{ 'https://console-openshift-console.' ~ cluster_domain ~ '/observe/traces'
+               if (r_coo.resources | length) > 0
+               else 'https://' ~ _telas['tempo-tempo-jaegerui'] ~ '/' ~ (tempo_tenant | default('dev')) }}
           demo_repo_url: "{{ demo_repo_url }}"
           demo_ref: "{{ demo_ref }}"
 
@@ -297,6 +313,7 @@
             grafana_url: "{{ _user_data.grafana_url }}"
             kiali_url: "{{ _user_data.kiali_url }}"
             tempo_url: "{{ _user_data.tempo_url }}"
+            traces_url: "{{ _user_data.traces_url }}"
             demo_repo: "{{ demo_repo_url }}@{{ demo_ref }}"
             cluster_domain: "{{ cluster_domain }}"
 

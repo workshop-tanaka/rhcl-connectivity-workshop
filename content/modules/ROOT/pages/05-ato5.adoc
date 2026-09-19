@@ -40,7 +40,7 @@ prod-web (ingress-gateway)
               └─ insurances ─┴─ mysqldb
 ----
 
-Traces: {tempo_url}[Tempo^] -- serviço `prod-web-istio.ingress-gateway`. Abra um
+Traces: {traces_url}[a tela de traces^] -- serviço `prod-web-istio.ingress-gateway`. Abra um
 trace: a decisão do gateway e a chamada de aplicação no mesmo timeline. As
 duas chamadas gRPC de auth e rate limit aparecem ali -- e são a resposta para
 "quanto custa em latência".

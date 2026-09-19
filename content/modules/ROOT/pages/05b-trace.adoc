@@ -31,7 +31,12 @@ serviços atrás do `travels`, e o trace alcança **dois**.
 
 == Navegador
 
-{tempo_url}[Tempo^] -- abra um trace de `200` e compare os dois spans do mesmo salto.
+{traces_url}[A tela de traces^] -- abra um trace de `200` e compare os dois spans
+do mesmo salto.
+
+NOTE: Se o endereço acabar na raiz do Tempo, você verá um JSON com uma lista
+de caminhos: aquilo é o gateway, não a tela. A interface fica em `/<tenant>`
+-- neste ambiente, `/dev`.
 
 == Configuração
 
