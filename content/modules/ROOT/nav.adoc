@@ -8,6 +8,7 @@
 * xref:03b-papeis.adoc[3b. Quem pode o quê]
 * xref:04-ato4.adoc[4. Isso vira número de negócio]
 * xref:05-ato5.adoc[5. O caminho todo é rastreável]
+* xref:06-ingenuo.adoc[6. De aberto a governado, um passo por vez]
 * xref:07-ato7.adoc[7. A borda não é a única fronteira]
 
 .Extras

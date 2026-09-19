@@ -1,0 +1,129 @@
+= 6. De aberto a governado, um passo por vez
+:navtitle: 6. De aberto a governado
+
+**A quem pertence:** Desenvolvedor -- e ao Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
+
+[NOTE.antes]
+====
+**Antes:** o ato 1 (a frase que este aprofunda), o 3 (precedência) e o 3b
+(as personas). Aqui você vai publicar uma API, e é bom já saber o que
+esperar dela.
+====
+
+Até agora você observou uma API que **já estava** governada. Neste exercício
+você publica uma do zero e a leva, um passo por vez, de completamente aberta a
+governada -- e cada passo é **uma policy**.
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh ingenuo
+----
+
+== Momento 1 -- qualquer um acessa, sem critério nenhum
+
+O caminho que quase todo serviço segue no primeiro dia: sobe o pod, expõe o
+Service, publica uma Route. Pronto, está no ar.
+
+[source,text]
+----
+HTTP 200
+----
+
+Sem chave, sem limite, sem registro de quem chamou. **E não há nada de errado
+com esse YAML** -- ele está correto, e é exatamente por isso que passaria em
+qualquer revisão de código.
+
+== Momento 2 -- zero trust: ninguém passa
+
+A mesma API, agora entrando pela porta da plataforma: uma `HTTPRoute` anexada
+ao Gateway `prod-web`, em vez da Route solta.
+
+[source,text]
+----
+sem chave: 403
+----
+
+`403` -- e a API é sua, e você não escreveu nenhuma negativa.
+
+O Gateway carrega a AuthPolicy `prod-web-deny-all`, escrita pelo Engenheiro de
+Plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não é
+"aberto até alguém fechar": é o contrário.
+
+[IMPORTANT]
+====
+Isto muda o que você entendeu no ato 1. A API de viagens não está fechada
+porque plataformas fecham coisas -- ela está fechada porque **alguém escreveu
+um deny-all no Gateway**. E foi esse mesmo deny-all que acabou de impedir a
+**sua** API de ir ao ar sem ninguém olhando.
+====
+
+== Momento 3 -- liberação seletiva, e a sobreposição acontecendo
+
+Agora uma chave e uma `AuthPolicy` que mira **a sua rota**, não o Gateway.
+
+[source,text]
+----
+sem chave: 401
+com chave: 200
+----
+
+E então o passo mostra o status do teto:
+
+[source,text]
+----
+AuthPolicy is overridden by [echo-ingenuo/echo-ingenuo-authpolicy ...]
+----
+
+**O próprio deny-all declara que cedeu, e nomeia quem o sobrepôs.** São dois
+alvos diferentes: o teto mira o `Gateway`, a sua mira a `HTTPRoute`. O mais
+específico prevalece.
+
+O ato 3 mostrou isso numa policy que outra pessoa escreveu. Aqui o
+`overridden` tem o nome da policy que **você** acabou de criar.
+
+== Momento 4 -- quem entra está resolvido; falta quanto pode
+
+Uma `PlanPolicy`, com um tier `experimental` de 3 requisições a cada 10 s:
+
+[source,text]
+----
+200 200 200 429 429 429
+----
+
+== E o que ainda falta
+
+O passo imprime um inventário do que a sua API tem e do que não tem. Quatro
+policies depois, ainda faltam telemetria por plano, mTLS, identidade de
+serviço, canário, pipeline e o registro no catálogo.
+
+**E nada disso falhou.** Não existe, simplesmente. O deploy passou, a rota foi
+aceita, o teste deu 200 -- e a única coisa que impediu um estrago foi o teto
+que outra pessoa tinha escrito antes.
+
+== O que o template geraria, para a mesma API
+
+Dezessete manifests. Você escreveu quatro, e levou dez minutos.
+
+Mas a diferença que mais importa não aparece em `oc get`: **o que você fez
+existe só no cluster.** Ninguém sabe quem criou, quando, nem por quê. Não há
+revisão, não há histórico, e a próxima mudança será outro `oc apply` de alguém
+numa terça-feira.
+
+Pelo template, os mesmos objetos nascem num **repositório**: com autor, data e
+merge request. O Argo aplica. Mudar uma policy passa a ser um PR que alguém
+revisa -- e o que está no cluster vira **consequência** do que está no git, não
+o contrário.
+
+== O que isso prova
+
+O golden path não economiza digitação. Ele torna **impossível** um serviço
+nascer sem autenticação, plano, telemetria e identidade -- e transforma
+configuração em algo que tem dono, data e revisão.
+
+É essa a diferença entre uma convenção escrita num wiki, que todo mundo
+concorda e alguém esquece numa terça-feira, e uma plataforma.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
