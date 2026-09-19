@@ -15,6 +15,7 @@ gateway** -- e nenhuma linha da aplicação muda para provar isso.
 * Ver a API recusar quem não tem credencial, sem código de autenticação na aplicação (ato 1)
 * Servir três clientes com três cotas a partir de **um label** num Secret (ato 2)
 * Ler no status do cluster qual policy venceu, sem arqueologia (ato 3)
+* **Entrar como o desenvolvedor** e sentir onde o apiserver recusa -- os dois papéis do Gateway API (ato 3b)
 * Transformar `429` em "o tier free está saturando", no Grafana (ato 4)
 * Seguir uma requisição do gateway até o banco, no grafo e no trace (ato 5)
 * Provar que a chave de API abre a porta da rua, não o cofre: mTLS e identidade de serviço (ato 7)
@@ -45,6 +46,7 @@ roda o pré-ato quando falta.
 | 1 | nada | Segurança · Plataforma
 | 2 | cota do dia; 11 s desde a última rajada | Produto · Plataforma
 | 3 | nada | Plataforma
+| 3b | nada -- mas só faz sentido depois do 3 | Plataforma · Dev
 | **4** | **ato 2 nos últimos 15 min** | Negócio · Operação
 | 4b | Limitador de pé | Operação/SRE
 | 5 | nada -- gera o próprio fan-out | Operação · Dev
