@@ -55,6 +55,26 @@ PERMISSIVE) e `selfHeal` os reverteria em segundos.
 Mude `demo.ref` em `values.yaml` para a tag nova e faça commit. O Job nunca
 clona `main`.
 
+## `rollout restart` NÃO atualiza os atributos
+
+Editar o conteúdo e rodar `oc rollout restart deploy/showroom` republica o
+**texto**, porque o Showroom clona o repositório de novo. Mas os valores que o
+conteúdo cita — hosts, chaves, URLs do GitLab e do Dev Spaces — vêm do
+ConfigMap `user_data`, que **só o playbook escreve**.
+
+Consequência medida duas vezes em 2026-09-18/19: a página publicada mostra o
+texto novo com os **placeholders** (`cluster-guid.dominio.exemplo`), e os links
+não abrem. Nada avisa.
+
+| mudou o quê | o que basta |
+| --- | --- |
+| só o texto de uma página | `rollout restart` |
+| qualquer atributo novo, ou um valor do cluster | **sync do Job** |
+
+```bash
+argocd app sync rhcl-workshop     # ou o patch em .operation do README abaixo
+```
+
 ## Se o Job falhar: corrigir e fazer push não basta
 
 O Job é um *hook* de Sync do Argo, e hook não entra na comparação de estado:
