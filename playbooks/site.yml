@@ -149,7 +149,6 @@
         - { name: tempo-tempo-jaegerui, ns: tracing-system }
         - { name: rede-de-servicos-network-observer, ns: travel-db }
         - { name: devspaces, ns: openshift-devspaces }
-        - { name: gitlab-webservice-default, ns: gitlab-system }
       register: r_telas
 
     # Loops em vez de zip/map: a chave do label tem ponto ('kuadrant.io/plan-id')
@@ -168,6 +167,23 @@
       loop: "{{ r_telas.results }}"
       loop_control:
         label: "{{ item.item.name }}"
+
+    # A rota do GitLab NAO tem nome fixo: o chart a gera com sufixo aleatorio
+    # (gitlab-webservice-default-xstcw). Procurar pelo nome exato devolve
+    # NotFound, e o link do IDE nasce vazio -- medido em 2026-09-18.
+    - name: Procurar a rota do GitLab pelo prefixo
+      kubernetes.core.k8s_info:
+        api_version: route.openshift.io/v1
+        kind: Route
+        namespace: gitlab-system
+      register: r_gitlab_rotas
+
+    - name: Host do GitLab
+      ansible.builtin.set_fact:
+        _gitlab_host: >-
+          {{ (r_gitlab_rotas.resources
+              | selectattr('metadata.name', 'match', '^gitlab-webservice-default')
+              | map(attribute='spec.host') | list + ['']) | first }}
 
     # A tela de traces muda com o cluster, e a raiz do Tempo NAO serve: no
     # TempoMonolithic com multitenancy ela e o gateway do observatorium e
@@ -201,12 +217,12 @@
           # O Dev Spaces le o devfile do REMOTO. O remoto aqui e o espelho no
           # GitLab do proprio ambiente -- nada aponta para fora.
           repo_no_ambiente: >-
-            {{ ('https://' ~ _telas['gitlab-webservice-default'] ~ '/rhcl/base/rhcl-connectivity-demo')
-               if _telas['gitlab-webservice-default'] else '' }}
+            {{ ('https://' ~ _gitlab_host ~ '/rhcl/base/rhcl-connectivity-demo')
+               if _gitlab_host else '' }}
           ide_url: >-
-            {{ ('https://' ~ _telas['devspaces'] ~ '/#https://' ~ _telas['gitlab-webservice-default']
+            {{ ('https://' ~ _telas['devspaces'] ~ '/#https://' ~ _gitlab_host
                 ~ '/rhcl/base/rhcl-connectivity-demo')
-               if (_telas['devspaces'] and _telas['gitlab-webservice-default']) else '' }}
+               if (_telas['devspaces'] and _gitlab_host) else '' }}
           demo_repo_url: "{{ demo_repo_url }}"
           demo_ref: "{{ demo_ref }}"
 
@@ -322,10 +338,20 @@
         namespace: "{{ _showroom_ns }}"
         pod: "{{ r_showroom_pod2.resources[0].metadata.name }}"
         container: terminal
+        # 'test -d .git || clone' deixava o volume preso na tag antiga quando
+        # demo.ref mudava (medido: v0.4 depois de promover para v0.6). Agora
+        # clona se faltar, e busca+troca a tag se ja existir.
         command: >-
-          bash -lc "test -d /home/lab-user/rhcl-connectivity-demo/.git ||
-          git clone --quiet --branch {{ demo_ref }} {{ demo_repo_url }}
-          /home/lab-user/rhcl-connectivity-demo"
+          bash -lc "set -e;
+          D=/home/lab-user/rhcl-connectivity-demo;
+          if [ -d $D/.git ]; then
+            git -C $D remote set-url origin {{ demo_repo_url }};
+            git -C $D fetch --quiet --tags --force origin;
+            git -C $D checkout --quiet --force {{ demo_ref }};
+          else
+            git clone --quiet --branch {{ demo_ref }} {{ demo_repo_url }} $D;
+          fi;
+          git -C $D describe --tags"
       register: r_clone
       retries: 5
       delay: 10
