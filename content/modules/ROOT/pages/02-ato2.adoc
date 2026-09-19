@@ -61,6 +61,57 @@ NOTE: O workspace leva 1 a 2 minutos para subir na primeira vez. Se você
 estiver com pouco tempo, o `oc get planpolicy travels-plans -n travel-agency -o yaml`
 mostra o mesmo conteúdo no terminal.
 
+.Mais detalhes: as duas janelas de um plano, e por que existem
+[%collapsible]
+====
+Cada tier do `PlanPolicy` declara **dois limites de naturezas diferentes**:
+
+[source,yaml]
+----
+- tier: gold
+  predicate: '... == "gold"'   # <1>
+  limits:
+    daily: 100000              # <2>
+    custom:
+      - limit: 30              # <3>
+        window: 10s
+----
+
+<1> **O predicado é CEL**, e é ele que encaixa o chamador num tier. A forma que
+    este repositório usa lê o label `kuadrant.io/plan-id` do Secret da chave e
+    cai para uma *annotation* quando o Secret veio do developer portal -- que
+    grava o plano em annotation, não em label. Sem esse fallback, uma chave
+    aprovada pelo portal entra **sem limite nenhum**.
+<2> **`daily` é o contrato comercial.** É a cota que se vende, e ela acumula
+    ao longo do dia. É o que aparece no quinto painel do dashboard do ato 4.
+<3> **`custom` é a proteção da infraestrutura.** 30 requisições por 10 s não
+    tem nada a ver com o que o cliente comprou: existe para que um cliente em
+    laço não derrube o serviço dos outros.
+
+É por isso que o ato 2 espera 11 segundos entre as rajadas: sem isso, o tier
+seguinte herdaria o `429` da janela de 10 s do anterior, e a demonstração
+mediria a coisa errada.
+====
+
+.Outro caso de uso: cobrar por consumidor, e não por plano
+[%collapsible]
+====
+A pergunta aparece sempre, e a resposta honesta tem duas partes.
+
+**Tecnicamente, o contador é por tier.** O Limitador mantém um contador por
+plano, não por cliente -- é isso que torna o custo previsível quando há
+milhares de consumidores.
+
+**Mas a métrica é por consumidor.** A `TelemetryPolicy` do ato 4 acrescenta a
+dimensão do parceiro, e o dashboard *Consumo por parceiro* quebra o uso por
+cliente. Então a pergunta "quanto o cliente X consumiu este mês?" tem resposta;
+o que não existe é um *limite* individual por cliente sem criar um tier para
+ele.
+
+Quando um cliente realmente precisa de limite próprio, o caminho é um tier
+dedicado -- um bloco a mais no YAML, e o label da chave dele apontando para lá.
+====
+
 == O que isso prova
 
 Você acabou de ver três contratos comerciais diferentes saírem de **um label**

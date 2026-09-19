@@ -59,6 +59,70 @@ não é um link para documentação, é a configuração que está no ar.
 oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml | head -40
 ----
 
+.Mais detalhes: o que cada campo da AuthPolicy faz
+[%collapsible]
+====
+A policy que você abriu tem quatro decisões dentro, e vale saber o que cada
+uma significa:
+
+[source,yaml]
+----
+spec:
+  targetRef:                    # <1>
+    kind: HTTPRoute
+    name: travel-agency
+  rules:
+    authentication:
+      api-key-authn:
+        apiKey:
+          allNamespaces: false  # <2>
+          selector:
+            matchLabels:
+              app: partner      # <3>
+        credentials:
+          queryString:
+            name: APIKEY        # <4>
+----
+
+<1> **O alvo decide o alcance.** `kind: HTTPRoute` faz a policy valer só para
+    esta rota. Se fosse `kind: Gateway`, valeria para todas as rotas anexadas
+    -- é assim que o `prod-web-deny-all` funciona.
+<2> **`allNamespaces: false`** limita a busca de chaves ao namespace da
+    policy. Em `true`, o Authorino procura no cluster inteiro -- útil quando
+    as chaves são administradas por um time central, arriscado quando não.
+<3> **O seletor é o contrato.** Qualquer `Secret` com `app: partner` vira uma
+    credencial válida. Criar um cliente novo é criar um Secret com esse label;
+    revogar é apagá-lo. Não há banco de dados de chaves para sincronizar.
+<4> **Onde a credencial viaja.** `queryString` é o mais fácil de demonstrar,
+    mas o mesmo bloco aceita `authorizationHeader` (o `Authorization: APIKEY
+    <chave>`) e `customHeader`. Em produção, cabeçalho -- query string entra em
+    log de acesso.
+====
+
+.Outro caso de uso: e se a autenticação for JWT/OIDC?
+[%collapsible]
+====
+É a pergunta que mais aparece, e a resposta é que **muda o bloco, não a
+arquitetura**. No lugar de `apiKey`, um `jwt`:
+
+[source,yaml]
+----
+rules:
+  authentication:
+    meu-idp:
+      jwt:
+        issuerUrl: https://sso.exemplo.com/realms/clientes
+----
+
+O Authorino busca as chaves públicas do emissor, valida assinatura e
+expiração, e o restante do roteiro continua idêntico -- inclusive o
+`PlanPolicy`, que passa a ler o plano de uma *claim* do token em vez do label
+do Secret.
+
+Os dois convivem na mesma policy: uma rota pode aceitar chave de API para
+parceiros antigos e JWT para os novos, com o mesmo alvo.
+====
+
 == O que isso prova
 
 Nenhuma linha da aplicação trata autenticação -- o binário do `travels` é o
