@@ -100,7 +100,12 @@ spec:
             || { echo "downloads.openshift-console indisponivel; tentando o mirror publico"; \
                  curl -sfL https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux.tar.gz | tar xz -C /tmp/work/bin oc; }
           export PATH=/tmp/work/bin:$PATH
-          oc version --client | head -1
+          # 'head -1' fecha o pipe enquanto o oc ainda escreve: o cliente 4.22
+          # imprime duas linhas (Client + Kustomize), o oc leva SIGPIPE, e com
+          # 'set -o pipefail' o script MORRE com exit 141 -- depois de dizer
+          # '=== oc ===' e nada mais. Medido em 2026-09-18. 'sed -n 1p' consome
+          # a entrada inteira e nao fecha nada.
+          oc version --client | sed -n '1p'
           oc whoami
 
           # helm: a role deploy-showroom renderiza o chart showroom-single-pod
