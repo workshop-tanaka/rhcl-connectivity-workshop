@@ -5,77 +5,114 @@
 _Workshop idealizado e construído por Sandro Tanaka._
 
 
-A mesma API de viagens servida em três planos comerciais (`free`, `silver`,
-`gold`), com o efeito visível na tela e mensurável no Grafana. A tese que cada
-ato defende: **o Red Hat Connectivity Link é uma plataforma de API, não um
-gateway** -- e nenhuma linha da aplicação muda para provar isso.
+Uma aplicação de viagens, sem uma linha de código sobre segurança ou limites,
+servindo três clientes com direitos diferentes -- e tudo isso decidido por uma
+camada na frente dela.
 
-== O que você vai fazer
+É essa camada que o workshop explora: o que ela faz, como se observa quando
+falha, quem tem permissão para mudá-la, e o que acontece além da porta de
+entrada.
 
-* Ver a API recusar quem não tem credencial, sem código de autenticação na aplicação (ato 1)
-* Servir três clientes com três cotas a partir de **um label** num Secret (ato 2)
-* Ler no status do cluster qual policy venceu, sem arqueologia (ato 3)
-* **Entrar como o desenvolvedor** e sentir onde o apiserver recusa -- os dois papéis do Gateway API (ato 3b)
-* Transformar `429` em "o tier free está saturando", no Grafana (ato 4)
-* Seguir uma requisição do gateway até o banco, no grafo e no trace (ato 5)
-* **Publicar uma API do zero** e levá-la de aberta a governada, uma policy por vez -- vendo a sobreposição acontecer na sua própria rota (ato 6)
-* Provar que a chave de API abre a porta da rua, não o cofre: mTLS e identidade de serviço (ato 7)
-* Alcançar um banco que **não está no cluster**, sem VPN e sem abrir porta nenhuma (ato 8)
+[NOTE]
+====
+**Não é preciso conhecer os produtos de antemão.** Cada módulo apresenta os
+conceitos conforme aparecem, com os links da documentação oficial de cada um.
+====
 
-Os extras (4b, 5b, 7b, 7c) respondem às perguntas que sempre aparecem: e se o
-componente cair? quanto custa em latência? como é uma promoção de versão ao
-vivo? e o que o Service Mesh **não** demonstra com fault injection.
+== Como o workshop está organizado
 
-== Para quem
+Quatro módulos, cada um com uma introdução própria e partes numeradas. Dá para
+fazer na ordem, ou escolher pelo que interessa ao seu dia.
 
-Cada ato abre dizendo **a quem o problema pertence** -- Segurança, Engenheiro
-de Plataforma, Produto, Operação/SRE, Desenvolvedor. Use isso para escolher
-por onde começar: se você opera a plataforma, os atos 3, 4b e 7c falam
-diretamente com o seu dia; se você desenvolve, o caminho 1 → 2 → 5 → 5b
-responde primeiro o que costuma incomodar mais.
-
-== A ordem importa
-
-Os atos rodam soltos. O risco não é a ordem: é um ato que **lê** o que outro
-**produziu** sair com painel vazio e sem erro. Cada página abre com um bloco
-*Antes* dizendo o que pressupõe -- e o `demo.sh` confere e **pergunta** se
-roda o pré-ato quando falta.
-
-[cols="1,3,2",options="header"]
+[cols="1,3,1",options="header"]
 |===
-| Ato | Precisa | Persona
-| 1 | nada | Segurança · Plataforma
-| 2 | cota do dia; 11 s desde a última rajada | Produto · Plataforma
-| 3 | nada | Plataforma
-| 3b | nada -- mas só faz sentido depois do 3 | Plataforma · Dev
-| **4** | **ato 2 nos últimos 15 min** | Negócio · Operação
-| 4b | Limitador de pé | Operação/SRE
-| 5 | nada -- gera o próprio fan-out | Operação · Dev
-| **5b** | **ato 5 na última hora** | Operação · Dev
-| 6 | atos 1, 3 e 3b -- publica uma API do zero | Desenvolvedor · Plataforma
-| **7** | **mesh no estado base** (STRICT, 90/10, sem fault) | Segurança · Plataforma
-| 7b | discounts em 90/10 | Dev · Plataforma
-| 7c | DestinationRule base | Operação/SRE
-| 8 | a rede de serviços provisionada | Arquitetura · Operação
+| módulo | o que você sai sabendo fazer | tempo
+
+| xref:m1-00-intro.adoc[**1** — Proteger e cobrar por uma API na borda]
+| fechar uma API sem tocar na aplicação, servir planos comerciais diferentes no
+  mesmo endereço, saber qual regra vence quando duas disputam, e transformar
+  isso em número de negócio
+| ~20 min
+
+| xref:m2-00-intro.adoc[**2** — Observar e diagnosticar]
+| seguir uma requisição salto a salto, saber o que um contador não responde,
+  dizer em qual de seis lugares uma recusa parou, e prever o que o tráfego faz
+  quando a plataforma falha
+| ~20 min
+
+| xref:m3-00-intro.adoc[**3** — Governar: do manual ao caminho pavimentado]
+| publicar uma API do zero, levá-la de aberta a governada uma regra por vez, e
+  auditar o próprio rastro por quatro fontes diferentes
+| ~16 min
+
+| xref:m4-00-intro.adoc[**4** — Além da borda]
+| proteger o que acontece **dentro** da aplicação, promover uma versão nova ao
+  vivo, e alcançar uma dependência que não roda no cluster
+| ~21 min
+|===
+
+== Para quem é cada módulo
+
+Cada parte abre dizendo **a quem o problema pertence**. Use isso para escolher
+por onde começar:
+
+[cols="1,3",options="header"]
+|===
+| se o seu dia é | comece por
+
+| segurança, ou plataforma
+| Módulo 1, e depois a parte 4.1 -- a chave de API abre a porta da rua, não o cofre
+
+| operação, suporte ou SRE
+| Módulo 2 inteiro, em especial a parte 2.3, que é diagnóstico de chamado
+
+| desenvolvimento
+| Módulo 1, depois o Módulo 3 -- é onde você escreve a configuração, e sente o que custa
+
+| arquitetura
+| Módulo 4, que trata das fronteiras que não são a borda
+|===
+
+== A ordem dentro de um módulo
+
+As partes rodam soltas, mas algumas **leem** o que outra produziu -- e uma
+parte sem o dado que ela espera sai com painel vazio, sem erro nenhum.
+
+Cada página abre com um bloco *Antes* dizendo o que pressupõe. E o terminal
+confere sozinho: quando falta, ele **pergunta** se roda a parte anterior e
+volta ao ponto onde você estava.
+
+As que dependem de outra:
+
+[cols="1,3",options="header"]
+|===
+| parte | precisa de
+
+| 1.5 Isso vira número
+| a parte 1.2 nos últimos 15 minutos -- ela só lê o que a 1.2 gera
+
+| 2.2 O que um contador não responde
+| a parte 2.1 na última hora
+
+| 3.1 De aberta a governada
+| as partes 1.1, 1.3 e 1.4
+
+| 3.2 Quatro perguntas, quatro fontes
+| o rastro que os Módulos 1 e 2 deixam
+
+| 4.2 e 4.3
+| o estado que a parte 4.1 estabelece
 |===
 
 == O ambiente
 
-Este cluster foi provisionado do zero para você. Tudo que o conteúdo cita --
-hosts, chaves, URLs -- foi lido do cluster na hora, nunca copiado de arquivo:
-os endereços abaixo são **deste** ambiente.
+Este cluster foi criado do zero para você. Tudo que o conteúdo cita -- hosts,
+chaves, endereços -- foi lido do cluster no momento em que ele nasceu, nunca
+copiado de um arquivo.
 
-[cols="1,3"]
-|===
-| API | https://{api_host}/travels[{api_host}/travels^]
-| Console | {openshift_console_url}[console do OpenShift^]
-| Grafana | {grafana_url}[Grafana^]
-| Kiali | {kiali_url}[Kiali^]
-| Traces | {traces_url}[a tela de traces^]
-|===
+Os seus endereços e as suas chaves estão em xref:acessos.adoc[Seus acessos].
 
-**Tempo:** 20 min para os atos 1–5; 30 min com o 7; ~55 min com os extras e a
-terceira fronteira.
+'''
 
 Comece pela xref:00-preparacao.adoc[Preparação].
 

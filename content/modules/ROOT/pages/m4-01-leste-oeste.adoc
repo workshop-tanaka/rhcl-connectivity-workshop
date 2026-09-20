@@ -1,19 +1,19 @@
-= 7. A borda não é a única fronteira
-:navtitle: 7. Não é a única fronteira
+= 4.1 A borda não é a única fronteira
+:navtitle: 4.1 A borda não é a única fronteira
 
 **Persona:** Segurança e Engenheiro de Plataforma -- identidade de serviço, não de cliente. · **8 min** · mesh no estado base
 
 [WARNING.antes]
 ====
 **Antes: o estado base do Service Mesh** -- mTLS `STRICT`, `discounts` em
-90/10, sem fault injection. Nenhum ato antes; mas 7b, 7c e `falha` mexem
+90/10, sem fault injection. Nenhuma parte antes; mas as partes 4.2, 4.3 e o passo `falha` mexem
 nesse estado e o devolvem ao sair, e um Ctrl-C no meio deles não. O script
-confere os três ao começar e oferece o pré-ato `mesh_base` (~5 s) se algo
+confere os três ao começar e oferece o passo `mesh_base` (~5 s) se algo
 estiver fora.
 ====
 
-Este ato é do Service Mesh, não do RHCL, e existe porque a pergunta vem
-sozinha depois do ato 1: "então a chave de API protege tudo?". Não protege --
+Esta parte é do Service Mesh, não do RHCL, e existe porque a pergunta vem
+sozinha depois da parte 1.1: "então a chave de API protege tudo?". Não protege --
 ela abre a porta da rua. E o argumento fecha porque é o **mesmo** Envoy nas
 duas pontas.
 
@@ -43,7 +43,7 @@ v2 no `discounts`. A versão não aparece na resposta -- só na métrica e no gr
 
 == Evidência
 
-Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência dos atos^].
+Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 
 == Configuração
 

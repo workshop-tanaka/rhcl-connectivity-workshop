@@ -1,0 +1,36 @@
+= Módulo 2 — Observar e diagnosticar
+:navtitle: Módulo 2 — Introdução
+
+**Quatro partes · cerca de 20 minutos · uma delas muda estado**
+
+== O que você vai conseguir fazer
+
+* ler o caminho de uma requisição salto a salto, sem instrumentar a aplicação;
+* saber o que um contador **não** consegue responder, e quando trocar de
+  ferramenta;
+* olhar uma recusa de API e dizer em qual de seis lugares ela parou;
+* prever o que acontece com o tráfego quando um componente da plataforma cai.
+
+== A ideia que atravessa as quatro partes
+
+Medir é fácil; **atribuir** é difícil. Um gráfico diz que houve erro. Ele não
+diz de quem, nem onde, nem por quê.
+
+Este módulo é sobre a diferença entre os dois, e sobre uma disciplina que vale
+mais que qualquer ferramenta: diagnóstico não é adivinhar onde parou, é
+**descartar** onde não parou.
+
+== O que você precisa antes
+
+O Módulo 1, por dois motivos: ele gera o tráfego que a parte 2.1 procura, e a
+parte 2.3 usa as recusas que as regras do Módulo 1 produzem.
+
+== Aviso sobre a parte 2.4
+
+Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
+você interromper com `Ctrl-C`. As outras três não alteram nada.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

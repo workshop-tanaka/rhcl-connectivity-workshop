@@ -1,11 +1,11 @@
-= 6. De aberta a governada, um passo por vez
-:navtitle: 6. De aberta a governada
+= 3.1 De aberta a governada, um passo por vez
+:navtitle: 3.1 De aberta a governada
 
 **A quem pertence:** Desenvolvedor -- e ao Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
 
 [NOTE.antes]
 ====
-**Antes:** o ato 1 (a frase que este aprofunda), o 3 (precedência) e o 3b
+**Antes:** a parte 1.1 (a frase que este aprofunda), a parte 1.3 (precedência) e o 3b
 (as personas). Aqui você vai publicar uma API, e é bom já saber o que
 esperar dela.
 ====
@@ -51,7 +51,7 @@ Plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não 
 
 [IMPORTANT]
 ====
-Isto muda o que você entendeu no ato 1. A API de viagens não está fechada
+Isto muda o que você entendeu na parte 1.1. A API de viagens não está fechada
 porque plataformas fecham coisas -- ela está fechada porque **alguém escreveu
 um deny-all no Gateway**. E foi esse mesmo deny-all que acabou de impedir a
 **sua** API de ir ao ar sem ninguém olhando.
@@ -78,7 +78,7 @@ AuthPolicy is overridden by [echo-exposta/echo-exposta-authpolicy ...]
 alvos diferentes: o teto mira o `Gateway`, a sua mira a `HTTPRoute`. O mais
 específico prevalece.
 
-O ato 3 mostrou isso numa policy que outra pessoa escreveu. Aqui o
+A parte 1.3 mostrou isso numa policy que outra pessoa escreveu. Aqui o
 `overridden` tem o nome da policy que **você** acabou de criar.
 
 == Momento 4 -- quem entra está resolvido; falta quanto pode

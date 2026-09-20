@@ -1,0 +1,122 @@
+= Seus acessos
+:navtitle: Seus acessos
+
+Tudo nesta página é **deste ambiente**, resolvido no momento em que ele foi
+criado. Nada aqui é exemplo: são os endereços e as chaves que você vai usar.
+
+[TIP]
+====
+Deixe esta página aberta numa aba à parte. Todos os módulos voltam a ela.
+====
+
+== A API do workshop
+
+A aplicação de viagens, que é o objeto de quase todos os módulos:
+
+[cols="1,3"]
+|===
+| endereço | `https://{api_host}/travels`
+|===
+
+Sem credencial ela responde `401` -- e isso é o Módulo 1.
+
+== As três chaves
+
+Cada uma representa um cliente num plano comercial diferente. É a diferença
+entre elas que o Módulo 1 explora:
+
+[cols="1,1,2",options="header"]
+|===
+| plano | para que serve | chave
+
+| gratuito
+| o limite mais apertado, e o que estoura primeiro
+| `{api_key_free}`
+
+| intermediário
+| o meio-termo
+| `{api_key_silver}`
+
+| completo
+| o que passa quando os outros já foram recusados
+| `{api_key_gold}`
+|===
+
+Para chamar a API com uma delas, a chave vai na própria URL:
+
+[source,bash,role="execute"]
+----
+curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 300
+----
+
+[NOTE]
+====
+Chave em URL é o mais fácil de demonstrar, e **não** é o que se usa em
+produção -- query string entra em log de acesso. O Módulo 1 mostra que o
+mesmo mecanismo aceita cabeçalho.
+====
+
+== As telas
+
+Cada uma abre em aba nova. Todas usam o login do OpenShift, exceto onde
+indicado.
+
+[cols="1,2,2",options="header"]
+|===
+| tela | para que | onde
+
+| Console do OpenShift
+| ver os objetos, os pods, os logs
+| {openshift_console_url}[abrir^]
+
+| Grafana
+| os painéis de consumo e de evidência
+| {grafana_url}[abrir^]
+
+| Kiali
+| o grafo de quem fala com quem
+| {kiali_url}[abrir^]
+
+| Traces
+| o caminho de uma requisição, salto a salto
+| {traces_url}[abrir^]
+
+| GitLab
+| a configuração versionada deste ambiente
+| {repo_policies}[abrir^]
+
+| Dev Spaces
+| editar a configuração sem instalar nada
+| {ide_url}[abrir^]
+|===
+
+== O terminal
+
+O painel à direita já está autenticado no cluster. Não há login a fazer, e
+não há senha a digitar. Confira:
+
+[source,bash,role="execute"]
+----
+oc whoami && oc get httproute -A
+----
+
+Os comandos dos módulos são executados a partir do diretório do workshop, que
+já está no lugar certo quando o terminal abre.
+
+== Se alguma coisa não responder
+
+O ambiente é criado do zero para você, e uma peça ou outra pode demorar mais
+que as demais. Antes de investigar, peça o veredito:
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh check
+----
+
+Ele confere a cadeia inteira e diz, em uma linha, se o workshop pode começar.
+Avisos não impedem -- falhas, sim, e o texto diz qual módulo cada uma afeta.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

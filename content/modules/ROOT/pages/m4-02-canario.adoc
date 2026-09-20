@@ -1,11 +1,11 @@
-= 7b. A promoção acontecendo, ao vivo
-:navtitle: 7b. Promoção ao vivo
+= 4.2 A promoção acontecendo, ao vivo
+:navtitle: 4.2 A promoção ao vivo
 
 **Persona:** Desenvolvedor e Engenheiro de Plataforma -- quem promove, e quem decide o peso. · **3 min** · **muda estado** · depois do 7
 
 [NOTE.antes]
 ====
-**Antes:** o ato 7 na narrativa (ele mostra o 90/10 parado; este o põe em
+**Antes:** a parte 4.1 na narrativa (ele mostra o 90/10 parado; este o põe em
 movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
 90/10 -- ponto de partida e de retorno, e o script confere.
 ====
@@ -13,7 +13,7 @@ movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
 == Terminal
 
 Abra **antes** o painel *A.7 · Peso efetivo do canário* em
-{grafana_url}/d/rhcl-evidencia[Evidência dos atos^]. Deixe-o visível ao lado do
+{grafana_url}/d/rhcl-evidencia[Evidência das partes^]. Deixe-o visível ao lado do
 terminal: é a única tela do workshop que se move sozinha, acompanhando os
 cinco passos.
 
@@ -38,7 +38,7 @@ acelerando enquanto o verde esvazia.
 == Configuração
 
 {config_url}/base/mesh/virtualservice-discounts.yaml[virtualservice-discounts.yaml^]
--- o peso é uma linha neste arquivo, e mudá-la é o que o ato faz cinco vezes.
+-- o peso é uma linha neste arquivo, e mudá-la é o que a parte faz cinco vezes.
 
 == O que isso prova
 

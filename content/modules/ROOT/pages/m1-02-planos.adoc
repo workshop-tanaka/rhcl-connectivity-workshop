@@ -1,12 +1,12 @@
-= 2. Nem todo cliente é igual
-:navtitle: 2. Nem todo cliente é igual
+= 1.2 Nem todo cliente é igual
+:navtitle: 1.2 Nem todo cliente é igual
 
-**Persona:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **5 min** · alimenta o ato 4
+**Persona:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **5 min** · alimenta a parte 1.5
 
 [NOTE.antes]
 ====
-**Antes:** cota do dia com folga e 11 s desde a última rajada. Nenhum ato
-antes -- mas **é este que produz o que o ato 4 lê**: sem ele (ou o
+**Antes:** cota do dia com folga e 11 s desde a última rajada. Nenhuma parte
+antes -- mas **é este que produz o que a parte 1.5 lê**: sem ele (ou o
 aquecimento) nos 15 min anteriores, o Grafana do 4 sai vazio.
 ====
 
@@ -37,19 +37,19 @@ oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
 Products e API Keys: os parceiros com plano e solicitante.
 
 WARNING: **Não aprove nada em API Key Approvals.** Aprovar cunha um Secret com
-o plano em *annotation* em vez de *label*; o predicado aguenta, mas o ato
+o plano em *annotation* em vez de *label*; o predicado aguenta, mas a parte
 perde o fio.
 
 == Evidência
 
-Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia[Evidência dos atos^].
+Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 Os três planos como barras. Se você rodou pelo Postman, aparece uma quarta
 série `sistema-teste`, isolada dos parceiros da história.
 
 == Configuração
 
 {config_url}/base/policies-plans/travels-plans.yaml[travels-plans.yaml^] --
-**é este arquivo que o ato defende**. Trinta linhas que declaram free, silver
+**é este arquivo que a parte defende**. Trinta linhas que declaram free, silver
 e gold com janela e cota.
 
 {ide_url}[Abrir o repositório no Dev Spaces^] -- o IDE sobe no próprio cluster,
@@ -83,12 +83,12 @@ Cada tier do `PlanPolicy` declara **dois limites de naturezas diferentes**:
     grava o plano em annotation, não em label. Sem esse fallback, uma chave
     aprovada pelo portal entra **sem limite nenhum**.
 <2> **`daily` é o contrato comercial.** É a cota que se vende, e ela acumula
-    ao longo do dia. É o que aparece no quinto painel do dashboard do ato 4.
+    ao longo do dia. É o que aparece no quinto painel do dashboard da parte 1.5.
 <3> **`custom` é a proteção da infraestrutura.** 30 requisições por 10 s não
     tem nada a ver com o que o cliente comprou: existe para que um cliente em
     laço não derrube o serviço dos outros.
 
-É por isso que o ato 2 espera 11 segundos entre as rajadas: sem isso, o tier
+É por isso que a parte 1.2 espera 11 segundos entre as rajadas: sem isso, o tier
 seguinte herdaria o `429` da janela de 10 s do anterior, e a demonstração
 mediria a coisa errada.
 ====
@@ -102,7 +102,7 @@ A pergunta aparece sempre, e a resposta honesta tem duas partes.
 plano, não por cliente -- é isso que torna o custo previsível quando há
 milhares de consumidores.
 
-**Mas a métrica é por consumidor.** A `TelemetryPolicy` do ato 4 acrescenta a
+**Mas a métrica é por consumidor.** A `TelemetryPolicy` da parte 1.5 acrescenta a
 dimensão do parceiro, e o dashboard *Consumo por parceiro* quebra o uso por
 cliente. Então a pergunta "quanto o cliente X consumiu este mês?" tem resposta;
 o que não existe é um *limite* individual por cliente sem criar um tier para

@@ -1,0 +1,38 @@
+= Módulo 1 — Proteger e cobrar por uma API na borda
+:navtitle: Módulo 1 — Introdução
+
+**Cinco partes · cerca de 20 minutos · nada muda de estado**
+
+== O que você vai conseguir fazer
+
+Ao final deste módulo você consegue explicar, com o ambiente na mão:
+
+* por que uma API pode ficar fechada **sem que ninguém altere a aplicação**;
+* como o mesmo endereço atende clientes diferentes com limites diferentes;
+* o que acontece quando duas regras disputam a mesma rota -- e qual vence;
+* quem, dentro da organização, tem permissão para escrever cada tipo de regra;
+* como tudo isso vira número que a área de negócio entende.
+
+== A ideia que atravessa as cinco partes
+
+A aplicação de viagens deste ambiente **não tem uma linha de código sobre
+autenticação, limites ou cobrança**. Ela responde a quem chegar.
+
+Quem decide quem chega é uma camada na frente dela. Este módulo é sobre essa
+camada: o que ela sabe fazer, e o que muda quando você a trata como parte da
+plataforma em vez de um acessório da aplicação.
+
+== O que você precisa antes
+
+Só a xref:00-preparacao.adoc[Preparação]. As cinco partes rodam em sequência,
+e a 1.5 lê os dados que a 1.2 gera -- então vale não pular a 1.2.
+
+== Onde isso te deixa
+
+No fim do Módulo 1 a API está protegida e medida. O **Módulo 2** parte daí
+para a pergunta seguinte: quando algo dá errado, como você descobre o quê.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

@@ -1,0 +1,38 @@
+= Módulo 4 — Além da borda
+:navtitle: Módulo 4 — Introdução
+
+**Quatro partes · cerca de 21 minutos · três delas mudam estado**
+
+== O que você vai conseguir fazer
+
+* explicar por que proteger a entrada não protege o que acontece lá dentro;
+* colocar uma versão nova no ar recebendo uma fração do tráfego;
+* distinguir as duas respostas que uma plataforma dá quando o serviço do outro
+  lado começa a falhar -- e por que as duas devolvem o mesmo código;
+* alcançar uma dependência que **não roda no cluster**, sem expô-la na
+  internet.
+
+== A ideia que atravessa as quatro partes
+
+Os módulos anteriores trataram a borda: quem entra, quanto passa, quanto
+custa. Mas uma aplicação real é feita de serviços que se chamam entre si, e
+depende de coisas que não moram no mesmo lugar.
+
+Este módulo é sobre as outras duas fronteiras -- a de dentro, e a de fora do
+cluster.
+
+== O que você precisa antes
+
+O Módulo 1. As partes 4.2 e 4.3 partem do estado que a 4.1 estabelece, então
+vale fazê-las na ordem.
+
+== Aviso
+
+As partes 4.1, 4.2 e 4.3 alteram configuração de tráfego e a revertem no fim.
+Se você interromper uma delas no meio, o comando `bash scripts/demo.sh
+mesh_base` devolve tudo ao estado inicial.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

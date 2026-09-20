@@ -1,11 +1,11 @@
-= 9. Quatro perguntas, quatro fontes
-:navtitle: 9. Quatro perguntas, quatro fontes
+= 3.2 Quatro perguntas, quatro fontes
+:navtitle: 3.2 Quatro perguntas, quatro fontes
 
 **A quem pertence:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **6 min** · **opcional**
 
 [WARNING.antes]
 ====
-**Antes: os atos 3b e 2.** O 3b deixa o `Forbidden` que você levou como
+**Antes: as partes 3b e 2.** O 3b deixa o `Forbidden` que você levou como
 `app-dev`; o 2 deixa as chamadas contadas por plano. Sem eles as fontes
 respondem "não há rastro" -- o que é verdade, mas não ensina nada.
 ====
@@ -60,7 +60,7 @@ As outras três são `config`, `argo` e `consumo`.
 == Exercício: encontre-se no log
 
 O audit log **rotaciona**. Se o bloco 1 disser que não há recusa na janela
-atual, gere uma agora -- é o mesmo movimento do ato 3b, e desta vez você sabe
+atual, gere uma agora -- é o mesmo movimento da parte 1.4, e desta vez você sabe
 que vai virar registro:
 
 [source,bash,role="execute"]
@@ -135,16 +135,16 @@ Repare como ela atravessa as quatro fontes:
 * **desde quando está valendo** -- o histórico do Argo CD, que amarra a
   revisão do git ao momento em que entrou no ar;
 * **e foi usado?** -- as métricas, quebradas pela dimensão de parceiro do
-  ato 4.
+  parte 1.5.
 
-Nenhuma responde sozinha. É por isso que o ato 6 termina onde termina -- com
+Nenhuma responde sozinha. É por isso que a parte 3.1 termina onde termina -- com
 a configuração versionada, e não apenas aplicada.
 ====
 
 == Configuração
 
 A quarta fonte não é de graça: a dimensão que permite perguntar *quem
-consumiu* vem da TelemetryPolicy do ato 4, não do audit log.
+consumiu* vem da TelemetryPolicy da parte 1.5, não do audit log.
 
 {config_url}/base/policies-telemetry/prod-web-telemetry.yaml[prod-web-telemetry.yaml^]
 -- é ela que carimba o plano na métrica. O par é
@@ -162,6 +162,14 @@ configuração passou por um repositório antes de chegar ao cluster.
 Configuração que só existe no cluster é configuração auditável pela metade. É
 o argumento mais concreto a favor do GitOps que este workshop tem, e ele não
 depende de acreditar em ninguém: as quatro fontes estão aí para conferir.
+
+== Você concluiu o Módulo 3
+
+Você publicou uma API do zero, transformou-a de aberta em governada uma regra
+por vez, e auditou o próprio rastro por quatro fontes diferentes.
+
+Tudo isso aconteceu na **borda**. O xref:m4-00-intro.adoc[Módulo 4] trata das
+outras duas fronteiras: a de dentro da aplicação, e a que sai do cluster.
 
 '''
 

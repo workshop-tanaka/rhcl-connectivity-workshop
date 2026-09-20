@@ -1,15 +1,15 @@
-= 8. A dependência que não mora aqui
-:navtitle: 8. A dependência que não mora aqui
+= 4.4 A dependência que não mora aqui
+:navtitle: 4.4 A dependência que não mora aqui
 
 **A quem pertence:** Arquitetura e Operação -- e a quem já ouviu "esse banco não vai para o Kubernetes". · **5 min**
 
 [NOTE.antes]
 ====
-**Antes:** nenhum ato. Precisa da rede de serviços provisionada -- se
+**Antes:** nenhuma parte. Precisa da rede de serviços provisionada -- se
 `bash scripts/interconnect.sh status` responder, você pode seguir.
 ====
 
-Os atos anteriores cobriram duas fronteiras. O Connectivity Link governou a
+Os módulos anteriores cobriram duas fronteiras. O Connectivity Link governou a
 **borda**: quem entra, quanto passa, quanto custa. O Service Mesh governou o
 **leste-oeste**: quem fala com quem, em qual versão, o que acontece quando
 quebra.
@@ -38,7 +38,7 @@ oc get endpoints mysqldb -n travel-db
 Nenhum pod de banco no namespace da aplicação. E o `Service` que ela consulta
 aponta para o endereço de um **roteador**, não para um pod de MySQL. Mesmo
 assim, `/travels` devolve 45 destinos e o fan-out traz voos, hotéis, carros e
-seguros -- você viu isso nos atos 1 e 5.
+seguros -- você viu isso nas partes 1.1 e 2.1.
 
 === 2. Quem ligou para quem
 
@@ -87,7 +87,7 @@ continua verde: `Site` `Ready`, `Listener` `Ready`, `Connector` `Matched`. E o
 contador não sai do zero.
 
 Pior: a borda segue impecável -- `401` sem chave, `429` no tier free, os planos
-medindo 3/10/14. **Os atos 1 a 4 passam inteiros.** O que morre é o fan-out.
+medindo 3/10/14. **As partes 1.1 a 1.5 passam inteiras.** O que morre é o fan-out.
 
 `Ready` diz que a configuração casou. Só o contador diz que passou byte.
 ====
@@ -129,6 +129,13 @@ leste-oeste com o Service Mesh, e o que está fora com o Service Interconnect
 
 O componente que "não vai para o Kubernetes" não precisa ir. Ele precisa ser
 alcançável, e isso é um par de objetos declarativos de dez linhas.
+
+== Você concluiu o Módulo 4
+
+As três fronteiras estão cobertas: quem entra pela borda, quem fala com quem
+por dentro, e como alcançar o que não mora aqui.
+
+Siga para o xref:99-encerramento.adoc[Encerramento].
 
 '''
 

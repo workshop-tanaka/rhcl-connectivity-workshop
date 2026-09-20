@@ -1,29 +1,32 @@
 * xref:index.adoc[Sobre este workshop]
-* xref:00-preparacao.adoc[0. Preparação]
+* xref:acessos.adoc[Seus acessos]
+* xref:00-preparacao.adoc[Preparação]
 
-.O roteiro
-* xref:01-ato1.adoc[1. A API está fechada por padrão]
-* xref:02-ato2.adoc[2. Nem todo cliente é igual]
-* xref:03-ato3.adoc[3. Precedência de policies é explícita]
-* xref:03b-papeis.adoc[3b. Quem pode o quê]
-* xref:04-ato4.adoc[4. Isso vira número de negócio]
-* xref:05-ato5.adoc[5. O caminho todo é rastreável]
-* xref:06-exposta.adoc[6. De aberta a governada, um passo por vez]
-* xref:07-ato7.adoc[7. A borda não é a única fronteira]
+.Módulo 1 — Proteger e cobrar por uma API na borda
+* xref:m1-00-intro.adoc[Introdução]
+* xref:m1-01-fechada.adoc[1.1 Fechada por padrão]
+* xref:m1-02-planos.adoc[1.2 Nem todo cliente é igual]
+* xref:m1-03-precedencia.adoc[1.3 Precedência de policies]
+* xref:m1-04-papeis.adoc[1.4 Quem pode o quê]
+* xref:m1-05-negocio.adoc[1.5 Isso vira número]
 
-.Extras
-* xref:04b-degrada.adoc[4b. O que acontece quando a policy cai]
-* xref:05b-trace.adoc[5b. O que um contador não responde]
-* xref:07b-canario.adoc[7b. A promoção acontecendo, ao vivo]
-* xref:07c-resiliencia.adoc[7c. O disjuntor, e o que não dá para demonstrar]
+.Módulo 2 — Observar e diagnosticar
+* xref:m2-00-intro.adoc[Introdução]
+* xref:m2-01-rastreavel.adoc[2.1 O caminho é rastreável]
+* xref:m2-02-trace.adoc[2.2 O que um contador não responde]
+* xref:m2-03-negado.adoc[2.3 Onde a requisição morreu]
+* xref:m2-04-degrada.adoc[2.4 Quando a policy cai]
 
-.A terceira fronteira
-* xref:08-interconnect.adoc[8. A dependência que não mora aqui]
+.Módulo 3 — Governar: do manual ao caminho pavimentado
+* xref:m3-00-intro.adoc[Introdução]
+* xref:m3-01-exposta.adoc[3.1 De aberta a governada]
+* xref:m3-02-auditoria.adoc[3.2 Quatro perguntas, quatro fontes]
 
-.A prova
-* xref:09-auditoria.adoc[9. Quatro perguntas, quatro fontes]
-
-.Quando o cliente não consegue
-* xref:10-negado.adoc[10. Onde a requisição morreu]
+.Módulo 4 — Além da borda
+* xref:m4-00-intro.adoc[Introdução]
+* xref:m4-01-leste-oeste.adoc[4.1 A borda não é a única fronteira]
+* xref:m4-02-canario.adoc[4.2 A promoção ao vivo]
+* xref:m4-03-resiliencia.adoc[4.3 O disjuntor]
+* xref:m4-04-interconnect.adoc[4.4 A dependência que não mora aqui]
 
 * xref:99-encerramento.adoc[Encerramento]

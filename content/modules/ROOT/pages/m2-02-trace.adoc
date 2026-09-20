@@ -1,17 +1,17 @@
-= 5b. O que um contador não responde
-:navtitle: 5b. O que um contador não responde
+= 2.2 O que um contador não responde
+:navtitle: 2.2 O que um contador não responde
 
-**Persona:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois do ato 5**
+**Persona:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte 2.1**
 
 [WARNING.antes]
 ====
-**Antes: o ato 5** (ou `bash scripts/traffic.sh mesh`) na última hora, para
+**Antes: a parte 2.1** (ou `bash scripts/traffic.sh mesh`) na última hora, para
 o terceiro movimento, que procura traces de fan-out do `travels`. Os dois
 primeiros geram as próprias chamadas. Se faltar, o script pergunta se dispara
-o ato 5 agora.
+a parte 2.1 agora.
 ====
 
-O ato 4 mostrou a métrica, que **agrega**. O trace **correlaciona**: amarra
+A parte 1.5 mostrou a métrica, que **agrega**. O trace **correlaciona**: amarra
 os pedaços de uma requisição. Quando alguém pergunta "quanto essa policy me
 custa em latência?", nenhum contador responde.
 

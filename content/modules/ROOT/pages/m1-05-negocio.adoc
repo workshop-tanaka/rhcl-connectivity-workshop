@@ -1,14 +1,14 @@
-= 4. Isso vira número de negócio
-:navtitle: 4. Número de negócio
+= 1.5 Isso vira número de negócio
+:navtitle: 1.5 Isso vira número
 
-**Persona:** Negócio (a pergunta é dele) e Operação (quem mantém a cadeia que responde). · **4 min** · **depois do ato 2**
+**Persona:** Negócio (a pergunta é dele) e Operação (quem mantém a cadeia que responde). · **4 min** · **depois da parte 1.2**
 
 [WARNING.antes]
 ====
-**Antes: o ato 2 (ou o aquecimento) nos últimos 15 min.** Este ato só lê.
+**Antes: a parte 1.2 (ou o aquecimento) nos últimos 15 min.** Esta parte só lê.
 Sem tráfego com chave, o painel sai vazio e nada avisa -- por isso o script
 consulta o Thanos ao começar e diz quantas chamadas há na janela. Se for zero,
-ele **pergunta** se roda o ato 2 agora e volta.
+ele **pergunta** se roda a parte 1.2 agora e volta.
 ====
 
 Até aqui foi código de status. Agora é a pergunta que a área comercial faz.
@@ -26,7 +26,7 @@ restante de cada plano. Depois, a mesma consulta direto no Thanos:
 
 == Navegador
 
-{grafana_url}/d/rhcl-negocio-planos[Planos comerciais^] -- o dashboard deste ato. Os
+{grafana_url}/d/rhcl-negocio-planos[Planos comerciais^] -- o dashboard desta parte. Os
 quatro primeiros painéis são a rajada; o quinto é a cota diária consumida por
 plano. Confira o seletor de datasource no topo: **Thanos**.
 
@@ -51,6 +51,15 @@ A cadeia que você percorreu -- PlanPolicy → TelemetryPolicy → Limitador →
 Prometheus → Thanos → Grafana -- já existia no cluster. O que a camada de demo
 acrescentou foi **uma dimensão**: o label `plan`. É a diferença entre saber
 quantos 429 houve e saber que o tier free está saturando.
+
+== Você concluiu o Módulo 1
+
+A API deste ambiente está fechada por padrão, atende três planos comerciais
+diferentes no mesmo endereço, e o consumo de cada cliente aparece em painel --
+e nada disso passou por uma linha de código da aplicação.
+
+O que ficou por responder: **quando algo der errado, como você descobre o
+quê?** É o xref:m2-00-intro.adoc[Módulo 2].
 
 '''
 

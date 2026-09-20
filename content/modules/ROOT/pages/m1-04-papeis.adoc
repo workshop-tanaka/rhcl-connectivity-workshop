@@ -1,11 +1,11 @@
-= 3b. Quem pode o quê
-:navtitle: 3b. Quem pode o quê
+= 1.4 Quem pode o quê
+:navtitle: 1.4 Quem pode o quê
 
 **A quem pertence:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **6 min**
 
 [NOTE.antes]
 ====
-**Antes:** nenhum ato. Faz muito mais sentido logo depois do 3, que mostra a
+**Antes:** nenhuma parte. Faz muito mais sentido logo depois da 1.3, que mostra a
 precedência no status; aqui ela deixa de ser afirmação.
 ====
 
@@ -27,7 +27,7 @@ Connectivity Link herda os três. Dois deles aparecem neste exercício:
   autenticação, plano comercial, telemetria
 |===
 
-O ato 3 mostrou a precedência num campo de status. Aqui quem responde é o
+A parte 1.3 mostrou a precedência num campo de status. Aqui quem responde é o
 **apiserver**.
 
 == Terminal
@@ -124,7 +124,7 @@ Um `Role` no namespace da aplicação e um `ClusterRole` de leitura só para
 
 **Precedência sem privilégio.** O desenvolvedor governa o que é dele e não
 alcança o que não é -- e a policy dele *prevalece* sobre a do gateway na rota
-dele, que foi o que o ato 3 mostrou no status.
+dele, que foi o que a parte 1.3 mostrou no status.
 
 Ninguém precisou escrever um processo, um checklist de revisão ou um acordo
 entre times para isso funcionar. O cluster é quem recusa. É essa a diferença

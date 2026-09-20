@@ -1,5 +1,5 @@
-= 4b. O que acontece quando a policy cai
-:navtitle: 4b. Quando a policy cai
+= 2.4 O que acontece quando a policy cai
+:navtitle: 2.4 Quando a policy cai
 
 **Persona:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
 
@@ -7,7 +7,7 @@
 ====
 **Antes:** o Limitador de pé -- é ele que cai e volta. O exercício gera as
 próprias rajadas, mas faz muito mais sentido depois de você ter visto o `429`
-do ato 2. Ao terminar, rodar o ato 2 de novo confirma que tudo voltou.
+da parte 1.2. Ao terminar, rodar a parte 1.2 de novo confirma que tudo voltou.
 ====
 
 O que se mede: o rate limit **falha aberto**. Com o Limitador fora, a
@@ -40,7 +40,7 @@ confirma que a cota não se perdeu no processo.
 == Configuração
 
 Não há arquivo: o comportamento de falha vive dentro do plugin do gateway, e
-não há campo para exibir. Foi por isso que o ato mede em vez de ler.
+não há campo para exibir. Foi por isso que a parte mede em vez de ler.
 
 == O que isso prova
 
@@ -50,6 +50,15 @@ falha **aberto** -- perde-se a contagem, não a receita. A autenticação faz o
 oposto, e as duas escolhas estão certas, porque respondem a perguntas
 diferentes: "quem é você" não admite dúvida, "quantas vezes você já veio"
 admite.
+
+== Você concluiu o Módulo 2
+
+Você sabe ler o caminho de uma requisição salto a salto, sabe em qual de seis
+lugares uma recusa parou, e sabe o que acontece com o tráfego quando a peça
+que conta as chamadas sai do ar.
+
+Até aqui a configuração já estava pronta. No xref:m3-00-intro.adoc[Módulo 3]
+é você quem a escreve -- e sente o que ela custa.
 
 '''
 

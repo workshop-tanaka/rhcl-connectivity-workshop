@@ -2,7 +2,7 @@
 :navtitle: 0. Preparação
 
 Três minutos, uma vez. O terminal ao lado já está autenticado no cluster e já
-tem tudo o que os atos executam.
+tem tudo o que as partes executam.
 
 == 1. Onde você vai trabalhar
 
@@ -20,7 +20,7 @@ NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
 
 === Onde a configuração vive
 
-Tudo o que os atos citam está publicado no GitLab **deste cluster**, e cada
+Tudo o que as partes citam está publicado no GitLab **deste cluster**, e cada
 página linka o arquivo exato. Vale saber o mapa:
 
 [cols="2,3",options="header"]
@@ -30,7 +30,7 @@ página linka o arquivo exato. Vale saber o mapa:
 | {repo_policies}[rhcl/policies/rhcl-policies^]
 | a camada de policies -- AuthPolicy, PlanPolicy, TelemetryPolicy, e o
   `base/mesh/` com VirtualService, DestinationRule, PeerAuthentication e
-  AuthorizationPolicy. É o que os atos 1 a 4, 7 e 7b abrem.
+  AuthorizationPolicy. É o que as partes 1 a 4, 7 e 7b abrem.
 
 | {repo_no_ambiente}[rhcl/base/rhcl-connectivity-demo^]
 | a documentação, os templates do portal e os workloads da aplicação
@@ -51,7 +51,7 @@ Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
   depende do cluster -- fixá-lo num manifesto quebraria o próximo ambiente.
   Veja o objeto real com `oc get gateway prod-web -n ingress-gateway -o yaml`.
 * **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o disjuntor
-  do ato 7c) é a plataforma que a demo *pressupõe*, não o que ela governa.
+  da parte 4.3) é a plataforma que a demo *pressupõe*, não o que ela governa.
   Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
 ====
 
@@ -64,7 +64,7 @@ bash scripts/demo.sh check --auto
 
 Percorre a cadeia inteira na ordem do roteiro (~45 s) e termina em
 `[OK] demo pronta.`. Um `✗` vermelho é bloqueante e vem com a correção ao
-lado; avisos amarelos degradam um ato, não impedem o workshop.
+lado; avisos amarelos degradam uma parte, não impedem o workshop.
 
 == 3. As telas
 
@@ -81,9 +81,9 @@ direita; todos os links deste guia já abrem em aba nova. No painel ficam o
 
 [cols="1,3"]
 |===
-| Grafana | {grafana_url}/d/rhcl-evidencia[Evidência dos atos^] -- um painel por ato
-| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (atos 5 e 7)
-| Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork do ato 3
+| Grafana | {grafana_url}/d/rhcl-evidencia[Evidência das partes^] -- um painel por parte
+| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes 2.1 e 4.1)
+| Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork da parte 1.3
 |===
 
 == 4. Como o `demo.sh` funciona
@@ -91,13 +91,13 @@ direita; todos os links deste guia já abrem em aba nova. No painel ficam o
 Cada passo **pausa antes de executar**: `Enter` segue, `p` pula, `Ctrl-C` sai.
 Ele mostra o comando na tela antes de rodar, roda, e diz o que olhar na saída.
 
-Três coisas que valem saber antes do ato 1:
+Três coisas que valem saber antes da parte 1.1:
 
 [cols="1,3"]
 |===
-| `◇ depende:` | a linha abaixo do título diz o que o ato pressupõe. Quando falta, o script **pergunta** se roda o pré-ato agora e volta.
-| Desvio | na pausa, digite o nome de outro ato (`ato5`, `trace`, ou só `5`): ele roda inteiro e **volta à mesma pausa**. É para a pergunta fora de ordem.
-| `◇ persona:` | para quem o ato fala. Use para escolher o que mostrar.
+| `◇ depende:` | a linha abaixo do título diz o que a parte pressupõe. Quando falta, o script **pergunta** se roda a parte anterior agora e volta.
+| Desvio | na pausa, digite o nome de outro passo do roteiro (`ato5`, `trace`, ou só `5`): ele roda inteiro e **volta à mesma pausa**. É para a pergunta fora de ordem.
+| `◇ persona:` | para quem a parte fala. Use para escolher o que mostrar.
 |===
 
 [source,bash]
@@ -113,10 +113,10 @@ bash scripts/demo.sh aquece --auto
 ----
 
 Três minutos de tráfego de fundo e **depois** o reset das cotas. Sem ele o
-Grafana do ato 4 mostra linha achatada. A ordem soak → reset é obrigatória:
+Grafana da parte 1.5 mostra linha achatada. A ordem soak → reset é obrigatória:
 o aquecimento queima cota diária, e o reset a devolve.
 
-Pronto. Siga para o xref:01-ato1.adoc[ato 1].
+Pronto. Siga para o xref:m1-01-fechada.adoc[Módulo 1].
 
 '''
 

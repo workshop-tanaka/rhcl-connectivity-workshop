@@ -1,11 +1,11 @@
-= 7c. O disjuntor, e o que não dá para demonstrar
-:navtitle: 7c. O disjuntor
+= 4.3 O disjuntor, e o que não dá para demonstrar
+:navtitle: 4.3 O disjuntor
 
 **Persona:** Operação/SRE -- flags do Envoy, ejeção, e o que fault injection não prova. · **5 min** · **muda estado** · depois do 7
 
 [NOTE.antes]
 ====
-**Antes:** o ato 7 na narrativa -- a carga sai do `cars` porque a
+**Antes:** a parte 4.1 na narrativa -- a carga sai do `cars` porque a
 AuthorizationPolicy dele só aceita os vendedores. Tecnicamente roda sozinho:
 DestinationRule como `base/mesh/` declara e pods v1 e v2 de pé.
 ====

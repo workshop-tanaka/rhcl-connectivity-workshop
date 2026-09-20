@@ -1,0 +1,36 @@
+= Módulo 3 — Governar: do manual ao caminho pavimentado
+:navtitle: Módulo 3 — Introdução
+
+**Duas partes · cerca de 16 minutos · a 3.1 cria e remove objetos**
+
+== O que você vai conseguir fazer
+
+* publicar uma API do jeito natural e ver, passo a passo, o que falta nela;
+* transformar uma API aberta em governada acrescentando **uma regra por vez**;
+* responder quatro perguntas de auditoria sobre o que você mesmo acabou de
+  fazer -- e saber qual fonte responde cada uma.
+
+== A ideia que atravessa as duas partes
+
+Nos módulos anteriores a configuração já estava pronta. Aqui você a escreve --
+e sente o que custa.
+
+O ponto não é a digitação. É que uma configuração que existe **só no cluster**
+responde metade das perguntas que alguém vai fazer depois: ela diz o que está
+valendo, e não diz quem decidiu, quando, nem por quê.
+
+== O que você precisa antes
+
+Os Módulos 1 e 2. A parte 3.2 audita o rastro que você deixou neles -- sem
+esse rastro, as fontes respondem "não há registro", o que é verdade e não
+ensina nada.
+
+== Aviso sobre a parte 3.1
+
+Ela cria uma API nova do zero e a remove no fim. Nenhum objeto dos outros
+módulos é tocado.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

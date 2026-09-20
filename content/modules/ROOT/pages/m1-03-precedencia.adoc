@@ -1,12 +1,12 @@
-= 3. Precedência de policies é explícita
-:navtitle: 3. Precedência
+= 1.3 Precedência de policies é explícita
+:navtitle: 1.3 Precedência de policies
 
 **Persona:** Engenheiro de Plataforma -- quem responde "qual policy venceu?" sem arqueologia. · **4 min**
 
 [NOTE.antes]
 ====
-**Antes:** nada -- este ato só lê status de policy. O texto se refere aos
-tiers do ato 2, mas nenhum comando aqui depende dele.
+**Antes:** nada -- esta parte só lê status de policy. O texto se refere aos
+tiers da parte 1.2, mas nenhum comando aqui depende dele.
 ====
 
 O par aqui é Gateway contra rota. As policies que miram o `prod-web` valem
