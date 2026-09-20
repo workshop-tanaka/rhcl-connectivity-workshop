@@ -34,3 +34,19 @@ tabs:
   - name: Terminal
     path: /terminal/
     port: 443
+
+  # SEGUNDO terminal, e sao DUAS SESSOES de verdade, nao a mesma tela: o ttyd
+  # sobe sem --max-clients e sem --once (`ttyd -p 7681 -P 5 -W /usr/bin/bash`),
+  # entao cada iframe abre o proprio bash. Conferido no pod em 2026-09-20.
+  #
+  # Para que serve: partes que MUDAM ESTADO ficam melhores com um observador
+  # do lado -- derrubar o Limitador na 2.4 enquanto o trafego roda, acompanhar
+  # o log colorido da 4.2, provocar na 2.3 e observar aqui.
+  #
+  # E ABA, nao painel: o nookbag so entende abas. Painel empilhado como o do
+  # template classico exigiria trocar de chart, e com ele viria wetty+SSH em
+  # lugar do ttyd ja autenticado -- ou seja, o participante passaria a ter de
+  # fazer login. Medido nos dois charts em 2026-09-20.
+  - name: Terminal 2
+    path: /terminal/
+    port: 443
