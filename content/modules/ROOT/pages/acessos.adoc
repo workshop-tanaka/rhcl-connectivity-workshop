@@ -44,7 +44,7 @@ entre elas que o Módulo 1 explora:
 
 Para chamar a API com uma delas, a chave vai na própria URL:
 
-[source,bash,role="execute"]
+[source,bash,role="execute",subs="attributes+"]
 ----
 curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 300
 ----
