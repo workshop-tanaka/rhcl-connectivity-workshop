@@ -26,8 +26,8 @@ quando quiser recomeçar do zero. Para repetir as partes no mesmo dia,
 |===
 | JWT/OIDC em vez de API key? | Sim -- a AuthPolicy aceita os dois; a demo usa chave porque cabe numa tela.
 | Cobrança por consumidor? | É por **plano**, e o motivo é técnico: o contador é por tier, e o label do parceiro é dimensão de métrica, não de limite.
-| E se o Limitador cair? | `failureMode: allow` -- a parte 2.4 mede isso. A autenticação é o oposto.
-| Quanto custa em latência? | Duas chamadas gRPC, visíveis no trace -- a parte 2.2 mede isso.
+| E se o Limitador cair? | `failureMode: allow` -- a parte 3.4 mede isso. A autenticação é o oposto.
+| Quanto custa em latência? | Duas chamadas gRPC, visíveis no trace -- a parte 3.2 mede isso.
 |===
 
 == Para levar

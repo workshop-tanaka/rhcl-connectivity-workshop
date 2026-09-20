@@ -52,12 +52,16 @@ Prometheus → Thanos → Grafana -- já existia no cluster. O que a camada de d
 acrescentou foi **uma dimensão**: o label `plan`. É a diferença entre saber
 quantos 429 houve e saber que o tier free está saturando.
 
-== Você concluiu o Módulo 1
+== Fim da primeira metade do Módulo 1
 
 A API deste ambiente está fechada por padrão, atende três planos comerciais
 diferentes no mesmo endereço, e o consumo de cada cliente aparece em painel --
 e nada disso passou por uma linha de código da aplicação.
 
-O que ficou por responder: **quando algo der errado, como você descobre o
-quê?** É o xref:m2-00-intro.adoc[Módulo 2].
+Até aqui você **observou** uma API que outra pessoa configurou. Da
+xref:m1-06-exposta.adoc[parte 1.6] em diante é você quem publica -- e sente o
+que a configuração custa.
 
+Se quiser parar por aqui, este é um bloco completo: o
+xref:99-encerramento.adoc[Encerramento] fecha o workshop e diz como devolver o
+ambiente ao estado inicial.

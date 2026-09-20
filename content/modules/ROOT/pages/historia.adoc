@@ -87,22 +87,18 @@ faz exatamente isso.
 |===
 | módulo | resolve
 
-| xref:m1-00-intro.adoc[1 — Proteger e cobrar por uma API na borda]
-| os problemas **1 e 2**: a API passa a exigir credencial e a distinguir
-  planos, e o consumo vira número
+| xref:m1-00-intro.adoc[1 — Connectivity Link: a API como produto]
+| os problemas **1, 2 e 4**: a API passa a exigir credencial e a distinguir
+  planos, o consumo vira número, e a configuração ganha dono, data e revisão
 
-| xref:m2-00-intro.adoc[2 — Observar e diagnosticar]
+| xref:m2-00-intro.adoc[2 — Service Mesh: a fronteira de dentro]
+| o que a borda não cobre: o tráfego **entre** os serviços
+
+| xref:m3-00-intro.adoc[3 — Observar e diagnosticar as duas fronteiras]
 | o problema **3**: seguir a requisição, e saber em qual de seis lugares ela
   morreu
 
-| xref:m3-00-intro.adoc[3 — Governar: do manual ao caminho pavimentado]
-| o problema **4**: a configuração ganha dono, data e revisão -- e uma API
-  nova deixa de poder nascer errada
-
-| xref:m4-00-intro.adoc[4 — Service Mesh: a fronteira de dentro]
-| o que os três anteriores não cobrem: o tráfego **entre** os serviços
-
-| xref:m5-00-intro.adoc[5 — Service Interconnect: o que não mora aqui]
+| xref:m4-00-intro.adoc[4 — Service Interconnect: o que não mora aqui]
 | o banco que ficou fora do cluster, e continua fora
 |===
 

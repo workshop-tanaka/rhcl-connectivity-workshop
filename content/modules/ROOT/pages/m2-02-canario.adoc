@@ -1,11 +1,11 @@
-= 4.2 A promoção acontecendo, ao vivo
-:navtitle: 4.2 A promoção ao vivo
+= 2.2 A promoção acontecendo, ao vivo
+:navtitle: 2.2 A promoção ao vivo
 
 **Persona:** Desenvolvedor e Engenheiro de Plataforma -- quem promove, e quem decide o peso. · **3 min** · **muda estado** · depois do 7
 
 [NOTE.antes]
 ====
-**Antes:** a parte 4.1 na narrativa (ele mostra o 90/10 parado; este o põe em
+**Antes:** a parte 2.1 na narrativa (ele mostra o 90/10 parado; este o põe em
 movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
 90/10 -- ponto de partida e de retorno, e o script confere.
 ====

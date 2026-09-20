@@ -1,32 +1,36 @@
-= Módulo 2 — Observar e diagnosticar
+= Módulo 2 — Service Mesh: a fronteira de dentro
 :navtitle: Módulo 2 — Introdução
 
-**Quatro partes · cerca de 20 minutos · uma delas muda estado**
+**Três partes · cerca de 16 minutos · todas mudam estado**
+
+**Produto protagonista:** Red Hat OpenShift Service Mesh
 
 == O que você vai conseguir fazer
 
-* ler o caminho de uma requisição salto a salto, sem instrumentar a aplicação;
-* saber o que um contador **não** consegue responder, e quando trocar de
-  ferramenta;
-* olhar uma recusa de API e dizer em qual de seis lugares ela parou;
-* prever o que acontece com o tráfego quando um componente da plataforma cai.
+* explicar por que proteger a entrada não protege o que acontece lá dentro;
+* colocar uma versão nova no ar recebendo uma fração do tráfego;
+* distinguir as duas respostas que uma plataforma dá quando o serviço do outro
+  lado começa a falhar -- e por que as duas devolvem o mesmo código;
+* distinguir os dois `503` que o Service Mesh produz quando o serviço do outro
+  lado começa a falhar.
 
 == A ideia que atravessa as quatro partes
 
-Medir é fácil; **atribuir** é difícil. Um gráfico diz que houve erro. Ele não
-diz de quem, nem onde, nem por quê.
+Os módulos anteriores trataram a **borda**: quem entra, quanto passa, quanto
+custa. Mas uma aplicação real é feita de serviços que se chamam entre si -- e
+uma chave de API que abre a porta da rua não diz nada sobre quem pode abrir as
+portas internas.
 
-Este módulo é sobre a diferença entre os dois, e sobre uma disciplina que vale
-mais que qualquer ferramenta: diagnóstico não é adivinhar onde parou, é
-**descartar** onde não parou.
+Este módulo é sobre essa segunda fronteira, a **leste-oeste**.
 
 == O que você precisa antes
 
-O Módulo 1, por dois motivos: ele gera o tráfego que a parte 2.1 procura, e a
-parte 2.3 usa as recusas que as regras do Módulo 1 produzem.
+O Módulo 1. As partes 2.2 e 2.3 partem do estado que a 2.1 estabelece, então
+vale fazê-las na ordem.
 
-== Aviso sobre a parte 2.4
+== Aviso
 
-Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
-você interromper com `Ctrl-C`. As outras três não alteram nada.
+As três alteram configuração de tráfego e a revertem no fim. Se você
+interromper uma delas no meio, o comando `bash scripts/demo.sh mesh_base`
+devolve tudo ao estado inicial.
 

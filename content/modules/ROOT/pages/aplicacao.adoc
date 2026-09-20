@@ -50,13 +50,13 @@ ao fim, que a plataforma fez o trabalho -- e não a aplicação.
 |===
 
 Só o `travels` tem rota externa. Os outros seis existem **atrás** dele, e é
-essa assimetria que o Módulo 4 explora: proteger a entrada não diz nada sobre
+essa assimetria que o Módulo 2 explora: proteger a entrada não diz nada sobre
 o que acontece depois dela.
 
 === O `discounts` tem duas versões de propósito
 
 `discounts-v1` e `discounts-v2` rodam ao mesmo tempo. É esse par que torna
-possível a parte 4.2, onde uma fração do tráfego vai para a versão nova sem
+possível a parte 2.2, onde uma fração do tráfego vai para a versão nova sem
 ninguém trocar imagem de Deployment.
 
 == A API que você vai chamar
@@ -98,8 +98,8 @@ Aqui o `travels` chama os outros serviços e junta tudo numa resposta só:
 ----
 
 **É este caminho que faz a aplicação ser mais que um serviço.** Uma chamada
-externa vira várias internas -- e é por isso que o Módulo 2 consegue mostrar
-um trace com vários saltos, e o Módulo 4 tem o que proteger.
+externa vira várias internas -- e é por isso que o Módulo 3 consegue mostrar
+um trace com vários saltos, e o Módulo 2 tem o que proteger.
 
 [NOTE]
 ====
@@ -132,7 +132,7 @@ assunto é *de onde vem a identidade de quem chama*.
 
 == E as APIs que você mesmo vai criar
 
-No Módulo 3 você publica uma API nova, do zero -- primeiro à mão, para sentir
+No Módulo 1 você publica uma API nova, do zero -- primeiro à mão, para sentir
 o que falta, e depois pelo caminho pavimentado do portal. Essa API é sua, nasce
 e morre dentro do módulo, e não toca em nada descrito nesta página.
 

@@ -1,35 +1,36 @@
-= Módulo 3 — Governar: do manual ao caminho pavimentado
+= Módulo 3 — Observar e diagnosticar as duas fronteiras
 :navtitle: Módulo 3 — Introdução
 
-**Três partes · cerca de 28 minutos · as partes 3.1 e 3.2 criam e removem objetos**
+**Quatro partes · cerca de 20 minutos · uma delas muda estado**
+
+**Produtos:** Connectivity Link e Service Mesh -- a observabilidade é dos dois
 
 == O que você vai conseguir fazer
 
-* publicar uma API do jeito natural e ver, passo a passo, o que falta nela;
-* transformar uma API aberta em governada acrescentando **uma regra por vez**;
-* publicar a **mesma** API pelo caminho pavimentado do portal, e comparar o
-  que nasce de um jeito e do outro;
-* responder quatro perguntas de auditoria sobre o que você mesmo acabou de
-  fazer -- e saber qual fonte responde cada uma.
+* ler o caminho de uma requisição salto a salto, sem instrumentar a aplicação;
+* saber o que um contador **não** consegue responder, e quando trocar de
+  ferramenta;
+* olhar uma recusa de API e dizer em qual de seis lugares ela parou;
+* prever o que acontece com o tráfego quando um componente da plataforma cai.
 
-== A ideia que atravessa as duas partes
+== A ideia que atravessa as quatro partes
 
-Nos módulos anteriores a configuração já estava pronta. Aqui você a escreve --
-e sente o que custa.
+Medir é fácil; **atribuir** é difícil. Um gráfico diz que houve erro. Ele não
+diz de quem, nem onde, nem por quê.
 
-O ponto não é a digitação. É que uma configuração que existe **só no cluster**
-responde metade das perguntas que alguém vai fazer depois: ela diz o que está
-valendo, e não diz quem decidiu, quando, nem por quê.
+Este módulo é sobre a diferença entre os dois, e sobre uma disciplina que vale
+mais que qualquer ferramenta: diagnóstico não é adivinhar onde parou, é
+**descartar** onde não parou.
 
 == O que você precisa antes
 
-Os Módulos 1 e 2. A parte 3.3 audita o rastro que você deixou neles -- sem
-esse rastro, as fontes respondem "não há registro", o que é verdade e não
-ensina nada. E a parte 3.2 só faz sentido depois da 3.1: ela é o contraste.
+Os Módulos 1 e 2 -- e é por isso que este vem depois deles. A parte 3.3
+percorre seis lugares onde uma chamada pode morrer, e dois deles são do Service
+Mesh: sem o Módulo 2, `sidecar` e `AuthorizationPolicy` seriam palavras novas
+no meio de um exercício de diagnóstico.
 
-== Aviso sobre as partes 3.1 e 3.2
+== Aviso sobre a parte 3.4
 
-Cada uma cria uma API nova. A 3.1 se limpa sozinha no fim; a 3.2 cria uma API
-de verdade, pelo portal, que fica no ar até você rodar o script de limpeza que
-a própria página indica. Nenhum objeto dos outros módulos é tocado.
+Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
+você interromper com `Ctrl-C`. As outras três não alteram nada.
 

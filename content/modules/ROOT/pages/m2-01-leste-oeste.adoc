@@ -1,12 +1,12 @@
-= 4.1 A borda não é a única fronteira
-:navtitle: 4.1 A borda não é a única fronteira
+= 2.1 A borda não é a única fronteira
+:navtitle: 2.1 A borda não é a única fronteira
 
 **Persona:** Segurança e Engenheiro de Plataforma -- identidade de serviço, não de cliente. · **8 min** · mesh no estado base
 
 [WARNING.antes]
 ====
 **Antes: o estado base do Service Mesh** -- mTLS `STRICT`, `discounts` em
-90/10, sem fault injection. Nenhuma parte antes; mas as partes 4.2, 4.3 e o passo `falha` mexem
+90/10, sem fault injection. Nenhuma parte antes; mas as partes 2.2, 2.3 e o passo `falha` mexem
 nesse estado e o devolvem ao sair, e um Ctrl-C no meio deles não. O script
 confere os três ao começar e oferece o passo `mesh_base` (~5 s) se algo
 estiver fora.

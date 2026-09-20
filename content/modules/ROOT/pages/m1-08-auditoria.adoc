@@ -1,5 +1,5 @@
-= 3.3 Quatro perguntas, quatro fontes
-:navtitle: 3.3 Quatro perguntas, quatro fontes
+= 1.8 Quatro perguntas, quatro fontes
+:navtitle: 1.8 Quatro perguntas, quatro fontes
 
 **A quem pertence:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **6 min** · **opcional**
 
@@ -137,7 +137,7 @@ Repare como ela atravessa as quatro fontes:
 * **e foi usado?** -- as métricas, quebradas pela dimensão de parceiro do
   parte 1.5.
 
-Nenhuma responde sozinha. É por isso que a parte 3.1 termina onde termina -- com
+Nenhuma responde sozinha. É por isso que a parte 1.6 termina onde termina -- com
 a configuração versionada, e não apenas aplicada.
 ====
 
@@ -163,11 +163,16 @@ Configuração que só existe no cluster é configuração auditável pela metad
 o argumento mais concreto a favor do GitOps que este workshop tem, e ele não
 depende de acreditar em ninguém: as quatro fontes estão aí para conferir.
 
-== Você concluiu o Módulo 3
+== Você concluiu o Módulo 1
 
 Você publicou uma API do zero, transformou-a de aberta em governada uma regra
 por vez, e auditou o próprio rastro por quatro fontes diferentes.
 
-Tudo isso aconteceu na **borda**. O xref:m4-00-intro.adoc[Módulo 4] trata das
-outras duas fronteiras: a de dentro da aplicação, e a que sai do cluster.
+Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
+governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego
+**entre** os serviços, que daqui não se enxerga.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.
+
 

@@ -1,11 +1,11 @@
-= 4.3 Circuit breaker: dois `503`, e como distingui-los
-:navtitle: 4.3 Circuit breaker
+= 2.3 Circuit breaker: dois `503`, e como distingui-los
+:navtitle: 2.3 Circuit breaker
 
-**A quem pertence:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte 4.1
+**A quem pertence:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte 2.1
 
 [NOTE.antes]
 ====
-**Antes:** a parte 4.1 -- a carga sai do `cars` porque a
+**Antes:** a parte 2.1 -- a carga sai do `cars` porque a
 AuthorizationPolicy dele só aceita os vendedores. Tecnicamente roda sozinho:
 DestinationRule como `base/mesh/` declara e pods v1 e v2 de pé.
 ====
@@ -68,10 +68,16 @@ plataforma opostas com o mesmo código de erro.
 
 
 
-== Você concluiu o Módulo 4
+== Você concluiu o Módulo 2
 
 O Service Mesh cobriu a fronteira de dentro: identidade entre serviços,
 autorização, promoção de versão ao vivo e o comportamento sob falha.
 
-Falta a terceira fronteira -- o que a aplicação precisa e que **não roda aqui**.
-É o xref:m5-00-intro.adoc[Módulo 5].
+Você já conhece as duas camadas de governança. O
+xref:m3-00-intro.adoc[Módulo 3] ensina a **observar e diagnosticar** as duas --
+e agora faz sentido, porque metade dos lugares onde uma chamada morre são do
+Service Mesh.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.
+

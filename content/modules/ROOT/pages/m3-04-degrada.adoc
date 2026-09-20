@@ -1,5 +1,5 @@
-= 2.4 O que acontece quando a policy cai
-:navtitle: 2.4 Quando a policy cai
+= 3.4 O que acontece quando a policy cai
+:navtitle: 3.4 Quando a policy cai
 
 **Persona:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
 
@@ -51,12 +51,16 @@ oposto, e as duas escolhas estão certas, porque respondem a perguntas
 diferentes: "quem é você" não admite dúvida, "quantas vezes você já veio"
 admite.
 
-== Você concluiu o Módulo 2
+== Você concluiu o Módulo 3
 
 Você sabe ler o caminho de uma requisição salto a salto, sabe em qual de seis
 lugares uma recusa parou, e sabe o que acontece com o tráfego quando a peça
 que conta as chamadas sai do ar.
 
-Até aqui a configuração já estava pronta. No xref:m3-00-intro.adoc[Módulo 3]
-é você quem a escreve -- e sente o que ela custa.
+Falta a terceira fronteira: o que a aplicação precisa e que **não roda
+aqui**. É o xref:m4-00-intro.adoc[Módulo 4], e ele fecha o workshop.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.
+
 

@@ -1,7 +1,9 @@
-= Módulo 1 — Proteger e cobrar por uma API na borda
+= Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Cinco partes · cerca de 20 minutos · nada muda de estado**
+**Oito partes · cerca de 48 minutos · as partes 1.6 e 1.7 criam objetos**
+
+**Produto protagonista:** Red Hat Connectivity Link
 
 == O que você vai conseguir fazer
 
@@ -11,7 +13,10 @@ Ao final deste módulo você consegue explicar, com o ambiente na mão:
 * como o mesmo endereço atende clientes diferentes com limites diferentes;
 * o que acontece quando duas regras disputam a mesma rota -- e qual vence;
 * quem, dentro da organização, tem permissão para escrever cada tipo de regra;
-* como tudo isso vira número que a área de negócio entende.
+* como tudo isso vira número que a área de negócio entende;
+* publicar uma API do zero à mão, e sentir o que falta nela;
+* refazer a **mesma** API pelo caminho pavimentado do portal, e comparar;
+* auditar o próprio rastro por quatro fontes diferentes.
 
 == A ideia que atravessa as cinco partes
 
@@ -22,13 +27,26 @@ Quem decide quem chega é uma camada na frente dela. Este módulo é sobre essa
 camada: o que ela sabe fazer, e o que muda quando você a trata como parte da
 plataforma em vez de um acessório da aplicação.
 
-== O que você precisa antes
+== Como percorrer
 
-Só a xref:00-preparacao.adoc[Preparação]. As cinco partes rodam em sequência,
-e a 1.5 lê os dados que a 1.2 gera -- então vale não pular a 1.2.
+Só a xref:00-preparacao.adoc[Preparação] é pré-requisito. Dentro do módulo há
+duas metades, e dá para parar entre elas:
+
+**1.1 a 1.5 — a API que já existe.** Você observa e mede uma API que outra
+pessoa configurou. Nada muda de estado. A 1.5 lê os dados que a 1.2 gera, então
+vale não pular a 1.2.
+
+**1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, refaz pelo
+caminho pavimentado, e audita o que fez. Estas criam objetos, e cada página diz
+como desfazer.
+
+Se o tempo for curto, parar na 1.5 deixa um bloco completo e coerente.
 
 == Onde isso te deixa
 
-No fim do Módulo 1 a API está protegida e medida. O **Módulo 2** parte daí
-para a pergunta seguinte: quando algo dá errado, como você descobre o quê.
+No fim do Módulo 1 você sabe governar a borda -- e sabe que isso é
+configuração com dono, data e revisão, não um `oc apply` numa terça-feira.
+
+O **Módulo 2** trata da fronteira seguinte: o tráfego **entre** os serviços,
+que o Connectivity Link não enxerga.
 

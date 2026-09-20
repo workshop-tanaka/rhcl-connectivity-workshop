@@ -1,5 +1,5 @@
-= 3.1 De aberta a governada, um passo por vez
-:navtitle: 3.1 De aberta a governada
+= 1.6 De aberta a governada, um passo por vez
+:navtitle: 1.6 De aberta a governada
 
 **A quem pertence:** Desenvolvedor -- e ao Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
 
@@ -130,5 +130,5 @@ Você escreveu quatro arquivos e levou dez minutos. A próxima parte publica a
 **mesma** API pelo caminho que a plataforma oferece -- e a comparação entre as
 duas é o ponto do módulo.
 
-Siga para a xref:m3-02-colheita.adoc[parte 3.2].
+Siga para a xref:m1-07-colheita.adoc[parte 1.7].
 

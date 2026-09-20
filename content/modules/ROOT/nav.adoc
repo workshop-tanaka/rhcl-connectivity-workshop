@@ -5,35 +5,32 @@
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
 
-.Módulo 1 — Proteger e cobrar por uma API na borda
+.Módulo 1 — Connectivity Link
 * xref:m1-00-intro.adoc[Introdução]
 * xref:m1-01-fechada.adoc[1.1 Fechada por padrão]
 * xref:m1-02-planos.adoc[1.2 Nem todo cliente é igual]
 * xref:m1-03-precedencia.adoc[1.3 Precedência de policies]
 * xref:m1-04-papeis.adoc[1.4 Quem pode o quê]
 * xref:m1-05-negocio.adoc[1.5 Isso vira número]
+* xref:m1-06-exposta.adoc[1.6 De aberta a governada]
+* xref:m1-07-colheita.adoc[1.7 O caminho pavimentado]
+* xref:m1-08-auditoria.adoc[1.8 Quatro perguntas, quatro fontes]
 
-.Módulo 2 — Observar e diagnosticar
+.Módulo 2 — Service Mesh
 * xref:m2-00-intro.adoc[Introdução]
-* xref:m2-01-rastreavel.adoc[2.1 O caminho é rastreável]
-* xref:m2-02-trace.adoc[2.2 O que um contador não responde]
-* xref:m2-03-negado.adoc[2.3 Onde a requisição morreu]
-* xref:m2-04-degrada.adoc[2.4 Quando a policy cai]
+* xref:m2-01-leste-oeste.adoc[2.1 A borda não é a única fronteira]
+* xref:m2-02-canario.adoc[2.2 A promoção ao vivo]
+* xref:m2-03-resiliencia.adoc[2.3 Circuit breaker]
 
-.Módulo 3 — Governar: do manual ao caminho pavimentado
+.Módulo 3 — Observar e diagnosticar
 * xref:m3-00-intro.adoc[Introdução]
-* xref:m3-01-exposta.adoc[3.1 De aberta a governada]
-* xref:m3-02-colheita.adoc[3.2 O caminho pavimentado]
-* xref:m3-03-auditoria.adoc[3.3 Quatro perguntas, quatro fontes]
+* xref:m3-01-rastreavel.adoc[3.1 O caminho é rastreável]
+* xref:m3-02-trace.adoc[3.2 O que um contador não responde]
+* xref:m3-03-negado.adoc[3.3 Onde a requisição morreu]
+* xref:m3-04-degrada.adoc[3.4 Quando a policy cai]
 
-.Módulo 4 — Service Mesh: a fronteira de dentro
+.Módulo 4 — Service Interconnect
 * xref:m4-00-intro.adoc[Introdução]
-* xref:m4-01-leste-oeste.adoc[4.1 A borda não é a única fronteira]
-* xref:m4-02-canario.adoc[4.2 A promoção ao vivo]
-* xref:m4-03-resiliencia.adoc[4.3 Circuit breaker]
-
-.Módulo 5 — Service Interconnect: o que não mora aqui
-* xref:m5-00-intro.adoc[Introdução]
-* xref:m5-01-interconnect.adoc[5.1 A dependência que não mora aqui]
+* xref:m4-01-interconnect.adoc[4.1 A dependência que não mora aqui]
 
 * xref:99-encerramento.adoc[Encerramento]

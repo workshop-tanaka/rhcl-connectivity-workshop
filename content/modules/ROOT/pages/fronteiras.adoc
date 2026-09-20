@@ -62,8 +62,8 @@ O que ele **não** sabe: o que acontece depois que a chamada entrou. Uma vez
 passada a borda, ele não tem mais opinião.
 
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação^]
-· Módulos xref:m1-00-intro.adoc[1], xref:m2-00-intro.adoc[2] e
-xref:m3-00-intro.adoc[3]
+· Módulo xref:m1-00-intro.adoc[1] inteiro, e o diagnóstico do
+xref:m3-00-intro.adoc[Módulo 3]
 
 === Service Mesh: quem fala com quem, lá dentro
 
@@ -74,7 +74,7 @@ O que ele **não** sabe: quem é o cliente comercial do outro lado da borda. Par
 o Service Mesh, tudo que vem do Gateway é *"o Gateway"*.
 
 https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.0[Documentação^]
-· Módulo xref:m4-00-intro.adoc[4]
+· Módulo xref:m2-00-intro.adoc[2]
 
 === Service Interconnect: como alcançar o que ficou fora
 
@@ -85,7 +85,7 @@ alcançável.
 O que ele **não** faz: política. Ele resolve conectividade, não governança.
 
 https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Documentação^]
-· Módulo xref:m5-00-intro.adoc[5]
+· Módulo xref:m4-00-intro.adoc[4]
 
 == As três juntas, numa chamada só
 
@@ -108,18 +108,15 @@ na aplicação.
 |===
 | módulo | produto protagonista
 
-| xref:m1-00-intro.adoc[1 — Proteger e cobrar por uma API na borda]
+| xref:m1-00-intro.adoc[1 — Connectivity Link: a API como produto]
 | Connectivity Link
 
-| xref:m2-00-intro.adoc[2 — Observar e diagnosticar]
-| Connectivity Link e Service Mesh (a observabilidade é dos dois)
-
-| xref:m3-00-intro.adoc[3 — Governar: do manual ao caminho pavimentado]
-| Connectivity Link, com Developer Hub e GitOps
-
-| xref:m4-00-intro.adoc[4 — Service Mesh: a fronteira de dentro]
+| xref:m2-00-intro.adoc[2 — Service Mesh: a fronteira de dentro]
 | Service Mesh
 
-| xref:m5-00-intro.adoc[5 — Service Interconnect: o que não mora aqui]
+| xref:m3-00-intro.adoc[3 — Observar e diagnosticar as duas fronteiras]
+| Connectivity Link e Service Mesh
+
+| xref:m4-00-intro.adoc[4 — Service Interconnect: o que não mora aqui]
 | Service Interconnect
 |===

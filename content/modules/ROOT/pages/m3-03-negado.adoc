@@ -1,5 +1,5 @@
-= 2.3 Onde a requisição morreu
-:navtitle: 2.3 Onde a requisição morreu
+= 3.3 Onde a requisição morreu
+:navtitle: 3.3 Onde a requisição morreu
 
 **A quem pertence:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **8 min** · **não muda estado**
 
@@ -375,7 +375,7 @@ explicando o limite.
 Diagnóstico não é adivinhação: é **descarte**. Cada sintoma elimina um
 pedaço do caminho, e os dois cabeçalhos certos eliminam mais da metade dele.
 
-E há uma simetria que vale notar: é a **mesma evidência** que a parte 3.2 usa
+E há uma simetria que vale notar: é a **mesma evidência** que a parte 1.7 usa
 para auditar. A auditoria parte da mudança e pergunta o efeito; o diagnóstico
 parte do efeito e pergunta a mudança.
 

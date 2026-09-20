@@ -1,11 +1,11 @@
-= 3.2 A mesma API, pelo caminho pavimentado
-:navtitle: 3.2 O caminho pavimentado
+= 1.7 A mesma API, pelo caminho pavimentado
+:navtitle: 1.7 O caminho pavimentado
 
 **A quem pertence:** Desenvolvedor (quem consome o caminho) e Engenheiro de Plataforma (quem o constrói). · **12 min** · **muda estado**
 
 [WARNING.antes]
 ====
-**Antes: a parte 3.1.** Ela é o contraste inteiro desta aqui. Sem ter escrito
+**Antes: a parte 1.6.** Ela é o contraste inteiro desta aqui. Sem ter escrito
 os quatro arquivos à mão, o que vem a seguir parece só um formulário
 conveniente.
 ====
@@ -123,7 +123,7 @@ cd /tmp && git clone -q "{repo_apis}/<o-nome-que-voce-deu>.git" api-nova \
 
 == Agora compare
 
-Esta é a parte que importa. Você escreveu **quatro arquivos** na parte 3.1.
+Esta é a parte que importa. Você escreveu **quatro arquivos** na parte 1.6.
 O template gerou **vinte e três**.
 
 [source,bash,role="execute"]
@@ -153,7 +153,7 @@ a|
 * `kustomization.yaml`
 |===
 
-E fora de `manifests/`, mais sete arquivos que a parte 3.1 nem mencionou:
+E fora de `manifests/`, mais sete arquivos que a parte 1.6 nem mencionou:
 
 [cols="1,2",options="header"]
 |===
@@ -191,7 +191,7 @@ qualquer pod do cluster possa chamar. Não porque haja uma convenção escrita
 num wiki -- porque o formulário não oferece a alternativa.
 
 **A configuração passou a ter dono, data e revisão.** O que você fez à mão na
-parte 3.1 existia **só no cluster**: ninguém sabia quem criou, quando, nem por
+parte 1.6 existia **só no cluster**: ninguém sabia quem criou, quando, nem por
 quê. Aqui os mesmos objetos nasceram num repositório, com autor e histórico.
 Mudar uma policy vira um merge request que alguém revisa.
 

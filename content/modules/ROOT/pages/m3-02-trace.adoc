@@ -1,14 +1,14 @@
-= 2.2 O que um contador não responde
-:navtitle: 2.2 O que um contador não responde
+= 3.2 O que um contador não responde
+:navtitle: 3.2 O que um contador não responde
 
-**Persona:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte 2.1**
+**Persona:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte 3.1**
 
 [WARNING.antes]
 ====
-**Antes: a parte 2.1** (ou `bash scripts/traffic.sh mesh`) na última hora, para
+**Antes: a parte 3.1** (ou `bash scripts/traffic.sh mesh`) na última hora, para
 o terceiro movimento, que procura traces de fan-out do `travels`. Os dois
 primeiros geram as próprias chamadas. Se faltar, o script pergunta se dispara
-a parte 2.1 agora.
+a parte 3.1 agora.
 ====
 
 A parte 1.5 mostrou a métrica, que **agrega**. O trace **correlaciona**: amarra

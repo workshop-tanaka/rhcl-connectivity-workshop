@@ -1,12 +1,12 @@
-= 2.1 O caminho todo é rastreável
-:navtitle: 2.1 O caminho é rastreável
+= 3.1 O caminho todo é rastreável
+:navtitle: 3.1 O caminho é rastreável
 
 **Persona:** Operação/SRE e Desenvolvedor -- a mesma tela serve a incidente e a debug. · **3 min**
 
 [NOTE.antes]
 ====
 **Antes:** nada -- gera o próprio tráfego de fan-out, e não precisa da parte 1.2.
-O que ele gera, a parte 2.2 aproveita.
+O que ele gera, a parte 3.2 aproveita.
 ====
 
 O tráfego de `/travels` **não** atravessa o Service Mesh: a resposta é local

@@ -51,7 +51,7 @@ Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
   depende do cluster -- fixá-lo num manifesto quebraria o próximo ambiente.
   Veja o objeto real com `oc get gateway prod-web -n ingress-gateway -o yaml`.
 * **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o circuit breaker
-  da parte 4.3) é a plataforma que a demo *pressupõe*, não o que ela governa.
+  da parte 2.3) é a plataforma que a demo *pressupõe*, não o que ela governa.
   Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
 ====
 
@@ -82,7 +82,7 @@ direita; todos os links deste guia já abrem em aba nova. No painel ficam o
 [cols="1,3"]
 |===
 | Grafana | {grafana_url}/d/rhcl-evidencia[Evidência das partes^] -- um painel por parte
-| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes 2.1 e 4.1)
+| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes 3.1 e 2.1)
 | Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork da parte 1.3
 |===
 
