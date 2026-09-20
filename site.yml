@@ -20,6 +20,22 @@ antora:
       script_stem: header-scripts
       mermaid_initialize_options:
         start_on_load: true
+        # AS CHAVES ANINHADAS VAO EM camelCase, e isto custou uma publicacao.
+        # A extensao converte snake_case -> camelCase apenas no NIVEL DE CIMA:
+        # 'start_on_load' virou 'startOnLoad', e um 'flowchart.use_max_width'
+        # foi descartado em silencio -- conferido no HTML publicado, que trazia
+        # apenas mermaid.initialize({"startOnLoad":true}).
+        #
+        # useMaxWidth: false tira o max-width que o mermaid crava a partir do
+        # tamanho NATURAL do desenho, que e a causa de ele sair pequeno no meio
+        # de uma coluna larga.
+        flowchart:
+          useMaxWidth: false
+        # A fonte dimensiona o desenho INTEIRO: o mermaid calcula o tamanho dos
+        # nos a partir do texto. Subir a fonte aumenta tudo proporcionalmente,
+        # o que e diferente de esticar o SVG por CSS.
+        themeVariables:
+          fontSize: 18px
     - require: '@andrew-jones/antora-tabs-extension'
 
 output:
