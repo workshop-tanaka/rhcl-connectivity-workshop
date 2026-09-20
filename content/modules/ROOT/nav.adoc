@@ -38,4 +38,5 @@
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
 
+.Para fechar
 * xref:99-encerramento.adoc[Encerramento]
