@@ -81,6 +81,11 @@ Seu `app-dev` aparece na tabela, com o verbo e o recurso que tentou. **A
 recusa foi registrada com nome** -- e é isso que separa "o cluster negou" de
 "o cluster negou e alguém consegue provar".
 
+Repare no verbo: a tabela mostra `get`, não `patch`. O `oc patch` lê o objeto
+antes de alterá-lo, e o `app-dev` foi barrado já na leitura -- a alteração
+nunca chegou a ser pedida. O audit log registra o que **de fato** trafegou,
+não a intenção de quem digitou.
+
 [NOTE]
 ====
 A chave do evento é `authorization.k8s.io/decision`, e o valor da recusa é
