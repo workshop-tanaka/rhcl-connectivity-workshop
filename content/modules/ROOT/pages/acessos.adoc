@@ -56,6 +56,20 @@ produção -- query string entra em log de acesso. O Módulo 1 mostra que o
 mesmo mecanismo aceita cabeçalho.
 ====
 
+== Os três portais de parceiro
+
+Cada um consome a API com a chave de um plano diferente. Vale deixar os três
+abertos em abas separadas -- o Módulo 1 pede isso.
+
+[cols="1,1,2",options="header"]
+|===
+| portal | plano | endereço
+
+| Azul | gratuito | {portal_free_url}[abrir^]
+| Verde | intermediário | {portal_silver_url}[abrir^]
+| Vermelho | completo | {portal_gold_url}[abrir^]
+|===
+
 == As telas
 
 Cada uma abre em aba nova. Todas usam o login do OpenShift, exceto onde

@@ -153,6 +153,13 @@
         # e o "+ ['']" do 'Host por tela' faz o atributo nascer vazio em vez
         # de quebrar o playbook -- o mesmo default das outras cinco.
         - { name: backstage-developer-hub, ns: rhdh-rhcl }
+        # Os tres portais de parceiro. Sao OPCIONAIS -- quem os cria e
+        # scripts/portais.sh, fora do provisionamento padrao. Rota ausente
+        # devolve lista vazia e o atributo nasce vazio, que e o que o
+        # conteudo espera para esconder a secao.
+        - { name: portal-blue, ns: parceiros }
+        - { name: portal-green, ns: parceiros }
+        - { name: portal-red, ns: parceiros }
       register: r_telas
 
     # Loops em vez de zip/map: a chave do label tem ponto ('kuadrant.io/plan-id')
@@ -239,6 +246,12 @@
           rhdh_url: >-
             {{ ('https://' ~ _telas['backstage-developer-hub'])
                if _telas['backstage-developer-hub'] else '' }}
+          portal_free_url: >-
+            {{ ('https://' ~ _telas['portal-blue']) if _telas['portal-blue'] else '' }}
+          portal_silver_url: >-
+            {{ ('https://' ~ _telas['portal-green']) if _telas['portal-green'] else '' }}
+          portal_gold_url: >-
+            {{ ('https://' ~ _telas['portal-red']) if _telas['portal-red'] else '' }}
           # Prefixo pronto para linkar UM arquivo: {config_url}/<caminho>
           config_url: >-
             {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies/-/blob/main')

@@ -31,7 +31,7 @@ Depois, o que muda entre as três linhas é **um label** no Secret da chave:
 oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
 ----
 
-== Navegador
+== Console: quem são os parceiros
 
 {openshift_console_url}/kuadrant/apiproducts[API Products no console^] -- Connectivity Link → API
 Products e API Keys: os parceiros com plano e solicitante.
@@ -39,6 +39,50 @@ Products e API Keys: os parceiros com plano e solicitante.
 WARNING: **Não aprove nada em API Key Approvals.** Aprovar cunha um Secret com
 o plano em *annotation* em vez de *label*; o predicado aguenta, mas a parte
 perde o fio.
+
+== Navegador: os três planos, lado a lado
+
+Esta é a parte em que o plano comercial deixa de ser um rótulo e vira
+comportamento. Abra os três portais **em abas separadas**:
+
+[cols="1,1,2",options="header"]
+|===
+| portal | plano | endereço
+
+| Azul | gratuito | {portal_free_url}[abrir^]
+| Verde | intermediário | {portal_silver_url}[abrir^]
+| Vermelho | completo | {portal_gold_url}[abrir^]
+|===
+
+Em cada um, clique em **Buscar destinos** várias vezes seguidas, alternando
+entre as abas.
+
+O que acontece: **o Azul para primeiro.** Depois o Verde. O Vermelho continua
+respondendo. Nenhum deles mudou de código, de imagem ou de endereço -- os três
+rodam exatamente a mesma aplicação. A única diferença é a chave que cada
+servidor carrega.
+
+[TIP]
+====
+Se todos continuarem respondendo, espere alguns segundos e insista no Azul: a
+janela do limite é curta, e quem vai devagar não a estoura.
+====
+
+.Mais detalhes: por que o portal mostra uma mensagem em vez de quebrar
+[%collapsible]
+====
+Quando a cota estoura, a API responde `429` e o portal mostra um aviso em vez
+de tela branca -- porque o servidor dele **lê o código de status** e trata o
+caso.
+
+É a diferença entre um consumidor que trata a recusa e um que não trata. Um
+parceiro que ignora o `429` e continua batendo não volta a funcionar mais
+rápido: ele só gasta a própria cota do próximo intervalo.
+
+E há uma limitação real aqui, que vale conhecer: o `429` desta plataforma **não
+diz qual é o limite nem quando tentar de novo**. Não há `retry-after`. O
+parceiro descobre o limite pelo contrato, não pela resposta.
+====
 
 == Evidência
 

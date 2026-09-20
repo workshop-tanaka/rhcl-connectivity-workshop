@@ -108,6 +108,51 @@ alcançáveis por dentro. Chamar `https://{api_host}/flights/Amsterdam` responde
 `404` -- e isso é desenho, não falta.
 ====
 
+== Os três portais de parceiro
+
+A Rota Viagens vende acesso à API. Três parceiros já assinaram, e cada um tem
+o **próprio portal** -- uma aplicação de terceiro, que não pertence à Rota
+Viagens e que consome a API como qualquer cliente externo faria.
+
+[cols="1,1,2",options="header"]
+|===
+| portal | plano | endereço
+
+| Azul | gratuito | {portal_free_url}[abrir^]
+| Verde | intermediário | {portal_silver_url}[abrir^]
+| Vermelho | completo | {portal_gold_url}[abrir^]
+|===
+
+Os três rodam **a mesma aplicação**, com a mesma imagem. A única diferença
+entre eles é a chave de API que cada um carrega -- e é essa diferença que os
+Módulos 1 e 3 exploram.
+
+.Mais detalhes: onde a chave do parceiro fica, e por que isso importa
+[%collapsible]
+====
+O portal é Angular com renderização no servidor. O navegador chama
+`/api/getcities` no **próprio servidor Node do portal**, e é esse servidor que
+chama a API de viagens acrescentando a chave.
+
+[source,text]
+----
+navegador  ->  servidor do portal  ->  API de viagens
+                    (a chave entra aqui)
+----
+
+Duas consequências:
+
+**A chave nunca chega ao navegador.** Ninguém a copia do DevTools. É como um
+portal de parceiro real se comporta, e é o motivo de a chave ser uma
+credencial de **sistema**, não de pessoa.
+
+**Não há CORS envolvido.** O navegador só conversa com a origem do próprio
+portal, então não existe chamada _cross-origin_. Uma página que chamasse a API
+direto do navegador precisaria que a API autorizasse a origem -- e isso também
+se resolve na borda, com dois cabeçalhos no `HTTPRoute`, sem tocar na
+aplicação.
+====
+
 == O banco não está no cluster
 
 Detalhe que muda a leitura de vários módulos: o `mysqldb` que a aplicação usa
