@@ -20,4 +20,7 @@
 .A terceira fronteira
 * xref:08-interconnect.adoc[8. A dependência que não mora aqui]
 
+.A prova
+* xref:09-auditoria.adoc[9. Quatro perguntas, quatro fontes]
+
 * xref:99-encerramento.adoc[Encerramento]

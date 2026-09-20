@@ -1,0 +1,164 @@
+= 9. Quatro perguntas, quatro fontes
+:navtitle: 9. Quatro perguntas, quatro fontes
+
+**A quem pertence:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **6 min** · **opcional**
+
+[WARNING.antes]
+====
+**Antes: os atos 3b e 2.** O 3b deixa o `Forbidden` que você levou como
+`app-dev`; o 2 deixa as chamadas contadas por plano. Sem eles as fontes
+respondem "não há rastro" -- o que é verdade, mas não ensina nada.
+====
+
+Auditoria costuma ser demonstrada com um exemplo inventado. Aqui as quatro
+perguntas incidem sobre o que **você** acabou de fazer neste cluster: a
+recusa que levou, a policy que alterou, a chamada que emitiu.
+
+E o ponto não é que existe log. É que são **quatro fontes diferentes, e
+nenhuma responde a pergunta da outra**.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh auditoria
+----
+
+Quatro blocos, um por fonte. Vale ler a saída pensando em qual pergunta cada
+uma **não** consegue responder:
+
+[cols="1,2,2",options="header"]
+|===
+| fonte | responde | não responde
+
+| audit log do apiserver
+| quem **tentou** o quê, e se o cluster deixou
+| por quê
+
+| `managedFields`
+| qual controlador escreveu cada campo, e quando
+| quem pediu a mudança
+
+| histórico do Argo CD
+| qual revisão do git está no ar, e quem a aplicou
+| o que a revisão mudou de fato
+
+| métricas do RHCL
+| quem **exerceu** o que a configuração permite
+| se o acesso era legítimo
+|===
+
+Para rodar uma de cada vez:
+
+[source,bash,role="execute"]
+----
+bash scripts/auditoria.sh negadas
+----
+
+As outras três são `config`, `argo` e `consumo`.
+
+== Exercício: encontre-se no log
+
+O audit log **rotaciona**. Se o bloco 1 disser que não há recusa na janela
+atual, gere uma agora -- é o mesmo movimento do ato 3b, e desta vez você sabe
+que vai virar registro:
+
+[source,bash,role="execute"]
+----
+oc patch authpolicy prod-web-deny-all -n ingress-gateway --as=app-dev \
+   --type=merge -p '{"metadata":{"annotations":{"auditoria":"1"}}}'
+----
+
+A resposta é `Forbidden`: o `app-dev` é dono da rota dele, não do teto do
+gateway. Agora procure a tentativa:
+
+[source,bash,role="execute"]
+----
+bash scripts/auditoria.sh negadas
+----
+
+Seu `app-dev` aparece na tabela, com o verbo e o recurso que tentou. **A
+recusa foi registrada com nome** -- e é isso que separa "o cluster negou" de
+"o cluster negou e alguém consegue provar".
+
+[NOTE]
+====
+A chave do evento é `authorization.k8s.io/decision`, e o valor da recusa é
+`forbid`. Procurar só por `decision` não acha nada: há outros campos com esse
+nome no mesmo JSON.
+====
+
+.Mais detalhes: por que o audit log não basta sozinho
+[%collapsible]
+====
+O audit log é o registro mais confiável que o cluster tem, e ainda assim
+responde só metade da pergunta de auditoria. Três limites que aparecem na
+primeira auditoria de verdade:
+
+**Ele rotaciona.** É um arquivo por nó de control-plane, com tamanho máximo.
+Num cluster movimentado, a janela pode ser de horas. Auditoria que precisa de
+retenção manda os eventos para fora -- e isso é configuração de cluster, não
+do RHCL.
+
+**Ele registra a intenção, não o motivo.** Sabe que `app-dev` tentou alterar
+a policy às 14h03 e foi recusado. Não sabe se foi engano, teste ou tentativa
+deliberada. O motivo só existe onde houve conversa: o commit, o merge request,
+o chamado.
+
+**Ele não vê o plano de dados.** Uma chamada `401` na borda não passa pelo
+apiserver e não aparece aqui -- ela está na métrica e no trace. Por isso a
+quarta fonte existe.
+====
+
+.Outro caso de uso: a pergunta que a auditoria realmente faz
+[%collapsible]
+====
+A pergunta que chega na prática quase nunca é "houve log?". É:
+
+[quote]
+____
+Quem liberou esse acesso, com autorização de quem, e desde quando ele está
+valendo?
+____
+
+Repare como ela atravessa as quatro fontes:
+
+* **quem liberou** -- audit log, ou `managedFields` se a mudança veio de um
+  controlador;
+* **com autorização de quem** -- o merge request no GitLab: o autor, o
+  revisor, a data da aprovação;
+* **desde quando está valendo** -- o histórico do Argo CD, que amarra a
+  revisão do git ao momento em que entrou no ar;
+* **e foi usado?** -- as métricas, quebradas pela dimensão de parceiro do
+  ato 4.
+
+Nenhuma responde sozinha. É por isso que o ato 6 termina onde termina -- com
+a configuração versionada, e não apenas aplicada.
+====
+
+== Configuração
+
+A quarta fonte não é de graça: a dimensão que permite perguntar *quem
+consumiu* vem da TelemetryPolicy do ato 4, não do audit log.
+
+{config_url}/base/policies-telemetry/prod-web-telemetry.yaml[prod-web-telemetry.yaml^]
+-- é ela que carimba o plano na métrica. O par é
+{config_url}/base/policies-telemetry/istio-partner-dimension.yaml[istio-partner-dimension.yaml^],
+que leva a mesma dimensão para o Service Mesh. Sem as duas, o consumo existe
+agregado e a pergunta "quem" fica sem resposta.
+
+== O que isso prova
+
+O cluster responde **metade** da pergunta de auditoria, e responde bem: quem
+tentou, o que mudou, quando entrou no ar, quanto foi consumido. A outra
+metade -- *por quê* e *com autorização de quem* -- só existe se a
+configuração passou por um repositório antes de chegar ao cluster.
+
+Configuração que só existe no cluster é configuração auditável pela metade. É
+o argumento mais concreto a favor do GitOps que este workshop tem, e ele não
+depende de acreditar em ninguém: as quatro fontes estão aí para conferir.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
