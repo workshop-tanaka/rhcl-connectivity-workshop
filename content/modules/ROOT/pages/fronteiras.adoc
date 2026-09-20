@@ -8,6 +8,8 @@ Esta página é a ponte para os próximos módulos. Confundir as três é a orig
 de boa parte das dúvidas que aparecem depois -- e agora você tem a primeira na
 mão para comparar.
 
+include::partial$diagrama.adoc[]
+
 [mermaid]
 ....
 flowchart LR

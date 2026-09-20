@@ -78,6 +78,8 @@ bash scripts/negado.sh 3
 
 == As seis estações
 
+include::partial$diagrama.adoc[]
+
 [mermaid]
 ....
 flowchart TD

@@ -12,6 +12,8 @@ no meio dessa mudança, descobriu que o produto mais valioso dela não é o site
 Os serviços já foram para o OpenShift. O banco de dados, não: ele continua
 fora do cluster, como acontece na maioria das migrações reais.
 
+include::partial$diagrama.adoc[]
+
 [mermaid]
 ....
 flowchart LR

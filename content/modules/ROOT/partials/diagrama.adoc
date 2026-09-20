@@ -1,0 +1,16 @@
+// Mermaid calcula um max-width a partir do tamanho NATURAL do desenho, e o
+// resultado num diagrama estreito e uma figura pequena no meio de uma coluna
+// larga. Duas correcoes, e as duas sao necessarias:
+//
+//   useMaxWidth: false  (no site.yml)  tira o teto que o mermaid impoe
+//   o CSS abaixo                       faz o SVG ocupar a largura disponivel
+//
+// Fica num partial para nao triplicar em cada pagina com diagrama.
+++++
+<style>
+  .mermaid { margin: 1.2rem 0; }
+  .mermaid svg { width: 100% !important; max-width: 100% !important; height: auto; }
+  .mermaid .nodeLabel, .mermaid .edgeLabel { font-size: 15px; }
+  .mermaid .cluster-label { font-size: 14px; font-weight: 600; }
+</style>
+++++
