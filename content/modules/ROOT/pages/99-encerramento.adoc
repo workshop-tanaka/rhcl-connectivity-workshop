@@ -1,12 +1,52 @@
 = Encerramento
 :navtitle: Encerramento
 
-== O fecho
+== O que você percorreu
+
+Quatro módulos, três produtos, e **uma aplicação que não mudou uma linha**. O
+binário do `travels` é o mesmo do primeiro ao último exercício.
+
+[cols="1,2",options="header"]
+|===
+| fronteira | o que ficou provado
+
+| **norte-sul** -- quem entra
+| A API é fechada por padrão, distingue planos comerciais no mesmo endereço, e
+  o consumo vira número. Nenhuma linha de aplicação trata disso.
+
+| **leste-oeste** -- quem fala com quem
+| Uma chave de API abre a porta da rua, não o cofre: dentro, quem autoriza é a
+  identidade do serviço.
+
+| **entre sites** -- o que não mora aqui
+| O componente que "não vai para o Kubernetes" não precisa ir. Precisa ser
+  alcançável.
+
+| e sobre as três
+| Observabilidade e diagnóstico: seguir uma requisição salto a salto, e dizer
+  em qual de seis lugares uma recusa morreu.
+|===
+
+[NOTE]
+====
+Se você parou antes do fim, nada aqui deixa de valer -- cada módulo fecha um
+bloco completo. Esta página é o fecho do conjunto, não uma condição para ele.
+====
+
+== A tese, agora que dá para conferir
 
 Seis policies, um alvo. Autenticação, limite, plano, telemetria -- e, onde há
 DNS público, certificado e DNS -- todas mirando o mesmo Gateway, todas com
-status próprio, nenhuma escondida num campo de anotação. Uma plataforma de
-API governa a borda inteira, não só o que passa por ela.
+status próprio, nenhuma escondida num campo de anotação.
+
+E uma ressalva que o workshop fez questão de medir em vez de omitir:
+**`Enforced=True` não é promessa de efeito.** A parte 1.9 mostra uma policy
+aceita, programada, com status verde -- e sem efeito nenhum sobre o tráfego.
+Quem confia no status sem medir o comportamento acredita num limite que não
+existe.
+
+Uma plataforma de API governa a borda inteira. E dizer isso com honestidade
+inclui dizer onde ela ainda não chega.
 
 == O que ficou para trás
 

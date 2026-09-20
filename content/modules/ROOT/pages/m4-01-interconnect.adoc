@@ -201,9 +201,8 @@ alcançável, e isso é um par de objetos declarativos de dez linhas.
 
 == Você concluiu o Módulo 4
 
-As três fronteiras estão cobertas: quem entra pela borda (Connectivity Link),
-quem fala com quem por dentro (Service Mesh), e como alcançar o que não mora
-aqui (Service Interconnect) -- mais a camada que observa as três.
+O componente que ficou fora do cluster passou a ser alcançável sem VPN, sem
+porta aberta e sem sair na internet -- e sem a aplicação saber.
 
-Siga para o xref:99-encerramento.adoc[Encerramento].
-
+Este era o último módulo. O xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.
