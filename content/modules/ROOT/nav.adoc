@@ -1,6 +1,5 @@
 * xref:index.adoc[Sobre este workshop]
 * xref:historia.adoc[A história por trás deste workshop]
-* xref:fronteiras.adoc[As três fronteiras]
 * xref:aplicacao.adoc[A aplicação e as APIs]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
@@ -15,7 +14,8 @@
 * xref:m1-06-exposta.adoc[1.6 De aberta a governada]
 * xref:m1-07-colheita.adoc[1.7 O caminho pavimentado]
 * xref:m1-08-auditoria.adoc[1.8 Quatro perguntas, quatro fontes]
-* xref:m1-09-grpc.adoc[1.9 gRPC: a mesma policy]
+
+* xref:fronteiras.adoc[Interlúdio: as três fronteiras]
 
 .Módulo 2 — Service Mesh
 * xref:m2-00-intro.adoc[Introdução]
@@ -33,5 +33,9 @@
 .Módulo 4 — Service Interconnect
 * xref:m4-00-intro.adoc[Introdução]
 * xref:m4-01-interconnect.adoc[4.1 A dependência que não mora aqui]
+
+.Extras — opcionais, em qualquer ordem
+* xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
+* xref:extra-postman.adoc[Testar a API no Postman]
 
 * xref:99-encerramento.adoc[Encerramento]

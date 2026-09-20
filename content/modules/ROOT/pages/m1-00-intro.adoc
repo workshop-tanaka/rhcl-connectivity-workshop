@@ -1,7 +1,7 @@
 = Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Nove partes · cerca de 56 minutos · as partes 1.6 e 1.7 criam objetos**
+**Oito partes · cerca de 48 minutos · as partes 1.6 e 1.7 criam objetos**
 
 **Produto protagonista:** Red Hat Connectivity Link
 
@@ -17,8 +17,7 @@ Ao final deste módulo você consegue explicar, com o ambiente na mão:
 * publicar uma API do zero à mão, e sentir o que falta nela;
 * refazer a **mesma** API pelo caminho pavimentado do portal, e comparar;
 * auditar o próprio rastro por quatro fontes diferentes;
-* responder "funciona com gRPC?" com a policy na mão -- e saber qual metade
-  da resposta é boa notícia.
+
 
 == A ideia que atravessa as cinco partes
 
@@ -41,9 +40,6 @@ vale não pular a 1.2.
 **1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, refaz pelo
 caminho pavimentado, e audita o que fez. Estas criam objetos, e cada página diz
 como desfazer.
-
-**1.9 — o mesmo, em gRPC.** Independente das duas anteriores; pode ficar para
-o fim ou ser pulada.
 
 Se o tempo for curto, parar na 1.5 deixa um bloco completo e coerente.
 

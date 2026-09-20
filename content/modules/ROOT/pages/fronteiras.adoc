@@ -1,9 +1,12 @@
-= As três fronteiras, e os três produtos
-:navtitle: As três fronteiras
+= Interlúdio: as três fronteiras
+:navtitle: Interlúdio: as três fronteiras
 
-Uma aplicação distribuída tem três fronteiras, e cada uma é governada por um
-produto diferente. Confundi-las é a origem de boa parte das dúvidas que
-aparecem depois -- por isso elas vêm antes de qualquer exercício.
+Você acabou de governar **uma** fronteira: quem entra. Uma aplicação
+distribuída tem três, e cada uma é governada por um produto diferente.
+
+Esta página é a ponte para os próximos módulos. Confundir as três é a origem
+de boa parte das dúvidas que aparecem depois -- e agora você tem a primeira na
+mão para comparar.
 
 [mermaid]
 ....
@@ -101,22 +104,3 @@ Vale guardar esta sequência, porque ela é o workshop inteiro em quatro linhas:
 
 Uma requisição, três fronteiras, três produtos. E nenhum deles exigiu mudança
 na aplicação.
-
-== Onde cada um aparece no workshop
-
-[cols="1,2",options="header"]
-|===
-| módulo | produto protagonista
-
-| xref:m1-00-intro.adoc[1 — Connectivity Link: a API como produto]
-| Connectivity Link
-
-| xref:m2-00-intro.adoc[2 — Service Mesh: a fronteira de dentro]
-| Service Mesh
-
-| xref:m3-00-intro.adoc[3 — Observar e diagnosticar as duas fronteiras]
-| Connectivity Link e Service Mesh
-
-| xref:m4-00-intro.adoc[4 — Service Interconnect: o que não mora aqui]
-| Service Interconnect
-|===

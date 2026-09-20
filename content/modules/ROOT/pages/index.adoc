@@ -49,7 +49,14 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
 | alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada
 | ~5 min
+
+| **Extras** — xref:extra-grpc.adoc[gRPC] e xref:extra-postman.adoc[Postman]
+| opcionais, em qualquer ordem e a qualquer momento
+| ~18 min
 |===
+
+Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
+apresenta os três produtos e a fronteira de cada um.
 
 == Para quem é cada módulo
 

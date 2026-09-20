@@ -81,26 +81,14 @@ A troca de papel não é enfeite: parte do que o workshop mostra só faz sentido
 quando você sente a recusa do lado de quem **não** tem permissão. A parte 1.4
 faz exatamente isso.
 
-== Como os quatro módulos atacam os quatro problemas
+== Como o workshop ataca esses problemas
 
-[cols="1,2",options="header"]
-|===
-| módulo | resolve
+Os quatro módulos resolvem os quatro problemas, nessa ordem -- o
+xref:index.adoc[Sobre este workshop] traz a tabela com o que cada um entrega e
+quanto tempo leva.
 
-| xref:m1-00-intro.adoc[1 — Connectivity Link: a API como produto]
-| os problemas **1, 2 e 4**: a API passa a exigir credencial e a distinguir
-  planos, o consumo vira número, e a configuração ganha dono, data e revisão
-
-| xref:m2-00-intro.adoc[2 — Service Mesh: a fronteira de dentro]
-| o que a borda não cobre: o tráfego **entre** os serviços
-
-| xref:m3-00-intro.adoc[3 — Observar e diagnosticar as duas fronteiras]
-| o problema **3**: seguir a requisição, e saber em qual de seis lugares ela
-  morreu
-
-| xref:m4-00-intro.adoc[4 — Service Interconnect: o que não mora aqui]
-| o banco que ficou fora do cluster, e continua fora
-|===
+O caminho curto: o **Módulo 1** resolve os problemas 1, 2 e 4 sozinho. Os
+outros três tratam do que a borda não alcança.
 
 == A tese que o workshop defende
 

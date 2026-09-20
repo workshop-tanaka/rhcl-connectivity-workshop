@@ -1,11 +1,13 @@
-= 1.9 A mesma policy, outro protocolo
-:navtitle: 1.9 gRPC
+= gRPC: a mesma policy, outro protocolo
+:navtitle: gRPC
 
-**A quem pertence:** Desenvolvedor de serviços internos, e Arquitetura. · **8 min** · **não muda estado**
+**Opcional · ~8 min · não muda estado**
+
+**A quem pertence:** Desenvolvedor de serviços internos, e Arquitetura.
 
 [NOTE.antes]
 ====
-**Antes:** a parte 1.1, que mostra a `AuthPolicy` sobre HTTP. Esta parte é a
+**Antes:** a parte 1.1, que mostra a `AuthPolicy` sobre HTTP. Esta página é a
 comparação com ela.
 ====
 
