@@ -1,5 +1,5 @@
-= 6. De aberto a governado, um passo por vez
-:navtitle: 6. De aberto a governado
+= 6. De aberta a governada, um passo por vez
+:navtitle: 6. De aberta a governada
 
 **A quem pertence:** Desenvolvedor -- e ao Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
 
@@ -16,7 +16,7 @@ governada -- e cada passo é **uma policy**.
 
 [source,bash,role="execute"]
 ----
-bash scripts/demo.sh ingenuo
+bash scripts/demo.sh exposta
 ----
 
 == Momento 1 -- qualquer um acessa, sem critério nenhum
@@ -71,7 +71,7 @@ E então o passo mostra o status do teto:
 
 [source,text]
 ----
-AuthPolicy is overridden by [echo-ingenuo/echo-ingenuo-authpolicy ...]
+AuthPolicy is overridden by [echo-exposta/echo-exposta-authpolicy ...]
 ----
 
 **O próprio deny-all declara que cedeu, e nomeia quem o sobrepôs.** São dois
