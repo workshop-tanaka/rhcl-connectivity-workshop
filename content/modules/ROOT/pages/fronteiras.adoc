@@ -61,7 +61,7 @@ credencial.
 O que ele **não** sabe: o que acontece depois que a chamada entrou. Uma vez
 passada a borda, ele não tem mais opinião.
 
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação^]
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Documentação^]
 · Módulo xref:m1-00-intro.adoc[1] inteiro, e o diagnóstico do
 xref:m3-00-intro.adoc[Módulo 3]
 
@@ -73,7 +73,7 @@ versões, e a instrumentação que produz traces sem tocar no código.
 O que ele **não** sabe: quem é o cliente comercial do outro lado da borda. Para
 o Service Mesh, tudo que vem do Gateway é *"o Gateway"*.
 
-https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.0[Documentação^]
+https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Documentação^]
 · Módulo xref:m2-00-intro.adoc[2]
 
 === Service Interconnect: como alcançar o que ficou fora

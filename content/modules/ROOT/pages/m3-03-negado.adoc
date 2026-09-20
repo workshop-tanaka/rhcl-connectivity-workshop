@@ -39,14 +39,14 @@ https://gateway-api.sigs.k8s.io/[Site do Gateway API^]
 **Red Hat Connectivity Link** -- o produto que implementa essas policies sobre
 o Gateway: autenticação, rate limit por plano e telemetria. As recusas das
 estações 3 e 4 vêm dele.
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação do Connectivity Link^]
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Documentação do Connectivity Link^]
 · https://docs.kuadrant.io/[projeto upstream (Kuadrant)^]
 
 **Service Mesh** -- a camada que governa o tráfego leste-oeste, entre os
 serviços. Cada pod ganha um **sidecar**, um proxy Envoy que intercepta tudo
 que entra e sai e aplica `AuthorizationPolicy` com base na identidade mTLS de
 quem chama. É a estação 5.
-https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.0[Documentação do Service Mesh^]
+https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Documentação do Service Mesh^]
 · https://istio.io/latest/docs/ops/deployment/architecture/[como funciona, no upstream^]
 ====
 
