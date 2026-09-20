@@ -1,0 +1,180 @@
+= 1.9 E quando quem consome é uma pessoa?
+:navtitle: 1.9 Chave ou identidade
+
+**A quem pertence:** Segurança, e quem desenha o produto de API. · **8 min** · **não muda estado**
+
+[NOTE.antes]
+====
+**Antes: a parte 1.1.** Ela mostrou a chave de API funcionando. Esta responde
+a pergunta que sobra: **e se o consumidor não for um programa?**
+====
+
+Tudo que você fez até aqui identifica o consumidor por **chave de API**. Faz
+sentido: o parceiro é uma empresa, o portal dele é um programa, e o plano é do
+contrato -- não de quem está sentado na cadeira.
+
+Mas nem todo consumo é assim. Um funcionário abrindo o painel interno, um
+cliente no aplicativo, um parceiro cujo limite é *por usuário* e não por
+contrato -- nesses casos a pergunta muda de "qual sistema é esse?" para **"quem
+é essa pessoa?"**.
+
+São credenciais diferentes, e o Connectivity Link trata as duas. Este ambiente
+já tem as duas no ar, no **mesmo Gateway**.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/identidade.sh
+----
+
+== O que a saída mostra
+
+=== Uma credencial que diz quem você é
+
+[source,text]
+----
+✓ token obtido (1477 caracteres, prefixo eyJhbGciOiJS...)
+
+  o que o token diz sobre quem voce e:
+    preferred_username   sistema-teste
+    name                 Sistema de Teste
+    email                sistema-teste@example.invalid
+    sub                  af24aa17-377c-447a-83ac-f33450037f0e
+----
+
+O token **carrega** a identidade. A chave de API não carrega nada -- ela é um
+identificador opaco, e quem é o dono está num `Secret` no cluster, não na
+credencial.
+
+Há uma segunda diferença, que não aparece na tela mas muda a operação: o token
+expira em minutos, e a chave vale até alguém revogá-la.
+
+=== O mesmo Gateway, dois comportamentos
+
+[source,text]
+----
+  o echo-api, governado por OIDCPolicy:
+    sem token ....... 302
+    com token ....... 404
+
+  o travels, governado por AuthPolicy com chave:
+    sem chave ....... 401
+    com chave ....... 200
+----
+
+Olhe a coluna da esquerda: **`302` e `401` são recusas diferentes de propósito.**
+
+[cols="1,1,2",options="header"]
+|===
+| resposta | o que é | por que faz sentido
+
+| `302`
+| redirecionamento para o login
+| do outro lado há um navegador e uma pessoa -- mandá-la para o Keycloak é a
+  atitude útil
+
+| `401`
+| recusa seca, com o motivo no cabeçalho
+| do outro lado há um programa, que não sabe fazer login; ele precisa do
+  motivo, não de uma tela
+|===
+
+[TIP]
+====
+O `404` **com** token é a prova de que passou: é resposta da **aplicação**, que
+não tem aquela rota. Uma requisição barrada nunca chega no app -- e a parte
+xref:m3-03-negado.adoc[3.3] usa exatamente essa distinção para dizer onde uma
+chamada morreu.
+====
+
+=== A chave não é recusada. É ignorada.
+
+[source,text]
+----
+  e a chave do travels serve no echo?
+    echo com a chave do travels: 302
+----
+
+Não é `401`. É o mesmo `302` de quem não mandou nada: aquela credencial não é
+a moeda que este produto aceita, então ela sequer é avaliada.
+
+== O que você declarou, e o que apareceu
+
+Esta é a parte que separa uma plataforma de API de um gateway configurável.
+
+[source,text]
+----
+  voce declarou UMA policy:
+    OIDCPolicy/echo-api-oidc
+
+  e o operador materializou DUAS AuthPolicy, com dono:
+    AuthPolicy/echo-api-oidc              <- echo-api-oidc
+    AuthPolicy/echo-api-oidc-callback     <- echo-api-oidc
+
+  e o que o operador escreveu dentro do callback:
+    2 trechos de Rego (OPA), gerados -- nenhum digitado por voce
+    regras de authorization: deny, location
+----
+
+A segunda AuthPolicy é o **callback**: o endereço onde o navegador aterrissa
+depois do login. Ele precisa de regra própria -- sem ela, seria uma porta sem
+tranca no Gateway -- e uma das regras geradas monta o redirecionamento de volta
+lendo um cookie, para o usuário voltar à página que pediu **antes** do login em
+vez de cair na raiz.
+
+Você não escreveu nada disso. Veio junto com a intenção.
+
+.Mais detalhes: por que isso não é só conveniência
+[%collapsible]
+====
+O fluxo OIDC tem partes que são fáceis de errar em silêncio: o callback sem
+proteção, o `state` não validado, o retorno para uma URL controlada por quem
+chamou. São vulnerabilidades conhecidas, e todas nascem de escrever o fluxo à
+mão.
+
+Quando a intenção -- "este produto usa OIDC, com este provider" -- é o objeto
+declarado, o fluxo correto é **derivado**, e derivado igual para todo mundo. É
+a mesma lógica da parte xref:m1-07-colheita.adoc[1.7]: o valor não é digitar
+menos, é não conseguir nascer errado.
+
+Ver
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[a
+documentação do Connectivity Link^] para a referência da `OIDCPolicy`.
+====
+
+== Como escolher, na prática
+
+[cols="1,1",options="header"]
+|===
+| use chave de API quando | use OIDC quando
+
+| o consumidor é um sistema, e o contrato é com a empresa
+| o consumidor é uma pessoa, e há um navegador no caminho
+
+| a cota é do plano comercial
+| a cota é por usuário, ou depende do papel dele
+
+| quem chama não sabe fazer login (jobs, integrações, CI)
+| você precisa de SSO, MFA ou revogação central de acesso
+
+| você precisa de credencial de vida longa
+| você prefere credencial curta, renovada
+|===
+
+Não é uma escolha de plataforma tomada uma vez para todo mundo: é **por
+produto de API**, e os dois convivem no mesmo Gateway -- que é exatamente o que
+você acabou de medir.
+
+== Você concluiu o Módulo 1
+
+Você publicou uma API do zero, transformou-a de aberta em governada uma regra
+por vez, auditou o próprio rastro por quatro fontes diferentes, e viu os dois
+jeitos de identificar quem está do outro lado.
+
+Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
+governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego
+**entre** os serviços, que daqui não se enxerga.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.

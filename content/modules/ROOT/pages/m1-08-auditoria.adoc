@@ -163,16 +163,9 @@ Configuração que só existe no cluster é configuração auditável pela metad
 o argumento mais concreto a favor do GitOps que este workshop tem, e ele não
 depende de acreditar em ninguém: as quatro fontes estão aí para conferir.
 
-== Você concluiu o Módulo 1
+== Falta uma pergunta
 
-Você publicou uma API do zero, transformou-a de aberta em governada uma regra
-por vez, e auditou o próprio rastro por quatro fontes diferentes.
-
-Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
-governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego
-**entre** os serviços, que daqui não se enxerga.
-
-Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
-workshop e diz como devolver o ambiente ao estado inicial.
-
-
+Todo esse rastro identifica o consumidor por **chave de API** -- que é
+credencial de sistema. A parte xref:m1-09-identidade.adoc[1.9] trata do outro
+caso: quando quem consome é uma **pessoa**, e a pergunta deixa de ser "qual
+sistema é esse?".
