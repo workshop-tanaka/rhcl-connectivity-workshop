@@ -91,7 +91,7 @@ https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Documenta�
 
 Vale guardar esta sequência, porque ela é o workshop inteiro em quatro linhas:
 
-. um parceiro chama `https://.../travels` -- o **Connectivity Link** decide se
+. um parceiro chama a API de viagens -- o **Connectivity Link** decide se
   ele entra, sob qual plano, e conta a chamada;
 . o `travels` chama `flights`, `hotels` e `cars` -- o **Service Mesh** decide
   se cada um desses saltos é permitido, e os instrumenta;
