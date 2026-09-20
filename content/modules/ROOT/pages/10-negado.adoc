@@ -263,6 +263,98 @@ Um workshop honesto também diz onde a ferramenta não chega. Tudo abaixo foi
 Saber disso poupa a tarde que você gastaria procurando um recurso que não
 existe.
 
+== Extra: refazer isto no Postman
+
+**Opcional, e fora do caminho do workshop.** O terminal prova o ponto com
+menos cliques, mas a maioria das pessoas testa API no Postman -- e ver os
+cabeçalhos numa interface ajuda a fixar o que as estações 3 e 4 ensinaram.
+
+A coleção cobre mais que este módulo: as chamadas recusadas, os três planos
+comerciais lado a lado, o estouro de cota determinístico, e a autenticação
+por identidade.
+
+=== São dois arquivos, e eles são diferentes
+
+[cols="1,2",options="header"]
+|===
+| arquivo | o que é
+
+| **a coleção** (`rhcl-demo.postman_collection.json`)
+| as requisições. Não tem segredo nem endereço fixo dentro -- serve em
+  qualquer cluster
+
+| **o _environment_** (`rhcl-demo.local.postman_environment.json`)
+| os endereços e as **chaves reais deste cluster**. É gerado na hora, nunca
+  vem pronto
+|===
+
+O motivo da separação é o mesmo do workshop inteiro: o cluster é efêmero, e
+valor copiado em arquivo envelhece.
+
+=== 1. Baixe a coleção
+
+Ela está no GitLab deste ambiente:
+
+{repo_no_ambiente}/-/blob/main/postman/rhcl-demo.postman_collection.json[rhcl-demo.postman_collection.json^]
+
+Use o botão de download da página (o ícone à direita, acima do conteúdo) para
+salvar o arquivo na sua máquina.
+
+=== 2. Gere o _environment_
+
+No terminal do workshop:
+
+[source,bash,role="execute"]
+----
+bash scripts/postman-env.sh
+----
+
+Ele descobre os endereços e as chaves **deste** cluster e escreve o arquivo.
+Agora mostre o conteúdo para copiar:
+
+[source,bash,role="execute"]
+----
+cat postman/rhcl-demo.local.postman_environment.json
+----
+
+São cerca de 20 linhas. Selecione, copie, e salve na sua máquina como
+`rhcl-demo.postman_environment.json`.
+
+[WARNING]
+====
+Esse arquivo contém **chaves de acesso reais**. Ele não vai para repositório
+nenhum -- é ignorado pelo controle de versão de propósito -- e não deve ser
+compartilhado.
+====
+
+=== 3. Importe os dois no Postman
+
+No Postman: botão **Import**, e arraste os dois arquivos (ou use *Select
+files*). A coleção aparece na barra lateral; o _environment_ precisa ser
+**selecionado no canto superior direito** para que as requisições encontrem
+os endereços e as chaves.
+
+[IMPORTANT]
+====
+**Desligue a verificação de certificado**, ou todas as requisições falham sem
+explicar por quê.
+
+*Settings* → *General* → **SSL certificate verification** → *OFF*
+
+O certificado deste cluster é assinado por ele mesmo, e o Postman rejeita
+esse tipo de certificado por padrão. Não é erro da API.
+====
+
+=== O que tentar primeiro
+
+Abra a pasta **Ato 1** e rode *GET travels SEM chave*. Olhe a aba
+**Headers** da resposta: lá está o `x-ext-auth-reason` da estação 3, na
+interface em vez do terminal.
+
+Depois, na pasta **Ato 2**, rode *estourar o free* -- é o `429` mudo da
+estação 4, e você pode conferir na mesma aba que não há nenhum cabeçalho
+explicando o limite.
+
 == O que isso prova
 
 Diagnóstico não é adivinhação: é **descarte**. Cada sintoma elimina um
