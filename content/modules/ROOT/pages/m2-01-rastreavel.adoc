@@ -70,7 +70,3 @@ Policy Topology, Traffic Graph e Traces: três telas para a mesma requisição,
 e nenhuma ferramenta nova entrou na conta. São as do OpenShift e as dos
 operadores que já sustentam o Service Mesh.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

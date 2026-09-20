@@ -151,7 +151,3 @@ curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 200; echo
 O primeiro mostra os sete serviços; o segundo, os destinos que vieram do banco
 do outro lado do túnel.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

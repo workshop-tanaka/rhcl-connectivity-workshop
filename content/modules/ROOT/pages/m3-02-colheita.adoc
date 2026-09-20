@@ -115,7 +115,7 @@ O repositório gerado traz um `verify.sh` -- o preflight **deste** serviço,
 percorrendo a mesma cadeia que o `scripts/demo.sh check` percorre para a
 travel-agency.
 
-[source,bash,role="execute"]
+[source,bash,role="execute",subs="attributes+"]
 ----
 cd /tmp && git clone -q "{repo_apis}/<o-nome-que-voce-deu>.git" api-nova \
   && cd api-nova && bash verify.sh
@@ -210,7 +210,3 @@ Ele remove o Application do Argo, o namespace e o projeto no GitLab -- nessa
 ordem, que importa: apagar o namespace antes do Application faria o Argo
 recriá-lo.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

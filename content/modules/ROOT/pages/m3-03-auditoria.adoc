@@ -171,7 +171,3 @@ por vez, e auditou o próprio rastro por quatro fontes diferentes.
 Tudo isso aconteceu na **borda**. O xref:m4-00-intro.adoc[Módulo 4] trata das
 outras duas fronteiras: a de dentro da aplicação, e a que sai do cluster.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

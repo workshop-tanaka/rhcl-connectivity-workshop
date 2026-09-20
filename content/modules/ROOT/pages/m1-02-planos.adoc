@@ -119,7 +119,3 @@ num Secret. Criar um tier novo é acrescentar um bloco de trinta linhas; mover
 um cliente de plano é editar esse label. Nenhum dos dois passa por build,
 deploy ou mudança de código.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

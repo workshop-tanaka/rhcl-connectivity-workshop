@@ -99,9 +99,11 @@ faz exatamente isso.
 | o problema **4**: a configuração ganha dono, data e revisão -- e uma API
   nova deixa de poder nascer errada
 
-| xref:m4-00-intro.adoc[4 — Além da borda]
-| o que os três anteriores não cobrem: o tráfego **entre** os serviços, e o
-  banco que ficou fora do cluster
+| xref:m4-00-intro.adoc[4 — Service Mesh: a fronteira de dentro]
+| o que os três anteriores não cobrem: o tráfego **entre** os serviços
+
+| xref:m5-00-intro.adoc[5 — Service Interconnect: o que não mora aqui]
+| o banco que ficou fora do cluster, e continua fora
 |===
 
 == A tese que o workshop defende

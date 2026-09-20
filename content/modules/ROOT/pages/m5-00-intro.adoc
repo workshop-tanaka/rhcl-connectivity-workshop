@@ -1,0 +1,42 @@
+= Módulo 5 — Service Interconnect: o que não mora aqui
+:navtitle: Módulo 5 — Introdução
+
+**Uma parte · cerca de 5 minutos · não muda estado**
+
+**Produto protagonista:** Red Hat Service Interconnect
+
+== O que você vai conseguir fazer
+
+* explicar como um serviço no cluster alcança uma dependência que **não roda
+  nele** -- sem VPN, sem abrir porta de entrada e sem expor o recurso na
+  internet;
+* ver o tráfego atravessando esse túnel, medido;
+* reconhecer quando essa é a resposta certa, e quando não é.
+
+== Por que isto tem módulo próprio
+
+Porque é a objeção mais comum em cliente real, e ela chega sempre com a mesma
+frase: *"esse banco não vai para o Kubernetes."*
+
+Ela quase nunca é preguiça. É licenciamento, é auditoria, é um time que não
+vai migrar neste trimestre, é hardware que ainda não depreciou. A resposta
+honesta não é insistir na migração -- é conectar.
+
+E há uma diferença que vale nomear: os Módulos 1 a 4 tratam de **governança**
+(quem pode o quê). Este trata de **conectividade** (como alcançar). São
+problemas diferentes, e o Service Interconnect resolve o segundo sem opinar
+sobre o primeiro.
+
+== O que você precisa antes
+
+Nenhum módulo. Mas ele fecha o arco: depois dele, as três fronteiras da
+xref:fronteiras.adoc[página das fronteiras] terão sido percorridas.
+
+== Uma observação sobre este ambiente
+
+O banco desta aplicação **já está** do outro lado do túnel desde o começo do
+workshop. Aqueles 45 destinos que você vem recebendo desde o Módulo 1
+atravessaram essa fronteira toda vez.
+
+Esta parte não monta o túnel -- ela abre a tampa e mostra o que já estava
+acontecendo.

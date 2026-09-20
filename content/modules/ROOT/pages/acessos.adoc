@@ -116,7 +116,3 @@ bash scripts/demo.sh check
 Ele confere a cadeia inteira e diz, em uma linha, se o workshop pode começar.
 Avisos não impedem -- falhas, sim, e o texto diz qual módulo cada uma afeta.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

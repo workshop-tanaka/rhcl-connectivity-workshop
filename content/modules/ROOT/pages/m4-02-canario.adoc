@@ -47,7 +47,3 @@ binário da v2 já estava no ar desde o primeiro passo -- o que mudou foi quanto
 do tráfego chega nele. E quem decide esse número não é quem escreveu o código:
 é quem opera a plataforma, no mesmo arquivo onde moram o timeout e o retry.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

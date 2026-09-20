@@ -50,7 +50,7 @@ Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
 * **o `Gateway prod-web`** é *gerado* no provisionamento, porque o hostname
   depende do cluster -- fixá-lo num manifesto quebraria o próximo ambiente.
   Veja o objeto real com `oc get gateway prod-web -n ingress-gateway -o yaml`.
-* **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o disjuntor
+* **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o circuit breaker
   da parte 4.3) é a plataforma que a demo *pressupõe*, não o que ela governa.
   Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
 ====
@@ -118,7 +118,3 @@ o aquecimento queima cota diária, e o reset a devolve.
 
 Pronto. Siga para o xref:m1-01-fechada.adoc[Módulo 1].
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

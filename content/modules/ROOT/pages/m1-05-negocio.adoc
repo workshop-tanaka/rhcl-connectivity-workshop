@@ -61,7 +61,3 @@ e nada disso passou por uma linha de código da aplicação.
 O que ficou por responder: **quando algo der errado, como você descobre o
 quê?** É o xref:m2-00-intro.adoc[Módulo 2].
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

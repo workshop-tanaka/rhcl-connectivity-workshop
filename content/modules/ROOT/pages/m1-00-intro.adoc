@@ -32,7 +32,3 @@ e a 1.5 lê os dados que a 1.2 gera -- então vale não pular a 1.2.
 No fim do Módulo 1 a API está protegida e medida. O **Módulo 2** parte daí
 para a pergunta seguinte: quando algo dá errado, como você descobre o quê.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

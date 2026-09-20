@@ -78,6 +78,19 @@ bash scripts/negado.sh 3
 
 == As seis estações
 
+[mermaid]
+....
+flowchart TD
+  A[a chamada falhou] --> B{"houve codigo HTTP?"}
+  B -->|"nao, exit=6"| E1["1 · o nome nao resolveu<br/>descarte tudo do lado do servidor"]
+  B -->|sim| C{"qual codigo?"}
+  C -->|503| E2["2 · sem Route publicada<br/>nao chegou ao Gateway"]
+  C -->|401| E3["3 · AuthPolicy recusou<br/>leia x-ext-auth-reason"]
+  C -->|429| E4["4 · cota do plano<br/>a credencial e valida"]
+  C -->|403| E5["5 · sidecar recusou<br/>RBAC: access denied"]
+  C -->|"200, mas errado"| E6["6 · policy sobreposta<br/>confira Enforced"]
+....
+
 [cols="1,2,2",options="header"]
 |===
 | onde parou | o que você vê | o que já dá para descartar
@@ -366,7 +379,3 @@ E há uma simetria que vale notar: é a **mesma evidência** que a parte 3.2 usa
 para auditar. A auditoria parte da mudança e pergunta o efeito; o diagnóstico
 parte do efeito e pergunta a mudança.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

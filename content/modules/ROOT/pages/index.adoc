@@ -21,7 +21,9 @@ conceitos conforme aparecem, com os links da documentação oficial de cada um.
 
 == Como o workshop está organizado
 
-Quatro módulos, cada um com uma introdução própria e partes numeradas. Dá para
+Cinco módulos, cada um com uma introdução própria e partes numeradas.
+Cada um tem um produto protagonista -- a
+xref:fronteiras.adoc[página das fronteiras] explica a divisão. Dá para
 fazer na ordem, ou escolher pelo que interessa ao seu dia.
 
 [cols="1,3,1",options="header"]
@@ -45,10 +47,14 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
   portal e comparar as duas, e auditar o próprio rastro por quatro fontes
 | ~28 min
 
-| xref:m4-00-intro.adoc[**4** — Além da borda]
-| proteger o que acontece **dentro** da aplicação, promover uma versão nova ao
-  vivo, e alcançar uma dependência que não roda no cluster
-| ~21 min
+| xref:m4-00-intro.adoc[**4** — Service Mesh: a fronteira de dentro]
+| proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo, e
+  distinguir os dois `503` de uma falha no outro lado
+| ~16 min
+
+| xref:m5-00-intro.adoc[**5** — Service Interconnect: o que não mora aqui]
+| alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada
+| ~5 min
 |===
 
 == Para quem é cada módulo
@@ -70,7 +76,7 @@ por onde começar:
 | Módulo 1, depois o Módulo 3 -- é onde você escreve a configuração, e sente o que custa
 
 | arquitetura
-| Módulo 4, que trata das fronteiras que não são a borda
+| a xref:fronteiras.adoc[página das fronteiras], e depois os Módulos 4 e 5
 |===
 
 == A ordem dentro de um módulo
@@ -119,7 +125,3 @@ Os seus endereços e as suas chaves estão em xref:acessos.adoc[Seus acessos].
 
 Comece pela xref:00-preparacao.adoc[Preparação].
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

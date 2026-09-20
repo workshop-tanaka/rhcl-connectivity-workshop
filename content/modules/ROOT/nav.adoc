@@ -1,5 +1,6 @@
 * xref:index.adoc[Sobre este workshop]
 * xref:historia.adoc[A história por trás deste workshop]
+* xref:fronteiras.adoc[As três fronteiras]
 * xref:aplicacao.adoc[A aplicação e as APIs]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
@@ -25,11 +26,14 @@
 * xref:m3-02-colheita.adoc[3.2 O caminho pavimentado]
 * xref:m3-03-auditoria.adoc[3.3 Quatro perguntas, quatro fontes]
 
-.Módulo 4 — Além da borda
+.Módulo 4 — Service Mesh: a fronteira de dentro
 * xref:m4-00-intro.adoc[Introdução]
 * xref:m4-01-leste-oeste.adoc[4.1 A borda não é a única fronteira]
 * xref:m4-02-canario.adoc[4.2 A promoção ao vivo]
-* xref:m4-03-resiliencia.adoc[4.3 O disjuntor]
-* xref:m4-04-interconnect.adoc[4.4 A dependência que não mora aqui]
+* xref:m4-03-resiliencia.adoc[4.3 Circuit breaker]
+
+.Módulo 5 — Service Interconnect: o que não mora aqui
+* xref:m5-00-intro.adoc[Introdução]
+* xref:m5-01-interconnect.adoc[5.1 A dependência que não mora aqui]
 
 * xref:99-encerramento.adoc[Encerramento]

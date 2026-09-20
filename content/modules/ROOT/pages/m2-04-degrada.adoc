@@ -60,7 +60,3 @@ que conta as chamadas sai do ar.
 Até aqui a configuração já estava pronta. No xref:m3-00-intro.adoc[Módulo 3]
 é você quem a escreve -- e sente o que ela custa.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

@@ -1,11 +1,11 @@
-= 4.3 O disjuntor, e o que não dá para demonstrar
-:navtitle: 4.3 O disjuntor
+= 4.3 Circuit breaker: dois `503`, e como distingui-los
+:navtitle: 4.3 Circuit breaker
 
-**Persona:** Operação/SRE -- flags do Envoy, ejeção, e o que fault injection não prova. · **5 min** · **muda estado** · depois do 7
+**A quem pertence:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte 4.1
 
 [NOTE.antes]
 ====
-**Antes:** a parte 4.1 na narrativa -- a carga sai do `cars` porque a
+**Antes:** a parte 4.1 -- a carga sai do `cars` porque a
 AuthorizationPolicy dele só aceita os vendedores. Tecnicamente roda sozinho:
 DestinationRule como `base/mesh/` declara e pods v1 e v2 de pé.
 ====
@@ -21,11 +21,11 @@ começa a falhar?", e as duas devolvem `503`. O que as distingue é o
 bash scripts/demo.sh resiliencia
 ----
 
-Cinco movimentos: antes, o disjuntor entra, carga concorrente, a tabela de
+Cinco movimentos: antes, o circuit breaker entra, carga concorrente, a tabela de
 flags, e a parte honesta. Reversão automática.
 
 IMPORTANT: Os limites do manifesto são **absurdos de propósito** -- uma
-conexão, uma pendente. É o que faz o disjuntor abrir no tempo de um
+conexão, uma pendente. É o que faz o circuit breaker abrir no tempo de um
 exercício; nenhum ambiente real roda assim.
 
 == Evidência
@@ -38,6 +38,9 @@ CODIGO FLAG   QUANTAS   O QUE E
 503    UH         ...   no healthy upstream -> outlierDetection EJETOU o pod
 503    UO         ...   upstream overflow   -> connectionPool recusou por fila
 ----
+
+https://istio.io/latest/docs/tasks/traffic-management/circuit-breaking/[Circuit breaking, na documentação do Istio^]
+· https://istio.io/latest/docs/reference/config/networking/destination-rule/[a referência de `DestinationRule`^]
 
 == Configuração
 
@@ -63,7 +66,12 @@ demonstração vira uma promessa que o ambiente não cumpre. Os dois mecanismos
 que você mediu -- `UO` e `UH` -- esses sim são visíveis, e são decisões de
 plataforma opostas com o mesmo código de erro.
 
-'''
 
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._
+
+== Você concluiu o Módulo 4
+
+O Service Mesh cobriu a fronteira de dentro: identidade entre serviços,
+autorização, promoção de versão ao vivo e o comportamento sob falha.
+
+Falta a terceira fronteira -- o que a aplicação precisa e que **não roda aqui**.
+É o xref:m5-00-intro.adoc[Módulo 5].

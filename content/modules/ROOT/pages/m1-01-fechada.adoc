@@ -130,7 +130,3 @@ mesmo de antes de existir policy. Quem recusou foi o gateway, e a regra vale
 para qualquer rota anexada a ele. É essa a diferença entre uma plataforma de
 API e uma biblioteca de autenticação dentro de cada serviço.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

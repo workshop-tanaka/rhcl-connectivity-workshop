@@ -131,7 +131,3 @@ entre times para isso funcionar. O cluster é quem recusa. É essa a diferença
 entre uma plataforma de API e um gateway com um documento de boas práticas ao
 lado.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

@@ -68,7 +68,3 @@ ler. Numa pilha de anotações de ingress ou de `EnvoyFilter` solto, responder
 "qual regra valeu para esta rota?" é arqueologia -- e costuma terminar em
 tentativa e erro no ambiente de produção.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

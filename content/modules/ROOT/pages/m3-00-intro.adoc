@@ -33,7 +33,3 @@ Cada uma cria uma API nova. A 3.1 se limpa sozinha no fim; a 3.2 cria uma API
 de verdade, pelo portal, que fica no ar até você rodar o script de limpeza que
 a própria página indica. Nenhum objeto dos outros módulos é tocado.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

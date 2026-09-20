@@ -1,7 +1,9 @@
-= Módulo 4 — Além da borda
+= Módulo 4 — Service Mesh: a fronteira de dentro
 :navtitle: Módulo 4 — Introdução
 
-**Quatro partes · cerca de 21 minutos · três delas mudam estado**
+**Três partes · cerca de 16 minutos · todas mudam estado**
+
+**Produto protagonista:** Red Hat OpenShift Service Mesh
 
 == O que você vai conseguir fazer
 
@@ -9,17 +11,17 @@
 * colocar uma versão nova no ar recebendo uma fração do tráfego;
 * distinguir as duas respostas que uma plataforma dá quando o serviço do outro
   lado começa a falhar -- e por que as duas devolvem o mesmo código;
-* alcançar uma dependência que **não roda no cluster**, sem expô-la na
-  internet.
+* distinguir os dois `503` que o Service Mesh produz quando o serviço do outro
+  lado começa a falhar.
 
 == A ideia que atravessa as quatro partes
 
-Os módulos anteriores trataram a borda: quem entra, quanto passa, quanto
-custa. Mas uma aplicação real é feita de serviços que se chamam entre si, e
-depende de coisas que não moram no mesmo lugar.
+Os módulos anteriores trataram a **borda**: quem entra, quanto passa, quanto
+custa. Mas uma aplicação real é feita de serviços que se chamam entre si -- e
+uma chave de API que abre a porta da rua não diz nada sobre quem pode abrir as
+portas internas.
 
-Este módulo é sobre as outras duas fronteiras -- a de dentro, e a de fora do
-cluster.
+Este módulo é sobre essa segunda fronteira, a **leste-oeste**.
 
 == O que você precisa antes
 
@@ -28,11 +30,7 @@ vale fazê-las na ordem.
 
 == Aviso
 
-As partes 4.1, 4.2 e 4.3 alteram configuração de tráfego e a revertem no fim.
-Se você interromper uma delas no meio, o comando `bash scripts/demo.sh
-mesh_base` devolve tudo ao estado inicial.
+As três alteram configuração de tráfego e a revertem no fim. Se você
+interromper uma delas no meio, o comando `bash scripts/demo.sh mesh_base`
+devolve tudo ao estado inicial.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

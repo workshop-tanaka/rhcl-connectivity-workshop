@@ -56,7 +56,3 @@ que recebeu para a próxima que faz. São três linhas por serviço, e saber dis
 **antes** é o que separa uma adoção que entrega a árvore completa de uma que
 descobre o buraco na primeira semana.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

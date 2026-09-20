@@ -1,5 +1,5 @@
-= 4.4 A dependência que não mora aqui
-:navtitle: 4.4 A dependência que não mora aqui
+= 5.1 A dependência que não mora aqui
+:navtitle: 5.1 A dependência que não mora aqui
 
 **A quem pertence:** Arquitetura e Operação -- e a quem já ouviu "esse banco não vai para o Kubernetes". · **5 min**
 
@@ -130,14 +130,11 @@ leste-oeste com o Service Mesh, e o que está fora com o Service Interconnect
 O componente que "não vai para o Kubernetes" não precisa ir. Ele precisa ser
 alcançável, e isso é um par de objetos declarativos de dez linhas.
 
-== Você concluiu o Módulo 4
+== Você concluiu o Módulo 5 -- e o workshop
 
-As três fronteiras estão cobertas: quem entra pela borda, quem fala com quem
-por dentro, e como alcançar o que não mora aqui.
+As três fronteiras estão cobertas: quem entra pela borda (Connectivity Link),
+quem fala com quem por dentro (Service Mesh), e como alcançar o que não mora
+aqui (Service Interconnect).
 
 Siga para o xref:99-encerramento.adoc[Encerramento].
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

@@ -1,0 +1,125 @@
+= As três fronteiras, e os três produtos
+:navtitle: As três fronteiras
+
+Uma aplicação distribuída tem três fronteiras, e cada uma é governada por um
+produto diferente. Confundi-las é a origem de boa parte das dúvidas que
+aparecem depois -- por isso elas vêm antes de qualquer exercício.
+
+[mermaid]
+....
+flowchart LR
+  subgraph EXT[" "]
+    P["Parceiro<br/>(chave de API)"]
+  end
+  subgraph NS["NORTE-SUL · Connectivity Link"]
+    G["Gateway<br/>AuthPolicy · PlanPolicy · TelemetryPolicy"]
+  end
+  subgraph EW["LESTE-OESTE · Service Mesh"]
+    T[travels] --> F[flights]
+    T --> H[hotels]
+    T --> C[cars]
+  end
+  subgraph SI["ENTRE SITES · Service Interconnect"]
+    DB[("banco<br/>fora do cluster")]
+  end
+  P -->|HTTPS| G
+  G -->|"quem entra,<br/>quanto passa"| T
+  F -.->|"tunel mutuo"| DB
+  H -.-> DB
+  C -.-> DB
+....
+
+[cols="1,2,2",options="header"]
+|===
+| fronteira | quem atravessa | quem governa
+
+| **norte-sul**
+| o tráfego que vem de **fora** para a aplicação: parceiros, clientes, outros
+  sistemas
+| **Red Hat Connectivity Link**
+
+| **leste-oeste**
+| o tráfego **entre os serviços** da aplicação, dentro do cluster
+| **Red Hat OpenShift Service Mesh**
+
+| **entre sites**
+| o que a aplicação precisa alcançar e que **não roda no cluster** -- um banco
+  em RHEL, um serviço em outra nuvem
+| **Red Hat Service Interconnect**
+|===
+
+== Por que a divisão importa na prática
+
+Cada produto responde uma pergunta que os outros dois **não** respondem.
+
+=== Connectivity Link: quem entra, e em quais condições
+
+Autenticação, limite por plano comercial, telemetria por consumidor. Ele opera
+na porta de entrada -- e para ele todo chamador é externo, identificado por uma
+credencial.
+
+O que ele **não** sabe: o que acontece depois que a chamada entrou. Uma vez
+passada a borda, ele não tem mais opinião.
+
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação^]
+· Módulos xref:m1-00-intro.adoc[1], xref:m2-00-intro.adoc[2] e
+xref:m3-00-intro.adoc[3]
+
+=== Service Mesh: quem fala com quem, lá dentro
+
+Identidade por serviço (mTLS), autorização entre eles, divisão de tráfego entre
+versões, e a instrumentação que produz traces sem tocar no código.
+
+O que ele **não** sabe: quem é o cliente comercial do outro lado da borda. Para
+o Service Mesh, tudo que vem do Gateway é *"o Gateway"*.
+
+https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.0[Documentação^]
+· Módulo xref:m4-00-intro.adoc[4]
+
+=== Service Interconnect: como alcançar o que ficou fora
+
+Um túnel mútuo entre sites, sem VPN, sem abrir porta de entrada e sem expor o
+recurso na internet. Quem fica de fora continua de fora -- e mesmo assim é
+alcançável.
+
+O que ele **não** faz: política. Ele resolve conectividade, não governança.
+
+https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Documentação^]
+· Módulo xref:m5-00-intro.adoc[5]
+
+== As três juntas, numa chamada só
+
+Vale guardar esta sequência, porque ela é o workshop inteiro em quatro linhas:
+
+. um parceiro chama `https://.../travels` -- o **Connectivity Link** decide se
+  ele entra, sob qual plano, e conta a chamada;
+. o `travels` chama `flights`, `hotels` e `cars` -- o **Service Mesh** decide
+  se cada um desses saltos é permitido, e os instrumenta;
+. esses serviços precisam do banco, que não está no cluster -- o **Service
+  Interconnect** carrega essa conversa por um túnel;
+. a resposta volta pelo mesmo caminho.
+
+Uma requisição, três fronteiras, três produtos. E nenhum deles exigiu mudança
+na aplicação.
+
+== Onde cada um aparece no workshop
+
+[cols="1,2",options="header"]
+|===
+| módulo | produto protagonista
+
+| xref:m1-00-intro.adoc[1 — Proteger e cobrar por uma API na borda]
+| Connectivity Link
+
+| xref:m2-00-intro.adoc[2 — Observar e diagnosticar]
+| Connectivity Link e Service Mesh (a observabilidade é dos dois)
+
+| xref:m3-00-intro.adoc[3 — Governar: do manual ao caminho pavimentado]
+| Connectivity Link, com Developer Hub e GitOps
+
+| xref:m4-00-intro.adoc[4 — Service Mesh: a fronteira de dentro]
+| Service Mesh
+
+| xref:m5-00-intro.adoc[5 — Service Interconnect: o que não mora aqui]
+| Service Interconnect
+|===

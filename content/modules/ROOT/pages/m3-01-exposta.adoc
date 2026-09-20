@@ -132,7 +132,3 @@ duas é o ponto do módulo.
 
 Siga para a xref:m3-02-colheita.adoc[parte 3.2].
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

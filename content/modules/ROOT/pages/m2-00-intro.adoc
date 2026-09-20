@@ -30,7 +30,3 @@ parte 2.3 usa as recusas que as regras do Módulo 1 produzem.
 Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
 você interromper com `Ctrl-C`. As outras três não alteram nada.
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._
