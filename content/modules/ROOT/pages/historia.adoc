@@ -17,19 +17,29 @@ include::partial$diagrama.adoc[]
 [mermaid]
 ....
 flowchart LR
-  P[Parceiros] -->|HTTPS| G[Gateway]
-  G --> T[travels]
-  T --> F[flights]
-  T --> H[hotels]
-  T --> C[cars]
-  T --> I[insurances]
-  T --> D[discounts]
-  F & H & C & I -.->|Service Interconnect| DB[(banco, fora do cluster)]
+  P["Parceiros<br/>(chave de API)"] -->|HTTPS| G["Gateway"]
+  G --> T["travels<br/><i>v1</i>"]
+  T --> F["flights<br/><i>v1</i>"]
+  T --> H["hotels<br/><i>v1</i>"]
+  T --> C["cars<br/><i>v1</i>"]
+  T --> I["insurances<br/><i>v1</i>"]
+  T -->|"90%"| D1["discounts<br/><b>v1</b>"]
+  T -.->|"10%"| D2["discounts<br/><b>v2</b>"]
+  F & H & C & I -.->|"Service Interconnect"| DB[("banco<br/>fora do cluster")]
+  classDef versaoNova fill:#fff4e0,stroke:#c08a2e,stroke-width:2px
+  class D2 versaoNova
 ....
 
 O `travels` é a única porta de entrada: ele recebe a chamada e distribui para
-os outros cinco. Os detalhes de cada serviço estão em
-xref:aplicacao.adoc[A aplicação e as APIs].
+os outros cinco.
+
+Repare no `discounts`: ele tem **duas versões no ar ao mesmo tempo**, e o
+tráfego se divide entre elas -- 90% para a v1, 10% para a v2. Nenhum outro
+serviço tem isso, e não é acaso: é o par que torna possível promover uma
+versão nova sem trocar a imagem de um Deployment, e é o que a parte 2.2
+exercita.
+
+Os detalhes de cada serviço estão em xref:aplicacao.adoc[A aplicação e as APIs].
 
 == O que mudou no negócio
 
