@@ -1,0 +1,216 @@
+= 3.2 A mesma API, pelo caminho pavimentado
+:navtitle: 3.2 O caminho pavimentado
+
+**A quem pertence:** Desenvolvedor (quem consome o caminho) e Engenheiro de Plataforma (quem o constrói). · **12 min** · **muda estado**
+
+[WARNING.antes]
+====
+**Antes: a parte 3.1.** Ela é o contraste inteiro desta aqui. Sem ter escrito
+os quatro arquivos à mão, o que vem a seguir parece só um formulário
+conveniente.
+====
+
+Na parte anterior você publicou uma API do zero. Quatro arquivos, quatro
+momentos, e um checklist no fim listando tudo que ainda faltava: telemetria
+por plano, mTLS, identidade de serviço, canário, catálogo.
+
+Agora a mesma API, pelo caminho que a plataforma oferece.
+
+== Abra o portal
+
+{rhdh_url}[Red Hat Developer Hub^] -- entre com as mesmas credenciais do
+OpenShift.
+
+No menu à esquerda: **Create**. Você verá seis templates; o desta parte é o
+**1. API como produto — projeto, Service Mesh e Connectivity Link**.
+
+[NOTE]
+====
+Os templates não estão embutidos no portal: ele os lê do GitLab deste
+ambiente, do mesmo repositório que o Módulo 1 usou para mostrar a
+configuração versionada. Template também é código, e também tem histórico.
+====
+
+== Preencha: três decisões, quinze defaults
+
+O formulário tem cinco seções e dezoito campos. Isso assusta à primeira
+vista, e não deveria: **só três exigem decisão sua**.
+
+[cols="1,2,2",options="header"]
+|===
+| campo | o que colocar | por quê
+
+| `name`
+| um nome curto, por exemplo `echo-pavimentado`
+| vira o namespace, o hostname e o nome de todos os objetos
+
+| `appsDomain`
+| `{cluster_domain}`
+| o domínio deste cluster, para montar o hostname da rota
+
+| `repoUrl`
+| o picker já vem travado em `rhcl/apis` -- só complete o nome do projeto
+| é o subgrupo que o GitOps observa
+|===
+
+Os outros quinze já vêm preenchidos, e vale olhar três deles antes de seguir,
+porque são decisões de produto disfarçadas de campo de formulário:
+
+[cols="1,1,2",options="header"]
+|===
+| campo | default | o que significa
+
+| `planPreset`
+| `three-tier`
+| nasce com os três planos comerciais, como o do Módulo 1 -- e não com um só
+
+| `mtlsStrict`
+| `true`
+| o namespace nasce exigindo mTLS; ninguém "liga depois"
+
+| `allowedCallers`
+| `ingress-gateway/prod-web-istio`
+| **só o Gateway** pode chamar este serviço. Nenhum outro pod do cluster
+  consegue, nem por engano
+|===
+
+Clique em **Create**.
+
+== O que aconteceu
+
+Três passos, e nenhum deles é "fazer deploy":
+
+. **fetch** -- o template é renderizado com os seus valores;
+. **publish** -- um projeto novo nasce no GitLab, em `rhcl/apis`, com tudo
+  dentro;
+. **register** -- a API aparece no catálogo do portal.
+
+Repare no que **não** existe nessa lista: nenhum `oc apply`. A configuração foi
+para o git, e é o GitOps que a traz para o cluster.
+
+== Espere o Argo (até ~3 min)
+
+O `ApplicationSet` chamado `rhcl-golden-path` varre o subgrupo `rhcl/apis` e
+adota todo projeto que tenha um diretório `manifests/`. O intervalo de varredura
+é de 180 segundos.
+
+[source,bash,role="execute"]
+----
+oc get applications -n openshift-gitops | grep -v travel
+----
+
+Quando a sua API aparecer na lista, o Argo já a está aplicando.
+
+[NOTE]
+====
+A condição de adoção é o **subgrupo**, não um rótulo. Não há topic a marcar
+nem passo a lembrar: se o projeto está em `rhcl/apis` e tem `manifests/`, ele
+entra. O `RepoUrlPicker` do formulário já travava o destino lá -- por isso
+você não teve escolha a fazer nesse campo.
+====
+
+== Confira com o verify que nasceu junto
+
+O repositório gerado traz um `verify.sh` -- o preflight **deste** serviço,
+percorrendo a mesma cadeia que o `scripts/demo.sh check` percorre para a
+travel-agency.
+
+[source,bash,role="execute"]
+----
+cd /tmp && git clone -q "{repo_apis}/<o-nome-que-voce-deu>.git" api-nova \
+  && cd api-nova && bash verify.sh
+----
+
+== Agora compare
+
+Esta é a parte que importa. Você escreveu **quatro arquivos** na parte 3.1.
+O template gerou **vinte e três**.
+
+[source,bash,role="execute"]
+----
+ls /tmp/api-nova/manifests/
+----
+
+[cols="1,2",options="header"]
+|===
+| o que você já tinha escrito à mão | o que veio a mais
+
+a|
+* `00-namespace.yaml`
+* `11-deployment.yaml`
+* `12-service.yaml`
+* `20-httproute.yaml`
+* `30-authpolicy.yaml`
+* `31-planpolicy.yaml`
+a|
+* `01-podmonitor.yaml` -- telemetria, que faltava
+* `10-serviceaccount.yaml` -- identidade própria do serviço
+* `21-route.yaml` -- a publicação no router
+* `40-apiproduct.yaml` -- a API como produto no portal
+* `50-peerauthentication.yaml` -- mTLS obrigatório
+* `51-authorizationpolicy.yaml` -- quem pode chamar
+* `52-destinationrule.yaml` + `53-virtualservice.yaml` -- canário já declarado
+* `kustomization.yaml`
+|===
+
+E fora de `manifests/`, mais sete arquivos que a parte 3.1 nem mencionou:
+
+[cols="1,2",options="header"]
+|===
+| arquivo | para que
+
+| `catalog-info.yaml`
+| a entidade no catálogo -- é assim que a API vira algo pesquisável
+
+| `openapi.yaml`
+| o contrato, que o portal publica para quem for consumir
+
+| `docs/index.md` + `mkdocs.yml`
+| documentação viajando junto com o código
+
+| `consumers/`
+| onde cada assinatura de cliente será registrada, por pull request
+
+| `gitops/application.yaml`
+| o Application do Argo, para quem preferir aplicar à mão
+
+| `verify.sh`
+| o preflight próprio, que você acabou de rodar
+|===
+
+== O que isso prova
+
+Não é sobre digitar menos. Os vinte e três arquivos seriam escrevíveis à mão
+-- você escreveu seis deles em dez minutos.
+
+São duas outras coisas:
+
+**Um serviço não consegue nascer errado.** Não existe caminho em que alguém
+esqueça o mTLS, ou publique sem plano comercial, ou suba um endpoint que
+qualquer pod do cluster possa chamar. Não porque haja uma convenção escrita
+num wiki -- porque o formulário não oferece a alternativa.
+
+**A configuração passou a ter dono, data e revisão.** O que você fez à mão na
+parte 3.1 existia **só no cluster**: ninguém sabia quem criou, quando, nem por
+quê. Aqui os mesmos objetos nasceram num repositório, com autor e histórico.
+Mudar uma policy vira um merge request que alguém revisa.
+
+E essa segunda diferença é exatamente o que a próxima parte vai auditar.
+
+== Limpando
+
+A API que você criou fica no ar até ser removida. Para desfazer:
+
+[source,bash,role="execute"]
+----
+bash scripts/golden-path-limpa.sh
+----
+
+Ele remove o Application do Argo, o namespace e o projeto no GitLab -- nessa
+ordem, que importa: apagar o namespace antes do Application faria o Argo
+recriá-lo.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

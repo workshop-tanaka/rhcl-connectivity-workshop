@@ -1,0 +1,120 @@
+= A história por trás deste workshop
+:navtitle: A história
+
+Neste workshop você acompanha a **Rota Viagens**, uma empresa fictícia de
+serviços de viagem que está modernizando a própria infraestrutura -- e que,
+no meio dessa mudança, descobriu que o produto mais valioso dela não é o site.
+
+É a API.
+
+== Onde a Rota Viagens está hoje
+
+Os serviços já foram para o OpenShift. O banco de dados, não: ele continua
+fora do cluster, como acontece na maioria das migrações reais.
+
+[mermaid]
+....
+flowchart LR
+  P[Parceiros] -->|HTTPS| G[Gateway]
+  G --> T[travels]
+  T --> F[flights]
+  T --> H[hotels]
+  T --> C[cars]
+  T --> I[insurances]
+  T --> D[discounts]
+  F & H & C & I -.->|Service Interconnect| DB[(banco, fora do cluster)]
+....
+
+O `travels` é a única porta de entrada: ele recebe a chamada e distribui para
+os outros cinco. Os detalhes de cada serviço estão em
+xref:aplicacao.adoc[A aplicação e as APIs].
+
+== O que mudou no negócio
+
+A Rota Viagens passou a vender acesso à própria API. Hoje existem três
+contratos assinados, com direitos diferentes:
+
+[cols="1,3",options="header"]
+|===
+| plano | o que o contrato promete
+
+| gratuito
+| poucas chamadas, para quem está avaliando
+
+| intermediário
+| volume moderado, para parceiros pequenos
+
+| completo
+| o volume que os grandes parceiros exigem
+|===
+
+O contrato existe. **A plataforma não sabe disso.**
+
+== Os quatro problemas que a equipe tem agora
+
+Todos eles são consequência da mesma coisa: o que foi combinado no papel
+nunca virou configuração.
+
+**1. A API não sabe quem está chamando.** Qualquer um com o endereço recebe
+resposta. Não há como distinguir um parceiro pagante de um robô.
+
+**2. Os planos não existem fora do contrato.** Ninguém consegue provar quanto
+cada parceiro consumiu, nem impedir que o cliente do plano gratuito use como
+se fosse do completo.
+
+**3. Quando um parceiro reclama, ninguém sabe onde parou.** *"Não consigo
+acessar"* pode ser DNS, endereço não publicado, credencial errada, cota
+estourada ou um serviço interno recusando outro -- e a investigação começa do
+zero toda vez.
+
+**4. Cada API nova repete o trabalho inteiro.** E a configuração existe só no
+cluster: ninguém sabe quem criou, quando, nem por quê. Quando a auditoria
+perguntar, metade da resposta não existe.
+
+== O seu papel
+
+Você é a pessoa de plataforma da Rota Viagens. Em alguns momentos assume o
+papel do **desenvolvedor** que publica uma API, e em outros o de quem está
+**de plantão** quando um parceiro abre chamado.
+
+A troca de papel não é enfeite: parte do que o workshop mostra só faz sentido
+quando você sente a recusa do lado de quem **não** tem permissão. A parte 1.4
+faz exatamente isso.
+
+== Como os quatro módulos atacam os quatro problemas
+
+[cols="1,2",options="header"]
+|===
+| módulo | resolve
+
+| xref:m1-00-intro.adoc[1 — Proteger e cobrar por uma API na borda]
+| os problemas **1 e 2**: a API passa a exigir credencial e a distinguir
+  planos, e o consumo vira número
+
+| xref:m2-00-intro.adoc[2 — Observar e diagnosticar]
+| o problema **3**: seguir a requisição, e saber em qual de seis lugares ela
+  morreu
+
+| xref:m3-00-intro.adoc[3 — Governar: do manual ao caminho pavimentado]
+| o problema **4**: a configuração ganha dono, data e revisão -- e uma API
+  nova deixa de poder nascer errada
+
+| xref:m4-00-intro.adoc[4 — Além da borda]
+| o que os três anteriores não cobrem: o tráfego **entre** os serviços, e o
+  banco que ficou fora do cluster
+|===
+
+== A tese que o workshop defende
+
+Tudo que você vai fazer acontece **ao redor** da aplicação. O binário do
+`travels` é o mesmo do primeiro ao último módulo -- nenhuma linha de código é
+alterada para autenticar, limitar, medir ou proteger.
+
+Se ao final isso estiver funcionando sem a aplicação ter mudado, a conclusão
+se impõe sozinha: **o Connectivity Link não é um gateway com recursos extras.
+É onde a API vira produto.**
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._

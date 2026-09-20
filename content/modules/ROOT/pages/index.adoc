@@ -41,9 +41,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | ~20 min
 
 | xref:m3-00-intro.adoc[**3** — Governar: do manual ao caminho pavimentado]
-| publicar uma API do zero, levá-la de aberta a governada uma regra por vez, e
-  auditar o próprio rastro por quatro fontes diferentes
-| ~16 min
+| publicar uma API do zero à mão, refazê-la pelo caminho pavimentado do
+  portal e comparar as duas, e auditar o próprio rastro por quatro fontes
+| ~28 min
 
 | xref:m4-00-intro.adoc[**4** — Além da borda]
 | proteger o que acontece **dentro** da aplicação, promover uma versão nova ao
@@ -97,7 +97,10 @@ As que dependem de outra:
 | 3.1 De aberta a governada
 | as partes 1.1, 1.3 e 1.4
 
-| 3.2 Quatro perguntas, quatro fontes
+| 3.2 O caminho pavimentado
+| a parte 3.1 -- ela é o contraste inteiro
+
+| 3.3 Quatro perguntas, quatro fontes
 | o rastro que os Módulos 1 e 2 deixam
 
 | 4.2 e 4.3

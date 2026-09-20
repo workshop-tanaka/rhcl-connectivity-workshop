@@ -1,5 +1,5 @@
-= 3.2 Quatro perguntas, quatro fontes
-:navtitle: 3.2 Quatro perguntas, quatro fontes
+= 3.3 Quatro perguntas, quatro fontes
+:navtitle: 3.3 Quatro perguntas, quatro fontes
 
 **A quem pertence:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **6 min** · **opcional**
 

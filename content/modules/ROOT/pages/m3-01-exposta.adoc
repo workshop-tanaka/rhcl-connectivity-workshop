@@ -123,6 +123,15 @@ configuração em algo que tem dono, data e revisão.
 É essa a diferença entre uma convenção escrita num wiki, que todo mundo
 concorda e alguém esquece numa terça-feira, e uma plataforma.
 
+
+== E agora, o contraste
+
+Você escreveu quatro arquivos e levou dez minutos. A próxima parte publica a
+**mesma** API pelo caminho que a plataforma oferece -- e a comparação entre as
+duas é o ponto do módulo.
+
+Siga para a xref:m3-02-colheita.adoc[parte 3.2].
+
 '''
 
 [.autoria]

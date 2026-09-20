@@ -149,6 +149,10 @@
         - { name: tempo-tempo-jaegerui, ns: tracing-system }
         - { name: rede-de-servicos-network-observer, ns: travel-db }
         - { name: devspaces, ns: openshift-devspaces }
+        # O portal e a tela da parte 3.2. Rota ausente devolve lista vazia,
+        # e o "+ ['']" do 'Host por tela' faz o atributo nascer vazio em vez
+        # de quebrar o playbook -- o mesmo default das outras cinco.
+        - { name: backstage-developer-hub, ns: rhdh-rhcl }
       register: r_telas
 
     # Loops em vez de zip/map: a chave do label tem ponto ('kuadrant.io/plan-id')
@@ -227,6 +231,14 @@
           repo_policies: >-
             {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies')
                if _gitlab_host else '' }}
+          # O subgrupo onde o golden path publica. Nasce VAZIO: quem o povoa e
+          # o template do portal, na parte 3.2.
+          repo_apis: >-
+            {{ ('https://' ~ _gitlab_host ~ '/rhcl/apis')
+               if _gitlab_host else '' }}
+          rhdh_url: >-
+            {{ ('https://' ~ _telas['backstage-developer-hub'])
+               if _telas['backstage-developer-hub'] else '' }}
           # Prefixo pronto para linkar UM arquivo: {config_url}/<caminho>
           config_url: >-
             {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies/-/blob/main')

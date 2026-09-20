@@ -1,4 +1,5 @@
 * xref:index.adoc[Sobre este workshop]
+* xref:historia.adoc[A história por trás deste workshop]
 * xref:aplicacao.adoc[A aplicação e as APIs]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
@@ -21,7 +22,8 @@
 .Módulo 3 — Governar: do manual ao caminho pavimentado
 * xref:m3-00-intro.adoc[Introdução]
 * xref:m3-01-exposta.adoc[3.1 De aberta a governada]
-* xref:m3-02-auditoria.adoc[3.2 Quatro perguntas, quatro fontes]
+* xref:m3-02-colheita.adoc[3.2 O caminho pavimentado]
+* xref:m3-03-auditoria.adoc[3.3 Quatro perguntas, quatro fontes]
 
 .Módulo 4 — Além da borda
 * xref:m4-00-intro.adoc[Introdução]
