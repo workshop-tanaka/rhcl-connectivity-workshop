@@ -25,25 +25,27 @@ ir além.
 as chamadas que vêm da internet e as entrega a quem de direito.
 https://docs.redhat.com/en/documentation/openshift_container_platform[Documentação do OpenShift^]
 
-**Endereço publicado** -- um nome (como `api-travels.apps...`) só responde se
-alguém o tiver **publicado** dentro do cluster. Nome que ninguém publicou
-resolve no DNS e mesmo assim não leva a lugar nenhum. É a estação 2.
+**Route** -- o objeto do OpenShift que publica um hostname no router de
+ingresso. O DNS curinga do cluster resolve qualquer `*.apps...`, mas sem uma
+Route correspondente o router não tem para onde encaminhar. É a estação 2.
 
-**A porta da API (_Gateway_)** -- o ponto único por onde as chamadas externas
-entram. Em vez de cada aplicação cuidar da própria segurança, todas ficam
-atrás desta porta. O padrão que a define chama-se Gateway API.
+**Gateway** -- o ponto único por onde as chamadas externas entram, declarado
+pelo padrão Gateway API do Kubernetes. Em vez de cada aplicação cuidar da
+própria segurança, todas ficam atrás dele. As rotas que ele publica são
+`HTTPRoute`; as regras que aplica são `AuthPolicy`, `RateLimitPolicy` e
+`PlanPolicy`.
 https://gateway-api.sigs.k8s.io/[Site do Gateway API^]
 
-**Red Hat Connectivity Link** -- o produto que coloca **regras** nessa porta:
-quem pode entrar, quantas chamadas cada cliente pode fazer, o que isso vira
-em métrica. As recusas das estações 3 e 4 vêm dele.
+**Red Hat Connectivity Link** -- o produto que implementa essas policies sobre
+o Gateway: autenticação, rate limit por plano e telemetria. As recusas das
+estações 3 e 4 vêm dele.
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação do Connectivity Link^]
 · https://docs.kuadrant.io/[projeto upstream (Kuadrant)^]
 
-**Service Mesh** -- a camada que governa as chamadas **entre os serviços
-internos**, depois que a chamada já entrou. Cada serviço ganha um
-acompanhante que inspeciona o que entra e sai dele, e pode recusar com base
-em quem está chamando. É a estação 5.
+**Service Mesh** -- a camada que governa o tráfego leste-oeste, entre os
+serviços. Cada pod ganha um **sidecar**, um proxy Envoy que intercepta tudo
+que entra e sai e aplica `AuthorizationPolicy` com base na identidade mTLS de
+quem chama. É a estação 5.
 https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.0[Documentação do Service Mesh^]
 · https://istio.io/latest/docs/ops/deployment/architecture/[como funciona, no upstream^]
 ====
@@ -84,23 +86,23 @@ bash scripts/negado.sh 3
 | `exit=6`, sem código HTTP
 | tudo do lado do servidor
 
-| 2. endereço não publicado
+| 2. sem Route publicada
 | `503`, sem cabeçalho de motivo
-| a API, as regras, a aplicação
+| Gateway, policies, aplicação
 
-| 3. credencial recusada
+| 3. AuthPolicy recusou
 | `401` + `x-ext-auth-reason`
-| DNS, endereço, e a API está de pé
+| DNS, Route, e o Gateway está de pé
 
 | 4. cota do plano estourada
 | `429`, sem cabeçalho nenhum
 | a credencial é válida
 
-| 5. um serviço recusou outro
+| 5. sidecar recusou (leste-oeste)
 | `403 RBAC: access denied`
 | toda a entrada
 
-| 6. a regra não estava valendo
+| 6. policy sobreposta
 | o comportamento contradiz a configuração
 | confirme **antes** do resto
 |===
@@ -149,14 +151,15 @@ aconteceu**:
 . o nome dele foi traduzido em endereço (o DNS funcionou);
 . a chamada chegou ao cluster;
 . o cluster encontrou quem publicou aquele endereço;
-. a chamada foi entregue à porta da API, que está de pé;
-. a regra de segurança daquela API foi encontrada **e aplicada**.
+. a chamada chegou ao Gateway, que está de pé;
+. a `AuthPolicy` daquela rota foi encontrada **e aplicada**.
 
 Cinco etapas confirmadas por um cabeçalho. É por isso que a primeira coisa a
 pedir ao cliente é *"me mande os cabeçalhos da resposta"*, e não o log dele.
 
 Um detalhe que costuma surpreender: um **caminho inexistente também responde
-`401`**, e não `404`. A regra de segurança decide antes de a aplicação entrar
+`401`**, e não `404`. A `HTTPRoute` casa `PathPrefix: /`, então a `AuthPolicy`
+decide antes de a aplicação entrar
 na conversa -- ela nunca chega a ser acordada para dizer "não tenho essa
 página". Isso é deliberado: uma API fechada não deve revelar quais caminhos
 existem para quem ainda não se identificou.
@@ -183,10 +186,9 @@ As estações 1 a 4 acontecem **antes** de a chamada entrar. A 5 acontece
 depois: a chamada externa responde `200`, e mesmo assim parte da tela fica
 vazia -- porque, lá dentro, um serviço tentou chamar outro e foi recusado.
 
-Quem recusa não é a aplicação nem a porta da API: é o acompanhante que o
-Service Mesh coloca ao lado de cada serviço, e que verifica **quem está
-chamando** antes de deixar passar. A frase `RBAC: access denied` no corpo da
-resposta é a assinatura dessa recusa.
+Quem recusa não é a aplicação nem o Gateway: é o **sidecar** do serviço de
+destino, aplicando uma `AuthorizationPolicy` sobre a identidade mTLS de quem
+chamou. A frase `RBAC: access denied` no corpo é a assinatura dessa recusa.
 
 O módulo mostra duas chamadas ao mesmo destino, de origens diferentes: uma
 recebe `403`, a outra `404`. E aqui **o `404` é boa notícia** -- só quem foi

@@ -1,4 +1,5 @@
 * xref:index.adoc[Sobre este workshop]
+* xref:aplicacao.adoc[A aplicação e as APIs]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
 

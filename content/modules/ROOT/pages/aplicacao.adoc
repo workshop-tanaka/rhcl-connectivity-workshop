@@ -1,0 +1,157 @@
+= A aplicação e as APIs
+:navtitle: A aplicação e as APIs
+
+Antes de governar uma API, vale saber qual API é. Esta página descreve o que
+está rodando no seu cluster -- e o que **não** está, que também importa.
+
+== O que é a travel-agency
+
+Uma agência de viagens de exemplo, com sete serviços em `travel-agency`. Ela
+foi escolhida por um motivo específico: **ela não tem uma linha de código
+sobre autenticação, cotas ou identidade**. O binário é o mesmo de antes de
+existir qualquer policy.
+
+Tudo que o workshop faz acontece *ao redor* dela. É isso que permite dizer,
+ao fim, que a plataforma fez o trabalho -- e não a aplicação.
+
+=== Os sete serviços
+
+[cols="1,2,1",options="header"]
+|===
+| serviço | o que faz | exposto?
+
+| `travels`
+| a porta de entrada da aplicação. Recebe a chamada e chama os outros
+| **sim**, via `HTTPRoute`
+
+| `flights`
+| companhias aéreas e preços
+| não, só interno
+
+| `hotels`
+| hospedagem
+| não
+
+| `cars`
+| locação de veículos
+| não
+
+| `insurances`
+| seguro viagem
+| não
+
+| `discounts`
+| descontos aplicáveis -- e o único com **duas versões** (`v1` e `v2`) no ar
+| não
+
+| `mysqldb`
+| o banco com os destinos
+| não
+|===
+
+Só o `travels` tem rota externa. Os outros seis existem **atrás** dele, e é
+essa assimetria que o Módulo 4 explora: proteger a entrada não diz nada sobre
+o que acontece depois dela.
+
+=== O `discounts` tem duas versões de propósito
+
+`discounts-v1` e `discounts-v2` rodam ao mesmo tempo. É esse par que torna
+possível a parte 4.2, onde uma fração do tráfego vai para a versão nova sem
+ninguém trocar imagem de Deployment.
+
+== A API que você vai chamar
+
+Um `HTTPRoute` publica o `travels` em:
+
+[cols="1,3"]
+|===
+| endereço | `https://{api_host}`
+|===
+
+Dois caminhos interessam ao workshop:
+
+=== `GET /travels` -- a lista de destinos
+
+Responde **45 destinos**, direto do banco:
+
+[source,json]
+----
+[{"city": "Amsterdam", "lat": "52.3500", "lng": "4.9166"}, ...]
+----
+
+É a chamada mais usada nos módulos, porque é barata e a resposta é fácil de
+conferir: se vierem 45 itens, a cadeia inteira funcionou.
+
+=== `GET /travels/<cidade>` -- o fan-out
+
+Aqui o `travels` chama os outros serviços e junta tudo numa resposta só:
+
+[source,json]
+----
+{
+  "city": "Amsterdam",
+  "status": "Valid",
+  "flights": [{"airline": "KLM", "price": ...}, ...],
+  "hotels":  [...],
+  "cars":    [...]
+}
+----
+
+**É este caminho que faz a aplicação ser mais que um serviço.** Uma chamada
+externa vira várias internas -- e é por isso que o Módulo 2 consegue mostrar
+um trace com vários saltos, e o Módulo 4 tem o que proteger.
+
+[NOTE]
+====
+A API **não** expõe `/flights` nem `/hotels` na borda: esses serviços só são
+alcançáveis por dentro. Chamar `https://{api_host}/flights/Amsterdam` responde
+`404` -- e isso é desenho, não falta.
+====
+
+== O banco não está no cluster
+
+Detalhe que muda a leitura de vários módulos: o `mysqldb` que a aplicação usa
+**não roda em `travel-agency`**. Ele vive em outro site, alcançado por um
+túnel do Red Hat Service Interconnect.
+
+Na prática isso significa que aqueles 45 destinos atravessam uma fronteira
+antes de chegar até você. A parte 4.4 abre esse túnel e mostra o tráfego
+passando por ele.
+
+É o cenário mais comum em cliente real -- *"esse banco não vai para o
+Kubernetes"* -- e por isso está no ambiente desde o começo, não como um extra.
+
+== A segunda API: `echo-api`
+
+Existe uma segunda aplicação no cluster, bem menor, chamada `echo-api`. Ela
+devolve o que recebe, e serve para demonstrar autenticação por **identidade**
+(OIDC) em vez de chave de API.
+
+Você não precisa dela nos Módulos 1 e 2. Ela aparece como contraste quando o
+assunto é *de onde vem a identidade de quem chama*.
+
+== E as APIs que você mesmo vai criar
+
+No Módulo 3 você publica uma API nova, do zero -- primeiro à mão, para sentir
+o que falta, e depois pelo caminho pavimentado do portal. Essa API é sua, nasce
+e morre dentro do módulo, e não toca em nada descrito nesta página.
+
+== Confira você mesmo
+
+[source,bash,role="execute"]
+----
+oc get deploy,svc -n travel-agency
+----
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 200; echo
+----
+
+O primeiro mostra os sete serviços; o segundo, os destinos que vieram do banco
+do outro lado do túnel.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
