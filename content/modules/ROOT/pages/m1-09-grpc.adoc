@@ -1,0 +1,101 @@
+= 1.9 A mesma policy, outro protocolo
+:navtitle: 1.9 gRPC
+
+**A quem pertence:** Desenvolvedor de serviços internos, e Arquitetura. · **8 min** · **não muda estado**
+
+[NOTE.antes]
+====
+**Antes:** a parte 1.1, que mostra a `AuthPolicy` sobre HTTP. Esta parte é a
+comparação com ela.
+====
+
+*"Funciona com gRPC?"* é a primeira pergunta de quem tem serviço interno em
+gRPC -- e a resposta honesta tem **duas metades que não são iguais**.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/grpc.sh
+----
+
+O comando roda três movimentos: a autenticação, a comparação entre as duas
+policies, e o limite.
+
+[NOTE]
+====
+As chamadas gRPC rodam **dentro de um pod**, com a imagem oficial do
+`grpcurl` -- o terminal do workshop não traz essa ferramenta, e instalar um
+binário na sua máquina seria pedir demais.
+
+Efeito colateral útil: a chamada sai de dentro do cluster, o que prova que o
+exercício não depende de rota publicada nem de DNS externo.
+====
+
+== A primeira metade: a autenticação vem de graça
+
+Sem credencial, a resposta é `code = Unauthenticated`. Com a chave no
+_metadata_ `apikey`, o serviço responde.
+
+E aqui está o ponto do módulo. Compare a `AuthPolicy` de gRPC com a de HTTP,
+campo a campo:
+
+[cols="1,1,1",options="header"]
+|===
+| | HTTP (`travels`) | gRPC (`bookings`)
+
+| `targetRef.kind` | `HTTPRoute` | **`GRPCRoute`**
+| `credentials` | `queryString: APIKEY` | **`customHeader: apikey`**
+| seletor das chaves | `app=partner` | `app=partner` — igual
+| Gateway | `prod-web` | `prod-web` — **o mesmo**
+| listener | HTTPS/443 | HTTPS/443 — **o mesmo**, h2 por ALPN
+|===
+
+**Duas diferenças, e as duas são do protocolo.** gRPC não tem query string,
+então a credencial viaja em _metadata_. Nada mais muda.
+
+Não há porta nova, não há Gateway novo, não há operador novo. É por isso que a
+resposta curta a *"funciona com gRPC?"* é **"é a mesma policy"**.
+
+== A segunda metade: o limite não morde
+
+Aqui o material podia esconder, e não vai.
+
+A `RateLimitPolicy` do `GRPCRoute` reporta `Accepted=True` e `Enforced=True`.
+O teto está declarado. E as chamadas **passam todas**.
+
+[source,text]
+----
+teto declarado: 5 por janela
+Accepted=True
+Enforced=True
+  1: passou    5: passou
+  2: passou    6: passou
+  3: passou    7: passou
+  4: passou    8: passou
+----
+
+No mesmo cluster e no mesmo minuto, o limite de HTTP corta no quarto request.
+É específico de `GRPCRoute`.
+
+[IMPORTANT]
+====
+Isto foi **medido**, não suposto: em 2026-08-28 e remedido em 2026-09-20 sobre
+o RHCL 1.4.3, que é a versão corrente. O resultado se repetiu.
+====
+
+== O que isso prova
+
+Duas coisas, e a segunda é a mais valiosa.
+
+**A policy é do protocolo, não do produto.** Trocar HTTP por gRPC não exigiu
+arquitetura nova. O mesmo Gateway, o mesmo listener, o mesmo mecanismo de
+credencial — só o transporte mudou.
+
+**E `Enforced=True` não é promessa de efeito.** A policy foi aceita, foi
+programada, e o campo de status diz que está valendo. O contador diz que não
+está. **Quem confia no status sem medir o comportamento acredita num limite
+que não existe.**
+
+Guarde essa segunda lição: ela reaparece no Módulo 3, quando o assunto for
+diagnosticar o que a plataforma afirma contra o que ela faz.

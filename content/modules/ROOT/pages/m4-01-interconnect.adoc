@@ -120,6 +120,75 @@ por um motivo técnico: o namespace da aplicação tem injeção de sidecar, e o
 sidecar interceptaria o protocolo próprio do roteador. A aplicação alcança o
 banco por DNS normal de Kubernetes, que é tráfego leste-oeste comum.
 
+== E quando o egress gateway bastaria?
+
+Esta é a pergunta que separa os dois produtos, e vale responder antes que ela
+apareça sozinha.
+
+O **Service Mesh** também sabe tratar tráfego que sai do cluster: declara-se um
+`ServiceEntry` para o destino externo e roteia-se por um **egress gateway**.
+Ganha-se ponto único de saída, política sobre quem pode chamar para fora, e
+métrica e trace do Istio sobre essa perna.
+
+Mas há um pressuposto embutido: **o egress gateway não cria conectividade, ele
+governa a que já existe.** Ele precisa que o cluster alcance o destino pela
+rede.
+
+[cols="2,1,1",options="header"]
+|===
+| | egress gateway | Service Interconnect
+
+| exige rota de rede até o destino
+| **sim**
+| não
+
+| atravessa NAT, firewall, rede privada
+| não
+| **sim**
+
+| ponto único de saída, com policy
+| **sim**
+| não
+
+| observabilidade da perna externa
+| métrica e trace do Istio
+| console própria da rede de serviços
+|===
+
+**O critério é objetivo:** o cluster alcança o destino pela rede? Se alcança,
+o egress gateway é mais simples e dá observabilidade melhor. Se não alcança --
+e é o caso de quase todo banco que ficou em RHEL atrás de um firewall --
+nenhuma configuração de mesh resolve, porque não há o que governar.
+
+=== Eles se encadeiam, não competem
+
+E aqui está a parte que costuma passar despercebida: **os dois operam ao mesmo
+tempo neste ambiente.**
+
+Como o Service Interconnect apresenta o serviço remoto como um `Service`
+**local**, esse Service está dentro do mundo do Service Mesh. Então a chamada
+atravessa as duas camadas, em sequência:
+
+[source,text]
+----
+flights  →  [sidecar: mTLS, AuthorizationPolicy, métrica]  →  Service mysqldb
+                                                                    ↓
+                                                        [túnel mútuo, mTLS próprio]
+                                                                    ↓
+                                                               banco na VM
+----
+
+O Service Mesh governa até o listener: quem pode chamar o banco, com qual
+identidade, e a métrica dessa perna. O Interconnect carrega dali em diante.
+
+**Um ponto cego, e é honesto nomeá-lo:** o grafo do Kiali mostra
+`flights → mysqldb` como um serviço interno qualquer. Ele **não** revela que
+ali começa um túnel para outro site. A observabilidade do mesh termina no
+listener; a do Interconnect começa no roteador.
+
+São dois planos que não se juntam -- e é exatamente por isso que este ambiente
+tem uma console separada para a rede de serviços.
+
 == O que isso prova
 
 Três fronteiras, três produtos, um argumento só: **conectividade é política
