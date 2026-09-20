@@ -23,4 +23,7 @@
 .A prova
 * xref:09-auditoria.adoc[9. Quatro perguntas, quatro fontes]
 
+.Quando o cliente não consegue
+* xref:10-negado.adoc[10. Onde a requisição morreu]
+
 * xref:99-encerramento.adoc[Encerramento]

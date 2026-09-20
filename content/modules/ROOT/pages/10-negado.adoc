@@ -1,0 +1,278 @@
+= 10. Onde a requisição morreu
+:navtitle: 10. Onde a requisição morreu
+
+**A quem pertence:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **8 min** · **não muda estado**
+
+[NOTE.antes]
+====
+**Antes:** nenhum módulo. Este roda sozinho, a qualquer hora.
+====
+
+**Ao final deste módulo** você consegue olhar uma recusa de API e dizer em
+qual de seis lugares a chamada morreu -- e, mais útil no dia a dia, quais
+lugares você já pode **descartar** sem investigar.
+
+== Cinco palavras, antes de começar
+
+Se os termos abaixo forem novos para você, está tudo bem: o módulo inteiro
+funciona sem conhecê-los de antemão. Eles estão aqui para quando você quiser
+ir além.
+
+.Abra se quiser o vocabulário mínimo (e os links oficiais)
+[%collapsible]
+====
+**Cluster / OpenShift** -- o ambiente onde tudo isto roda. É ele quem recebe
+as chamadas que vêm da internet e as entrega a quem de direito.
+https://docs.redhat.com/en/documentation/openshift_container_platform[Documentação do OpenShift^]
+
+**Endereço publicado** -- um nome (como `api-travels.apps...`) só responde se
+alguém o tiver **publicado** dentro do cluster. Nome que ninguém publicou
+resolve no DNS e mesmo assim não leva a lugar nenhum. É a estação 2.
+
+**A porta da API (_Gateway_)** -- o ponto único por onde as chamadas externas
+entram. Em vez de cada aplicação cuidar da própria segurança, todas ficam
+atrás desta porta. O padrão que a define chama-se Gateway API.
+https://gateway-api.sigs.k8s.io/[Site do Gateway API^]
+
+**Red Hat Connectivity Link** -- o produto que coloca **regras** nessa porta:
+quem pode entrar, quantas chamadas cada cliente pode fazer, o que isso vira
+em métrica. As recusas das estações 3 e 4 vêm dele.
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação do Connectivity Link^]
+· https://docs.kuadrant.io/[projeto upstream (Kuadrant)^]
+
+**Service Mesh** -- a camada que governa as chamadas **entre os serviços
+internos**, depois que a chamada já entrou. Cada serviço ganha um
+acompanhante que inspeciona o que entra e sai dele, e pode recusar com base
+em quem está chamando. É a estação 5.
+https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/3.0[Documentação do Service Mesh^]
+· https://istio.io/latest/docs/ops/deployment/architecture/[como funciona, no upstream^]
+====
+
+== O método: apostar antes de rodar
+
+Este módulo **não é para assistir**. Cada estação descreve um sintoma e pára,
+esperando que você **aposte** em qual é a causa antes de ver a resposta.
+
+A aposta errada ensina mais que a saída certa lida em silêncio. Erre à
+vontade: nada aqui muda a configuração do ambiente.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh negado
+----
+
+São seis estações, na ordem em que uma chamada as encontra. Vale ler cada uma
+perguntando não "o que aconteceu?", mas **"o que isto já me permite parar de
+investigar?"**.
+
+Para rever uma sozinha:
+
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 3
+----
+
+== As seis estações
+
+[cols="1,2,2",options="header"]
+|===
+| onde parou | o que você vê | o que já dá para descartar
+
+| 1. o nome não resolveu
+| `exit=6`, sem código HTTP
+| tudo do lado do servidor
+
+| 2. endereço não publicado
+| `503`, sem cabeçalho de motivo
+| a API, as regras, a aplicação
+
+| 3. credencial recusada
+| `401` + `x-ext-auth-reason`
+| DNS, endereço, e a API está de pé
+
+| 4. cota do plano estourada
+| `429`, sem cabeçalho nenhum
+| a credencial é válida
+
+| 5. um serviço recusou outro
+| `403 RBAC: access denied`
+| toda a entrada
+
+| 6. a regra não estava valendo
+| o comportamento contradiz a configuração
+| confirme **antes** do resto
+|===
+
+=== A estação que mais engana: o `503`
+
+Um `503` normalmente significa "a aplicação está fora do ar". Na estação 2
+ele significa outra coisa: **esse endereço nunca foi publicado**.
+
+Acontece porque o cluster tem DNS curinga -- qualquer nome terminado no
+domínio dele é traduzido para o mesmo endereço, que é a porta de entrada do
+OpenShift. Ela recebe a chamada, procura quem publicou aquele nome, não
+encontra ninguém, e responde `503`. A chamada nem chegou perto da API.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503[O que o 503 significa no padrão HTTP^]
+
+=== A estação mais útil: dois `401` de causas opostas
+
+[cols="1,1",options="header"]
+|===
+| `x-ext-auth-reason` | significa
+
+| `credential not found`
+| o cliente **não mandou** credencial nenhuma
+
+| `the API Key provided is invalid`
+| mandou, e ela **não vale** -- revogada, trocada, ou com erro de digitação
+|===
+
+Mesmo código, investigações completamente diferentes. E há um detalhe que
+poucos usam: o cabeçalho `www-authenticate` traz `realm="api-key-authn"`, que
+é o **nome da regra** que recusou. Você descobre em qual regra o cliente caiu
+sem abrir um arquivo de configuração e sem ter acesso ao cluster.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401[O que o 401 significa no padrão HTTP^]
+
+.Mais detalhes: por que o `401` prova tanta coisa
+[%collapsible]
+====
+Vale a pena entender por que este código é tão informativo, porque é ele que
+encurta a maior parte dos chamados.
+
+Para o cliente receber um `401` com `x-ext-auth-reason`, **tudo isto já
+aconteceu**:
+
+. o nome dele foi traduzido em endereço (o DNS funcionou);
+. a chamada chegou ao cluster;
+. o cluster encontrou quem publicou aquele endereço;
+. a chamada foi entregue à porta da API, que está de pé;
+. a regra de segurança daquela API foi encontrada **e aplicada**.
+
+Cinco etapas confirmadas por um cabeçalho. É por isso que a primeira coisa a
+pedir ao cliente é *"me mande os cabeçalhos da resposta"*, e não o log dele.
+
+Um detalhe que costuma surpreender: um **caminho inexistente também responde
+`401`**, e não `404`. A regra de segurança decide antes de a aplicação entrar
+na conversa -- ela nunca chega a ser acordada para dizer "não tenho essa
+página". Isso é deliberado: uma API fechada não deve revelar quais caminhos
+existem para quem ainda não se identificou.
+====
+
+=== A estação muda: o `429`
+
+Quando a cota do plano estoura, a resposta é `429` -- e **só isso**. Sem
+`retry-after`, sem `x-ratelimit-*`. O cliente não descobre qual é o limite,
+quanto já usou, nem quando pode tentar de novo.
+
+Medimos: **não há configuração para ligar esses cabeçalhos** nesta versão.
+É uma limitação real, e é melhor você saber disso agora do que procurar o
+botão por uma tarde.
+
+O que o `429` **prova** é valioso mesmo assim: a credencial é válida e o
+plano dela foi identificado. A recusa é sobre **quanto**, não sobre **quem**.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429[O que o 429 significa no padrão HTTP^]
+
+=== A estação invisível de fora: um serviço recusando outro
+
+As estações 1 a 4 acontecem **antes** de a chamada entrar. A 5 acontece
+depois: a chamada externa responde `200`, e mesmo assim parte da tela fica
+vazia -- porque, lá dentro, um serviço tentou chamar outro e foi recusado.
+
+Quem recusa não é a aplicação nem a porta da API: é o acompanhante que o
+Service Mesh coloca ao lado de cada serviço, e que verifica **quem está
+chamando** antes de deixar passar. A frase `RBAC: access denied` no corpo da
+resposta é a assinatura dessa recusa.
+
+O módulo mostra duas chamadas ao mesmo destino, de origens diferentes: uma
+recebe `403`, a outra `404`. E aqui **o `404` é boa notícia** -- só quem foi
+atendido pode responder "não tenho essa página". Quem é recusado nunca chega
+a existir para o serviço do outro lado.
+
+https://istio.io/latest/docs/concepts/security/[Como a identidade entre serviços funciona^]
+
+=== A estação que custa mais tempo: a regra que não valia
+
+Esta não tem sintoma na resposta. O comportamento simplesmente **contradiz a
+configuração que você está lendo**.
+
+O status da regra mostra duas linhas que parecem se contradizer:
+
+[source,text]
+----
+Accepted=True    AuthPolicy has been accepted
+Enforced=False   AuthPolicy is overridden by [travel-agency/travel-agency-authpolicy]
+----
+
+Traduzindo: a regra **está escrita corretamente** e foi aceita -- e **não
+está valendo**, porque outra, mais específica, a substitui. O próprio status
+diz o nome de quem a substituiu.
+
+É o mesmo princípio de qualquer sistema de permissões: a regra específica
+vence a regra ampla. O que engana é que o arquivo que você abre está certo;
+ele só não é o que decide.
+
+https://gateway-api.sigs.k8s.io/concepts/security-model/[Como a delegação de regras funciona no Gateway API^]
+
+== Desafio: diagnostique sem saber a resposta
+
+Aqui é onde você descobre se aprendeu, em vez de achar que aprendeu.
+
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh desafio
+----
+
+O comando provoca **uma das seis estações, sorteada**, e mostra só o sintoma.
+Você diz o número, e ele confirma ou corrige. Pode repetir quantas vezes
+quiser -- cada rodada sorteia outra.
+
+Se errar, o próprio resultado diz qual módulo rever.
+
+== A cola, para levar embora
+
+Este é o artefato do módulo -- o que sobrevive ao workshop:
+
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh tabela
+----
+
+As duas perguntas que resolvem a maioria dos chamados:
+
+. **"me mande os cabeçalhos da resposta"** -- separa as estações 1 a 5 na hora;
+. **"a regra que você leu está valendo?"** -- separa a estação 6, que contradiz
+  a configuração e por isso engana mais.
+
+== O que esta plataforma ainda não responde
+
+Um workshop honesto também diz onde a ferramenta não chega. Tudo abaixo foi
+**medido neste ambiente**, não suposto:
+
+* o `429` não explica nada ao cliente, e não há como ligar isso;
+* o cliente **não recebe um número de protocolo** para citar no chamado -- e o
+  que ele envia é descartado. A correlação entre o chamado e o registro
+  interno só dá por horário e motivo;
+* o registro interno da recusa guarda o **motivo**, mas não diz de **qual
+  API** -- o que num ambiente com várias APIs não fecha o chamado sozinho.
+
+Saber disso poupa a tarde que você gastaria procurando um recurso que não
+existe.
+
+== O que isso prova
+
+Diagnóstico não é adivinhação: é **descarte**. Cada sintoma elimina um
+pedaço do caminho, e os dois cabeçalhos certos eliminam mais da metade dele.
+
+E há uma simetria que vale notar: é a **mesma evidência** que o módulo 9 usa
+para auditar. A auditoria parte da mudança e pergunta o efeito; o diagnóstico
+parte do efeito e pergunta a mudança.
+
+'''
+
+[.autoria]
+_Workshop idealizado e construído por Sandro Tanaka._
