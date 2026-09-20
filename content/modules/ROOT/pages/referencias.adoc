@@ -1,0 +1,149 @@
+= Materiais de referência
+:navtitle: Materiais de referência
+
+Tudo que este workshop usou, reunido -- o que fica disponível depois que o
+ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
+
+== Documentação dos produtos
+
+[cols="1,2",options="header"]
+|===
+| produto | onde aparece no workshop
+
+| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Red Hat Connectivity Link^]
+| Módulo 1 inteiro, e o diagnóstico do Módulo 3
+
+| https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Red Hat OpenShift Service Mesh^]
+| Módulo 2, e a instrumentação que o Módulo 3 usa
+
+| https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Red Hat Service Interconnect^]
+| Módulo 4
+
+| https://docs.redhat.com/en/documentation/red_hat_developer_hub[Red Hat Developer Hub^]
+| parte 1.7, o caminho pavimentado
+
+| https://docs.redhat.com/en/documentation/openshift_container_platform[OpenShift Container Platform^]
+| a base de tudo
+|===
+
+Os links apontam para a **página do produto**, não para uma versão. Para saber
+em qual versão você trabalhou, rode no terminal:
+
+[source,bash,role="execute"]
+----
+bash scripts/versoes.sh
+----
+
+== Os padrões e projetos por trás
+
+Vale conhecer, porque é onde a especificação vive -- e porque o vocabulário do
+workshop vem daqui:
+
+[cols="1,2",options="header"]
+|===
+| projeto | o que define
+
+| https://gateway-api.sigs.k8s.io/[Gateway API^]
+| `Gateway`, `HTTPRoute`, `GRPCRoute` e o modelo de papéis que a parte 1.4
+  exercita
+
+| https://docs.kuadrant.io/[Kuadrant^]
+| o upstream do Connectivity Link: `AuthPolicy`, `RateLimitPolicy`,
+  `TLSPolicy`, `DNSPolicy`
+
+| https://istio.io/latest/docs/[Istio^]
+| `PeerAuthentication`, `AuthorizationPolicy`, `VirtualService`,
+  `DestinationRule`
+
+| https://skupper.io/[Skupper^]
+| o upstream do Service Interconnect: `Site`, `Link`, `Connector`, `Listener`
+
+| https://cert-manager.io/docs/[cert-manager^]
+| quem emite o certificado que a `TLSPolicy` declara
+
+| https://argo-cd.readthedocs.io/[Argo CD^]
+| quem aplica no cluster o que a parte 1.7 publica no git
+
+| https://backstage.io/docs/features/software-templates/[Backstage Software Templates^]
+| o mecanismo por trás do template que a parte 1.7 usa
+|===
+
+== Especificação HTTP
+
+Os códigos que o Módulo 3 ensina a distinguir:
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401[401 Unauthorized^]
+· https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429[429 Too Many Requests^]
+· https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503[503 Service Unavailable^]
+
+== O que está no ambiente
+
+Estes só existem **enquanto o ambiente estiver de pé**. Se algum interessar,
+vale copiar antes de devolver a reserva.
+
+[cols="1,2",options="header"]
+|===
+| onde | o que é
+
+| {repo_policies}[a configuração, no GitLab^]
+| toda policy que você viu, versionada, com histórico e autoria
+
+| {repo_no_ambiente}[o repositório da demo, no GitLab^]
+| os scripts, os manifests e a documentação interna
+
+| {rhdh_url}[o catálogo no Developer Hub^]
+| as APIs modeladas como produto, com os templates
+
+| {grafana_url}[os painéis do Grafana^]
+| consumo por plano e por parceiro
+|===
+
+=== A documentação interna do repositório
+
+No terminal, dentro de `docs/`:
+
+[cols="1,2",options="header"]
+|===
+| arquivo | para quê
+
+| `RUNBOOK.md`
+| o porquê de cada passo, as perguntas que sempre aparecem, e as armadilhas
+  já medidas
+
+| `CONHECIMENTO.md`
+| o estado do ambiente, o ruído benigno que não se persegue, e as decisões
+  fechadas
+
+| `SAMPLES.md`
+| as amostras do Istio que acompanham o ambiente, e o que cada uma mede
+|===
+
+[source,bash,role="execute"]
+----
+ls docs/
+----
+
+=== A coleção do Postman
+
+{repo_no_ambiente}/-/blob/main/postman/rhcl-demo.postman_collection.json[rhcl-demo.postman_collection.json^]
+-- as chamadas dos módulos, prontas. O passo a passo está em
+xref:extra-postman.adoc[Testar a API no Postman].
+
+== Para levar no bolso
+
+Duas saídas de terminal que valem colar num runbook do seu time:
+
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh tabela
+----
+
+A tabela de diagnóstico: do sintoma para o lugar onde a chamada morreu, e o
+que cada um já permite descartar.
+
+[source,bash,role="execute"]
+----
+bash scripts/versoes.sh --md
+----
+
+As versões em markdown, prontas para colar num chamado.

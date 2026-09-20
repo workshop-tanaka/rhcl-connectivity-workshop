@@ -72,14 +72,13 @@ quando quiser recomeçar do zero. Para repetir as partes no mesmo dia,
 
 == Para levar
 
-O ambiente inteiro fica de pé até o fim da sua reserva: repita as partes quantos
+O ambiente fica de pé até o fim da sua reserva: repita as partes quantas vezes
 quiser. No terminal, `bash scripts/demo.sh --list` mostra todos os passos, o
 que cada um pressupõe e para quem ele fala.
 
-* `docs/RUNBOOK.md`, no diretório da demo, tem o porquê de cada parte, as
-  perguntas que sempre aparecem e as armadilhas já medidas.
-* `docs/DEMO-PASSO-A-PASSO.md` é este roteiro na forma de sequência, com a
-  saída esperada de cada comando.
+Tudo que o workshop usou -- documentação dos produtos, os projetos por trás, a
+configuração versionada e a coleção do Postman -- está reunido em
+xref:referencias.adoc[Materiais de referência].
 
 '''
 

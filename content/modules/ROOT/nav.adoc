@@ -40,3 +40,4 @@
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]
+* xref:referencias.adoc[Materiais de referência]
