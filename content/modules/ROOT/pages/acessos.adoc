@@ -104,6 +104,31 @@ indicado.
 | {ide_url}[abrir^]
 |===
 
+== As versões deste ambiente
+
+"Em que versão você testou isso?" é a primeira pergunta de quem vai reproduzir
+o workshop, e a segunda de quem abre um chamado. A resposta sai do cluster, não
+de uma tabela:
+
+[source,bash,role="execute"]
+----
+bash scripts/versoes.sh
+----
+
+Para colar num chamado ou num relatório, em markdown:
+
+[source,bash,role="execute"]
+----
+bash scripts/versoes.sh --md
+----
+
+[NOTE]
+====
+A versão do **operador** não é a do que está servindo. O operador do
+Connectivity Link diz `1.4.3`, mas quem decide cada requisição são o Authorino,
+o Limitador e o _shim_ no proxy -- por isso a tabela separa as duas colunas.
+====
+
 == O terminal
 
 O painel à direita já está autenticado no cluster. Não há login a fazer, e

@@ -394,6 +394,39 @@
       delay: 10
       until: r_clone is not failed
 
+    # O terminal abre um nivel ACIMA do repositorio, e os 37 comandos do
+    # conteudo sao 'bash scripts/...' -- que ali falham com "No such file or
+    # directory". A Preparacao mandava fazer 'cd' a mao, o que bastava enquanto
+    # havia UM terminal. Com o segundo, quem alterna entre as abas leva o erro
+    # sem entender por que o mesmo comando funciona numa e nao na outra.
+    #
+    # workingDir, e NAO um 'cd' no .bashrc: o HOME do container e /data, que
+    # nao e gravavel -- escrever em /home/lab-user/.bashrc nao tem efeito
+    # nenhum, porque o bash le $HOME/.bashrc. Medido em 2026-09-20.
+    #
+    # E DEPOIS DO CLONE, nao antes: workingDir apontando para diretorio
+    # inexistente faz o container morrer em CreateContainerError. O patch
+    # dispara um pod novo, e a essa altura o diretorio ja existe.
+    - name: Abrir o terminal dentro do repositorio
+      kubernetes.core.k8s:
+        state: patched
+        api_version: apps/v1
+        kind: Deployment
+        namespace: "{{ _showroom_ns }}"
+        name: showroom
+        definition:
+          spec:
+            template:
+              spec:
+                containers:
+                  # Merge estrategico casa o container pelo NOME. Usar indice
+                  # exigiria ler o Deployment antes, e quebraria calado no dia
+                  # em que o chart reordenar os containers -- o patch iria para
+                  # o traefik, que aceita workingDir e nao reclama.
+                  - name: terminal
+                    workingDir: /home/lab-user/rhcl-connectivity-demo
+      failed_when: false
+
     - name: Conferir que os scripts chegaram
       kubernetes.core.k8s_exec:
         namespace: "{{ _showroom_ns }}"

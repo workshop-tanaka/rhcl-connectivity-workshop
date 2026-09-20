@@ -8,10 +8,11 @@ tem tudo o que as partes executam.
 
 [source,bash,role="execute"]
 ----
-cd /home/lab-user/rhcl-connectivity-demo && ls scripts/
+ls scripts/
 ----
 
-Tudo daqui em diante roda **de dentro desse diretório**. Os scripts descobrem
+O terminal **já abre dentro do repositório** -- e as duas abas, `Terminal` e
+`Terminal 2`, abrem no mesmo lugar. Tudo daqui em diante roda daí. Os scripts descobrem
 hostname, chaves e rotas do cluster na hora -- não há nada para configurar e
 nada para baixar.
 
