@@ -29,6 +29,7 @@
 * xref:m3-02-trace.adoc[3.2 O que um contador não responde]
 * xref:m3-03-negado.adoc[3.3 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[3.4 Quando a policy cai]
+* xref:m3-05-alerta.adoc[3.5 O alerta]
 
 .Módulo 4 — Service Interconnect
 * xref:m4-00-intro.adoc[Introdução]

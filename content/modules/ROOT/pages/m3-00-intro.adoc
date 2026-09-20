@@ -1,7 +1,7 @@
 = Módulo 3 — Observar e diagnosticar as duas fronteiras
 :navtitle: Módulo 3 — Introdução
 
-**Quatro partes · cerca de 20 minutos · uma delas muda estado**
+**Cinco partes · cerca de 30 minutos · duas delas mudam estado**
 
 **Produtos:** Connectivity Link e Service Mesh -- a observabilidade é dos dois
 
@@ -11,7 +11,9 @@
 * saber o que um contador **não** consegue responder, e quando trocar de
   ferramenta;
 * olhar uma recusa de API e dizer em qual de seis lugares ela parou;
-* prever o que acontece com o tráfego quando um componente da plataforma cai.
+* prever o que acontece com o tráfego quando um componente da plataforma cai;
+* fazer a plataforma **avisar sobre si mesma** -- inclusive quando o tráfego
+  está perfeito e ninguém reclama.
 
 == A ideia que atravessa as quatro partes
 

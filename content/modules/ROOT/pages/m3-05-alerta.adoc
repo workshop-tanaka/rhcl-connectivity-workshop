@@ -1,0 +1,193 @@
+= 3.5 A plataforma avisando sobre si mesma
+:navtitle: 3.5 O alerta
+
+**A quem pertence:** Operação/SRE, e quem está de plantão. · **10 min** · **muda estado**
+
+[WARNING.antes]
+====
+**Antes: a parte 3.4.** Ela mostra o Limitador caindo e o tráfego passando. Esta
+responde a pergunta que fica: **e quem te avisa?**
+====
+
+Tudo que você diagnosticou até aqui foi falha que **alguém sente**: `401`, `429`,
+`403`. Falta a que ninguém sente.
+
+A proteção que deixou de valer não gera reclamação. O tráfego continua `200`, o
+painel continua verde, e a API está desprotegida. Os dois jeitos de isso
+acontecer já apareceram neste workshop -- a policy sobreposta da parte 1.3 e o
+Limitador fora do ar da parte 3.4 -- e nos dois o material apresentou como
+acidente inevitável.
+
+Falta a segunda metade da frase.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/alerta.sh aplica
+----
+
+Três regras, em três lugares. Depois, para ver o que cada uma está enxergando:
+
+[source,bash,role="execute"]
+----
+bash scripts/alerta.sh status
+----
+
+`inactive` é o estado saudável: a condição não está valendo.
+
+== As três regras, e por que moram separadas
+
+[cols="1,1,2",options="header"]
+|===
+| onde | o que observa | o que pega
+
+| `monitoring`
+| `kuadrant_planpolicy_status`
+| uma policy que foi aceita e **deixou de valer**
+
+| `kuadrant-system`
+| `limitador_up`
+| o rate limit **falhando aberto** agora
+
+| `travel-agency`
+| `istio_requests_total`
+| um parceiro saturando o plano, ou sendo recusado em série
+|===
+
+Elas não moram juntas por escolha. **O monitoramento de workload injeta o
+namespace nas consultas de uma `PrometheusRule`**: uma regra em
+`kuadrant-system` não enxerga métrica coletada em `monitoring`.
+
+.Mais detalhes: como isso falha, e por que é difícil de perceber
+[%collapsible]
+====
+Medimos com duas regras idênticas no mesmo arquivo, uma consultando métrica do
+próprio namespace e outra de fora:
+
+[source,text]
+----
+TesteMesmoNamespace    estado=pending    series=1
+TesteOutroNamespace    estado=inactive   series=0
+----
+
+A segunda não deu erro. Não apareceu aviso, não houve log. Ela simplesmente
+ficou `inactive` para sempre, como uma regra saudável cuja condição nunca
+ocorre.
+
+É a mesma família de falha que o Módulo 3 inteiro persegue: **o objeto existe,
+o status é verde, e o efeito não acontece.**
+====
+
+== A prova: o tráfego verde e o alerta vermelho
+
+[source,bash,role="execute"]
+----
+bash scripts/alerta.sh prova
+----
+
+Cinco movimentos. O que importa está entre o terceiro e o quarto:
+
+[source,text]
+----
+1. com o Limitador de pe, o tier gratuito corta:
+   200 200 200 429 429 429 429 429
+
+3. a MESMA rajada, sem quem contar:
+   200 200 200 200 200 200 200 200
+   → as oito passaram
+
+4. e o alerta?
+   40s   pending
+   80s   pending
+   ✗ LimitadorForaDoAr: FIRING  (aos 100s)
+----
+
+**As oito passaram.** Do ponto de vista do cliente, o serviço está perfeito --
+melhor que antes, até. Nenhum painel de tráfego acusa nada, e nenhum cliente
+vai abrir chamado.
+
+E o alerta acende.
+
+[NOTE]
+====
+O alerta demora cerca de 100 segundos, e a espera tem duas partes que se
+somam: a métrica precisa ficar obsoleta (uma raspagem, ~30s) e só então o
+`for: 1m` da regra começa a contar. O script mostra a contagem em vez de
+esperar calado.
+====
+
+== Duas armadilhas que este ato mede
+
+Nenhuma das duas dá erro. As duas produzem um alerta que parece certo e nunca
+dispara.
+
+=== `== 0` não pega métrica que desaparece
+
+A primeira versão da regra era `limitador_up == 0`. Parece correta. Não
+dispara nunca:
+
+[cols="1,1",options="header"]
+|===
+| com o Limitador fora | resultado
+
+| `limitador_up` | **0 séries** -- a métrica some junto com o pod
+| `limitador_up == 0` | comparação sobre 0 séries: nunca verdadeira
+| `absent(limitador_up)` | **1 série** ← é isto que detecta
+|===
+
+Métrica exportada pela aplicação **desaparece** quando o pod morre; ela não vai
+a zero. Quem escreve `== 0` está esperando um valor que nunca chega.
+
+=== Derrubar o Deployment não derruba o Limitador
+
+O `Deployment` pertence ao recurso `Limitador`, e o operador o reconcilia de
+volta em segundos. Um `oc scale deploy --replicas=0` parece funcionar, o pod
+some, e volta antes da medição -- o que faz a rajada seguinte levar `429` de
+novo, que é o oposto do que o exercício quer provar.
+
+O caminho é pelo próprio recurso:
+
+[source,bash,role="execute"]
+----
+oc patch limitador limitador -n kuadrant-system --type=merge -p '{"spec":{"replicas":0}}'
+----
+
+== No console
+
+{openshift_console_url}/monitoring/alertrules[Observe → Alerting → Alerting rules^]
+-- as regras aparecem ali junto com as do cluster, e o alerta aceso aparece em
+*Alerts*.
+
+Notificação por e-mail ou chat é configuração do Alertmanager, não do
+Connectivity Link. Neste ambiente os alertas ficam no console.
+
+== Limpando
+
+[source,bash,role="execute"]
+----
+bash scripts/alerta.sh remove
+----
+
+== O que isso prova
+
+**O tráfego não avisou, porque o tráfego estava bem.** Quem avisou foi a
+plataforma, sobre si mesma.
+
+É a diferença entre monitorar o que os clientes sentem e monitorar se a
+governança ainda está de pé. A primeira é obrigatória e todo mundo faz. A
+segunda só é possível quando as policies têm status próprio e esse status vira
+métrica -- e é aí que uma plataforma de API se separa de um gateway com
+recursos extras.
+
+== Você concluiu o Módulo 3
+
+Você sabe seguir uma requisição salto a salto, dizer em qual de seis lugares
+uma recusa morreu, prever o que o tráfego faz quando a plataforma falha -- e
+fazer a plataforma avisar quando a proteção cai sem ninguém sentir.
+
+Falta a terceira fronteira: o que a aplicação precisa e que **não roda aqui**.
+É o xref:m4-00-intro.adoc[Módulo 4], e ele fecha o workshop.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.
