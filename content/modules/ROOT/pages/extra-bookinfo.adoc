@@ -1,0 +1,132 @@
+= Uma aplicação, duas fronteiras
+:navtitle: Uma aplicação, duas fronteiras
+
+**Opcional · ~6 min · muda estado e desfaz no fim**
+
+**A quem pertence:** Arquitetura e Engenheiro de Plataforma -- quem precisa
+explicar o que o Service Mesh decide, o que o Connectivity Link decide, e por
+que não é a mesma coisa.
+
+[NOTE.antes]
+====
+**Antes:** as partes xref:m2-02-canario.adoc[2.2], que promove uma versão
+nova, e xref:m1-01-fechada.adoc[1.1], que fecha a API. Esta página faz as duas
+coisas numa aplicação que não é a de viagens.
+====
+
+O *bookinfo* é a aplicação de exemplo do projeto Istio: uma loja de livros
+com quatro serviços. Ele roda neste ambiente como o upstream o fez, com o
+gateway do próprio Istio. Duas coisas que a aplicação de viagens não permite
+mostrar ficam fáceis nele:
+
+* ele tem **três versões** do serviço de avaliações (`reviews`);
+* ele pode ser publicado **duas vezes**: pelo gateway do upstream, sem
+  plataforma na frente, e pelo `prod-web`, governado.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/bookinfo-fronteiras.sh
+----
+
+Leva cerca de dois minutos. O script altera os pesos das versões, aplica a
+camada de Connectivity Link do bookinfo e cria três chaves de API. No fim,
+desfaz as três coisas.
+
+== 1. Três versões, e quem decide quem recebe
+
+[source,text]
+----
+o VirtualService como o repositorio declara (pesos iguais), 30 chamadas:
+  reviews-v1 9
+  reviews-v2 10
+  reviews-v3 11
+o canario: 90 / 0 / 10, mais 30 chamadas:
+  reviews-v1 26
+  reviews-v3 4
+os pods, enquanto isso:
+  reviews-v1-...   2/2 Running
+  reviews-v2-...   2/2 Running
+  reviews-v3-...   2/2 Running
+----
+
+A `reviews-v2` está no ar, pronta, e **não recebeu nenhuma chamada**.
+
+Com duas versões, "canário" e "troca de versão" se confundem: some a antiga,
+entra a nova. Com três, fica visível o que decide: não é o `Deployment` que
+existe, é o peso no `VirtualService`. Uma versão pode estar implantada,
+saudável e fora do tráfego ao mesmo tempo.
+
+Abra a loja e recarregue algumas vezes: v1 sem estrelas, v2 com estrelas
+pretas, v3 com vermelhas.
+
+[source,bash,role="execute"]
+----
+echo "https://bookinfo.$(oc get ingresses.config cluster -o jsonpath='{.spec.domain}')/productpage"
+----
+
+== 2. A mesma aplicação, sem plataforma na frente
+
+[source,text]
+----
+https://bookinfo.<dominio>/productpage       200
+https://bookinfo.<dominio>/api/v1/products   200
+----
+
+A loja e a API dela respondem a qualquer um. O gateway do upstream roteia, e
+só: não há chave, nem plano, nem limite.
+
+== 3. A mesma aplicação, atrás do `prod-web`
+
+O script aplica a camada `samples/bookinfo/rhcl/`, que publica o mesmo
+bookinfo em `bookinfo-rhcl.<dominio>` com **duas rotas** no mesmo hostname:
+
+[cols="1,1,2",options="header"]
+|===
+| rota | caminho | policy
+
+| `bookinfo-ui`
+| `/`
+| `AuthPolicy` anônima e um limite de capacidade
+
+| `bookinfo-api`
+| `/api/v1`
+| `AuthPolicy` com chave, e `PlanPolicy` gold / silver / free
+|===
+
+[source,text]
+----
+interface, sem chave               200
+API, sem chave                     401
+API, chave invalida                401
+API, free (2 a cada 10s)           200 200 429 429 429
+API, gold (20 a cada 10s)          200 200 200 200 200
+----
+
+Mesmo pod, mesmo código, mesmo hostname. A interface continua pública; a API
+tem chave e plano. **A fronteira é do produto, decidida por rota**, e não do
+endereço.
+
+[TIP]
+====
+**E a interface, que usa a API?** Ela chama os outros serviços por dentro do
+cluster (`productpage` → `details` e `reviews`), e isso não passa pelo
+Gateway. A policy de borda governa quem **entra**. O que os serviços fazem
+entre si é assunto do Service Mesh, como na parte
+xref:m2-01-leste-oeste.adoc[2.1].
+====
+
+== O que isso prova
+
+As duas metades desta página são produtos diferentes decidindo coisas
+diferentes sobre a mesma aplicação:
+
+* **o Service Mesh** decide para **qual versão** vai cada chamada;
+* **o Connectivity Link** decide **quem pode chamar**, e quanto.
+
+Nenhuma das duas precisou de uma linha de código do bookinfo, e ele não foi
+escrito pensando em nenhuma delas.
+
+TIP: Se o exercício for interrompido, `bash scripts/bookinfo-fronteiras.sh limpa`
+devolve os pesos e remove a camada e as chaves.
