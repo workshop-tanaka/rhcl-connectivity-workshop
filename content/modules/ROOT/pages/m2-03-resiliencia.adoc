@@ -67,17 +67,9 @@ que você mediu -- `UO` e `UH` -- esses sim são visíveis, e são decisões de
 plataforma opostas com o mesmo código de erro.
 
 
+== Falta um salto
 
-== Você concluiu o Módulo 2
-
-O Service Mesh cobriu a fronteira de dentro: identidade entre serviços,
-autorização, promoção de versão ao vivo e o comportamento sob falha.
-
-Você já conhece as duas camadas de governança. O
-xref:m3-00-intro.adoc[Módulo 3] ensina a **observar e diagnosticar** as duas --
-e agora faz sentido, porque metade dos lugares onde uma chamada morre são do
-Service Mesh.
-
-Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
-workshop e diz como devolver o ambiente ao estado inicial.
-
+Na parte 2.1 você mediu o mTLS entre os serviços da aplicação. Mas antes de
+chegar a eles, toda requisição passa por duas chamadas que não aparecem no
+grafo: do Gateway ao Authorino e ao Limitador. A parte
+xref:m2-04-canal.adoc[2.4] pergunta se esse salto também é cifrado.

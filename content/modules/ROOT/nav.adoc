@@ -24,6 +24,7 @@
 * xref:m2-01-leste-oeste.adoc[2.1 A borda não é a única fronteira]
 * xref:m2-02-canario.adoc[2.2 A promoção ao vivo]
 * xref:m2-03-resiliencia.adoc[2.3 Circuit breaker]
+* xref:m2-04-canal.adoc[2.4 O salto que o mesh não cobria]
 
 .Módulo 3 — Observar e diagnosticar
 * xref:m3-00-intro.adoc[Introdução]

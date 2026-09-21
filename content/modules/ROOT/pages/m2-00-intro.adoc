@@ -1,7 +1,7 @@
 = Módulo 2 — Service Mesh: a fronteira de dentro
 :navtitle: Módulo 2 — Introdução
 
-**Três partes · cerca de 16 minutos · todas mudam estado**
+**Quatro partes · cerca de 21 minutos · três mudam estado**
 
 **Produto protagonista:** Red Hat OpenShift Service Mesh
 
@@ -12,7 +12,9 @@
 * distinguir as duas respostas que uma plataforma dá quando o serviço do outro
   lado começa a falhar -- e por que as duas devolvem o mesmo código;
 * distinguir os dois `503` que o Service Mesh produz quando o serviço do outro
-  lado começa a falhar.
+  lado começa a falhar;
+* dizer onde o mTLS começa e onde termina -- inclusive no salto do Gateway até
+  o Authorino e o Limitador.
 
 == A ideia que atravessa as quatro partes
 
@@ -25,12 +27,12 @@ Este módulo é sobre essa segunda fronteira, a **leste-oeste**.
 
 == O que você precisa antes
 
-O Módulo 1. As partes 2.2 e 2.3 partem do estado que a 2.1 estabelece, então
+O Módulo 1. As partes 2.2, 2.3 e 2.4 partem do estado que a 2.1 estabelece, então
 vale fazê-las na ordem.
 
 == Aviso
 
-As três alteram configuração de tráfego e a revertem no fim. Se você
+As partes 2.1 a 2.3 alteram configuração de tráfego e a revertem no fim. Se você
 interromper uma delas no meio, o comando `bash scripts/demo.sh mesh_base`
 devolve tudo ao estado inicial.
 

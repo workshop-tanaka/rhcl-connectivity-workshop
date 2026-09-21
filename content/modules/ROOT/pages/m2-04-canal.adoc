@@ -1,0 +1,191 @@
+= 2.4 O salto que o Service Mesh não cobria
+:navtitle: 2.4 O salto que o mesh não cobria
+
+**A quem pertence:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **5 min** · só lê
+
+[NOTE.antes]
+====
+**Antes: a parte 2.1.** Ela mostrou que ninguém fala em texto claro **entre os
+serviços** da aplicação. Esta parte pergunta sobre um salto que não aparece no
+grafo do Kiali: o do Gateway até quem decide se a requisição passa.
+====
+
+Toda requisição que chega à API faz duas perguntas antes de seguir: ao
+**Authorino** ("esta chave vale?") e ao **Limitador** ("ainda cabe no plano?").
+São duas chamadas gRPC que o Envoy do Gateway faz para fora dele mesmo.
+
+A parte 2.1 mediu o mTLS entre os serviços da aplicação. Mas o Authorino e o
+Limitador moram em `kuadrant-system`, e esse namespace, por padrão, **não está
+no Service Mesh**. E a chave de API viaja na query string, então vai junto na
+chamada ao Authorino.
+
+A pergunta desta parte: **esse salto é cifrado?**
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/mtls-kuadrant.sh status
+----
+
+Só **lê**: o `config_dump` do Envoy do Gateway, o CR `Kuadrant` e os pods de
+`kuadrant-system`. Não muda nada.
+
+== O que a leitura mostra
+
+[source,text]
+----
+O canal Gateway -> Authorino / Limitador
+  kuadrant-auth-service        cifrado (tls)
+  kuadrant-ratelimit-service   cifrado (tls)
+
+  Kuadrant/kuadrant  spec.mtls={"enable":true}
+  status: mtlsAuthorino=true mtlsLimitador=true
+  sidecar no Authorino / Limitador (containers + initContainers):
+    authorino-...              authorino istio-validation istio-proxy
+    limitador-limitador-...    limitador istio-validation istio-proxy
+----
+
+As duas primeiras linhas são o que o Envoy do Gateway de fato usa. Cada
+destino é um *cluster* do Envoy, e um cluster cifrado carrega um
+`transport_socket` TLS. O resto explica por que ele está lá.
+
+== O mesmo comando, antes
+
+Este ambiente já nasce com o salto cifrado. Não foi sempre assim: esta é a
+mesma leitura, **medida neste ambiente** antes da correção.
+
+[source,text]
+----
+O canal Gateway -> Authorino / Limitador
+  kuadrant-auth-service        TEXTO CLARO
+  kuadrant-ratelimit-service   TEXTO CLARO
+
+  Kuadrant/kuadrant  spec.mtls=
+  status: mtlsAuthorino=false mtlsLimitador=false
+  sidecar no Authorino / Limitador (containers + initContainers):
+    authorino-...              authorino
+    limitador-limitador-...    limitador
+----
+
+Nada disso dava erro. Todas as partes do Módulo 1 funcionavam: `401` sem
+chave, `200` com chave, `429` no plano free. A chave era validada, só que
+chegava ao validador **legível** para qualquer um que enxergasse aquele
+tráfego dentro do cluster.
+
+É o mesmo tipo de achado da parte xref:m1-10-certificado.adoc[1.10]: tudo
+funciona, e é justamente por isso que ninguém olha.
+
+== A correção é um campo
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: kuadrant-system
+spec:
+  mtls:
+    enable: true
+----
+
+Com esse campo, o operador do Connectivity Link:
+
+* põe o Authorino e o Limitador no Service Mesh (o `istio-proxy` que você viu
+  na listagem);
+* cria uma `PeerAuthentication` `STRICT` para eles;
+* e o Envoy do Gateway passa a falar com os dois por mTLS.
+
+[source,bash,role="execute"]
+----
+oc get peerauthentication -n kuadrant-system
+----
+
+.Por que o `istio-proxy` aparece depois de `istio-validation`
+[%collapsible]
+====
+Ele é um **sidecar nativo** do Kubernetes: mora em `initContainers`, com
+`restartPolicy: Always`, e não em `containers`. Uma listagem que olha só
+`containers` não o encontra, e parece que o mTLS não pegou. O script lista os
+dois.
+====
+
+== A parte honesta
+
+Ligar o campo teve dois custos, e os dois foram medidos.
+
+**A troca não é gratuita.** Ao ligar num ambiente em uso, os pods do Authorino
+e do Limitador reiniciam. Uma sonda de 1 segundo registrou cerca de **8
+segundos de `500` para todo mundo**: com chave e sem chave. A falha foi
+**fechada**: nenhuma requisição sem chave passou. Por isso o campo se liga na
+criação do ambiente, e não no meio de um exercício.
+
+**O Prometheus ficou cego.** O Prometheus que coleta as métricas do cluster
+não está no Service Mesh. Com `STRICT`, a coleta do Limitador e do Authorino
+levou *connection reset*. As métricas sumiram, e o alerta da parte
+xref:m3-05-alerta.adoc[3.5], `LimitadorForaDoAr`, **disparou com o Limitador
+de pé**.
+
+A correção é abrir **só a porta de métricas** (`8080`) em `PERMISSIVE`. As
+portas que carregam credencial e decisão continuam aceitando só mTLS: `50051`
+no Authorino e `8081` no Limitador. São as outras duas `PeerAuthentication`
+da listagem.
+
+.Mais detalhes: por que a ordem de criação importa
+[%collapsible]
+====
+A `default` que o operador cria não vale para o namespace inteiro: ela
+seleciona os pods por label (`kuadrant.io/managed=true`). Quando duas
+`PeerAuthentication` com seletor valem para o mesmo pod, o Istio usa **a mais
+antiga**.
+
+A primeira tentativa de correção criou a exceção depois da `default`, e foi
+ignorada sem erro nenhum. Por isso o provisionamento aplica a exceção
+**antes** de ligar o mTLS, e o `preflight.sh` confere as datas de criação.
+
+[source,bash,role="execute"]
+----
+oc get peerauthentication -n kuadrant-system \
+  -o custom-columns='NOME:.metadata.name,CRIADA:.metadata.creationTimestamp'
+----
+====
+
+== Configuração
+
+No terminal, em `/home/lab-user/rhcl-connectivity-demo`:
+
+* `platform-reference/kuadrant-system/kuadrant.yaml` -- o campo `spec.mtls`;
+* `platform-reference/kuadrant-system/peerauthentication-metricas.yaml` -- a
+  exceção da porta de métricas;
+* `scripts/mtls-kuadrant.sh` -- a leitura desta parte, e os subcomandos `liga`
+  e `desliga` com a sonda.
+
+WARNING: Não rode `liga` nem `desliga` durante o workshop. Os dois reiniciam o
+Authorino que protege **todas** as APIs, e a sonda mostra a janela de `500`
+enquanto isso acontece.
+
+== O que isso prova
+
+"Temos mTLS" é uma frase sobre um **conjunto de saltos**, não sobre o cluster.
+A parte 2.1 cobriu os saltos entre os serviços. Este aqui, entre o Gateway e
+quem decide, ficou de fora até alguém olhar o `config_dump` e perguntar.
+
+E a correção foi **um campo declarado**, com status que diz se pegou
+(`mtlsAuthorino=true`), e não um procedimento. É a tese deste workshop na
+camada mais baixa: o que está declarado se confere, e o que não está funciona
+por acaso.
+
+== Você concluiu o Módulo 2
+
+O Service Mesh cobriu a fronteira de dentro: identidade entre serviços,
+autorização, promoção de versão ao vivo, o comportamento sob falha e o salto
+entre o Gateway e quem aplica as policies.
+
+Você já conhece as duas camadas de governança. O
+xref:m3-00-intro.adoc[Módulo 3] ensina a **observar e diagnosticar** as duas.
+Agora isso faz sentido, porque metade dos lugares onde uma chamada morre são
+do Service Mesh.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.
