@@ -1,7 +1,7 @@
 = 1.8 Quatro perguntas, quatro fontes
 :navtitle: 1.8 Quatro perguntas, quatro fontes
 
-**A quem pertence:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **6 min** · **opcional**
+**A quem pertence:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **10 min** · **opcional**
 
 [WARNING.antes]
 ====
@@ -140,6 +140,64 @@ Repare como ela atravessa as quatro fontes:
 Nenhuma responde sozinha. É por isso que a parte 1.6 termina onde termina -- com
 a configuração versionada, e não apenas aplicada.
 ====
+
+== Exercício: a chave vazou
+
+As quatro fontes acima respondem sobre **configuração**: quem mudou o quê. A
+pergunta que chega num incidente é outra, sobre **uso**:
+
+[quote]
+____
+A chave do parceiro vazou. Prove quando ela foi criada, por quem, o que ela
+acessou -- e que depois da revogação ela não acessou mais.
+____
+
+[source,bash,role="execute"]
+----
+bash scripts/chave-vazada.sh
+----
+
+Leva cerca de dois minutos. O script cria uma chave **descartável** no plano
+free, usa, audita, revoga e apaga. Nenhuma chave do roteiro é tocada.
+
+[source,text]
+----
+0. A chave existe, e e usada -- como qualquer parceiro
+  ✓ chave cunhada: apikey-vazada-5e4b (tier free)
+  200 200 200 429 429 429 429 429
+
+1. Quando ela nasceu, e por quem?
+  nascimento: 2026-09-21T15:08:13Z
+  QUEM                                       VERBO    QUANDO
+  system:serviceaccount:showroom-rhcl:...    create   2026-09-21T15:08:13
+
+2. O que essa chave acessou?
+  RESPOSTA         CHAMADAS
+  200              3
+  429              5
+
+3. Revogar -- e provar que parou
+  antes da revogacao:  200
+  a MESMA chave, depois:  401 401 401
+----
+
+Cada pergunta tem uma fonte diferente:
+
+* **Quando** vem do próprio `Secret`. **Por quem**, só o audit log sabe: o
+  objeto não guarda o autor em lugar nenhum. Quem aparece é você, pela conta
+  de serviço do terminal.
+* **O que ela acessou** vem das métricas, e não do audit log: nenhuma chamada
+  à API passa pelo apiserver. A contagem é **por chave**, e não por plano,
+  graças à dimensão de parceiro da parte xref:m1-05-negocio.adoc[1.5]. Os
+  `429` também aparecem: o rastro inclui o que a chave tentou e não pôde.
+* **Que parou** não é alguém afirmando que revogou. É o contador da chave que
+  não anda mais, enquanto a mesma chave recebe `401`.
+
+Revogar é apagar um objeto. Não há banco de chaves para sincronizar, nem
+cache para invalidar à mão.
+
+TIP: Se o exercício for interrompido, `bash scripts/chave-vazada.sh limpa`
+remove a chave que sobrou.
 
 == Configuração
 

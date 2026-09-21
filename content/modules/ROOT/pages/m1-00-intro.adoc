@@ -1,7 +1,7 @@
 = Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Oito partes · cerca de 48 minutos · as partes 1.6 e 1.7 criam objetos**
+**Dez partes · cerca de 70 minutos · as partes 1.6 a 1.8 e a 1.10 criam objetos**
 
 **Produto protagonista:** Red Hat Connectivity Link
 
@@ -16,10 +16,14 @@ Ao final deste módulo você consegue explicar, com o ambiente na mão:
 * como tudo isso vira número que a área de negócio entende;
 * publicar uma API do zero à mão, e sentir o que falta nela;
 * refazer a **mesma** API pelo caminho pavimentado do portal, e comparar;
-* auditar o próprio rastro por quatro fontes diferentes;
+* auditar o próprio rastro por quatro fontes diferentes, e reconstituir o uso
+  de uma chave vazada;
+* distinguir a chave de API, que identifica um sistema, do token, que
+  identifica uma pessoa;
+* dizer quem renova o certificado da borda -- e provar que alguém renova.
 
 
-== A ideia que atravessa as cinco partes
+== A ideia que atravessa o módulo
 
 A aplicação de viagens deste ambiente **não tem uma linha de código sobre
 autenticação, limites ou cobrança**. Ela responde a quem chegar.
@@ -31,7 +35,7 @@ plataforma em vez de um acessório da aplicação.
 == Como percorrer
 
 Só a xref:00-preparacao.adoc[Preparação] é pré-requisito. Dentro do módulo há
-duas metades, e dá para parar entre elas:
+três blocos, e dá para parar entre eles:
 
 **1.1 a 1.5 — a API que já existe.** Você observa e mede uma API que outra
 pessoa configurou. Nada muda de estado. A 1.5 lê os dados que a 1.2 gera, então
@@ -40,6 +44,10 @@ vale não pular a 1.2.
 **1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, refaz pelo
 caminho pavimentado, e audita o que fez. Estas criam objetos, e cada página diz
 como desfazer.
+
+**1.9 e 1.10 — o que fica em volta da chave.** A outra credencial, a de uma
+pessoa, e o certificado que protege todas as chamadas. A 1.10 cria e remove um
+namespace próprio.
 
 Se o tempo for curto, parar na 1.5 deixa um bloco completo e coerente.
 
