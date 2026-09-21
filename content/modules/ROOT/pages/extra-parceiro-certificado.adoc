@@ -1,0 +1,157 @@
+= Parceiro com certificado
+:navtitle: Parceiro com certificado
+
+**Opcional · ~6 min · cria e remove um namespace próprio**
+
+**A quem pertence:** Arquitetura e Segurança -- a integração B2B em que o
+parceiro não quer chave de API.
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-09-identidade.adoc[1.9], que compara chave e
+token. Esta página traz a terceira credencial: o certificado de cliente.
+====
+
+*"E se o parceiro quiser se identificar por certificado, e não por chave?"* É
+a pergunta de toda conversa B2B. A resposta honesta tem três partes, e só a
+terceira funciona.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/parceiro-certificado.sh
+----
+
+Leva cerca de dois minutos, e remove tudo no fim.
+
+[IMPORTANT]
+====
+**Por que não no Gateway da API.** Exigir certificado no `prod-web` recusaria
+todos os clientes que você usou até aqui. O exercício sobe um Gateway **só
+dele**, num namespace próprio, com uma CA de parceiros própria emitida pelo
+cert-manager.
+
+O "parceiro" é um pod no mesmo namespace, com os certificados montados. As
+chaves privadas nunca saem do cluster.
+====
+
+== 1. O Gateway exige certificado
+
+O listener do Gateway fica em modo `MUTUAL`:
+
+[source,yaml]
+----
+tls:
+  mode: Terminate
+  certificateRefs: [{name: servidor, kind: Secret}]
+  options: {gateway.istio.io/tls-terminate-mode: MUTUAL}
+----
+
+A CA de parceiros emitiu dois certificados de cliente: `parceiro-gold` e
+`intruso`.
+
+[source,text]
+----
+2. So o listener em MUTUAL, sem AuthPolicy
+  sem certificado          http=000 exit=56
+  parceiro-gold            http=200 exit=0
+  intruso (mesma CA)       http=200 exit=0
+----
+
+Sem certificado, o handshake TLS nem termina (`exit=56`). Mas **o intruso
+entra**. O listener prova que o certificado veio da CA certa, e não **quem**
+é o parceiro. Uma CA que emite para dez parceiros abre a porta para os dez.
+
+== 2. A AuthPolicy com `x509` não enxerga o certificado
+
+O Connectivity Link tem uma forma de autenticação feita para isso: `x509`, que
+valida o certificado do cliente contra uma CA guardada num Secret.
+
+[source,text]
+----
+3. A AuthPolicy com x509 -- o caminho da documentacao
+  parceiro-gold            http=401  x-ext-auth-reason: client certificate is missing
+----
+
+O Envoy **validou** o certificado no handshake, e mesmo assim o Authorino diz
+que ele não veio.
+
+O motivo é o caminho da chamada. O Envoy do Gateway pergunta ao Authorino por
+meio do wasm-shim do Kuadrant, e o wasm-shim não repassa o certificado do
+cliente nessa pergunta. Nesta versão, com `x509`, **ninguém entra**.
+
+WARNING: Isto foi medido no RHCL 1.4. Não tome como definitivo em outra versão:
+refaça o exercício antes de decidir.
+
+== 3. O contorno: o Gateway escreve o certificado num cabeçalho
+
+Duas peças:
+
+. O Gateway passa a escrever o certificado que ele validou no cabeçalho
+  `x-forwarded-client-cert` (XFCC). O modo `SANITIZE_SET` **apaga** o XFCC que
+  vier do cliente e escreve o verdadeiro.
+. A AuthPolicy decide pelo `CN` escrito nesse cabeçalho.
+
+[source,yaml]
+----
+# no Gateway
+spec:
+  infrastructure:
+    annotations:
+      proxy.istio.io/config: '{"gatewayTopology":{"forwardClientCertDetails":"SANITIZE_SET"}}'
+---
+# na AuthPolicy
+rules:
+  authentication:
+    certificado-validado-no-gateway:
+      plain: {selector: request.headers.x-forwarded-client-cert}
+  authorization:
+    so-parceiros-conhecidos:
+      patternMatching:
+        patterns:
+        - selector: request.headers.x-forwarded-client-cert
+          operator: matches
+          value: 'Subject="CN=parceiro-(gold|silver|free)"'
+----
+
+[source,text]
+----
+4. O contorno: o Gateway escreve o certificado num cabecalho
+  sem certificado                http=000 exit=56
+  parceiro-gold                  http=200 exit=0
+  intruso (mesma CA)             http=403  x-ext-auth-reason: Unauthorized
+  intruso forjando o cabecalho   http=403  x-ext-auth-reason: Unauthorized
+----
+
+A última linha é a que importa. O intruso manda o cabeçalho escrito à mão,
+dizendo ser `parceiro-gold`, e leva `403`. O Gateway substituiu o cabeçalho
+pelo certificado que o intruso de fato apresentou.
+
+[IMPORTANT]
+====
+**Sem o `SANITIZE_SET`, o contorno é uma porta aberta.** O XFCC vira só mais
+um cabeçalho, que qualquer cliente preenche como quiser. As duas peças só
+funcionam juntas.
+====
+
+== O que isso prova
+
+Certificado de cliente responde duas perguntas diferentes, e cada uma tem um
+dono:
+
+* **O certificado é legítimo?** Quem responde é o listener do Gateway, no
+  handshake.
+* **Este parceiro pode entrar?** Quem responde é a AuthPolicy, com a regra
+  declarada.
+
+O caminho nativo para a segunda pergunta não funciona nesta versão, e o
+contorno funciona **porque** a primeira resposta chega à segunda por um canal
+que o cliente não controla. Se não fosse assim, a AuthPolicy estaria julgando
+o que o cliente disse de si mesmo.
+
+[TIP]
+====
+Se o exercício for interrompido no meio, limpe com
+`bash scripts/parceiro-certificado.sh limpa`.
+====

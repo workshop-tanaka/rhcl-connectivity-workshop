@@ -1,7 +1,7 @@
 = 2.4 O salto que o Service Mesh não cobria
 :navtitle: 2.4 O salto que o mesh não cobria
 
-**A quem pertence:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **5 min** · só lê
+**A quem pertence:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **8 min** · só lê
 
 [NOTE.antes]
 ====
@@ -151,6 +151,70 @@ oc get peerauthentication -n kuadrant-system \
 ----
 ====
 
+== O mapa inteiro
+
+Esta parte corrigiu um salto. A pergunta que sobra é **quais outros** existem.
+
+[source,bash,role="execute"]
+----
+bash scripts/mapa-mtls.sh
+----
+
+Também só lê. O script percorre o caminho de uma requisição, do cliente até o
+banco, e diz o que protege cada salto. A resposta vem **medida**, e não do que
+está declarado: a métrica `connection_security_policy` do Service Mesh,
+reportada por quem recebe a chamada.
+
+[source,text]
+----
+1. Cliente -> Gateway (a borda)
+  ✓ listener api: TLS de servidor (Terminate) -- o canal e cifrado
+
+2. Gateway -> Authorino / Limitador (quem decide)
+  ✓ Authorino  mTLS
+  ✓ Limitador  mTLS
+
+3. Entre workloads: o que o Service Mesh mediu (ultimas 3h)
+  ORIGEM                          DESTINO                               CANAL
+  ingress-gateway/prod-web-istio  travel-agency/travels-v1              ✓ mTLS
+  travel-agency/travels-v1        travel-agency/hotels-v1               ✓ mTLS
+  travel-agency/travels-v1        travel-agency/discounts-v1            ✓ mTLS
+  ...
+  (fora do mesh)                  kuadrant-system/authorino             ✗ texto claro  (Prometheus ...)
+
+  Destinos SEM sidecar (so quem envia reporta):
+  ingress-gateway/echo-web-istio  echo-api/echo-api (echo-api)          ✗ TEXTO CLARO
+  travel-agency/hotels-v1         travel-db/skupper-router (mysqldb)    ✗ TEXTO CLARO
+
+4. O banco: Skupper e MySQL
+  ✓ Link travel-db-remoto/para-o-cluster (Ready): TLS mutuo do proprio Skupper
+  ✗ MySQL em travel-db-remoto: 1417 conexoes desde que subiu, 0 com TLS
+----
+
+Se a seção 3 vier vazia, o Service Mesh não viu tráfego na janela. Rode
+`bash scripts/traffic.sh tiers` e repita.
+
+Leia o mapa de cima para baixo:
+
+* **Até o `hotels`, tudo é cifrado.** A borda tem TLS de servidor. Do Gateway
+  em diante, até o Authorino, o Limitador e os serviços da aplicação, é mTLS.
+* **O Prometheus em texto claro é de propósito.** É a exceção da porta de
+  métricas, da seção anterior.
+* **O `echo-api` da parte xref:m1-09-identidade.adoc[1.9] está fora do mesh.**
+  O Gateway entrega a requisição a ele em texto claro.
+* **O `hotels` fala com o banco em texto claro.** O `skupper-router` não tem
+  sidecar, e o Envoy do `hotels` só faz mTLS quando há um sidecar do outro
+  lado. O Istio chama isso de *auto mTLS*: ele não recusa, só não cifra.
+* **O Skupper cifra entre os routers**, com o TLS mútuo dele, e não entre a
+  aplicação e o router, nem do router até o banco.
+* **E o MySQL nunca negociou TLS.** As queries e os resultados passam legíveis
+  nos dois saltos locais.
+
+Nenhum destes saltos dá erro, e a parte xref:m4-01-interconnect.adoc[4.1]
+funciona com eles do jeito que estão. O mapa não é um defeito a corrigir
+agora: é **onde a frase "temos mTLS" deixa de ser verdade**. Quem responde por
+esse trecho é o Service Interconnect e o próprio banco, e não o Service Mesh.
+
 == Configuração
 
 No terminal, em `/home/lab-user/rhcl-connectivity-demo`:
@@ -159,7 +223,8 @@ No terminal, em `/home/lab-user/rhcl-connectivity-demo`:
 * `platform-reference/kuadrant-system/peerauthentication-metricas.yaml` -- a
   exceção da porta de métricas;
 * `scripts/mtls-kuadrant.sh` -- a leitura desta parte, e os subcomandos `liga`
-  e `desliga` com a sonda.
+  e `desliga` com a sonda;
+* `scripts/mapa-mtls.sh` -- o mapa, salto por salto.
 
 WARNING: Não rode `liga` nem `desliga` durante o workshop. Os dois reiniciam o
 Authorino que protege **todas** as APIs, e a sonda mostra a janela de `500`
@@ -168,8 +233,9 @@ enquanto isso acontece.
 == O que isso prova
 
 "Temos mTLS" é uma frase sobre um **conjunto de saltos**, não sobre o cluster.
-A parte 2.1 cobriu os saltos entre os serviços. Este aqui, entre o Gateway e
-quem decide, ficou de fora até alguém olhar o `config_dump` e perguntar.
+A parte 2.1 cobriu os saltos entre os serviços. O salto entre o Gateway e quem
+decide ficou de fora até alguém olhar o `config_dump` e perguntar. E o mapa
+mostra que ainda há dois saltos de fora, até o banco.
 
 E a correção foi **um campo declarado**, com status que diz se pegou
 (`mtlsAuthorino=true`), e não um procedimento. É a tese deste workshop na

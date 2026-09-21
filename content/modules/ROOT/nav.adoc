@@ -41,6 +41,7 @@
 .Extras — opcionais, em qualquer ordem
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
+* xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]

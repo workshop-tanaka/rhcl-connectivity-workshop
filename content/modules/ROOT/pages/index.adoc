@@ -37,9 +37,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | ~48 min
 
 | xref:m2-00-intro.adoc[**2** — Service Mesh: a fronteira de dentro]
-| proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo, e
-  distinguir os dois `503` de uma falha no outro lado
-| ~16 min
+| proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo,
+  distinguir os dois `503` de uma falha no outro lado, e saber onde o mTLS termina
+| ~24 min
 
 | xref:m3-00-intro.adoc[**3** — Observar e diagnosticar as duas fronteiras]
 | seguir uma requisição salto a salto, dizer em qual de seis lugares uma recusa
@@ -50,9 +50,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada
 | ~5 min
 
-| **Extras** — xref:extra-grpc.adoc[gRPC] e xref:extra-postman.adoc[Postman]
+| **Extras** — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman] e xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 | opcionais, em qualquer ordem e a qualquer momento
-| ~18 min
+| ~24 min
 |===
 
 Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
