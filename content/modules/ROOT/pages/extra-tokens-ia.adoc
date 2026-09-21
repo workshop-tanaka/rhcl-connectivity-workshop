@@ -1,0 +1,152 @@
+= Limite por token: a API de IA
+:navtitle: Limite por token (IA)
+
+**Opcional · ~6 min · cria e remove um namespace próprio**
+
+**A quem pertence:** Engenheiro de Plataforma e Arquitetura -- quem vai expor
+modelos de IA para outros times.
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-02-planos.adoc[1.2], que limita **requisições** por
+plano. Esta página troca a unidade: em API de IA, o que custa é o **token**.
+====
+
+Numa API comum, uma chamada custa mais ou menos o mesmo que a outra. Numa API
+de IA, não: uma pergunta curta gasta cinquenta tokens, um relatório gasta
+cinco mil. Limitar por número de chamadas deixa passar quem faz poucas
+chamadas caras.
+
+O Connectivity Link tem uma policy para isso: a `TokenRateLimitPolicy`.
+
+== O que é de verdade, e o que é simulado
+
+[IMPORTANT]
+====
+**O backend deste exercício é um mock.** Este ambiente não tem modelo de IA
+rodando. O mock tem umas trinta linhas de Python e responde no formato da API
+da OpenAI, com a contagem de tokens no campo `usage.total_tokens`.
+
+O resto é de verdade: o Gateway, a `AuthPolicy`, a `TokenRateLimitPolicy`, o
+Limitador. Trocar o mock por um modelo real, que responda no mesmo formato,
+não muda nenhuma policy.
+====
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/tokens-ia.sh
+----
+
+Leva cerca de dois minutos, e remove tudo no fim. O script sobe um Gateway
+**só dele**, num namespace próprio. O cliente é um pod no mesmo namespace, que
+manda a chave em `Authorization: Bearer`, como os SDKs de IA fazem.
+
+== A policy
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1alpha1
+kind: TokenRateLimitPolicy
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: chat}
+  limits:
+    free:
+      rates: [{limit: 300, window: 1m}]
+      when: [{predicate: 'auth.identity.plan == "free"'}]
+      counters: [{expression: auth.identity.userid}]
+    gold:
+      rates: [{limit: 5000, window: 1m}]
+      when: [{predicate: 'auth.identity.plan == "gold"'}]
+      counters: [{expression: auth.identity.userid}]
+----
+
+Mesma forma de uma `RateLimitPolicy`. A diferença é o que ela soma: em vez de
+`1` por chamada, o número que o backend devolve em `usage.total_tokens`.
+
+== O free: poucas chamadas, muitos tokens
+
+[source,text]
+----
+chamada  max_tokens  http   tokens relatados  acumulado
+1        50          200    56                56
+2        50          200    56                112
+3        250         200    256               368
+4        50          429    -                 368
+5        50          429    -                 368
+----
+
+Duas coisas nesta tabela:
+
+* **Quem recusou foi o total de tokens, não o número de chamadas.** Três
+  chamadas bastaram para passar de 300.
+* **A chamada que estourou o limite foi servida.** A terceira pediu 256 tokens
+  com 112 já gastos, e passou. O custo de uma chamada de IA só se conhece
+  **depois** da resposta. A policy confere o saldo na entrada e desconta na
+  saída; quem paga o estouro é a chamada seguinte.
+
+O gold, com as mesmas cinco chamadas, recebe `200` em todas: mesma API, mesma
+policy, outro plano.
+
+== O backend que mente na contagem
+
+[source,text]
+----
+modelo 'mock-mentiroso', outra chave free
+chamada  max_tokens  http   tokens relatados  acumulado
+1        250         200    0                 0
+...
+5        250         200    0                 0
+----
+
+O mock faz o mesmo trabalho e relata **zero**. São 1250 tokens pedidos e
+nenhum `429`.
+
+A policy não mede tokens: ela confia no que o backend diz que gastou. Um
+modelo que não preenche `usage`, ou uma API que responde em outro formato,
+passa pela `TokenRateLimitPolicy` sem ser contado, e o status continua
+`Enforced=True`.
+
+== A armadilha que custou o primeiro teste
+
+A primeira versão deste exercício usava `auth.identity.metadata.labels`
+direto na policy de limite. Ela ficou `Enforced=True`, os limites apareceram
+no Limitador, e **nada foi contado**. O log do Gateway explicava:
+
+[source,text]
+----
+CelError::Resolve { NoSuchKey("identity") }
+----
+
+O limite não enxerga a identidade que o Authorino resolveu. Enxerga só o que a
+`AuthPolicy` **exporta**:
+
+[source,yaml]
+----
+response:
+  success:
+    filters:
+      identity:
+        json:
+          properties:
+            userid: {expression: auth.identity.metadata.name}
+            plan: {expression: 'auth.identity.metadata.labels["kuadrant.io/plan-id"]'}
+----
+
+Na API do travels, ninguém vê isso porque a `PlanPolicy` exporta o plano
+sozinha. Quem escreve a policy de limite à mão precisa escrever o export
+também.
+
+TIP: Se o exercício for interrompido no meio, limpe com
+`bash scripts/tokens-ia.sh limpa`.
+
+== O que isso prova
+
+A plataforma que governa a API de viagens governa a API de IA com a mesma
+peça: o mesmo Gateway, a mesma chave, o mesmo plano. Muda a unidade da conta.
+
+E vale a mesma lição do resto do workshop, com um detalhe a mais: `Enforced`
+diz que a policy foi instalada, não que ela está contando. Aqui, a conta
+depende de dois outros: da `AuthPolicy`, que exporta a identidade, e do
+backend, que declara o que gastou.

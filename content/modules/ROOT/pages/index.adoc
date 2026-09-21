@@ -50,9 +50,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada
 | ~5 min
 
-| **Extras** — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman] e xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
+| **Extras** — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado] e xref:extra-tokens-ia.adoc[Limite por token (IA)]
 | opcionais, em qualquer ordem e a qualquer momento
-| ~24 min
+| ~30 min
 |===
 
 Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
