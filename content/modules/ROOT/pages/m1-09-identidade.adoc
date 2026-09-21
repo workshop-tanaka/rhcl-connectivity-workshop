@@ -166,15 +166,8 @@ Não é uma escolha de plataforma tomada uma vez para todo mundo: é **por
 produto de API**, e os dois convivem no mesmo Gateway -- que é exatamente o que
 você acabou de medir.
 
-== Você concluiu o Módulo 1
+== Falta uma camada
 
-Você publicou uma API do zero, transformou-a de aberta em governada uma regra
-por vez, auditou o próprio rastro por quatro fontes diferentes, e viu os dois
-jeitos de identificar quem está do outro lado.
-
-Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
-governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego
-**entre** os serviços, que daqui não se enxerga.
-
-Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
-workshop e diz como devolver o ambiente ao estado inicial.
+Chave ou token, toda credencial desta parte viajou dentro de TLS -- e o
+certificado que protege essa viagem ninguém olhou ainda. A parte
+xref:m1-10-certificado.adoc[1.10] pergunta quem é o dono dele.

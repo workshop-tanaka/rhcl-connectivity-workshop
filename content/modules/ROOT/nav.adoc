@@ -15,6 +15,7 @@
 * xref:m1-07-colheita.adoc[1.7 O caminho pavimentado]
 * xref:m1-08-auditoria.adoc[1.8 Quatro perguntas, quatro fontes]
 * xref:m1-09-identidade.adoc[1.9 Chave ou identidade]
+* xref:m1-10-certificado.adoc[1.10 O certificado tem dono?]
 
 * xref:fronteiras.adoc[Interlúdio: as três fronteiras]
 

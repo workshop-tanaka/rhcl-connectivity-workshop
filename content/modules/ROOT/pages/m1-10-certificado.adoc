@@ -1,0 +1,224 @@
+= 1.10 O certificado tem dono?
+:navtitle: 1.10 O certificado tem dono?
+
+**A quem pertence:** Engenheiro de Plataforma, e quem fica de plantão no dia do vencimento. · **10 min** · **cria e remove um namespace próprio**
+
+[NOTE.antes]
+====
+**Antes: a parte 1.4.** Ela separou quem cuida do Gateway de quem cuida da
+rota. O certificado da borda é do primeiro -- e esta parte pergunta se alguém
+está, de fato, cuidando dele.
+====
+
+Toda chamada que você fez até aqui passou por TLS. O certificado é válido, o
+cliente confia, e nada reclama. É o tipo de coisa que ninguém olha -- até o dia
+em que vence.
+
+A pergunta desta parte não é "o certificado funciona?". É **"quem vai
+renová-lo?"**.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/certificado.sh quem
+----
+
+Esta primeira parte só **lê**. Não muda nada.
+
+== O que a leitura mostra
+
+[source,text]
+----
+1. De onde veio o certificado que a API entrega?
+   o Gateway prod-web aponta para o Secret api-tls. Dentro dele:
+     issuer=C=US, O=Google Trust Services, CN=WR1
+   ✓ um cliente comum confia nele: curl SEM -k verifica
+
+2. Quem vai renová-lo?
+   ✗ nenhuma TLSPolicy no namespace do Gateway
+   ✗ o Secret diz ser do Certificate 'echo-web-api' -- que NAO EXISTE
+
+   o MESMO certificado (mesmo serial) é emitido por outro dono:
+     Certificate openshift-ingress/cert-manager-ingress-cert
+----
+
+Leia de baixo para cima:
+
+* O certificado **existe** e é gerido pelo cert-manager -- mas para o
+  *ingress do OpenShift*, não para o Gateway.
+* O Secret do Gateway é uma **cópia** dele. Mesmo serial, outro lugar.
+* Cópia não acompanha renovação. Quando o original trocar, a borda continua
+  servindo o antigo até ele vencer -- e aí todas as APIs caem ao mesmo tempo.
+* E o Secret ainda carrega uma annotation apontando para um `Certificate` que
+  não existe mais: o rastro de um dono que foi embora.
+
+Nada disso dá erro hoje. É um problema de **dono**, e problema de dono só
+aparece no pior dia.
+
+.Mais detalhes: as três peças, e quem faz o quê
+[%collapsible]
+====
+[cols="1,2",options="header"]
+|===
+| peça | papel
+
+| **cert-manager**
+| o operador que conversa com autoridades certificadoras, emite e **renova**
+  certificados, e os grava em `Secret`
+
+| `Issuer` / `ClusterIssuer`
+| *de onde* vem o certificado: uma CA pública via ACME, uma CA interna, ou
+  self-signed. É ele que decide se um cliente vai confiar
+
+| `Certificate`
+| o pedido: *quais nomes*, *por quanto tempo*, *em qual Secret*
+
+| **`TLSPolicy`**
+| a policy do Connectivity Link: lê os listeners do `Gateway` e **gera os
+  `Certificate`** que eles precisam. Você declara o Gateway; os nomes saem de
+  lá
+|===
+
+Ver https://cert-manager.io/docs/[a documentação do cert-manager^] e
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[a do
+Connectivity Link^].
+====
+
+== A prova: uma TLSPolicy de ponta a ponta
+
+[source,bash,role="execute"]
+----
+bash scripts/certificado.sh prova
+----
+
+O script sobe um **Gateway isolado**, num namespace só dele, e remove tudo no
+fim. Leva cerca de um minuto.
+
+[IMPORTANT]
+====
+**Por que não no Gateway da API.** A `TLSPolicy` escreve no Secret que o
+listener declara. No `prod-web`, esse Secret é compartilhado por todas as APIs
+-- aplicar a policy ali trocaria o certificado de todas de uma vez. O Gateway
+do exercício tem Secret próprio, Issuer próprio e endereço próprio.
+====
+
+=== Antes: um Gateway sem certificado
+
+[source,text]
+----
+Programmed=False Invalid
+ResolvedRefs=False InvalidCertificateRef
+curl ........ exit=35  (o handshake TLS nem completa)
+----
+
+O Gateway aceitou a configuração, mas não consegue servir: o listener aponta
+para um Secret que não existe. O status diz exatamente isso.
+
+=== Uma policy, e o que ela cria sozinha
+
+[source,text]
+----
+✓ certificado pronto em 4s
+  Accepted=True
+  Enforced=True
+
+voce aplicou UMA policy. Apareceu:
+  Certificate/lab-https  dono=TLSPolicy  secret=tls-lab-cert
+  renovacao agendada para ...
+
+e o Gateway:
+  Programmed=True Programmed
+  ResolvedRefs=True ResolvedRefs
+----
+
+Você não escreveu o `Certificate`, nem listou os nomes do certificado. A
+policy leu o listener do Gateway e pediu o que ele precisa. É o mesmo padrão
+da parte xref:m1-09-identidade.adoc[1.9]: a intenção declarada, o objeto
+derivado, com dono.
+
+=== O que o cliente vê
+
+[source,text]
+----
+com -k ....... http=404
+sem -k ....... exit=60
+----
+
+Os dois números dizem coisas diferentes:
+
+* **`404` com `-k`**: o TLS funciona. O `404` é porque não há rota neste
+  Gateway, e está certo -- não há aplicação.
+* **`exit=60` sem `-k`**: o cliente **não confia**. O Issuer do exercício é
+  self-signed.
+
+A policy entrega um certificado; **quem decide se alguém confia nele é o
+Issuer**. Troque o `issuerRef` por um Issuer de CA pública e a mesma policy,
+sem mudar mais nada, vira um certificado confiável.
+
+=== Quem é o dono: apague o certificado
+
+[source,text]
+----
+serial antes .......... 298D21EB123CB89AA1EF2F48D9A67B2D88CF2CFA
+serial  1s depois .... 65D9E6B35A7D4E50D87BC5E78BF067C5074A659D
+o Gateway entrega ..... 65D9E6B35A7D4E50D87BC5E78BF067C5074A659D
+----
+
+O script apaga o Secret. Um segundo depois ele existe de novo, com outro
+serial, e o Gateway já está entregando o novo. Ninguém precisou lembrar. É o
+mesmo mecanismo que renova o certificado antes do vencimento.
+
+=== E sem a policy?
+
+[source,text]
+----
+Certificate ........... 0 (sumiu junto com a policy)
+Secret ................ continua la
+o Gateway ainda serve . http=404
+----
+
+**Nada quebrou -- e esse é o problema.** O `Certificate` foi embora com a
+policy, mas o Secret ficou. O Gateway continua servindo, e ninguém vai
+renovar.
+
+É exatamente o estado do Secret da API que a primeira parte mostrou:
+certificado válido, sem dono.
+
+[TIP]
+====
+Se a prova for interrompida no meio, limpe com
+`bash scripts/certificado.sh limpa`.
+====
+
+== Por que não emitimos um certificado público no exercício
+
+Seria o natural, e o ambiente tem o Issuer para isso. Não usamos por um motivo
+medido: o desafio DNS-01 do ACME cria um registro `TXT` temporário, e esse
+registro pode sobrepor o wildcard DNS do cluster para aquele nome
+(https://www.rfc-editor.org/rfc/rfc4592[RFC 4592^]). Num ambiente
+compartilhado, um exercício não deveria correr esse risco -- e a lição, *quem
+é o dono*, é a mesma com qualquer Issuer.
+
+== O que isso prova
+
+Um certificado válido não é um certificado **governado**. A diferença é se
+existe um objeto declarando que alguém é responsável por ele -- e esse objeto
+tem status, dono e renovação.
+
+É a mesma tese do Módulo 1 inteiro, agora na camada mais esquecida da borda:
+o que não está declarado como policy funciona por acaso, até o dia em que para.
+
+== Você concluiu o Módulo 1
+
+Você publicou uma API do zero, transformou-a de aberta em governada uma regra
+por vez, auditou o próprio rastro por quatro fontes diferentes, viu os dois
+jeitos de identificar quem está do outro lado -- e perguntou quem é o dono do
+certificado que protege tudo isso.
+
+Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
+governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego
+**entre** os serviços, que daqui não se enxerga.
+
+Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.

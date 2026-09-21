@@ -80,15 +80,21 @@ files*). A coleção aparece na barra lateral; o _environment_ precisa ser
 **selecionado no canto superior direito** para que as requisições encontrem
 os endereços e as chaves.
 
-[IMPORTANT]
+[NOTE]
 ====
-**Desligue a verificação de certificado**, ou todas as requisições falham sem
-explicar por quê.
+**Deixe a verificação de certificado ligada.** O certificado da API é emitido
+por uma autoridade pública, e o Postman o aceita como aceitaria o de qualquer
+site. Para conferir antes de importar:
 
-*Settings* → *General* → **SSL certificate verification** → *OFF*
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -s -o /dev/null -w 'verificacao: %{ssl_verify_result} (0 = confiavel)\n' https://{api_host}/travels
+----
 
-O certificado deste cluster é assinado por ele mesmo, e o Postman rejeita
-esse tipo de certificado por padrão. Não é erro da API.
+Se a verificação falhar num ambiente seu, o motivo é o certificado daquele
+ambiente, não a API -- e desligar a verificação no Postman esconde o problema
+em vez de resolvê-lo. A parte xref:m1-10-certificado.adoc[1.10] mostra de onde
+vem esse certificado e quem o renova.
 ====
 
 == O que tentar primeiro
