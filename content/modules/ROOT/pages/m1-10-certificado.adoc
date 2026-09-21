@@ -32,7 +32,8 @@ Esta primeira parte só **lê**. Não muda nada.
 ----
 1. De onde veio o certificado que a API entrega?
    o Gateway prod-web aponta para o Secret api-tls. Dentro dele:
-     issuer=C=US, O=Google Trust Services, CN=WR1
+     emitido por  countryName=US, organizationName=Google Trust Services, commonName=WR1
+     vence em     Dec 17 20:14:23 2026 GMT
    ✓ um cliente comum confia nele: curl SEM -k verifica
 
 2. Quem vai renová-lo?
