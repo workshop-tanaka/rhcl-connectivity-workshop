@@ -1,7 +1,7 @@
 = Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Dez partes e uma leitura · cerca de 75 minutos · as partes 1.6 a 1.8 e a 1.10 criam objetos**
+**Dez partes e uma leitura · cerca de 79 minutos · as partes 1.6 a 1.8 e a 1.10 criam objetos**
 
 **Produto protagonista:** Red Hat Connectivity Link
 
@@ -41,9 +41,10 @@ três blocos, e dá para parar entre eles:
 pessoa configurou. Nada muda de estado. A 1.5 lê os dados que a 1.2 gera, então
 vale não pular a 1.2.
 
-Antes da 1.6 há uma xref:leitura-ingresso.adoc[leitura de quatro minutos] sobre
+Antes da 1.6 há uma xref:leitura-ingresso.adoc[leitura de oito minutos] sobre
 `Route`, `Ingress` e Gateway API -- as três gerações de ingresso que convivem
-neste cluster. Ela não é obrigatória, mas é onde a diferença entre elas fica
+neste cluster, quantos `Gateway` faz sentido ter, e onde o Connectivity Link
+e o Service Mesh se sobrepõem. Ela não é obrigatória, mas é onde a diferença entre elas fica
 explícita.
 
 **1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, refaz pelo

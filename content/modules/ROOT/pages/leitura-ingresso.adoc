@@ -1,7 +1,7 @@
 = Leitura: Route, Ingress e Gateway API
 :navtitle: Leitura: Route, Ingress e Gateway API
 
-**Leitura · ~4 min · não muda estado**
+**Leitura · ~8 min · não muda estado**
 
 Até aqui você usou `Gateway` e `HTTPRoute` sem que ninguém explicasse por que
 não é uma `Route` do OpenShift, que é o jeito que todo mundo já conhece. A
@@ -110,6 +110,150 @@ Gateway, não de quem o publica.
 | padrão, mas cada controlador inventa as próprias anotações
 | padrão, e o que o controlador acrescenta são **objetos**, não anotações
 |===
+
+== Um gateway, ou vários?
+
+O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
+e um Service de Envoy próprios. Neste cluster há três, e eles não são iguais:
+
+[cols="2,2,2",options="header"]
+|===
+| Gateway | namespace | governado pelo Connectivity Link?
+
+| `prod-web`
+| `ingress-gateway`
+| **sim** -- é a borda do workshop
+
+| `echo-web`
+| `ingress-gateway`
+| **sim** -- é a borda da API com OIDC da parte 1.9
+
+| `bookinfo-gateway`
+| `bookinfo`
+| **não** -- Service Mesh puro, como o upstream do Istio o escreveu
+|===
+
+[source,bash,role="execute"]
+----
+oc get gatewayclass
+oc get gateway -A
+oc get envoyfilter -A | grep kuadrant
+----
+
+Os três são da mesma `GatewayClass istio`. Mas os `EnvoyFilter` que o
+Connectivity Link gera existem **só** no namespace dos dois primeiros -- e é
+neles que mora o wasm que chama o Authorino e o Limitador:
+
+[source,bash,role="execute"]
+----
+oc exec -n ingress-gateway deploy/prod-web-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
+oc exec -n bookinfo deploy/bookinfo-gateway-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
+----
+
+`1` no primeiro, `0` no segundo. **Um gateway vira "do Connectivity Link" ao
+receber uma policy**, e não por ser de outro tipo.
+
+Três consequências práticas:
+
+* **O teto não atravessa gateways.** O `prod-web-deny-all` da parte
+  xref:m1-06-exposta.adoc[1.6] vale para as rotas anexadas ao `prod-web`, e
+  para mais nenhuma. Foi por isso que as amostras do Istio subiram com gateway
+  próprio: uma rota delas pendurada no `prod-web` nasceria negada.
+* **Cada gateway custa um pod de Envoy**, e um jeito de ser publicado -- aqui,
+  uma `Route` por hostname.
+* **As policies de plataforma se repetem por gateway:** `deny-all`, TLS, DNS e
+  telemetria. A `TelemetryPolicy`, nesta release, só aceita `Gateway` como
+  alvo -- não aceita rota.
+
+Separar vale quando o **público** é outro: parceiros que se identificam por
+certificado (o xref:extra-parceiro-certificado.adoc[Extra sobre isso] sobe um
+gateway próprio justamente para não mexer na borda de todo mundo), interno
+contra externo, ou para reduzir o raio de alcance de um erro -- trocar o
+certificado de um gateway afeta todas as APIs que estão atrás dele.
+
+Compartilhar vale quando o argumento é de plataforma: um teto escrito uma vez,
+herdado por todas as rotas, com as exceções declaradas em cada uma.
+
+== Connectivity Link e Service Mesh: onde um termina e o outro começa
+
+Os dois produtos escrevem no mesmo Envoy, e por isso a pergunta "há
+sobreposição?" é justa. Há -- em três lugares, e só neles:
+
+[cols="2,2,2",options="header"]
+|===
+| a pergunta | Service Mesh | Connectivity Link
+
+| para qual **versão** vai a chamada
+| `VirtualService`, `DestinationRule`
+| —
+
+| **quem fala com quem** dentro do cluster
+| `AuthorizationPolicy` sobre identidade mTLS
+| —
+
+| o canal entre os serviços é cifrado
+| `PeerAuthentication`
+| —
+
+| **quem entra** pela borda
+| `AuthorizationPolicy`, `RequestAuthentication` (JWT)
+| `AuthPolicy`: chave de API, OIDC, e a identidade do **consumidor**
+  ◆ *sobreposição*
+
+| **quanto** cada um pode chamar
+| limite local do Envoy, sem API de produto
+| `RateLimitPolicy` e `PlanPolicy`, por plano comercial ◆ *sobreposição*
+
+| que **métrica** o tráfego gera
+| `Telemetry` do Istio
+| `TelemetryPolicy`, com a dimensão de parceiro ◆ *sobreposição*
+
+| o **certificado** da borda
+| o listener aponta para um Secret
+| `TLSPolicy` cria e renova esse Secret (parte xref:m1-10-certificado.adoc[1.10])
+
+| o **nome DNS** da borda
+| —
+| `DNSPolicy`
+
+| **plano comercial, chave, portal do consumidor**
+| —
+| `APIProduct`, `APIKey`, e o portal do desenvolvedor
+|===
+
+Nos três pontos marcados, a regra prática é simples: **decida em um lugar
+só**. Uma `AuthorizationPolicy` do Istio e uma `AuthPolicy` do Connectivity
+Link sobre a mesma rota funcionam ao mesmo tempo, e uma recusa passa a ter
+duas origens possíveis -- exatamente o que a parte
+xref:m3-03-negado.adoc[3.3] ensina a separar.
+
+A divisão que este workshop usa: **a borda é do Connectivity Link, o
+leste-oeste é do Service Mesh.**
+
+=== Preciso do Service Mesh instalado para ter o Gateway do Connectivity Link?
+
+**Sim.** O Connectivity Link **não implementa Gateway API**: ele não traz
+`GatewayClass` nenhuma, e a única deste cluster tem como controlador
+`istio.io/gateway-controller`, que é do Service Mesh. Quem materializa o pod
+do gateway é o Service Mesh; o Connectivity Link **anexa políticas** a ele.
+
+Dá para ver isso no nome dos próprios controladores do operador, no log:
+
+[source,text]
+----
+kuadrant-operator.IstioExtensionReconciler.buildWasmConfigs
+kuadrant-operator.AuthorinoIstioIntegrationReconciler
+----
+
+E o veículo das policies é um objeto do Istio, o `EnvoyFilter`. Sem um
+provedor de Gateway API no cluster, as policies do Connectivity Link ficam
+sem onde se anexar.
+
+NOTE: O contrário não é verdade: o Service Mesh roda sozinho, sem o
+Connectivity Link -- o `bookinfo-gateway` acima é a prova. E a combinação
+suportada de versões dos dois produtos sai da
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
+do Connectivity Link^], não daqui.
 
 == O que isso prova
 

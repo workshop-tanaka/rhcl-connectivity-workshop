@@ -34,7 +34,7 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | fechar uma API sem tocar na aplicação, servir planos comerciais no mesmo
   endereço, publicar uma API do zero à mão e depois pelo caminho pavimentado,
   auditar o próprio rastro, e cuidar da identidade e do certificado
-| ~75 min
+| ~79 min
 
 | xref:m2-00-intro.adoc[**2** — Service Mesh: a fronteira de dentro]
 | proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo,
