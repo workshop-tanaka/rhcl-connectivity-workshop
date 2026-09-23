@@ -58,14 +58,63 @@ Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
 
 == 2. O veredito
 
+Antes da primeira parte, confirme que o ambiente nasceu inteiro. Um ambiente
+incompleto não dá erro logo: ele falha no meio de uma parte, com painel vazio
+ou número que não bate.
+
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh check --auto
 ----
 
-Percorre a cadeia inteira na ordem do roteiro (~45 s) e termina em
-`[OK] demo pronta.`. Um `✗` vermelho é bloqueante e vem com a correção ao
-lado; avisos amarelos degradam uma parte, não impedem o workshop.
+Percorre a cadeia inteira -- operadores, gateway, policies, chaves, caminho de
+dados, Service Mesh, Interconnect, portais e portal do desenvolvedor. Leva
+**cerca de dois minutos** e termina assim:
+
+[source,text]
+----
+  ✓ sem chave -> 401 (Ato 1)
+  ✓ cota diaria: gold 99980/100000, free 989/1000, silver 9987/10000
+  ✓ tier free: 3 servidas, 5 limitadas (Ato 2)
+  ...
+[OK] demo pronta.
+----
+
+Como ler o resultado:
+
+[cols="1,3",options="header"]
+|===
+| o que aparece | o que fazer
+
+| `[OK]` no fim
+| siga para a parte 1.1
+
+| `!` amarelo
+| **não bloqueia.** Degrada uma parte específica, e a linha diz qual
+
+| `✗` vermelho
+| bloqueia. Cada `✗` vem com a correção ao lado -- rode o que ele indica e
+  repita a checagem
+
+| o comando não responde
+| a sessão do terminal caiu; abra a aba `Terminal` de novo e repita
+|===
+
+.Uma checagem mais curta, para o meio do workshop
+[%collapsible]
+====
+A checagem completa confere coisas que só interessam a alguns módulos. Se você
+só quer saber se o **caminho de dados** está de pé -- a API, as policies e os
+planos --, há uma versão de cerca de 50 segundos:
+
+[source,bash,role="execute"]
+----
+bash scripts/preflight.sh core
+----
+
+Ela termina em `[OK] núcleo pronto`. É a que vale rodar se uma parte devolver
+um número estranho no meio do caminho.
+====
 
 == 3. As telas
 

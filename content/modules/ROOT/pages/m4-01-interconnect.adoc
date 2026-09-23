@@ -199,10 +199,7 @@ leste-oeste com o Service Mesh, e o que está fora com o Service Interconnect
 O componente que "não vai para o Kubernetes" não precisa ir. Ele precisa ser
 alcançável, e isso é um par de objetos declarativos de dez linhas.
 
-== Você concluiu o Módulo 4
+== Falta uma pergunta
 
-O componente que ficou fora do cluster passou a ser alcançável sem VPN, sem
-porta aberta e sem sair na internet -- e sem a aplicação saber.
-
-Este era o último módulo. O xref:99-encerramento.adoc[Encerramento] fecha o
-workshop e diz como devolver o ambiente ao estado inicial.
+O túnel é mútuo, mas o caminho até o banco tem três saltos. A parte
+xref:m4-02-tunel.adoc[4.2] mede o que está cifrado em cada um deles.

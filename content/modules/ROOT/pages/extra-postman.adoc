@@ -11,14 +11,6 @@ A coleção cobre mais que um módulo: as chamadas recusadas, os três planos
 comerciais lado a lado, o estouro de cota determinístico, e a autenticação por
 identidade.
 
-**Opcional, e fora do caminho do workshop.** O terminal prova o ponto com
-menos cliques, mas a maioria das pessoas testa API no Postman -- e ver os
-cabeçalhos numa interface ajuda a fixar o que as estações 3 e 4 ensinaram.
-
-A coleção cobre mais que este módulo: as chamadas recusadas, os três planos
-comerciais lado a lado, o estouro de cota determinístico, e a autenticação
-por identidade.
-
 == São dois arquivos, e eles são diferentes
 
 [cols="1,2",options="header"]

@@ -38,8 +38,10 @@
 .Módulo 4 — Service Interconnect
 * xref:m4-00-intro.adoc[Introdução]
 * xref:m4-01-interconnect.adoc[4.1 A dependência que não mora aqui]
+* xref:m4-02-tunel.adoc[4.2 O que o túnel protege]
 
 .Extras — opcionais, em qualquer ordem
+* xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
 * xref:extra-parceiro-certificado.adoc[Parceiro com certificado]

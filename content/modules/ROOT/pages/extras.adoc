@@ -1,0 +1,82 @@
+= Extras: qual escolher
+:navtitle: Extras: qual escolher
+
+**Cinco páginas opcionais · ~36 min no total · fora do caminho principal**
+
+Os Extras não são continuação de módulo nenhum. Cada um responde uma pergunta
+que aparece em conversa real e que o roteiro principal não cobre. Dá para
+fazer um só, na ordem que quiser, a qualquer momento depois da parte que ele
+pressupõe.
+
+[cols="2,3,1",options="header"]
+|===
+| Extra | escolha este se a sua conversa é sobre | antes
+
+| xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
+| serviços internos em gRPC, e se a governança da borda vale para eles. Traz
+  as **duas metades que não são iguais**: a autenticação funciona, o limite tem
+  ressalva
+| 1.1
+
+| xref:extra-postman.adoc[Testar a API no Postman]
+| entregar a API a quem vai consumi-la, com coleção e ambiente prontos -- e o
+  que muda quando o cliente é uma ferramenta, não um script
+| 1.2
+
+| xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
+| integração B2B em que o parceiro se identifica por **certificado**, e não por
+  chave. Inclui o que **não** funciona nesta versão, e o contorno medido
+| 1.9
+
+| xref:extra-tokens-ia.adoc[Limite por token (IA)]
+| expor modelos de IA, onde o que custa é o **token** e não a requisição. O
+  backend do exercício é um mock, e a página diz isso na primeira tela
+| 1.2
+
+| xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
+| explicar onde termina o Service Mesh e começa o Connectivity Link, numa
+  aplicação que não é a de viagens -- com **três versões** no ar e uma delas
+  em zero por cento
+| 2.2
+|===
+
+== Quanto custa cada um
+
+[cols="2,1,2",options="header"]
+|===
+| Extra | tempo | muda estado?
+
+| gRPC
+| ~8 min
+| não
+
+| Postman
+| ~10 min
+| não
+
+| Parceiro com certificado
+| ~6 min
+| cria e remove um namespace próprio
+
+| Limite por token (IA)
+| ~6 min
+| cria e remove um namespace próprio
+
+| Uma aplicação, duas fronteiras
+| ~6 min
+| altera e devolve a configuração do bookinfo
+|===
+
+Os três que mudam estado desfazem tudo no fim, e cada página diz o comando de
+limpeza caso a execução seja interrompida.
+
+== Se for escolher um só
+
+* **Já convive com um parceiro de verdade?** *Parceiro com certificado*, pela
+  parte honesta: o caminho da documentação não funciona nesta versão, e saber
+  disso antes vale mais que o exercício.
+* **A conversa passou por IA?** *Limite por token*, porque ele mostra a
+  policy contando o que o modelo relata -- e o que acontece quando o modelo
+  mente.
+* **Está explicando a divisão entre os dois produtos?** *Uma aplicação, duas
+  fronteiras*, que separa as duas decisões na mesma aplicação.

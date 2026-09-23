@@ -47,16 +47,46 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | ~20 min
 
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
-| alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada
-| ~5 min
+| alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada,
+  e saber o que o túnel protege
+| ~11 min
 
-| **Extras** — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)] e xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
+| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)] e xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
 | opcionais, em qualquer ordem e a qualquer momento
 | ~36 min
 |===
 
 Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
 apresenta os três produtos e a fronteira de cada um.
+
+== Três trilhas, por tempo disponível
+
+O workshop inteiro leva cerca de **três horas**, e ninguém precisa fazê-lo de
+uma vez. Três recortes que fecham sozinhos:
+
+[cols="1,1,3",options="header"]
+|===
+| trilha | tempo | o que fazer
+
+| **rápida**
+| ~1 h
+| xref:00-preparacao.adoc[Preparação], partes 1.1 a 1.5 e a parte
+  xref:m2-01-leste-oeste.adoc[2.1]. Você vê a API fechada, os planos
+  comerciais, a precedência, os papéis, o número de negócio -- e a segunda
+  fronteira, que é a pergunta que sempre vem
+
+| **completa**
+| ~2 h 30
+| os quatro módulos na ordem, sem os Extras. É a trilha que o
+  xref:99-encerramento.adoc[Encerramento] pressupõe
+
+| **aprofundada**
+| ~3 h 10
+| a completa mais os xref:extras.adoc[Extras] que interessarem ao seu dia
+|===
+
+Se o tempo acabar no meio, pare no fim de uma parte: cada uma fecha o próprio
+raciocínio, e o bloco *Antes* da seguinte diz o que ela pressupõe.
 
 == Para quem é cada módulo
 
@@ -74,10 +104,10 @@ por onde começar:
 | Módulo 3 inteiro, em especial a parte 3.3, que é diagnóstico de chamado
 
 | desenvolvimento
-| Módulo 1, depois o Módulo 1 -- é onde você escreve a configuração, e sente o que custa
+| as partes 1.6 e 1.7 -- é onde você escreve a configuração, e sente o que custa
 
 | arquitetura
-| a xref:fronteiras.adoc[página das fronteiras], e depois os Módulos 4 e 5
+| a xref:fronteiras.adoc[página das fronteiras], e depois os Módulos 2 e 4
 |===
 
 == A ordem dentro de um módulo

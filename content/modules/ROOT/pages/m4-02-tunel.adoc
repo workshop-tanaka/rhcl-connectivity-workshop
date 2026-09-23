@@ -1,0 +1,122 @@
+= 4.2 O que o túnel protege, e o que não
+:navtitle: 4.2 O que o túnel protege
+
+**A quem pertence:** Segurança e Arquitetura -- quem vai responder "e o tráfego até o banco, está protegido?". · **6 min** · só lê
+
+[NOTE.antes]
+====
+**Antes: a parte 4.1.** Ela mostrou o banco de outro site alcançável sem VPN
+e sem porta aberta. Esta pergunta o que, exatamente, fica protegido nesse
+caminho.
+====
+
+Depois da 4.1, a conclusão fácil é: "o banco atravessa um túnel mútuo, então o
+caminho até ele está protegido". **Está protegido o trecho que atravessa a
+rede de fora.** O caminho inteiro tem três saltos, e os outros dois são de
+dentro de cada site.
+
+É a mesma pergunta da parte xref:m2-04-canal.adoc[2.4], agora na terceira
+fronteira.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/tunel-protege.sh
+----
+
+Só **lê**: os objetos da rede de serviços, o log do roteador, a configuração
+do sidecar da aplicação e dois contadores do banco. Não muda nada e não gera
+tráfego.
+
+== O salto que o Skupper protege
+
+[source,text]
+----
+link travel-db-remoto/para-o-cluster  credencial=link-para-travel-db-remoto  Ready
+as CAs que o proprio Skupper emitiu, e que nenhum de nos digitou:
+  skupper-local-ca
+  skupper-site-ca
+dir=out encrypted=TLSv1.3 auth=EXTERNAL
+----
+
+A última linha vem do log do roteador, e é a prova: não é um campo dizendo que
+deveria estar cifrado, é a conexão registrando que **está**. `auth=EXTERNAL`
+quer dizer certificado dos dois lados -- a CA é do próprio Skupper, e ninguém
+digitou, distribuiu ou rotacionou nada à mão.
+
+== Os dois saltos que ele não protege
+
+[source,text]
+----
+✗  hotels -> skupper-router (travel-db)
+   TEXTO CLARO (endpoint sem tlsMode)
+
+no site remoto, quem fala com o banco e o proprio roteador:
+  mysqldb-...        containers=mysqldb
+  skupper-router-... containers=router kube-adaptor
+----
+
+* **Da aplicação até o roteador**, dentro do cluster. O `skupper-router` não
+  tem sidecar -- e não pode ter, como a parte 4.1 explica: o sidecar
+  interceptaria o protocolo próprio do roteador. Sem sidecar do outro lado, o
+  Envoy do `hotels` fala em texto claro. Isso se lê na configuração do próprio
+  sidecar: o endpoint chega sem o `tlsMode` que o *auto mTLS* exige.
+* **Do roteador até o banco**, no site remoto. Nenhum dos dois pods tem
+  sidecar. Esse salto não é coberto por mesh nenhum.
+
+== E o próprio banco
+
+[source,text]
+----
+✗ 57 conexoes desde que o banco subiu, 0 com TLS
+----
+
+O MySQL aceita TLS e **nunca negociou nenhuma vez**: o cliente não pede, e o
+servidor não exige (`require_secure_transport` desligado). As queries e os
+resultados passam legíveis nos dois saltos locais.
+
+A senha não: o handshake do MySQL é desafio-resposta, e ela não trafega em
+claro. O que está exposto é o **conteúdo**.
+
+== O mapa dos três saltos
+
+[cols="2,1,2",options="header"]
+|===
+| salto | canal | de quem é a responsabilidade
+
+| aplicação → roteador (site local)
+| texto claro
+| Service Mesh -- e aqui ele **não pode** entrar
+
+| roteador ↔ roteador (entre sites)
+| **mTLS do Skupper**
+| Service Interconnect
+
+| roteador → banco (site remoto)
+| texto claro
+| quem opera o site do banco
+|===
+
+== O que isso prova
+
+O Service Interconnect protege exatamente o que ele promete: **o trecho que
+sai da sua rede**. É o trecho que você não controla, atravessa firewall e
+internet, e é onde um túnel mútuo vale mais.
+
+Os outros dois continuam sendo responsabilidade de quem opera cada site -- e
+as ferramentas mudam: TLS no próprio MySQL de um lado, e do outro uma decisão
+de desenho, porque o mesh não cobre o roteador.
+
+Dizer "temos um túnel mútuo" é verdade e é insuficiente, pelo mesmo motivo da
+parte xref:m2-04-canal.adoc[2.4]: **cifrado é propriedade de cada salto, não
+do sistema**. Um desenho honesto nomeia os três.
+
+== Você concluiu o Módulo 4
+
+O componente que ficou fora do cluster passou a ser alcançável sem VPN, sem
+porta aberta e sem sair na internet -- e sem a aplicação saber. E você sabe
+dizer, salto a salto, o que está cifrado nesse caminho.
+
+Este era o último módulo. O xref:99-encerramento.adoc[Encerramento] fecha o
+workshop e diz como devolver o ambiente ao estado inicial.

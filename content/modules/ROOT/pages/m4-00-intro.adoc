@@ -1,7 +1,7 @@
 = Módulo 4 — Service Interconnect: o que não mora aqui
 :navtitle: Módulo 4 — Introdução
 
-**Uma parte · cerca de 5 minutos · não muda estado**
+**Duas partes · cerca de 11 minutos · nenhuma muda estado**
 
 **Produto protagonista:** Red Hat Service Interconnect
 
@@ -11,7 +11,8 @@
   nele** -- sem VPN, sem abrir porta de entrada e sem expor o recurso na
   internet;
 * ver o tráfego atravessando esse túnel, medido;
-* reconhecer quando essa é a resposta certa, e quando não é.
+* reconhecer quando essa é a resposta certa, e quando não é;
+* dizer, salto a salto, o que está cifrado no caminho até essa dependência.
 
 == Por que isto tem módulo próprio
 
