@@ -68,6 +68,30 @@ desenvolvedor **pode ver** o Gateway. Sem essa leitura ele não descobre o nome
 para o `parentRefs`, e o modelo viraria "abra um ticket para a plataforma" --
 exatamente o que o Gateway API existe para eliminar.
 
+.E se fosse uma `Route` do OpenShift?
+[%collapsible]
+====
+A matriz acima só existe porque a porta e a rota são **dois objetos**. Numa
+`Route`, hostname, TLS e destino moram juntos, e quem tem permissão de editá-la
+decide os três. Não há um objeto "gateway" onde o Engenheiro de Plataforma
+escreva um teto -- e o `deny-all` da parte xref:m1-06-exposta.adoc[1.6] não
+teria onde existir.
+
+Neste cluster dá para ver a diferença na prática:
+
+[source,bash,role="execute"]
+----
+oc auth can-i create routes -n travel-agency --as=app-dev
+oc auth can-i create httproutes.gateway.networking.k8s.io -n travel-agency --as=app-dev
+oc auth can-i create gateways.gateway.networking.k8s.io -n ingress-gateway --as=app-dev
+----
+
+`no`, `yes`, `no`: o desenvolvedor publica a própria rota **atrás** da porta da
+plataforma, e não uma porta nova. A primeira resposta é uma decisão de RBAC
+deste ambiente; as outras duas são o modelo que a
+xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] descreve.
+====
+
 === Camada 2: você entra como o desenvolvedor
 
 O passo faz um `oc login` real, pelo Keycloak, que é o provedor de identidade

@@ -1,0 +1,129 @@
+= Leitura: Route, Ingress e Gateway API
+:navtitle: Leitura: Route, Ingress e Gateway API
+
+**Leitura · ~4 min · não muda estado**
+
+Até aqui você usou `Gateway` e `HTTPRoute` sem que ninguém explicasse por que
+não é uma `Route` do OpenShift, que é o jeito que todo mundo já conhece. A
+resposta importa, porque **os três convivem neste cluster** -- e a próxima
+parte, a xref:m1-06-exposta.adoc[1.6], começa justamente publicando uma
+`Route` para depois trocá-la.
+
+include::partial$diagrama.adoc[]
+
+== As três gerações, todas no ar aqui
+
+[source,bash,role="execute"]
+----
+oc get ingress -A
+oc get route -A -o jsonpath='{range .items[?(@.metadata.ownerReferences[0].kind=="Ingress")]}{.metadata.namespace}/{.metadata.name}{"  <- Ingress/"}{.metadata.ownerReferences[0].name}{"\n"}{end}'
+oc get route -n ingress-gateway
+oc get gateway -A
+oc get gatewayclass
+----
+
+[cols="1,2",options="header"]
+|===
+| o que você vê | o que isso quer dizer
+
+| dois `Ingress` em `gitlab-system`, classe `openshift-default`
+| **Ingress** é o objeto padrão do Kubernetes. No OpenShift ele não é servido
+  diretamente: o operador o **traduz em uma `Route`**
+
+| cada `Route` do GitLab aponta, em `ownerReferences`, para um `Ingress`
+| a tradução acontecendo. Quem instalou o GitLab escreveu `Ingress`; o cluster
+  materializou uma `Route`
+
+| duas `Route` em `ingress-gateway`, `passthrough`, apontando para
+  `prod-web-istio`
+| **Route** é o objeto do OpenShift, anterior ao `Ingress`. Aqui ela não
+  publica uma aplicação: publica o **Gateway**
+
+| três `Gateway` de classe `istio`
+| **Gateway API** é a geração seguinte. A classe diz quem materializa o
+  gateway -- aqui, o Service Mesh
+|===
+
+== O caminho real de uma chamada, neste cluster
+
+[mermaid]
+....
+flowchart LR
+  C["cliente<br/>https://api-travels..."] -->|TLS| R["Route passthrough<br/>router do OpenShift<br/>(HAProxy)"]
+  R -->|"bytes, sem abrir"| G["Gateway prod-web<br/>Envoy do Service Mesh"]
+  G -->|"chave, plano,<br/>telemetria"| A["travels"]
+....
+
+O router do OpenShift **continua existindo**, e está na frente. Com
+`passthrough` ele não abre a conexão: repassa os bytes. Quem termina o TLS,
+valida a chave e conta o consumo é o Envoy do `Gateway` -- por isso o
+certificado da parte xref:m1-10-certificado.adoc[1.10] é um Secret do Gateway,
+e não do router.
+
+[IMPORTANT]
+====
+**Não generalize este desenho.** A `Route` está na frente porque este cluster
+não tem LoadBalancer: o Service do Gateway é `ClusterIP`, e sem a `Route` nada
+chegaria nele. Num cluster de nuvem, o Gateway recebe um endereço próprio e o
+router sai do caminho.
+
+O que não muda entre os dois cenários é o que vem depois: as policies são do
+Gateway, não de quem o publica.
+====
+
+== O que muda de uma geração para a outra
+
+[cols="1,1,1,1",options="header"]
+|===
+| | Route (OpenShift) | Ingress (Kubernetes) | Gateway API
+
+| **quantos objetos**
+| um: hostname, TLS e destino juntos
+| um, mais anotações do controlador
+| **dois**: `Gateway` (a porta) e `HTTPRoute` (a rota)
+
+| **quem é dono**
+| quem tem `edit` no namespace -- não há separação
+| o mesmo
+| **papéis separados**: a porta é do Engenheiro de Plataforma, a rota é do
+  time da aplicação (parte xref:m1-04-papeis.adoc[1.4])
+
+| **onde se pendura regra**
+| em lugar nenhum: o que existe são anotações específicas do produto
+| anotações, idem
+| **policy attachment**: objetos que miram o Gateway ou a rota --
+  `AuthPolicy`, `PlanPolicy`, `RateLimitPolicy`, `TLSPolicy`
+
+| **protocolos**
+| HTTP, HTTPS, TLS
+| HTTP e HTTPS
+| HTTP, HTTPS, TLS, TCP, UDP e **gRPC** (parte xref:extra-grpc.adoc[Extra de gRPC])
+
+| **status**
+| condição de admissão
+| endereço publicado
+| **condições por rota e por policy** -- `Accepted`, `Programmed`,
+  `Enforced` (parte xref:m1-03-precedencia.adoc[1.3])
+
+| **portabilidade**
+| só OpenShift
+| padrão, mas cada controlador inventa as próprias anotações
+| padrão, e o que o controlador acrescenta são **objetos**, não anotações
+|===
+
+== O que isso prova
+
+A diferença que sustenta este workshop não é "um objeto mais novo". É a
+**separação em dois objetos**.
+
+Enquanto hostname, TLS e destino moram num objeto só, não existe onde escrever
+o teto da plataforma: quem publica decide tudo. Com `Gateway` e `HTTPRoute`
+separados, existe um lugar para o `deny-all` da parte 1.6, outro para a
+liberação da sua rota, e um terceiro conjunto de objetos -- as policies -- que
+diz o que vale em cada um.
+
+É por isso que o Connectivity Link nasce sobre a Gateway API, e não sobre
+`Ingress`.
+
+https://gateway-api.sigs.k8s.io/[Gateway API^]
+· https://docs.redhat.com/en/documentation/openshift_container_platform/latest/html/networking/index[Rede e ingresso no OpenShift^]

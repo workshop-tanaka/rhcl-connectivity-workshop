@@ -19,10 +19,10 @@ governada -- e cada passo é **uma policy**.
 bash scripts/demo.sh exposta
 ----
 
-== Momento 1 -- qualquer um acessa, sem critério nenhum
+== Momento 1 -- a `Route` que você já sabe usar
 
 O caminho que quase todo serviço segue no primeiro dia: sobe o pod, expõe o
-Service, publica uma Route. Pronto, está no ar.
+Service, publica uma `Route`. Pronto, está no ar.
 
 [source,text]
 ----
@@ -32,6 +32,12 @@ HTTP 200
 Sem chave, sem limite, sem registro de quem chamou. **E não há nada de errado
 com esse YAML** -- ele está correto, e é exatamente por isso que passaria em
 qualquer revisão de código.
+
+O que falta não está no arquivo, e sim no formato: uma `Route` carrega
+hostname, TLS e destino num objeto só. Não há onde a plataforma pendurar uma
+regra, nem um segundo dono para a porta -- é a diferença que a
+xref:leitura-ingresso.adoc[leitura anterior] descreve, e o próximo momento a
+usa.
 
 == Momento 2 -- zero trust: ninguém passa
 

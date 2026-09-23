@@ -28,6 +28,9 @@ https://docs.redhat.com/en/documentation/openshift_container_platform[Documenta�
 **Route** -- o objeto do OpenShift que publica um hostname no router de
 ingresso. O DNS curinga do cluster resolve qualquer `*.apps...`, mas sem uma
 Route correspondente o router não tem para onde encaminhar. É a estação 2.
+Ela é a geração anterior ao `Gateway` abaixo, e as duas convivem: aqui é uma
+`Route` `passthrough` que publica o Gateway (ver a
+xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API]).
 
 **Gateway** -- o ponto único por onde as chamadas externas entram, declarado
 pelo padrão Gateway API do Kubernetes. Em vez de cada aplicação cuidar da
