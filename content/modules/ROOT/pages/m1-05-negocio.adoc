@@ -39,6 +39,28 @@ vai achar -- e o motivo é esse, não um defeito de coleta.
 Aqui a tela **é** a evidência. Para o consumo por parceiro, onde o tráfego de
 teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros[Consumo por parceiro^].
 
+.E quanto essa camada custa?
+[%collapsible]
+====
+Esta parte mede o consumo **dos clientes**. A outra metade da pergunta de
+dimensionamento -- quanto os produtos pesam no cluster -- tem dashboard
+próprio: {grafana_url}/d/rhcl-consumo-plataforma[Consumo da plataforma (RHCL e
+OSSM)^].
+
+Ele separa por produto, com a regra de atribuição escrita nos painéis: o
+Connectivity Link é o que roda em `kuadrant-system`; o Service Mesh é o
+control plane, o CNI (um pod por nó), os pods de `Gateway` e os sidecars.
+Também traz o que a subscrição conta -- requisições por dia e número de
+`Gateway`.
+
+O número que costuma surpreender: **os sidecars reservam mais CPU que todo o
+resto somado**. O custo da plataforma é a malha, não o gateway.
+
+Duas leituras cuidadosas, que estão na tela: reserva e uso são coisas
+diferentes, e o painel de custo por 1.000 requisições só tem sentido sob
+carga.
+====
+
 == Configuração
 
 {config_url}/base/policies-telemetry/prod-web-telemetry.yaml[prod-web-telemetry.yaml^]
