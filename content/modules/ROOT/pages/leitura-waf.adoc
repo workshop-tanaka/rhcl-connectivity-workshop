@@ -1,0 +1,114 @@
+= Leitura: onde entra o WAF
+:navtitle: Leitura: onde entra o WAF
+
+**Leitura · ~5 min · não muda estado**
+
+Depois de ver a API fechada por padrão, os planos comerciais e as listas de
+bloqueio, a pergunta chega sozinha: *"e o WAF?"*. Ela é justa, e a resposta
+começa por uma separação que costuma estar embaralhada.
+
+== Duas perguntas diferentes
+
+[cols="1,2,2",options="header"]
+|===
+| | Connectivity Link | WAF
+
+| a pergunta
+| **quem** é o cliente, e quanto ele pode
+| **o que** vem dentro da requisição
+
+| o que examina
+| credencial, plano, rota, identidade
+| o corpo, os parâmetros, os cabeçalhos, a URL
+
+| exemplos de decisão
+| `401` sem chave, `403` fora do plano, `429` acima da cota
+| injeção de SQL, XSS, path traversal, varredura automatizada
+
+| o que ele não faz
+| não olha o conteúdo
+| não sabe quem é o cliente nem qual plano ele assinou
+|===
+
+Nenhuma das seis policies do Connectivity Link tem regra de conteúdo. Isso não
+é lacuna: é escopo. E é por isso que os dois convivem na mesma borda, sem
+competir.
+
+== As três posições possíveis
+
+=== 1. Antes do cluster -- CDN ou appliance
+
+É onde a maioria das empresas já tem um. Absorve volume antes de custar CPU do
+cluster, costuma vir com regras gerenciadas e atualizadas pelo fornecedor, e
+normalmente é operado por outra equipe.
+
+**O detalhe que decide:** um WAF só inspeciona o que ele consegue ler. Se o TLS
+termina **depois** dele -- como acontece neste ambiente, onde a `Route` é
+`passthrough` e quem termina é o Gateway --, ele vê bytes cifrados e não vê
+nada. Para inspecionar, ele precisa terminar o TLS, e aí ele passa a ser o dono
+do certificado.
+
+=== 2. No Envoy do Gateway
+
+O Service Mesh permite estender o proxy, e as duas APIs estão instaladas neste
+cluster:
+
+[cols="1,2",options="header"]
+|===
+| API | o que aceita
+
+| `WasmPlugin`
+| um módulo WebAssembly -- a forma clássica do Istio
+
+| `TrafficExtension`
+| WebAssembly **ou** Lua, com `phase` (`AUTHN`, `AUTHZ`, `STATS`) e filtro por
+  porta
+|===
+
+Existem motores de WAF distribuídos como módulo WebAssembly, que se anexam ao
+Gateway por essas APIs. O `phase` é o que decide a ordem em relação ao filtro
+do Connectivity Link: o WAF antes da autenticação gasta CPU com quem nem tem
+chave; depois, só inspeciona quem já provou quem é. As duas ordens são
+defensáveis, e a escolha é de desenho.
+
+**A parte honesta:** o motor é um componente a mais, com ciclo de vida e regras
+próprios. Antes da conversa técnica vem a de suporte -- quem mantém o módulo,
+quem atualiza as regras e o que a sua subscrição cobre.
+
+=== 3. Na aplicação
+
+Biblioteca de validação dentro do serviço. É o último lugar -- o mais caro de
+manter e o que menos se enxerga de fora --, mas é o único que entende as regras
+de negócio do payload.
+
+== Como escolher, em quatro perguntas
+
+. **Onde o TLS termina?** Determina quem consegue inspecionar. Nesta borda,
+  com `passthrough`, só o Gateway lê o conteúdo.
+. **Quem opera as regras?** WAF vive de ajuste: falso positivo derruba cliente
+  legítimo, e alguém precisa acordar para isso.
+. **Qual o volume?** Ataque em massa custa caro se for tratado dentro do
+  cluster. Isso é argumento para a borda de fora.
+. **O que já existe?** Se a empresa tem WAF de CDN, o Gateway não precisa
+  repetir o trabalho -- precisa confiar nele e cuidar do que é dele.
+
+== O que não atribuir ao WAF
+
+* **Identidade e cota.** Um WAF não sabe se a chave é do plano gold. Isso é o
+  Connectivity Link, e é a parte xref:m1-02-planos.adoc[1.2].
+* **Tráfego entre serviços.** O WAF olha a borda; dentro do cluster, quem
+  decide quem fala com quem é o Service Mesh (parte
+  xref:m2-01-leste-oeste.adoc[2.1]).
+* **Lista de consumidor.** Bloquear um parceiro é decisão de contrato, e o
+  Extra xref:extra-listas.adoc[Listas de permissão e bloqueio] mostra por que
+  ela sobrevive melhor por identidade do que por IP.
+
+== O que isso prova
+
+A borda tem **camadas**, e cada uma responde uma pergunta. Colocar tudo numa só
+é o erro que produz tanto o WAF que vira gateway quanto o gateway que tenta
+virar WAF.
+
+O desenho que se sustenta é o oposto: cada camada faz o que sabe, e a
+composição é declarada -- que é a mesma tese que este workshop defende desde a
+parte 1.1.

@@ -51,9 +51,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
   e saber o que o túnel protege
 | ~11 min
 
-| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras], xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos] e xref:extra-listas.adoc[Listas de permissão e bloqueio]
+| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras], xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos], xref:extra-listas.adoc[Listas de permissão e bloqueio] e a xref:leitura-waf.adoc[leitura sobre WAF]
 | opcionais, em qualquer ordem e a qualquer momento
-| ~66 min
+| ~71 min
 |===
 
 Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
