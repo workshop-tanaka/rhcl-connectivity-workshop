@@ -1,0 +1,103 @@
+= Leitura: WebSocket e conexão longa
+:navtitle: Leitura: WebSocket
+
+**Leitura · ~5 min · não muda estado**
+
+Cotação em tempo real, chat, telemetria de dispositivo, notificação de
+pedido -- em algum momento aparece uma API que não é requisição e resposta, e
+sim **uma conexão que fica aberta**. A pergunta que vem junto é: o Connectivity
+Link governa isso?
+
+Governa **a porta**. E é importante saber exatamente onde a porta termina.
+
+== O handshake é uma requisição HTTP comum
+
+Um WebSocket começa assim:
+
+[source,text]
+----
+GET /stream HTTP/1.1
+Host: api.exemplo.com
+Upgrade: websocket
+Connection: Upgrade
+----
+
+É uma requisição como outra qualquer, e por isso **tudo o que o workshop
+mostrou vale nela**:
+
+* a `AuthPolicy` exige chave, token ou certificado e recusa com `401` ou `403`
+  **antes** do `101 Switching Protocols`;
+* a `PlanPolicy` e a `RateLimitPolicy` contam essa requisição;
+* a `TelemetryPolicy` carimba o plano e o parceiro na métrica.
+
+E não há nada a configurar para o *upgrade* atravessar: nem na `HTTPRoute`, nem
+no `Gateway`, nem no Service Mesh. A pergunta "preciso de um gateway diferente
+para WebSocket?" tem uma resposta curta: não.
+
+== Onde o Connectivity Link para de enxergar
+
+Depois do `101`, o túnel está aberto, e daí em diante:
+
+[cols="1,2",options="header"]
+|===
+| o que acontece | a consequência
+
+| nenhuma mensagem é inspecionada
+| o gateway não sabe o que trafega dentro da conexão
+
+| nenhuma mensagem é contada
+| um cliente que abre **uma** conexão e envia dez mil mensagens consumiu
+  **uma** unidade de cota
+
+| a autorização não é reavaliada
+| um token que expira em 15 minutos não derruba uma conexão de 8 horas
+
+| a métrica registra uma requisição
+| com duração igual à vida da conexão -- o painel de latência mistura duas
+  coisas incomparáveis
+|===
+
+Nada disso é defeito: é a natureza de um protocolo que troca o modelo
+requisição-resposta por um fluxo. Mas muda o que se pode **prometer**.
+
+== O que isso significa na prática
+
+* **Cobrança por mensagem não sai da borda.** Se o seu produto é vendido por
+  evento, a contagem tem de vir da aplicação -- o gateway conta conexões.
+* **Expiração de acesso vira desenho.** Quem precisa que o acesso caia quando
+  o token expira precisa de reconexão periódica: conexões curtas, renovadas,
+  em vez de uma conexão eterna.
+* **A credencial vai no handshake, e o cliente limita as opções.** O navegador
+  não deixa definir cabeçalho na API de WebSocket: sobra query string, cookie
+  ou subprotocolo. Query string é a que mais aparece em log -- o mesmo cuidado
+  da parte xref:m1-09-identidade.adoc[1.9].
+* **Rate limit ainda serve**, só que para outra coisa: limitar **quantas
+  conexões** um parceiro abre, que é uma proteção de capacidade real.
+
+== Duas configurações que a conexão precisa para não cair
+
+Estas foram medidas neste ambiente, e as duas produzem **o mesmo sintoma**
+quando faltam -- uma conexão que abre e morre sozinha, sem erro em log nenhum:
+
+[cols="1,2",options="header"]
+|===
+| onde | o quê
+
+| proxy do Service Mesh
+| `maxRequestsPerConnection: 0` -- impede reciclar a conexão HTTP/1.1 por baixo
+
+| router do OpenShift
+| `haproxy.router.openshift.io/timeout` -- o padrão derruba em cerca de 30 s
+|===
+
+Vale conhecer as duas antes de concluir que "WebSocket não funciona atrás do
+gateway".
+
+== O que isso prova
+
+O gateway governa **quem entra** e **quantas conexões** cada um abre. O que
+acontece dentro do túnel é da aplicação.
+
+Confundir os dois é o que produz a promessa que não se cumpre -- e reconhecer
+a fronteira é o que permite desenhar em volta dela: conexões com prazo,
+contagem no serviço, e limite de concorrência na borda.

@@ -1,7 +1,7 @@
 = Extras: qual escolher
 :navtitle: Extras: qual escolher
 
-**Oito exercícios e uma leitura · ~71 min no total · fora do caminho principal**
+**Oito exercícios e duas leituras · ~76 min no total · fora do caminho principal**
 
 Os Extras não são continuação de módulo nenhum. Cada um responde uma pergunta
 que aparece em conversa real e que o roteiro principal não cobre. Dá para
@@ -56,6 +56,11 @@ pressupõe.
   e as três posições possíveis. **Só leitura**, sem exercício
 | 1.1
 
+| xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa]
+| o que a policy decide num WebSocket (o handshake) e o que ela deixa de ver
+  depois dele. **Só leitura**, sem exercício
+| 1.1
+
 | xref:extra-contextos.adoc[Uma API, vários contextos]
 | uma API com muitos caminhos, vários hostnames e **várias APIs sob o mesmo
   hostname**: até onde a policy desce, quem governa cada caminho, e o que o
@@ -104,6 +109,10 @@ pressupõe.
 | Leitura: onde entra o WAF
 | ~5 min
 | não muda nada -- é leitura
+
+| Leitura: WebSocket e conexão longa
+| ~5 min
+| não muda nada -- é leitura
 |===
 
 Os três que mudam estado desfazem tudo no fim, e cada página diz o comando de
@@ -122,6 +131,8 @@ limpeza caso a execução seja interrompida.
 * **A API tem muitos caminhos, com regras diferentes?** *Uma API, vários
   contextos*, que leva a policy até a regra e mostra a precedência em três
   níveis.
+* **A API não é requisição e resposta?** A *leitura sobre WebSocket*, que
+  separa o que o gateway decide na porta do que acontece dentro do túnel.
 * **Pediram uma lista de IPs?** *Listas de permissão e bloqueio*, que mede o
   que de fato chega ao Gateway antes de prometer qualquer coisa.
 * **A conversa chegou em multicluster?** *O nome também é policy*, que mostra a

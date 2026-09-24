@@ -51,6 +51,7 @@
 * xref:extra-contextos.adoc[Uma API, vários contextos]
 * xref:extra-listas.adoc[Listas de permissão e bloqueio]
 * xref:leitura-waf.adoc[Leitura: onde entra o WAF]
+* xref:leitura-websocket.adoc[Leitura: WebSocket]
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]
