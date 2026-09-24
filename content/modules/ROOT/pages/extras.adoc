@@ -1,7 +1,7 @@
 = Extras: qual escolher
 :navtitle: Extras: qual escolher
 
-**Sete páginas opcionais · ~57 min no total · fora do caminho principal**
+**Oito páginas opcionais · ~66 min no total · fora do caminho principal**
 
 Os Extras não são continuação de módulo nenhum. Cada um responde uma pergunta
 que aparece em conversa real e que o roteiro principal não cobre. Dá para
@@ -45,6 +45,12 @@ pressupõe.
   num cluster só
 | 1.6
 
+| xref:extra-listas.adoc[Listas de permissão e bloqueio]
+| o pedido "libera só a faixa de IP do parceiro": qual endereço chega até o
+  Gateway, por que uma lista por cabeçalho é forjável, e qual lista sobrevive a
+  NAT e CDN
+| 1.1
+
 | xref:extra-contextos.adoc[Uma API, vários contextos]
 | uma API com muitos caminhos, vários hostnames e **várias APIs sob o mesmo
   hostname**: até onde a policy desce, quem governa cada caminho, e o que o
@@ -85,6 +91,10 @@ pressupõe.
 | Uma API, vários contextos
 | ~14 min
 | cria e remove namespaces próprios
+
+| Listas de permissão e bloqueio
+| ~9 min
+| cria e remove um namespace próprio
 |===
 
 Os três que mudam estado desfazem tudo no fim, e cada página diz o comando de
@@ -103,6 +113,8 @@ limpeza caso a execução seja interrompida.
 * **A API tem muitos caminhos, com regras diferentes?** *Uma API, vários
   contextos*, que leva a policy até a regra e mostra a precedência em três
   níveis.
+* **Pediram uma lista de IPs?** *Listas de permissão e bloqueio*, que mede o
+  que de fato chega ao Gateway antes de prometer qualquer coisa.
 * **A conversa chegou em multicluster?** *O nome também é policy*, que mostra a
   estrutura de geografia e peso que o Connectivity Link usa para distribuir
   tráfego entre clusters -- e que aqui roda num cluster só.

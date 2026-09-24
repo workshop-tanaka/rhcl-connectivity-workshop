@@ -1,0 +1,199 @@
+= Listas de permissão e bloqueio
+:navtitle: Listas de permissão e bloqueio
+
+**Opcional · ~9 min · cria e remove um namespace próprio**
+
+**A quem pertence:** Segurança e Arquitetura -- e quem já recebeu o pedido "libera só a faixa de IP do parceiro".
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-01-fechada.adoc[1.1] e, de preferência, o Extra
+xref:extra-contextos.adoc[Uma API, vários contextos] -- a lista aqui é aplicada
+a **um contexto**, e não à API inteira.
+====
+
+O pedido chega sempre igual: *"libera só a faixa de IP do parceiro."* A
+resposta curta é que dá. A resposta útil começa com outra pergunta: **qual
+endereço chega até o Gateway?**
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh
+----
+
+Cerca de dois minutos, num namespace próprio. O laboratório publica o **mesmo**
+Gateway de duas formas e compara o que sobrevive do cliente em cada uma.
+
+== 1. Que endereço sobrevive
+
+[source,text]
+----
+Route edge           {"xff": "100.64.0.6,10.233.2.2", ...}
+Route passthrough    {"xff": "10.235.0.2", ...}
+de dentro, direto    {"xff": "10.233.0.109", ...}
+----
+
+* **Com `passthrough`** -- que é como a API deste workshop é publicada -- não
+  há informação nenhuma do cliente. O router repassa bytes; o endereço que
+  aparece é o do próprio router.
+* **Com `edge`**, o router termina o TLS e escreve o `X-Forwarded-For`. Mas o
+  primeiro endereço é o **NAT da borda** (`100.64.x` é faixa de NAT de
+  operadora), não o cliente. Meu IP público real, medido no mesmo instante,
+  não aparece em lugar nenhum.
+
+**Primeira conclusão:** neste tipo de borda, "liberar a faixa do parceiro"
+libera *todo mundo que passa pelo mesmo NAT*.
+
+== 2. A lista existe, e vale por contexto
+
+[source,yaml]
+----
+spec:
+  targetRef: {kind: HTTPRoute, name: edge, sectionName: restrito}   # <1>
+  rules:
+    authorization:
+      so-quem-vem-da-borda:
+        patternMatching:
+          patterns:
+          - predicate: 'request.headers["x-forwarded-for"].startsWith("100.64.")'
+----
+<1> A lista vale **só no contexto `/restrito`** -- mesma rota, mesmo hostname.
+
+[source,text]
+----
+/aberto   (sem policy), de fora    200
+/restrito (com lista), de fora     200
+/restrito de dentro                403
+----
+
+Funciona. E é aqui que a conversa costuma parar -- cedo demais.
+
+== 3. Lista por cabeçalho é forjável
+
+[source,text]
+----
+/restrito de dentro, FORJANDO XFF   200
+----
+
+Um cliente que fala **direto** com o Gateway escreve o cabeçalho que quiser. E
+não adianta trocar de campo: tentei usar o `x-envoy-external-address`, que é o
+valor que o próprio Envoy calcula, e **todas as chamadas viraram `403`** -- esse
+cabeçalho não chega à `AuthPolicy` no momento da decisão. O que existe para
+decidir é o `X-Forwarded-For` cru.
+
+Com `numTrustedProxies: 1` no Gateway, o Envoy passa a tratar o penúltimo salto
+como cliente -- e a forja **continua funcionando** para quem fala direto com
+ele, porque esse cliente é sempre "um salto antes".
+
+É a mesma lição do Extra
+xref:extra-parceiro-certificado.adoc[Parceiro com certificado]: cabeçalho só
+vale quando alguém confiável o escreve.
+
+== 4. O que fecha a forja é rede, não policy
+
+[source,text]
+----
+so os enderecos de gerencia dos nos alcancam o Gateway:
+  10.232.0.2/32, 10.232.2.2/32, 10.233.0.2/32, ...
+
+/aberto de fora (pelo router)       200
+/restrito de dentro, FORJANDO XFF   000  (exit 28: a conexão morre no timeout)
+----
+
+Uma `NetworkPolicy` no namespace do Gateway derruba o caminho direto. Sem
+caminho direto, não há o que forjar -- e quem vem pela borda continua entrando.
+
+.Três formas erradas de escrever essa NetworkPolicy, e por que cada uma falha
+[%collapsible]
+====
+As três foram medidas neste cluster, e cada erro ensina algo sobre a rede do
+OpenShift:
+
+[cols="1,1,2",options="header"]
+|===
+| tentativa | resultado | por quê
+
+| `namespaceSelector` de `openshift-ingress`
+| bloqueou tudo
+| o router roda em **host network**: para a `NetworkPolicy`, ele não é um pod
+  daquele namespace
+
+| `ipBlock` com a rede dos nós
+| bloqueou tudo
+| no OVN-Kubernetes, o tráfego vindo do host **não** chega com o IP do nó
+
+| `0.0.0.0/0` exceto a rede de pods
+| bloqueou tudo
+| o tráfego do host chega **mascarado** como o endereço de gerência do nó --
+  que mora *dentro* da rede de pods
+|===
+
+O que funciona é liberar exatamente esses endereços de gerência: o `.2` da
+sub-rede de cada nó, que o cluster publica na anotação
+`k8s.ovn.org/node-subnets`. O script os descobre; nada fica escrito à mão.
+====
+
+== 5. A lista que não depende da rede
+
+[source,text]
+----
+sem chave                      401
+chave na lista de bloqueio     403
+chave liberada                 200
+----
+
+A mesma `AuthPolicy`, decidindo por **identidade**:
+
+[source,yaml]
+----
+authorization:
+  nao-e-da-lista:
+    patternMatching:
+      patterns:
+      - predicate: 'auth.identity.metadata.name != "chave-parceiro"'
+----
+
+O mesmo predicado serve para bloquear por plano, por anotação da chave, por
+`CN` de certificado ou por *claim* de token. E ela atravessa NAT, CDN e troca
+de operadora sem mudar de resposta.
+
+== E se eu precisar mesmo do IP do cliente?
+
+[cols="1,3",options="header"]
+|===
+| caminho | o que resolve, e o que não
+
+| **MetalLB** com `Service` `LoadBalancer` e `externalTrafficPolicy: Local`
+| o pacote chega **sem SNAT** e o endereço passa a ser da conexão, não de um
+  cabeçalho -- não dá para forjar. Não resolve NAT que exista *antes* do
+  cluster, que é o caso deste ambiente
+
+| `Route` `edge` em vez de `passthrough`
+| passa a existir um `X-Forwarded-For`. O preço é mover a terminação TLS para
+  o router, e a parte xref:m1-10-certificado.adoc[1.10] deixa de valer como
+  está
+
+| PROXY protocol
+| **não serve aqui**: a opção `protocol: PROXY` do `IngressController` é sobre
+  o que o router *recebe*, não sobre o que ele *emite*
+
+| `AuthorizationPolicy` do Service Mesh, com `ipBlocks`
+| funciona, sobre o IP da **conexão** -- que neste desenho é sempre o router.
+  É lista de rede, não de consumidor
+|===
+
+== O que isso prova
+
+Lista por IP responde "de onde veio o pacote". Lista por identidade responde
+"quem é o cliente". São perguntas diferentes, e só a segunda sobrevive a NAT,
+CDN, nuvem e troca de operadora.
+
+A primeira ainda tem lugar -- como cerca, no nível da rede, onde o endereço é
+da conexão e não de um cabeçalho. O que não funciona é usá-la **como se fosse**
+identidade: é aí que ela vira uma lista que envelhece e um falso senso de
+controle.
+
+TIP: Se o exercício for interrompido, `bash scripts/listas.sh limpa` remove o
+namespace.
