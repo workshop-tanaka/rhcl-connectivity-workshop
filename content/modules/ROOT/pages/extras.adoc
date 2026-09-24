@@ -1,7 +1,7 @@
 = Extras: qual escolher
 :navtitle: Extras: qual escolher
 
-**Cinco páginas opcionais · ~36 min no total · fora do caminho principal**
+**Seis páginas opcionais · ~43 min no total · fora do caminho principal**
 
 Os Extras não são continuação de módulo nenhum. Cada um responde uma pergunta
 que aparece em conversa real e que o roteiro principal não cobre. Dá para
@@ -38,6 +38,12 @@ pressupõe.
   aplicação que não é a de viagens -- com **três versões** no ar e uma delas
   em zero por cento
 | 2.2
+
+| xref:extra-dns.adoc[O nome também é policy (DNS)]
+| quem cria o nome DNS da API, e como uma policy o declara junto com o
+  `Gateway`. Traz também a estrutura de **multicluster** -- geografia e peso --
+  num cluster só
+| 1.6
 |===
 
 == Quanto custa cada um
@@ -65,6 +71,10 @@ pressupõe.
 | Uma aplicação, duas fronteiras
 | ~6 min
 | altera e devolve a configuração do bookinfo
+
+| O nome também é policy (DNS)
+| ~7 min
+| cria e remove um namespace próprio
 |===
 
 Os três que mudam estado desfazem tudo no fim, e cada página diz o comando de
@@ -80,3 +90,6 @@ limpeza caso a execução seja interrompida.
   mente.
 * **Está explicando a divisão entre os dois produtos?** *Uma aplicação, duas
   fronteiras*, que separa as duas decisões na mesma aplicação.
+* **A conversa chegou em multicluster?** *O nome também é policy*, que mostra a
+  estrutura de geografia e peso que o Connectivity Link usa para distribuir
+  tráfego entre clusters -- e que aqui roda num cluster só.

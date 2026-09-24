@@ -51,9 +51,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
   e saber o que o túnel protege
 | ~11 min
 
-| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)] e xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
+| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras] e xref:extra-dns.adoc[O nome também é policy (DNS)]
 | opcionais, em qualquer ordem e a qualquer momento
-| ~36 min
+| ~43 min
 |===
 
 Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
@@ -81,7 +81,7 @@ uma vez. Três recortes que fecham sozinhos:
   xref:99-encerramento.adoc[Encerramento] pressupõe
 
 | **aprofundada**
-| ~3 h 10
+| ~3 h 20
 | a completa mais os xref:extras.adoc[Extras] que interessarem ao seu dia
 |===
 

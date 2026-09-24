@@ -1,0 +1,179 @@
+= O nome da API também é policy
+:navtitle: O nome também é policy (DNS)
+
+**Opcional · ~7 min · cria e remove um namespace próprio**
+
+**A quem pertence:** Engenheiro de Plataforma e Arquitetura -- quem opera a borda, e quem vai desenhar mais de um cluster.
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-06-exposta.adoc[1.6], que publica uma API com
+`HTTPRoute` num Gateway. Aqui entra a peça que falta: **o nome** pelo qual
+alguém a encontra.
+====
+
+O Connectivity Link tem seis policies. O workshop exercita cinco. A que faltava
+é a `DNSPolicy` -- e ela faltava por um motivo prático: a leitura óbvia da
+documentação pede conta em nuvem, domínio público e um endereço externo para
+publicar.
+
+Só que o operador de DNS deste ambiente registra **cinco provedores**, e dois
+deles rodam dentro do cluster:
+
+[source,text]
+----
+init provider factory  providers: ["coredns","endpoint","aws","azure","google"]
+----
+
+Com o provedor `coredns`, o exercício inteiro cabe num namespace.
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/dns-nome.sh
+----
+
+Leva cerca de dois minutos, e remove tudo no fim. O script sobe uma zona de
+mentira (`lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório,
+um Gateway próprio, e o cliente é um pod.
+
+[IMPORTANT]
+====
+**Nada disto toca o DNS do cluster.** A zona não existe fora do laboratório, e
+quem a serve é um CoreDNS que sobe e desce com o exercício. O `prod-web` e os
+nomes do workshop seguem intocados.
+====
+
+== 1. O Gateway está pronto, e ninguém o encontra
+
+[source,text]
+----
+2. O nome ainda nao existe
+   NXDOMAIN -- o nome nao existe nesta zona
+----
+
+O `Gateway` está `Programmed`, a `HTTPRoute` está anexada, o serviço responde.
+Falta o nome -- e **isso é trabalho de outra equipe**, na maioria das empresas,
+com outro chamado e outro prazo.
+
+== 2. Uma policy, e os registros aparecem
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1
+kind: DNSPolicy
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: Gateway, name: lab}
+  providerRefs: [{name: coredns-provider}]
+----
+
+O `Secret` do provedor tem duas linhas: o tipo `kuadrant.io/coredns` e a zona.
+
+[source,text]
+----
+Accepted=True   DNSPolicy has been accepted
+Enforced=True   DNSPolicy has been successfully enforced
+
+DNSRecord authoritative-record-...  provedor=coredns   Ready=True
+  api.lab.rhcl.internal   CNAME -> lab-istio.dns-lab.svc.cluster.local
+----
+
+Você não escreveu registro nenhum. **O operador leu o listener do Gateway** e
+derivou o nome, o tipo e o destino -- o mesmo padrão da parte
+xref:m1-10-certificado.adoc[1.10] com a `TLSPolicy`, e da
+xref:m1-09-identidade.adoc[1.9] com a `OIDCPolicy`: intenção declarada, objeto
+derivado, com dono.
+
+E repare em **como o CoreDNS descobre o registro**: pelo label
+`kuadrant.io/coredns-zone-name` que o operador carimbou. Não há arquivo de zona
+editado à mão, nem recarga de servidor.
+
+== 3. O nome resolve, e responde
+
+[source,text]
+----
+CNAME -> lab-istio.dns-lab.svc.cluster.local
+A     -> 172.231.211.233
+HTTP no endereco que o DNS deu     200
+----
+
+O cliente é um pod com um resolvedor de trinta linhas em Python -- o terminal
+do workshop não tem `dig`, e a zona só existe dentro do cluster.
+
+== 4. Geografia e peso: multicluster num cluster só
+
+Esta é a parte que a `DNSPolicy` tem e nenhuma outra policy tem. Acrescentando
+três campos:
+
+[source,yaml]
+----
+spec:
+  loadBalancing:
+    defaultGeo: true
+    geo: GEO-NA
+    weight: 120
+----
+
+a estrutura muda inteira:
+
+[source,text]
+----
+api.lab.rhcl.internal              CNAME -> klb.api.lab.rhcl.internal
+klb.api.lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=GEO-NA
+klb.api.lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=*
+geo-na.klb.api.lab.rhcl.internal   CNAME -> lab-istio...         weight=120
+----
+
+Leia de cima para baixo:
+
+* o nome público vira um **CNAME para um ponto de decisão**, o `klb.`;
+* do `klb.` sai **um ramo por geografia** -- e um ramo `*`, que é o
+  `defaultGeo`: quem não casa com nenhuma região cai nele;
+* de cada ramo geográfico saem os **destinos, com peso**.
+
+Com dois clusters, cada um publica o próprio ramo **na mesma zona**. Quem
+resolve o nome recebe o destino da sua região; dentro da região, o peso
+distribui. Não há balanceador no meio, e nenhum dos clusters sabe do outro --
+os dois só escrevem seus registros.
+
+É a mesma API, com os mesmos três campos, tanto aqui quanto num cenário real
+com Route53 ou Azure DNS. Muda o `Secret` do provedor.
+
+== A parte honesta
+
+[cols="1,3",options="header"]
+|===
+| ponto | o que vale saber
+
+| o provedor `coredns`
+| serve para DNS **interno** ou para quem opera o próprio servidor autoritativo.
+  Para publicar na internet, o provedor é `aws`, `azure` ou `google`, com
+  credencial e zona hospedada
+
+| a imagem do CoreDNS
+| vem do upstream do Kuadrant. Num ambiente de cliente, vale espelhá-la para o
+  registro da casa e fixá-la por digest
+
+| o endereço publicado
+| é o que está no `status` do `Gateway`. Aqui é um `Service` interno, porque o
+  cluster não tem LoadBalancer -- para DNS interno isso é o comportamento
+  certo, e não um remendo
+
+| geografia de mentira
+| `GEO-NA` é só um rótulo. Quem resolve geografia de verdade é o provedor: os
+  valores aceitos saem da documentação de cada um
+|===
+
+== O que isso prova
+
+O nome de uma API é infraestrutura, e quase sempre mora fora do alcance de quem
+publica a API -- vira chamado, planilha e espera.
+
+A `DNSPolicy` o traz para o mesmo lugar das outras decisões: declarado ao lado
+do `Gateway`, com status, com dono, e desfeito quando a policy sai. E, com
+`loadBalancing`, a mesma declaração passa a responder uma pergunta que nenhuma
+outra camada deste workshop responde: **qual cluster atende cada região**.
+
+TIP: Se o exercício for interrompido, `bash scripts/dns-nome.sh limpa` remove o
+namespace e os objetos de RBAC que ele cria.
