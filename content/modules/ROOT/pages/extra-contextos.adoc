@@ -1,7 +1,7 @@
 = Uma API, vários contextos
 :navtitle: Uma API, vários contextos
 
-**Opcional · ~8 min · cria e remove um namespace próprio**
+**Opcional · ~14 min · cria e remove namespaces próprios**
 
 **A quem pertence:** Arquitetura e Engenheiro de Plataforma -- quem publica uma API com dez caminhos e precisa tratá-los de formas diferentes.
 
@@ -151,6 +151,80 @@ Se duas rotas disputassem o **mesmo** hostname, valeriam as regras de
 precedência da Gateway API: vence o casamento mais específico e, em empate, a
 rota mais antiga.
 
+== Um hostname, várias APIs
+
+Até aqui foi uma API com vários contextos. A outra metade da pergunta é o
+contrário: **várias APIs, de equipes diferentes, sob o mesmo hostname.**
+
+[source,bash,role="execute"]
+----
+bash scripts/prefixos.sh
+----
+
+Outro laboratório, ~3 min: um Gateway num namespace, e **uma `HTTPRoute` por
+equipe, no namespace de cada uma**.
+
+[source,text]
+----
+caminho                    codigo quem atendeu
+/api1/listall (sem chave)  401
+/api1/listall (free)       200    backend=api1  recebeu=/listall
+/api2/listall (sem chave)  200    backend=api2  recebeu=/listall
+/api/getinfo (sem chave)   401
+/api/getinfo (free)        403
+/api/getinfo (gold)        200    backend=api2  recebeu=/getinfo
+/outro (sem rota)          404
+----
+
+Quatro coisas nessa tabela:
+
+* **Cada equipe é dona do seu prefixo**, e da policy dele: `/api1` exige chave,
+  `/api2` é anônima. As rotas moram nos namespaces das equipes, e o Gateway em
+  outro -- o listener declara `allowedRoutes: {namespaces: {from: All}}`.
+* **O backend recebe o caminho sem o prefixo** (`recebeu=/listall`). Quem o
+  remove é o filtro `URLRewrite` da rota, com `ReplacePrefixMatch`. A aplicação
+  não sabe que está atrás de um prefixo.
+* **`/api/getinfo` é um endpoint solto da api2**, publicado fora do prefixo
+  dela, com `matches` do tipo `Exact`, `ReplaceFullPath` e policy própria: só o
+  plano gold entra. Um endpoint pode ter contrato próprio sem que a API dele
+  mude de endereço.
+* **`/outro` devolve `404`, não `403`.** Sem rota que case, não há policy para
+  aplicar -- é a estação 2 da parte xref:m3-03-negado.adoc[3.3] aparecendo
+  aqui.
+
+=== O Gateway diz quem governa cada caminho
+
+[source,text]
+----
+request.url_path == '/api/getinfo'      <- pfx-equipe-b/getinfo-gold
+request.url_path.startsWith('/api1')    <- pfx-equipe-a/api1-chave
+request.url_path.startsWith('/api2')    <- pfx-equipe-b/api2-anonima
+----
+
+Isso sai da configuração que o Connectivity Link escreve no Envoy. Não é
+documentação, é o que está valendo -- e responde "qual policy pega este
+caminho?" sem depender de quem leu o quê.
+
+=== A rota nova herda o teto, mas não na hora
+
+O laboratório cria uma rota `/api3` **sem policy própria** e cronometra até o
+`deny-all` do Gateway assumir:
+
+[source,text]
+----
+  1s  200
+ 13s  403
+----
+
+Medi três vezes, com três resultados: `~1s`, `~13s` e mais de um minuto quando
+o operador estava reconciliando outras mudanças. **A janela existe e o tamanho
+varia.**
+
+Enquanto ela dura, a rota responde sem policy nenhuma. É o argumento mais
+concreto a favor do caminho pavimentado da parte
+xref:m1-07-colheita.adoc[1.7]: lá, a rota e a policy dela nascem no mesmo
+commit -- e não há janela.
+
 == A outra estratégia: uma policy com predicados
 
 O mesmo efeito cabe numa policy só, com CEL:
@@ -214,5 +288,5 @@ cedeu para a outra.
 É o que permite publicar uma API com dez contextos, tratar cada um como ele
 merece, e ainda assim ter **um** hostname, **uma** rota e **um** dono.
 
-TIP: Se o exercício for interrompido, `bash scripts/contextos.sh limpa` remove
-o namespace.
+TIP: Se algum dos dois exercícios for interrompido, `bash scripts/contextos.sh limpa`
+e `bash scripts/prefixos.sh limpa` removem os namespaces.
