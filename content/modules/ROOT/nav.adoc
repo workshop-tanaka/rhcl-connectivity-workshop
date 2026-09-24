@@ -48,6 +48,7 @@
 * xref:extra-tokens-ia.adoc[Limite por token (IA)]
 * xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
 * xref:extra-dns.adoc[O nome também é policy (DNS)]
+* xref:extra-contextos.adoc[Uma API, vários contextos]
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]

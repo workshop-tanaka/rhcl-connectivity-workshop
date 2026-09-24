@@ -1,7 +1,7 @@
 = Extras: qual escolher
 :navtitle: Extras: qual escolher
 
-**Seis páginas opcionais · ~43 min no total · fora do caminho principal**
+**Sete páginas opcionais · ~51 min no total · fora do caminho principal**
 
 Os Extras não são continuação de módulo nenhum. Cada um responde uma pergunta
 que aparece em conversa real e que o roteiro principal não cobre. Dá para
@@ -44,6 +44,12 @@ pressupõe.
   `Gateway`. Traz também a estrutura de **multicluster** -- geografia e peso --
   num cluster só
 | 1.6
+
+| xref:extra-contextos.adoc[Uma API, vários contextos]
+| uma API com muitos caminhos, e dois hostnames no mesmo Gateway: até onde a
+  policy desce (**até a regra**), e o que o status diz quando uma cede para a
+  outra
+| 1.3 e 1.6
 |===
 
 == Quanto custa cada um
@@ -75,6 +81,10 @@ pressupõe.
 | O nome também é policy (DNS)
 | ~7 min
 | cria e remove um namespace próprio
+
+| Uma API, vários contextos
+| ~8 min
+| cria e remove um namespace próprio
 |===
 
 Os três que mudam estado desfazem tudo no fim, e cada página diz o comando de
@@ -90,6 +100,9 @@ limpeza caso a execução seja interrompida.
   mente.
 * **Está explicando a divisão entre os dois produtos?** *Uma aplicação, duas
   fronteiras*, que separa as duas decisões na mesma aplicação.
+* **A API tem muitos caminhos, com regras diferentes?** *Uma API, vários
+  contextos*, que leva a policy até a regra e mostra a precedência em três
+  níveis.
 * **A conversa chegou em multicluster?** *O nome também é policy*, que mostra a
   estrutura de geografia e peso que o Connectivity Link usa para distribuir
   tráfego entre clusters -- e que aqui roda num cluster só.
