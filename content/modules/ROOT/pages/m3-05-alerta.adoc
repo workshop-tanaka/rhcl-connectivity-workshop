@@ -20,6 +20,17 @@ acidente inevitável.
 
 Falta a segunda metade da frase.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  M["<b>metrica</b><br/>limitador_up, authorized_calls"] --> R["<b>PrometheusRule</b><br/>a condicao e o tempo"]
+  R -->|"condicao verdadeira<br/>pelo tempo declarado"| AL["<b>alerta</b> firing"]
+  AL --> AM["Alertmanager<br/><i>neste cluster, sem destino</i>"]
+  AL --> PA["painel do Grafana"]
+....
+
 == Terminal
 
 [source,bash,role="execute"]

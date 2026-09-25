@@ -86,6 +86,20 @@ https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[a do
 Connectivity Link^].
 ====
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  T["<b>TLSPolicy</b><br/>voce declara"] -->|"le os listeners<br/>e cria"| CE["<b>Certificate</b><br/>dono: a TLSPolicy"]
+  I["<b>Issuer</b><br/>de onde vem o certificado"] --> CE
+  CE -->|"cert-manager emite<br/>e RENOVA"| SE["<b>Secret</b>"]
+  SE --> GW["<b>Gateway</b><br/>listener TLS"]
+....
+
+Sem a `TLSPolicy`, o `Secret` continua lá -- e ninguém renova. É o achado da
+leitura acima, desenhado.
+
 == A prova: uma TLSPolicy de ponta a ponta
 
 [source,bash,role="execute"]

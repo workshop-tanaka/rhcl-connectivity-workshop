@@ -101,6 +101,18 @@ HTTP no endereco que o DNS deu     200
 O cliente é um pod com um resolvedor de trinta linhas em Python -- o terminal
 do workshop não tem `dig`, e a zona só existe dentro do cluster.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  N["api.lab.rhcl.internal<br/><i>o nome publico</i>"] --> K["klb.api...<br/><b>ponto de decisao</b>"]
+  K -->|"geo-code: GEO-NA"| G1["geo-na.klb.api..."]
+  K -->|"geo-code: * (defaultGeo)"| G1
+  G1 -->|"weight: 120"| D1["Gateway deste cluster"]
+  G1 -.->|"weight: N<br/>(outro cluster publicaria aqui)"| D2["Gateway de outro cluster"]
+....
+
 == 4. Geografia e peso: multicluster num cluster só
 
 Esta é a parte que a `DNSPolicy` tem e nenhuma outra policy tem. Acrescentando

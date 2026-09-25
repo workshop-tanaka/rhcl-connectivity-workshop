@@ -19,6 +19,19 @@ governada -- e cada passo é **uma policy**.
 bash scripts/demo.sh exposta
 ----
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  M1["<b>1</b> Route solta<br/>200 para qualquer um"] --> M2["<b>2</b> HTTPRoute no Gateway<br/>403: o teto da plataforma"]
+  M2 --> M3["<b>3</b> AuthPolicy da rota<br/>401 sem chave, 200 com chave"]
+  M3 --> M4["<b>4</b> PlanPolicy<br/>429 acima da cota"]
+....
+
+A mesma API, quatro estados. Só o que muda entre eles é **qual objeto
+declara o quê** -- a aplicação é a mesma nos quatro.
+
 == Momento 1 -- a `Route` que você já sabe usar
 
 O caminho que quase todo serviço segue no primeiro dia: sobe o pod, expõe o

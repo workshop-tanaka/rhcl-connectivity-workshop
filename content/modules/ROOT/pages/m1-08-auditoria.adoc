@@ -17,6 +17,17 @@ recusa que levou, a policy que alterou, a chamada que emitiu.
 E o ponto não é que existe log. É que são **quatro fontes diferentes, e
 nenhuma responde a pergunta da outra**.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  P["a pergunta da auditoria"] --> A["<b>audit log</b><br/>quem TENTOU o que<br/><i>nao diz por que</i>"]
+  P --> B["<b>managedFields</b><br/>qual controlador escreveu<br/><i>nao diz quem pediu</i>"]
+  P --> C["<b>historico do Argo</b><br/>qual revisao esta no ar<br/><i>nao diz o que ela mudou</i>"]
+  P --> D["<b>metricas do RHCL</b><br/>quem EXERCEU o acesso<br/><i>nao diz se era legitimo</i>"]
+....
+
 == Terminal
 
 [source,bash,role="execute"]

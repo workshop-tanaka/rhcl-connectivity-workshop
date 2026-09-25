@@ -28,6 +28,24 @@ já tem as duas no ar, no **mesmo Gateway**.
 bash scripts/identidade.sh
 ----
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  subgraph CHAVE["chave de API -- identifica um SISTEMA"]
+    direction LR
+    C1["cliente"] -->|"APIKEY na chamada"| G1["Gateway"] -->|"200 ou 401"| S1["travels"]
+  end
+  subgraph OIDC["token OIDC -- identifica uma PESSOA"]
+    direction LR
+    C2["navegador"] -->|"sem token"| G2["Gateway"]
+    G2 -->|"302 para o login"| K["provedor de identidade"]
+    K -->|"volta com token"| G2
+    G2 -->|"200"| S2["echo-api"]
+  end
+....
+
 == O que a saída mostra
 
 === Uma credencial que diz quem você é

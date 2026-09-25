@@ -14,6 +14,20 @@ O Service Mesh tem duas respostas para "e quando o serviço do outro lado
 começa a falhar?", e as duas devolvem `503`. O que as distingue é o
 `response_flag` do Envoy: `UO` (fila cheia) e `UH` (instância **ejetada**).
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  C["chamada"] --> SC["sidecar do <b>cars</b>"]
+  SC -->|"fila cheia:<br/>connectionPool recusou"| UO["<b>503 UO</b><br/>upstream overflow"]
+  SC -->|"instancia EJETADA:<br/>outlierDetection tirou o pod"| UH["<b>503 UH</b><br/>no healthy upstream"]
+  SC -->|"passou"| D["discounts"]
+....
+
+Mesmo código, duas decisões de plataforma opostas. O que as separa é o
+`response_flag` do Envoy.
+
 == Terminal
 
 [source,bash,role="execute"]

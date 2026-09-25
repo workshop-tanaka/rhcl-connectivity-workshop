@@ -30,6 +30,23 @@ Connectivity Link herda os três. Dois deles aparecem neste exercício:
 A parte 1.3 mostrou a precedência num campo de status. Aqui quem responde é o
 **apiserver**.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  subgraph PE["Engenheiro de Plataforma (plat-eng)"]
+    G["<b>Gateway</b> prod-web"]
+    GP["policies que miram o Gateway<br/>deny-all · limite baixo · TLS · DNS"]
+  end
+  subgraph AD["Desenvolvedor (app-dev)"]
+    R["<b>HTTPRoute</b> do proprio servico"]
+    RP["policies que miram a rota<br/>AuthPolicy · PlanPolicy · TelemetryPolicy"]
+  end
+  R -->|"parentRefs: so precisa VER o Gateway"| G
+  GP -.->|"teto herdado"| R
+....
+
 == Terminal
 
 [source,bash,role="execute"]
