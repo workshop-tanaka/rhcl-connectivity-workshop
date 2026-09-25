@@ -34,17 +34,17 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | fechar uma API sem tocar na aplicação, servir planos comerciais no mesmo
   endereço, publicar uma API do zero à mão e depois pelo caminho pavimentado,
   auditar o próprio rastro, e cuidar da identidade e do certificado
-| ~79 min
+| ~87 min
 
 | xref:m2-00-intro.adoc[**2** — Service Mesh: a fronteira de dentro]
 | proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo,
   distinguir os dois `503` de uma falha no outro lado, e saber onde o mTLS termina
-| ~24 min
+| ~26 min
 
 | xref:m3-00-intro.adoc[**3** — Observar e diagnosticar as duas fronteiras]
 | seguir uma requisição salto a salto, dizer em qual de seis lugares uma recusa
   morreu, e prever o que o tráfego faz quando a plataforma falha
-| ~20 min
+| ~33 min
 
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
 | alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada,
@@ -61,8 +61,8 @@ apresenta os três produtos e a fronteira de cada um.
 
 == Três trilhas, por tempo disponível
 
-O workshop inteiro leva cerca de **três horas**, e ninguém precisa fazê-lo de
-uma vez. Três recortes que fecham sozinhos:
+Os quatro módulos levam cerca de **2 h 40**; com os Extras, perto de **4 h**.
+Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 [cols="1,1,3",options="header"]
 |===
@@ -76,12 +76,12 @@ uma vez. Três recortes que fecham sozinhos:
   fronteira, que é a pergunta que sempre vem
 
 | **completa**
-| ~2 h 30
+| ~2 h 40
 | os quatro módulos na ordem, sem os Extras. É a trilha que o
   xref:99-encerramento.adoc[Encerramento] pressupõe
 
 | **aprofundada**
-| ~3 h 40
+| ~4 h
 | a completa mais os xref:extras.adoc[Extras] que interessarem ao seu dia
 |===
 

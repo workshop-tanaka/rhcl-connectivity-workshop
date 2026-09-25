@@ -1,7 +1,7 @@
 = Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Dez partes e uma leitura · cerca de 79 minutos · as partes 1.6 a 1.8 e a 1.10 criam objetos**
+**Dez partes e uma leitura · cerca de 87 minutos · as partes 1.6 a 1.8 e a 1.10 criam objetos**
 
 **Produto protagonista:** Red Hat Connectivity Link
 

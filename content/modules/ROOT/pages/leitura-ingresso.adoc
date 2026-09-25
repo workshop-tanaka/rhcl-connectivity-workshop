@@ -1,7 +1,7 @@
 = Leitura: Route, Ingress e Gateway API
 :navtitle: Leitura: Route, Ingress e Gateway API
 
-**Leitura · ~8 min · não muda estado**
+**Leitura · ~10 min · não muda estado**
 
 Até aqui você usou `Gateway` e `HTTPRoute` sem que ninguém explicasse por que
 não é uma `Route` do OpenShift, que é o jeito que todo mundo já conhece. A

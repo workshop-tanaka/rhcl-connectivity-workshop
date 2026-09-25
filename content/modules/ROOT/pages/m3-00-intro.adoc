@@ -1,7 +1,7 @@
 = Módulo 3 — Observar e diagnosticar as duas fronteiras
 :navtitle: Módulo 3 — Introdução
 
-**Cinco partes · cerca de 30 minutos · duas delas mudam estado**
+**Cinco partes · cerca de 33 minutos · duas delas mudam estado**
 
 **Produtos:** Connectivity Link e Service Mesh -- a observabilidade é dos dois
 

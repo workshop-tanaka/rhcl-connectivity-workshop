@@ -141,6 +141,16 @@ também.
 TIP: Se o exercício for interrompido no meio, limpe com
 `bash scripts/tokens-ia.sh limpa`.
 
+== Não tente isto
+
+Escrever a `TokenRateLimitPolicy` com predicado direto sobre
+`auth.identity.metadata.labels[...]`, que é o caminho intuitivo. Ela fica
+`Accepted=True`, `Enforced=True`, os limites aparecem no Limitador -- e **nada
+é contado**. O log do Gateway explica: `CelError::Resolve { NoSuchKey("identity") }`.
+
+O limite só enxerga o que a `AuthPolicy` exporta em `response.success.filters`.
+Sem esse export, a policy existe e não morde.
+
 == O que isso prova
 
 A plataforma que governa a API de viagens governa a API de IA com a mesma

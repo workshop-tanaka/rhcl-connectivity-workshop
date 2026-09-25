@@ -1,7 +1,7 @@
 = 1.4 Quem pode o quê
 :navtitle: 1.4 Quem pode o quê
 
-**A quem pertence:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **6 min**
+**A quem pertence:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **7 min**
 
 [NOTE.antes]
 ====

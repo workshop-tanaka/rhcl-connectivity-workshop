@@ -1,7 +1,7 @@
 = 2.4 O salto que o Service Mesh não cobria
 :navtitle: 2.4 O salto que o mesh não cobria
 
-**A quem pertence:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **8 min** · só lê
+**A quem pertence:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **10 min** · só lê
 
 [NOTE.antes]
 ====

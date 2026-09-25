@@ -215,6 +215,13 @@ registro pode sobrepor o wildcard DNS do cluster para aquele nome
 compartilhado, um exercício não deveria correr esse risco -- e a lição, *quem
 é o dono*, é a mesma com qualquer Issuer.
 
+== Não tente isto
+
+Aplicar uma `TLSPolicy` no Gateway da API para "resolver" o certificado sem
+dono. O `prod-web` tem um Secret **compartilhado por todas as rotas**: a policy
+o sobrescreveria, e o certificado de todas as APIs trocaria de uma vez. Foi o
+que motivou o Gateway isolado deste exercício.
+
 == O que isso prova
 
 Um certificado válido não é um certificado **governado**. A diferença é se

@@ -1,7 +1,7 @@
 = 3.3 Onde a requisição morreu
 :navtitle: 3.3 Onde a requisição morreu
 
-**A quem pertence:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **8 min** · **não muda estado**
+**A quem pertence:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **12 min** · **não muda estado**
 
 [NOTE.antes]
 ====

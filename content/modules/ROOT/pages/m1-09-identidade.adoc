@@ -184,6 +184,16 @@ Não é uma escolha de plataforma tomada uma vez para todo mundo: é **por
 produto de API**, e os dois convivem no mesmo Gateway -- que é exatamente o que
 você acabou de medir.
 
+== O que isso prova
+
+A mesma borda atende dois tipos de consumidor sem que a aplicação saiba de
+nenhum dos dois. O que muda é **qual policy** está anexada à rota -- e, com
+ela, o que a recusa significa: `401` para quem programa, `302` para quem
+navega.
+
+Credencial de sistema e credencial de pessoa não competem: respondem a
+perguntas diferentes, e a plataforma precisa das duas.
+
 == Falta uma camada
 
 Chave ou token, toda credencial desta parte viajou dentro de TLS -- e o

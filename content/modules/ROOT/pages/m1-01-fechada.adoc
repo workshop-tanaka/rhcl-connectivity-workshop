@@ -1,7 +1,7 @@
 = 1.1 A API está fechada por padrão
 :navtitle: 1.1 Fechada por padrão
 
-**Persona:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **2 min**
+**Persona:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **5 min**
 
 [NOTE.antes]
 ====

@@ -98,3 +98,11 @@ interface em vez do terminal.
 Depois, na pasta **Ato 2**, rode *estourar o free* -- é o `429` mudo da
 estação 4, e você pode conferir na mesma aba que não há nenhum cabeçalho
 explicando o limite.
+
+== O que isso prova
+
+A mesma API que o terminal exercita cabe numa ferramenta que o consumidor já
+usa -- sem adaptação, sem proxy e sem instrução especial. O que ele precisa é
+do endereço, da chave e do contrato.
+
+É o teste mais próximo do que um cliente vai fazer no primeiro dia.

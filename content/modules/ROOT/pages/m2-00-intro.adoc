@@ -1,7 +1,7 @@
 = Módulo 2 — Service Mesh: a fronteira de dentro
 :navtitle: Módulo 2 — Introdução
 
-**Quatro partes · cerca de 24 minutos · três mudam estado**
+**Quatro partes · cerca de 26 minutos · três mudam estado**
 
 **Produto protagonista:** Red Hat OpenShift Service Mesh
 

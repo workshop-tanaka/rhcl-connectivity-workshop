@@ -1,7 +1,7 @@
 = 1.2 Nem todo cliente é igual
 :navtitle: 1.2 Nem todo cliente é igual
 
-**Persona:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **5 min** · alimenta a parte 1.5
+**Persona:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **7 min** · alimenta a parte 1.5
 
 [NOTE.antes]
 ====
