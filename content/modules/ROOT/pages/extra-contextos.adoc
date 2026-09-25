@@ -63,6 +63,27 @@ spec:
     `AuthPolicy`, `RateLimitPolicy`, `PlanPolicy`, `TokenRateLimitPolicy` e
     `TelemetryPolicy`.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TD
+  G["<b>Gateway</b><br/>deny-all · limite de capacidade"]
+  R["<b>HTTPRoute</b> api1<br/>exige chave · limite 30/10s"]
+  P["regra <b>publico</b><br/>anonymous"]
+  M["regra <b>premium</b><br/>limite 5/10s"]
+  A["regra <b>admin</b><br/>chave + plano gold"]
+  B["regra <b>busca</b><br/>sem policy propria"]
+  G -->|"vale onde ninguem sobrepoe"| R
+  R -->|cede| P
+  R -->|cede| M
+  R -->|cede| A
+  R -->|"herda"| B
+....
+
+O que a seta "cede" significa no status: a policy da rota fica
+`partially enforced`, e a da regra, `successfully enforced`.
+
 == A matriz
 
 [source,text]

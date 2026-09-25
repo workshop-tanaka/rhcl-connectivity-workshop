@@ -194,6 +194,22 @@ reportada por quem recebe a chamada.
 Se a seção 3 vier vazia, o Service Mesh não viu tráfego na janela. Rode
 `bash scripts/traffic.sh tiers` e repita.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  C["cliente"] -->|"TLS"| RT["Route passthrough<br/>router do OpenShift"]
+  RT -->|"bytes, sem abrir"| GW["Gateway<br/>Envoy"]
+  GW -->|"mTLS"| AU["Authorino"]
+  GW -->|"mTLS"| LI["Limitador"]
+  GW -->|"mTLS"| TR["travels"]
+  TR -->|"mTLS"| HO["hotels"]
+  HO -->|"TEXTO CLARO"| S1["skupper-router<br/>site local"]
+  S1 -->|"mTLS do Skupper"| S2["skupper-router<br/>site remoto"]
+  S2 -->|"TEXTO CLARO"| DB[("MySQL")]
+....
+
 Leia o mapa de cima para baixo:
 
 * **Até o `hotels`, tudo é cifrado.** A borda tem TLS de servidor. Do Gateway

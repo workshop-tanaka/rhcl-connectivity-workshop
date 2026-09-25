@@ -34,6 +34,25 @@ E não há nada a configurar para o *upgrade* atravessar: nem na `HTTPRoute`, ne
 no `Gateway`, nem no Service Mesh. A pergunta "preciso de um gateway diferente
 para WebSocket?" tem uma resposta curta: não.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+sequenceDiagram
+  participant C as cliente
+  participant G as Gateway
+  participant P as Authorino / Limitador
+  participant S as servico
+  C->>G: GET /stream (Upgrade websocket)
+  G->>P: a chave vale? cabe no plano?
+  P-->>G: sim
+  G->>S: upgrade
+  S-->>C: 101 Switching Protocols
+  Note over C,S: daqui em diante: nenhuma mensagem inspecionada,<br/>nenhuma contada, autorizacao nao reavaliada
+  C->>S: mensagem 1
+  C->>S: mensagem 2 ... 10.000
+....
+
 == Onde o Connectivity Link para de enxergar
 
 Depois do `101`, o túnel está aberto, e daí em diante:

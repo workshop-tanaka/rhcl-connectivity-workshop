@@ -81,6 +81,17 @@ claro. O que está exposto é o **conteúdo**.
 
 == O mapa dos três saltos
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  A["aplicacao<br/>(hotels)"] -->|"TEXTO CLARO"| R1["skupper-router<br/>site local"]
+  R1 -->|"mTLS do Skupper<br/>CA propria"| R2["skupper-router<br/>site remoto"]
+  R2 -->|"TEXTO CLARO"| DB[("MySQL")]
+....
+
+
 [cols="2,1,2",options="header"]
 |===
 | salto | canal | de quem é a responsabilidade

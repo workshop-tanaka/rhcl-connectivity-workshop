@@ -34,6 +34,27 @@ Nenhuma das seis policies do Connectivity Link tem regra de conteúdo. Isso não
 é lacuna: é escopo. E é por isso que os dois convivem na mesma borda, sem
 competir.
 
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TD
+  subgraph FORA["fora do cluster"]
+    W["WAF de borda<br/><i>o que vem na requisicao?</i>"]
+  end
+  subgraph BORDA["borda do cluster"]
+    G["Gateway + Connectivity Link<br/><i>quem e o cliente? quanto pode?</i>"]
+    E["extensao no Envoy<br/><i>o que vem na requisicao?</i>"]
+  end
+  subgraph DENTRO["dentro do cluster"]
+    M["Service Mesh<br/><i>quem fala com quem?</i>"]
+    A["aplicacao<br/><i>a regra de negocio do payload</i>"]
+  end
+  W --> G
+  E -.->|"mesmo Envoy"| G
+  G --> M --> A
+....
+
 == As três posições possíveis
 
 === 1. Antes do cluster -- CDN ou appliance
