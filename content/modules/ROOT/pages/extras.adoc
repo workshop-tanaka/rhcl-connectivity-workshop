@@ -1,7 +1,7 @@
 = Extras: qual escolher
 :navtitle: Extras: qual escolher
 
-**Oito exercícios e duas leituras · ~76 min no total · fora do caminho principal**
+**Oito exercícios e duas leituras · ~75 min no total · fora do caminho principal**
 
 Os Extras não são continuação de módulo nenhum. Cada um responde uma pergunta
 que aparece em conversa real e que o roteiro principal não cobre. Dá para
@@ -52,8 +52,8 @@ pressupõe.
 | 1.1
 
 | xref:leitura-waf.adoc[Leitura: onde entra o WAF]
-| a pergunta "e o WAF?": o que o Connectivity Link decide, o que um WAF decide,
-  e as três posições possíveis. **Só leitura**, sem exercício
+| o desenho recomendado (WAF fora, identidade dentro), quando trazê-lo para o
+  Envoy, e o que é do produto e o que é seu. **Só leitura**, sem exercício
 | 1.1
 
 | xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa]
@@ -107,7 +107,7 @@ pressupõe.
 | cria e remove um namespace próprio
 
 | Leitura: onde entra o WAF
-| ~5 min
+| ~4 min
 | não muda nada -- é leitura
 
 | Leitura: WebSocket e conexão longa

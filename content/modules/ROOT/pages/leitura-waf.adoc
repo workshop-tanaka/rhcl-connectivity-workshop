@@ -1,135 +1,89 @@
 = Leitura: onde entra o WAF
 :navtitle: Leitura: onde entra o WAF
 
-**Leitura · ~5 min · não muda estado**
+**Leitura · ~4 min · não muda estado**
 
-Depois de ver a API fechada por padrão, os planos comerciais e as listas de
-bloqueio, a pergunta chega sozinha: *"e o WAF?"*. Ela é justa, e a resposta
-começa por uma separação que costuma estar embaralhada.
+Duas perguntas, dois produtos:
 
-== Duas perguntas diferentes
-
-[cols="1,2,2",options="header"]
+[cols="1,1",options="header"]
 |===
-| | Connectivity Link | WAF
+| Connectivity Link | WAF
 
-| a pergunta
 | **quem** é o cliente, e quanto ele pode
 | **o que** vem dentro da requisição
 
-| o que examina
-| credencial, plano, rota, identidade
-| o corpo, os parâmetros, os cabeçalhos, a URL
-
-| exemplos de decisão
 | `401` sem chave, `403` fora do plano, `429` acima da cota
-| injeção de SQL, XSS, path traversal, varredura automatizada
-
-| o que ele não faz
-| não olha o conteúdo
-| não sabe quem é o cliente nem qual plano ele assinou
+| injeção de SQL, XSS, path traversal, varredura
 |===
 
-Nenhuma das seis policies do Connectivity Link tem regra de conteúdo. Isso não
-é lacuna: é escopo. E é por isso que os dois convivem na mesma borda, sem
-competir.
+Nenhuma das seis policies olha conteúdo. Não é lacuna: é escopo.
+
+== O desenho recomendado
 
 include::partial$diagrama.adoc[]
 
 [mermaid]
 ....
-flowchart TD
-  subgraph FORA["fora do cluster"]
-    W["WAF de borda<br/><i>o que vem na requisicao?</i>"]
-  end
-  subgraph BORDA["borda do cluster"]
-    G["Gateway + Connectivity Link<br/><i>quem e o cliente? quanto pode?</i>"]
-    E["extensao no Envoy<br/><i>o que vem na requisicao?</i>"]
-  end
-  subgraph DENTRO["dentro do cluster"]
-    M["Service Mesh<br/><i>quem fala com quem?</i>"]
-    A["aplicacao<br/><i>a regra de negocio do payload</i>"]
-  end
-  W --> G
-  E -.->|"mesmo Envoy"| G
-  G --> M --> A
+flowchart LR
+  CL["cliente"] --> W["<b>WAF</b><br/>na borda, fora do cluster"]
+  W -->|"o que passou<br/>na inspecao"| G["<b>Gateway + Connectivity Link</b><br/>credencial, plano, cota"]
+  G --> M["<b>Service Mesh</b><br/>quem fala com quem"]
+  M --> A["<b>aplicacao</b><br/>regra de negocio"]
 ....
 
-== As três posições possíveis
+**WAF fora, identidade dentro.** Quatro razões:
 
-=== 1. Antes do cluster -- CDN ou appliance
+* **volume** -- ataque em massa morre antes de consumir CPU do cluster;
+* **regras gerenciadas** -- assinatura de ataque envelhece toda semana, e
+  sustentar isso é trabalho de quem vende o serviço;
+* **operação separada** -- falso positivo derruba cliente legítimo, e quem
+  ajusta regra costuma ser outro time;
+* **TLS** -- só inspeciona quem consegue ler. Se o TLS atravessa até o Gateway,
+  como nesta borda, o WAF de fora não vê nada.
 
-É onde a maioria das empresas já tem um. Absorve volume antes de custar CPU do
-cluster, costuma vir com regras gerenciadas e atualizadas pelo fornecedor, e
-normalmente é operado por outra equipe.
+== Quando trazer para dentro
 
-**O detalhe que decide:** um WAF só inspeciona o que ele consegue ler. Se o TLS
-termina **depois** dele -- como acontece neste ambiente, onde a `Route` é
-`passthrough` e quem termina é o Gateway --, ele vê bytes cifrados e não vê
-nada. Para inspecionar, ele precisa terminar o TLS, e aí ele passa a ser o dono
-do certificado.
+Quando a inspeção precisa acontecer **depois** de saber quem é o cliente --
+regras diferentes por plano ou por parceiro. Aí o WAF vira extensão do mesmo
+Envoy:
 
-=== 2. No Envoy do Gateway
+[mermaid]
+....
+flowchart LR
+  CL["cliente"] --> G["<b>Gateway</b>"]
+  subgraph ENVOY["no mesmo Envoy"]
+    direction TB
+    AU["1. Connectivity Link<br/>quem e voce?"] --> WA["2. extensao de WAF<br/>o que voce mandou?"]
+  end
+  G --> ENVOY --> A["aplicacao"]
+....
 
-O Service Mesh permite estender o proxy, e as duas APIs estão instaladas neste
-cluster:
+O Service Mesh oferece `WasmPlugin` e `TrafficExtension` para isso, e o campo
+`phase` decide a ordem. Inspecionar **antes** da autenticação gasta CPU com
+quem nem tem chave; **depois**, só com quem já provou quem é.
 
-[cols="1,2",options="header"]
-|===
-| API | o que aceita
+== O que é suportado
 
-| `WasmPlugin`
-| um módulo WebAssembly -- a forma clássica do Istio
+* **O mecanismo é do produto:** as duas APIs de extensão vêm com o Service
+  Mesh.
+* **O módulo carregado nelas, não.** Um motor de WAF de terceiro é artefato
+  externo -- CVE, correção e atualização de regra são de quem o publica.
+* **A combinação suportada** sai da matriz de suporte do Service Mesh e do
+  Connectivity Link. É a pergunta a fazer **antes** de desenhar.
 
-| `TrafficExtension`
-| WebAssembly **ou** Lua, com `phase` (`AUTHN`, `AUTHZ`, `STATS`) e filtro por
-  porta
-|===
+== Não tente isto
 
-Existem motores de WAF distribuídos como módulo WebAssembly, que se anexam ao
-Gateway por essas APIs. O `phase` é o que decide a ordem em relação ao filtro
-do Connectivity Link: o WAF antes da autenticação gasta CPU com quem nem tem
-chave; depois, só inspeciona quem já provou quem é. As duas ordens são
-defensáveis, e a escolha é de desenho.
-
-**A parte honesta:** o motor é um componente a mais, com ciclo de vida e regras
-próprios. Antes da conversa técnica vem a de suporte -- quem mantém o módulo,
-quem atualiza as regras e o que a sua subscrição cobre.
-
-=== 3. Na aplicação
-
-Biblioteca de validação dentro do serviço. É o último lugar -- o mais caro de
-manter e o que menos se enxerga de fora --, mas é o único que entende as regras
-de negócio do payload.
-
-== Como escolher, em quatro perguntas
-
-. **Onde o TLS termina?** Determina quem consegue inspecionar. Nesta borda,
-  com `passthrough`, só o Gateway lê o conteúdo.
-. **Quem opera as regras?** WAF vive de ajuste: falso positivo derruba cliente
-  legítimo, e alguém precisa acordar para isso.
-. **Qual o volume?** Ataque em massa custa caro se for tratado dentro do
-  cluster. Isso é argumento para a borda de fora.
-. **O que já existe?** Se a empresa tem WAF de CDN, o Gateway não precisa
-  repetir o trabalho -- precisa confiar nele e cuidar do que é dele.
-
-== O que não atribuir ao WAF
-
-* **Identidade e cota.** Um WAF não sabe se a chave é do plano gold. Isso é o
-  Connectivity Link, e é a parte xref:m1-02-planos.adoc[1.2].
-* **Tráfego entre serviços.** O WAF olha a borda; dentro do cluster, quem
-  decide quem fala com quem é o Service Mesh (parte
-  xref:m2-01-leste-oeste.adoc[2.1]).
-* **Lista de consumidor.** Bloquear um parceiro é decisão de contrato, e o
-  Extra xref:extra-listas.adoc[Listas de permissão e bloqueio] mostra por que
-  ela sobrevive melhor por identidade do que por IP.
+Escrever regra de conteúdo na própria `AuthPolicy`, com CEL ou Rego. **A policy
+não recebe o corpo da requisição** -- medido na configuração do Envoy deste
+Gateway: o filtro de autorização não pede o *body*. Ela vê método, caminho,
+cabeçalhos e a identidade resolvida, e nada mais.
 
 == O que isso prova
 
-A borda tem **camadas**, e cada uma responde uma pergunta. Colocar tudo numa só
-é o erro que produz tanto o WAF que vira gateway quanto o gateway que tenta
-virar WAF.
+Cada camada responde uma pergunta, e o erro é sempre o mesmo: pedir a uma
+camada a resposta da outra.
 
-O desenho que se sustenta é o oposto: cada camada faz o que sabe, e a
-composição é declarada -- que é a mesma tese que este workshop defende desde a
-parte 1.1.
+Identidade e cota são do Connectivity Link (parte
+xref:m1-02-planos.adoc[1.2]); tráfego entre serviços é do Service Mesh (parte
+xref:m2-01-leste-oeste.adoc[2.1]); bloquear um parceiro é contrato, e o Extra
+xref:extra-listas.adoc[Listas de permissão e bloqueio] mostra por quê.
