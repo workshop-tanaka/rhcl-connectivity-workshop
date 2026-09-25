@@ -38,19 +38,19 @@ include::partial$diagrama.adoc[]
 
 [mermaid]
 ....
-sequenceDiagram
-  participant C as cliente
-  participant G as Gateway
-  participant P as Authorino / Limitador
-  participant S as servico
-  C->>G: GET /stream (Upgrade websocket)
-  G->>P: a chave vale? cabe no plano?
-  P-->>G: sim
-  G->>S: upgrade
-  S-->>C: 101 Switching Protocols
-  Note over C,S: daqui em diante: nenhuma mensagem inspecionada,<br/>nenhuma contada, autorizacao nao reavaliada
-  C->>S: mensagem 1
-  C->>S: mensagem 2 ... 10.000
+flowchart TB
+  subgraph PORTA["a porta -- requisicao HTTP comum"]
+    direction LR
+    C["cliente"] -->|"GET /stream<br/>Upgrade: websocket"| G["Gateway"]
+    G -->|"a chave vale?<br/>cabe no plano?"| P["Authorino<br/>Limitador"]
+    P -->|"sim"| S["servico"]
+    S -->|"101 Switching Protocols"| OK(["conexao aberta"])
+  end
+  subgraph TUNEL["depois do 101 -- o gateway nao participa"]
+    direction LR
+    C2["cliente"] <-->|"mensagens: nao inspecionadas,<br/>nao contadas, sem reavaliar autorizacao"| S2["servico"]
+  end
+  OK --> C2
 ....
 
 == Onde o Connectivity Link para de enxergar

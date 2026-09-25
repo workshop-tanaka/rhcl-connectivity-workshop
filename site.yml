@@ -31,6 +31,11 @@ antora:
         # de uma coluna larga.
         flowchart:
           use_max_width: false
+        # O mesmo teto existe para OUTROS tipos de diagrama, e cada um tem a
+        # sua chave: sem esta, um sequenceDiagram sai pequeno no meio da
+        # coluna, exatamente como o flowchart saia antes (2026-09-25).
+        sequence:
+          use_max_width: false
         # A fonte dimensiona o desenho INTEIRO: o mermaid calcula o tamanho dos
         # nos a partir do texto. Subir a fonte aumenta tudo proporcionalmente,
         # o que e diferente de esticar o SVG por CSS.
