@@ -61,25 +61,7 @@ esperando que você **aposte** em qual é a causa antes de ver a resposta.
 A aposta errada ensina mais que a saída certa lida em silêncio. Erre à
 vontade: nada aqui muda a configuração do ambiente.
 
-== Terminal
-
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh negado
-----
-
-São seis estações, na ordem em que uma chamada as encontra. Vale ler cada uma
-perguntando não "o que aconteceu?", mas **"o que isto já me permite parar de
-investigar?"**.
-
-Para rever uma sozinha:
-
-[source,bash,role="execute"]
-----
-bash scripts/negado.sh 3
-----
-
-== As seis estações
+== As seis estações, antes de rodar qualquer coisa
 
 include::partial$diagrama.adoc[]
 
@@ -124,6 +106,23 @@ flowchart TD
 | o comportamento contradiz a configuração
 | confirme **antes** do resto
 |===
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh negado
+----
+
+O script percorre as seis, na ordem. Leia cada uma perguntando não "o que
+aconteceu?", mas **"o que isto já me permite parar de investigar?"**.
+
+Para rever uma sozinha:
+
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 3
+----
 
 === A estação que mais engana: o `503`
 

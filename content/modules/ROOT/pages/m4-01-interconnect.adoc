@@ -1,7 +1,7 @@
 = 4.1 A dependência que não mora aqui
 :navtitle: 4.1 A dependência que não mora aqui
 
-**A quem pertence:** Arquitetura e Operação -- e a quem já ouviu "esse banco não vai para o Kubernetes". · **5 min**
+**A quem pertence:** Arquitetura e Operação -- e a quem já ouviu "esse banco não vai para o Kubernetes". · **8 min**
 
 [NOTE.antes]
 ====
@@ -9,14 +9,28 @@
 `bash scripts/interconnect.sh status` responder, você pode seguir.
 ====
 
-Os módulos anteriores cobriram duas fronteiras. O Connectivity Link governou a
-**borda**: quem entra, quanto passa, quanto custa. O Service Mesh governou o
-**leste-oeste**: quem fala com quem, em qual versão, o que acontece quando
-quebra.
+O componente que "não vai para o Kubernetes" **não precisa ir**. Ele precisa
+ser alcançável -- e isso é um par de objetos declarativos, sem VPN, sem porta
+aberta e sem a aplicação saber.
 
-Falta a terceira, que nenhum dos dois cobre: **o que está fora do cluster**. E
-quase sempre é o banco de dados -- o componente que ninguém quer mover, que
-tem licença, auditoria, janela de manutenção e um time que não é o seu.
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  subgraph CL["cluster"]
+    APP["flights, hotels, cars<br/>MYSQL_SERVICE=mysqldb.travel-db"] --> SVC["Service mysqldb<br/>(um Service comum)"]
+    SVC --> R1["skupper-router"]
+  end
+  subgraph FORA["onde o banco mora"]
+    R2["skupper-router"] --> DB[("MySQL")]
+  end
+  R2 -.->|"conexao SAI daqui<br/>TLS mutuo, auth por certificado"| R1
+....
+
+A seta tracejada é o argumento inteiro: **a conexão parte do lado do banco**.
+Do lado dele não há porta aberta, rota publicada nem regra de firewall de
+entrada.
 
 == Terminal
 
@@ -25,7 +39,7 @@ tem licença, auditoria, janela de manutenção e um time que não é o seu.
 bash scripts/demo.sh interconnect
 ----
 
-Cinco movimentos. Os três primeiros valem parar e olhar:
+Cinco movimentos. Três valem parar e olhar.
 
 === 1. O banco não está aqui
 
@@ -35,10 +49,8 @@ oc get pods -n travel-agency -l app=mysqldb
 oc get endpoints mysqldb -n travel-db
 ----
 
-Nenhum pod de banco no namespace da aplicação. E o `Service` que ela consulta
-aponta para o endereço de um **roteador**, não para um pod de MySQL. Mesmo
-assim, `/travels` devolve 45 destinos e o fan-out traz voos, hotéis, carros e
-seguros -- você viu isso nas partes 1.1 e 3.1.
+Nenhum pod de banco no namespace da aplicação, e o `Service` que ela consulta
+aponta para um **roteador**. Mesmo assim `/travels` devolve 45 destinos.
 
 === 2. Quem ligou para quem
 
@@ -47,16 +59,19 @@ seguros -- você viu isso nas partes 1.1 e 3.1.
 oc logs -n travel-db-remoto deploy/skupper-router -c router | grep -m1 'Connection Opened'
 ----
 
-A linha traz `dir=out`, `encrypted=TLSv1.3` e `auth=EXTERNAL`. Leia com
-atenção, porque é o argumento inteiro:
+[cols="1,3",options="header"]
+|===
+| o que a linha traz | o que isso quer dizer
 
-* **`dir=out`** -- a conexão **parte do lado do banco**. Ele não abre porta, não
-  publica rota, não entra em VPN e não aparece em regra de firewall de entrada.
-* **`auth=EXTERNAL`** -- os dois lados se autenticam por certificado. Não há
-  senha de túnel, nem chave compartilhada para rotacionar à mão.
+| `dir=out`
+| a conexão parte do lado do banco -- superfície de entrada **zero**
 
-A superfície de entrada do lado do banco continua sendo **zero**. É o oposto de
-"liberar o banco para a rede".
+| `encrypted=TLSv1.3`
+| o trecho entre sites é cifrado
+
+| `auth=EXTERNAL`
+| os dois lados se autenticam por certificado: sem senha de túnel para rotacionar
+|===
 
 === 3. O que mudou na aplicação
 
@@ -65,9 +80,8 @@ A superfície de entrada do lado do banco continua sendo **zero**. É o oposto d
 oc get deploy flights-v1 -n travel-agency -o jsonpath='{.spec.template.spec.containers[0].env[?(@.name=="MYSQL_SERVICE")].value}{"\n"}'
 ----
 
-Uma variável de ambiente. Nenhuma biblioteca de cliente, nenhum agente,
-nenhum sidecar novo, nenhum certificado no código. Para o processo,
-`mysqldb.travel-db` é um `Service` de Kubernetes como outro qualquer.
+**Uma variável de ambiente.** Nenhuma biblioteca, nenhum agente, nenhum
+certificado no código.
 
 == Evidência
 
@@ -76,63 +90,36 @@ nenhum sidecar novo, nenhum certificado no código. Para o processo,
 bash scripts/interconnect.sh status
 ----
 
-Olhe a última seção, **tráfego no túnel**. O contador `in` sobe a cada
-requisição que atravessa.
+Olhe **tráfego no túnel**: o contador `in` sobe a cada requisição que atravessa.
 
 [WARNING]
 ====
-Esta é a lição mais cara deste material, e ela custou um diagnóstico inteiro
-num ambiente real. Quando o banco do outro lado **não está de pé**, tudo
-continua verde: `Site` `Ready`, `Listener` `Ready`, `Connector` `Matched`. E o
-contador não sai do zero.
+**`Ready` não quer dizer que passou byte.** Quando o banco do outro lado não
+está de pé, tudo fica verde -- `Site` `Ready`, `Listener` `Ready`, `Connector`
+`Matched` -- e o contador não sai do zero. Pior: a borda segue impecável, e as
+partes 1.1 a 1.5 passam inteiras. O que morre é o fan-out.
 
-Pior: a borda segue impecável -- `401` sem chave, `429` no tier free, os planos
-medindo 3/10/14. **As partes 1.1 a 1.5 passam inteiras.** O que morre é o fan-out.
-
-`Ready` diz que a configuração casou. Só o contador diz que passou byte.
+Custou um diagnóstico inteiro num ambiente real.
 ====
-
-== A console da rede de serviços
-
-{interconnect_console_url}[Console do Service Interconnect^] -- entra com o
-login do OpenShift.
-
-Ela **não** é o Kiali, e vale entender a diferença: o Kiali desenha o que passa
-pelo Service Mesh **dentro** do cluster; esta desenha os **sites**, o link
-entre eles e os serviços publicados pela chave de roteamento. Duas telas, duas
-perguntas -- e a sua topologia real tem as duas.
 
 == Configuração
 
 [source,bash,role="execute"]
 ----
 oc get site -A
-oc get connector -n travel-db-remoto -o yaml | head -30
-oc get listener -n travel-db -o yaml | head -30
+oc get listener -n travel-db
+oc get connector -n travel-db-remoto
 ----
 
-O par `Connector` + `Listener` é o que publica o banco, e os dois se acham por
-uma única string: `routingKey: appconn`. Não há DNS entre os sites, não há
-rota, não há IP roteável de um lado para o outro.
+`Connector` e `Listener` se acham por uma única string -- `routingKey:
+appconn`. Não há DNS entre os sites, nem rota, nem IP roteável de um lado para
+o outro.
 
 NOTE: O site do lado do cluster mora em `travel-db`, e não em `travel-agency`,
-por um motivo técnico: o namespace da aplicação tem injeção de sidecar, e o
-sidecar interceptaria o protocolo próprio do roteador. A aplicação alcança o
-banco por DNS normal de Kubernetes, que é tráfego leste-oeste comum.
+por um motivo técnico: o namespace da aplicação injeta sidecar, e o sidecar
+interceptaria o protocolo próprio do roteador.
 
 == E quando o egress gateway bastaria?
-
-Esta é a pergunta que separa os dois produtos, e vale responder antes que ela
-apareça sozinha.
-
-O **Service Mesh** também sabe tratar tráfego que sai do cluster: declara-se um
-`ServiceEntry` para o destino externo e roteia-se por um **egress gateway**.
-Ganha-se ponto único de saída, política sobre quem pode chamar para fora, e
-métrica e trace do Istio sobre essa perna.
-
-Mas há um pressuposto embutido: **o egress gateway não cria conectividade, ele
-governa a que já existe.** Ele precisa que o cluster alcance o destino pela
-rede.
 
 [cols="2,1,1",options="header"]
 |===
@@ -155,49 +142,31 @@ rede.
 | console própria da rede de serviços
 |===
 
-**O critério é objetivo:** o cluster alcança o destino pela rede? Se alcança,
-o egress gateway é mais simples e dá observabilidade melhor. Se não alcança --
-e é o caso de quase todo banco que ficou em RHEL atrás de um firewall --
-nenhuma configuração de mesh resolve, porque não há o que governar.
+**O critério é objetivo:** o cluster alcança o destino pela rede? Se alcança, o
+egress gateway é mais simples. Se não alcança -- e é o caso de quase todo banco
+atrás de um firewall --, nenhuma configuração de mesh resolve, porque não há o
+que governar.
 
-=== Eles se encadeiam, não competem
+.Os dois operam ao mesmo tempo, e há um ponto cego
+[%collapsible]
+====
+Como o serviço remoto aparece como um `Service` local, ele está dentro do mundo
+do Service Mesh. A chamada atravessa as duas camadas em sequência: o sidecar
+governa até o listener (identidade, autorização, métrica) e o túnel carrega
+dali em diante.
 
-E aqui está a parte que costuma passar despercebida: **os dois operam ao mesmo
-tempo neste ambiente.**
-
-Como o Service Interconnect apresenta o serviço remoto como um `Service`
-**local**, esse Service está dentro do mundo do Service Mesh. Então a chamada
-atravessa as duas camadas, em sequência:
-
-[source,text]
-----
-flights  →  [sidecar: mTLS, AuthorizationPolicy, métrica]  →  Service mysqldb
-                                                                    ↓
-                                                        [túnel mútuo, mTLS próprio]
-                                                                    ↓
-                                                               banco na VM
-----
-
-O Service Mesh governa até o listener: quem pode chamar o banco, com qual
-identidade, e a métrica dessa perna. O Interconnect carrega dali em diante.
-
-**Um ponto cego, e é honesto nomeá-lo:** o grafo do Kiali mostra
-`flights → mysqldb` como um serviço interno qualquer. Ele **não** revela que
-ali começa um túnel para outro site. A observabilidade do mesh termina no
-listener; a do Interconnect começa no roteador.
-
-São dois planos que não se juntam -- e é exatamente por isso que este ambiente
-tem uma console separada para a rede de serviços.
+**O ponto cego:** o grafo do Kiali mostra `flights → mysqldb` como um serviço
+interno qualquer, e não revela que ali começa um túnel para outro site. A
+observabilidade do mesh termina no listener; a da rede de serviços começa no
+roteador -- e é por isso que este ambiente tem
+{interconnect_console_url}[uma console separada^] para ela.
+====
 
 == O que isso prova
 
 Três fronteiras, três produtos, um argumento só: **conectividade é política
-declarada, não configuração espalhada**. A borda com o Connectivity Link, o
-leste-oeste com o Service Mesh, e o que está fora com o Service Interconnect
--- e em nenhuma das três a aplicação precisou saber.
-
-O componente que "não vai para o Kubernetes" não precisa ir. Ele precisa ser
-alcançável, e isso é um par de objetos declarativos de dez linhas.
+declarada, não configuração espalhada**. E em nenhuma das três a aplicação
+precisou saber.
 
 == Falta uma pergunta
 

@@ -78,15 +78,20 @@ Clique em **Create**.
 
 == O que aconteceu
 
-Três passos, e nenhum deles é "fazer deploy":
+include::partial$diagrama.adoc[]
 
-. **fetch** -- o template é renderizado com os seus valores;
-. **publish** -- um projeto novo nasce no GitLab, em `rhcl/apis`, com tudo
-  dentro;
-. **register** -- a API aparece no catálogo do portal.
+[mermaid]
+....
+flowchart LR
+  F["voce<br/>3 decisoes no formulario"] -->|"fetch"| T["template renderizado"]
+  T -->|"publish"| G["projeto novo no GitLab<br/>rhcl/apis"]
+  G -->|"register"| P["catalogo do portal"]
+  G -.->|"o ApplicationSet varre<br/>o subgrupo a cada 180s"| AR["Argo CD"]
+  AR -->|"aplica"| C["cluster<br/>23 objetos"]
+....
 
-Repare no que **não** existe nessa lista: nenhum `oc apply`. A configuração foi
-para o git, e é o GitOps que a traz para o cluster.
+**Nenhum passo é "fazer deploy", e não há `oc apply` em lugar nenhum.** A
+configuração foi para o git, e é o GitOps que a traz para o cluster.
 
 == Espere o Argo (até ~3 min)
 
