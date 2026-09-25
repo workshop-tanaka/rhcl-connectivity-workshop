@@ -1,0 +1,8 @@
+// O Kiali deste ambiente usa a estrategia de autenticacao 'anonymous': nao ha
+// login a fazer. Dizer isso e melhor que calar -- quem espera uma tela de
+// senha e nao ve nenhuma acha que entrou no lugar errado.
+[NOTE.credencial]
+====
+**Para entrar:** o Kiali abre **sem pedir nada** -- este ambiente o serve em
+modo anônimo.
+====

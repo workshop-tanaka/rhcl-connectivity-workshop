@@ -36,6 +36,8 @@ oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
 {openshift_console_url}/kuadrant/apiproducts[API Products no console^] -- Connectivity Link → API
 Products e API Keys: os parceiros com plano e solicitante.
 
+include::partial$entrar-ocp.adoc[]
+
 WARNING: **Não aprove nada em API Key Approvals.** Aprovar cunha um Secret com
 o plano em *annotation* em vez de *label*; o predicado aguenta, mas a parte
 perde o fio.
@@ -89,6 +91,8 @@ parceiro descobre o limite pelo contrato, não pela resposta.
 Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 Os três planos como barras. Se você rodou pelo Postman, aparece uma quarta
 série `sistema-teste`, isolada dos parceiros da história.
+
+include::partial$entrar-grafana.adoc[]
 
 == Configuração
 

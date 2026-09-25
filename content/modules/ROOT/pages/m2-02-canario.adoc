@@ -17,6 +17,8 @@ Abra **antes** o painel *A.7 · Peso efetivo do canário* em
 terminal: é a única tela do workshop que se move sozinha, acompanhando os
 cinco passos.
 
+include::partial$entrar-grafana.adoc[]
+
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh canario

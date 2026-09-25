@@ -1,0 +1,11 @@
+// A console de administracao do Keycloak e OUTRA credencial: ela e do
+// servidor, nao do realm. Confundir as duas e o erro classico -- por isso a
+// linha diz qual e qual.
+ifeval::["{keycloak_admin_senha}" != ""]
+[NOTE.credencial]
+====
+**Para entrar:** usuário `{keycloak_admin_user}` · senha
+`{keycloak_admin_senha}` -- esta é a credencial do **servidor** Keycloak, e
+não a das personas.
+====
+endif::[]

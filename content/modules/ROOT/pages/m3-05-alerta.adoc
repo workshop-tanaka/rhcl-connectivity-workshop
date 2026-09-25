@@ -170,6 +170,8 @@ oc patch limitador limitador -n kuadrant-system --type=merge -p '{"spec":{"repli
 -- as regras aparecem ali junto com as do cluster, e o alerta aceso aparece em
 *Alerts*.
 
+include::partial$entrar-ocp.adoc[]
+
 Notificação por e-mail ou chat é configuração do Alertmanager, não do
 Connectivity Link. Neste ambiente os alertas ficam no console.
 

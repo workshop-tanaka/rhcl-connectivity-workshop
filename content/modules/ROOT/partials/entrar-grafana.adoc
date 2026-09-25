@@ -1,0 +1,18 @@
+// Linha de entrada do Grafana. Ele abre em modo anonimo com papel de Admin --
+// e por isso a maioria dos participantes nunca ve tela de login. O formulario
+// continua ativo, e a conta local existe; quando o Grafana pedir, e esta.
+ifeval::["{grafana_senha}" != ""]
+[NOTE.credencial]
+====
+**Para entrar:** o Grafana abre **sem pedir nada** (acesso anônimo, papel de
+Admin). Se a tela de login aparecer: usuário `{grafana_user}` · senha
+`{grafana_senha}`
+====
+endif::[]
+ifeval::["{grafana_senha}" == ""]
+[NOTE.credencial]
+====
+**Para entrar:** o Grafana abre **sem pedir nada** -- acesso anônimo, com
+papel de Admin.
+====
+endif::[]

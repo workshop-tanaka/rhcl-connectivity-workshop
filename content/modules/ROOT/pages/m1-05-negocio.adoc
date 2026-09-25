@@ -30,6 +30,8 @@ restante de cada plano. Depois, a mesma consulta direto no Thanos:
 quatro primeiros painéis são a rajada; o quinto é a cota diária consumida por
 plano. Confira o seletor de datasource no topo: **Thanos**.
 
+include::partial$entrar-grafana.adoc[]
+
 Os dashboards de fábrica do RHCL agregam **sem** quebrar por plano: são
 anteriores ao TelemetryPolicy. Se você abrir um deles procurando os tiers, não
 vai achar -- e o motivo é esse, não um defeito de coleta.

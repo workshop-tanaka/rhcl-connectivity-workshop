@@ -1,0 +1,13 @@
+// O GitLab entra pelo Keycloak (botao "Keycloak"/SSO), com a mesma persona do
+// resto da jornada. A conta 'root' existe e e a saida quando o SSO falha.
+ifeval::["{senha_persona}" != ""]
+[NOTE.credencial]
+====
+**Para entrar:** botão **Keycloak** na tela de login, e então usuário
+`{usuario_persona}` · senha `{senha_persona}`
+ifeval::["{gitlab_root_senha}" != ""]
+Se o SSO não responder, há a conta local: usuário `root` · senha
+`{gitlab_root_senha}`
+endif::[]
+====
+endif::[]

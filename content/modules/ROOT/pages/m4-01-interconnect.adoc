@@ -162,6 +162,8 @@ roteador -- e é por isso que este ambiente tem
 {interconnect_console_url}[uma console separada^] para ela.
 ====
 
+include::partial$entrar-ocp.adoc[]
+
 == O que isso prova
 
 Três fronteiras, três produtos, um argumento só: **conectividade é política

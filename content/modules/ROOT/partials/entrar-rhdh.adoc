@@ -1,0 +1,9 @@
+// O Developer Hub usa o mesmo Keycloak. A persona importa aqui: o catalogo
+// mostra coisas diferentes para o plat-eng e para o app-dev.
+ifeval::["{senha_persona}" != ""]
+[NOTE.credencial]
+====
+**Para entrar:** botão **Keycloak** e então usuário `{usuario_persona}` ·
+senha `{senha_persona}` -- a mesma persona do console e do GitLab.
+====
+endif::[]

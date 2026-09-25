@@ -49,6 +49,8 @@ Você, no navegador, não tem chave nenhuma.
 
 Painel **A.1 · 401 na borda: quem foi o destino?** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 
+include::partial$entrar-grafana.adoc[]
+
 [source,promql]
 ----
 sum by (response_code, destination_workload) (increase(istio_requests_total{response_code="401"}[15m]))

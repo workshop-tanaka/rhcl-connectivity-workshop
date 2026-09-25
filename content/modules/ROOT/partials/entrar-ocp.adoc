@@ -1,0 +1,20 @@
+// Linha de entrada do console do OpenShift. Incluida onde o conteudo manda
+// abrir uma tela do console -- a primeira vez em cada pagina.
+//
+// O par vem do cluster, nunca de documento. Onde a cadeia de identidade nao
+// foi provisionada (o caso do RHDP: 'identidade' nao esta nas etapas), o
+// atributo nasce vazio e a linha vira um ponteiro honesto em vez de mentir.
+ifeval::["{senha_persona}" != ""]
+[NOTE.credencial]
+====
+**Para entrar:** usuário `{usuario_persona}` · senha `{senha_persona}`
+====
+endif::[]
+ifeval::["{senha_persona}" == ""]
+[NOTE.credencial]
+====
+**Para entrar:** o usuário e a senha do OpenShift são os da página do seu
+pedido no RHDP -- os mesmos que o e-mail de criação do ambiente trouxe.
+O terminal à direita já está autenticado e não pede nada.
+====
+endif::[]

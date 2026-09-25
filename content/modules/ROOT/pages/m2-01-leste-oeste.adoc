@@ -41,9 +41,13 @@ Três movimentos, sequenciais:
 em *Versioned app graph*: depois do terceiro movimento, a divisão entre v1 e
 v2 no `discounts`. A versão não aparece na resposta -- só na métrica e no grafo.
 
+include::partial$entrar-kiali.adoc[]
+
 == Evidência
 
 Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
+
+include::partial$entrar-grafana.adoc[]
 
 == Configuração
 

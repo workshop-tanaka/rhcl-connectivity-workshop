@@ -70,10 +70,10 @@ abertos em abas separadas -- o Módulo 1 pede isso.
 | Vermelho | completo | {portal_gold_url}[abrir^]
 |===
 
-== As telas
+== As telas, e com o que se entra nelas
 
-Cada uma abre em aba nova. Todas usam o login do OpenShift, exceto onde
-indicado.
+Cada uma abre em aba nova. **A credencial está escrita ao lado** -- nenhuma
+delas é adivinhada, todas saem deste cluster.
 
 [cols="1,2,2",options="header"]
 |===
@@ -103,6 +103,47 @@ indicado.
 | editar a configuração sem instalar nada
 | {ide_url}[abrir^]
 |===
+
+=== Console do OpenShift, Traces e Dev Spaces
+
+include::partial$entrar-ocp.adoc[]
+
+=== Grafana
+
+include::partial$entrar-grafana.adoc[]
+
+=== Kiali
+
+include::partial$entrar-kiali.adoc[]
+
+ifeval::["{senha_persona}" != ""]
+=== GitLab e Developer Hub
+
+include::partial$entrar-gitlab.adoc[]
+
+=== Keycloak, se você quiser ver as personas por dentro
+
+{keycloak_url}[abrir^]
+
+include::partial$entrar-keycloak.adoc[]
+
+As personas deste ambiente. A senha é **a mesma para todas**:
+`{senha_persona}` -- a que as telas acima já pedem.
+
+[cols="1,3",options="header"]
+|===
+| persona | quem é
+
+| `plat-eng`
+| Engenheiro de Plataforma: opera a borda. É a persona padrão do workshop
+| `app-dev`
+| Desenvolvedor: consome a plataforma, não a configura
+| `globex-travel`, `initech-voyages`, `acme-trips`
+| os três parceiros da história, um por plano comercial
+| `sistema-teste`
+| o consumidor que o *seu* tráfego usa, para aparecer isolado nas métricas
+|===
+endif::[]
 
 == As versões deste ambiente
 

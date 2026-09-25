@@ -18,8 +18,9 @@ Agora a mesma API, pelo caminho que a plataforma oferece.
 
 == Abra o portal
 
-{rhdh_url}[Red Hat Developer Hub^] -- entre com as mesmas credenciais do
-OpenShift.
+{rhdh_url}[Red Hat Developer Hub^] -- o catálogo do ambiente.
+
+include::partial$entrar-rhdh.adoc[]
 
 No menu à esquerda: **Create**. Você verá seis templates; o desta parte é o
 **1. API como produto — projeto, Service Mesh e Connectivity Link**.

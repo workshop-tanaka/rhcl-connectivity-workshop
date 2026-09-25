@@ -26,5 +26,19 @@ asciidoc:
     repo_policies: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
     config_url: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies/-/blob/main
     ide_url: https://devspaces.apps.cluster-guid.dominio.exemplo/#https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
+    keycloak_url: https://sso.apps.cluster-guid.dominio.exemplo
+    gitlab_url: https://gitlab.apps.cluster-guid.dominio.exemplo
+    # A linha de credencial de cada tela sai daqui -- e SO do cluster, na
+    # hora. Aqui elas nascem VAZIAS de proposito, e e a escolha segura: com o
+    # atributo vazio, a pagina troca a linha de credencial por um ponteiro
+    # honesto. Se um dia um valor de mentira fosse parar aqui, o participante
+    # o leria como se fosse a senha do ambiente dele.
+    usuario_persona: plat-eng
+    senha_persona: ''
+    keycloak_admin_user: ''
+    keycloak_admin_senha: ''
+    grafana_user: ''
+    grafana_senha: ''
+    gitlab_root_senha: ''
     demo_repo_url: https://github.com/workshop-tanaka/rhcl-connectivity-demo.git
     demo_ref: workshop-v0.1

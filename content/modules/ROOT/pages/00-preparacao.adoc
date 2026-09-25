@@ -41,8 +41,12 @@ página linka o arquivo exato. Vale saber o mapa:
   discounts) -- é o que o Argo CD aplica
 |===
 
+include::partial$entrar-gitlab.adoc[]
+
 {ide_url}[Abrir as policies no Dev Spaces^] sobe um IDE no próprio cluster com
 esse repositório. Nada aqui depende de repositório fora do ambiente.
+
+include::partial$entrar-ocp.adoc[]
 
 [NOTE]
 ====
@@ -135,6 +139,12 @@ direita; todos os links deste guia já abrem em aba nova. No painel ficam o
 | Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes 3.1 e 2.1)
 | Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork da parte 1.3
 |===
+
+include::partial$entrar-grafana.adoc[]
+
+include::partial$entrar-kiali.adoc[]
+
+include::partial$entrar-ocp.adoc[]
 
 == 4. Como o `demo.sh` funciona
 
