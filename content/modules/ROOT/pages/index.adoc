@@ -49,7 +49,7 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
 | alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada,
   e saber o que o túnel protege
-| ~11 min
+| ~14 min
 
 | xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras], xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos], xref:extra-listas.adoc[Listas de permissão e bloqueio], e as leituras sobre xref:leitura-waf.adoc[WAF] e xref:leitura-websocket.adoc[WebSocket]
 | opcionais, em qualquer ordem e a qualquer momento

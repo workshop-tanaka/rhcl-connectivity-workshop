@@ -1,7 +1,7 @@
 = Módulo 4 — Service Interconnect: o que não mora aqui
 :navtitle: Módulo 4 — Introdução
 
-**Duas partes · cerca de 11 minutos · nenhuma muda estado**
+**Duas partes · cerca de 14 minutos · nenhuma muda estado**
 
 **Produto protagonista:** Red Hat Service Interconnect
 
