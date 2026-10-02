@@ -1,20 +1,25 @@
-// Linha de entrada do console do OpenShift. Incluida onde o conteudo manda
-// abrir uma tela do console -- a primeira vez em cada pagina.
+// Linha de entrada do console do OpenShift, dos Traces e do Dev Spaces --
+// tudo que passa pelo OAuth do cluster. Incluida na PRIMEIRA indicacao de cada
+// uma dessas telas, em cada pagina.
 //
-// O par vem do cluster, nunca de documento. Onde a cadeia de identidade nao
-// foi provisionada (o caso do RHDP: 'identidade' nao esta nas etapas), o
-// atributo nasce vazio e a linha vira um ponteiro honesto em vez de mentir.
-ifeval::["{senha_persona}" != ""]
+// POR QUE UM ATRIBUTO PROPRIO, e nao o 'senha_persona': sao perguntas
+// diferentes, e confundi-las produz uma linha errada. A persona do Keycloak
+// entra no GitLab e no Developer Hub, mas no OpenShift ela nao tem papel
+// nenhum -- o login ACONTECE e a tela nasce vazia, e quem le conclui que a
+// senha esta errada. Nos dois ambientes que existem hoje a credencial do
+// console vem de FORA do cluster (a pagina do pedido no RHDP), entao o
+// atributo nasce vazio e esta linha vira um ponteiro honesto.
+ifeval::["{senha_console}" != ""]
 [NOTE.credencial]
 ====
-**Para entrar:** usuário `{usuario_persona}` · senha `{senha_persona}`
+**Para entrar:** usuário `{usuario_console}` · senha `{senha_console}`
 ====
 endif::[]
-ifeval::["{senha_persona}" == ""]
+ifeval::["{senha_console}" == ""]
 [NOTE.credencial]
 ====
 **Para entrar:** o usuário e a senha do OpenShift são os da página do seu
-pedido no RHDP -- os mesmos que o e-mail de criação do ambiente trouxe.
-O terminal à direita já está autenticado e não pede nada.
+pedido no RHDP -- os mesmos que o e-mail de criação do ambiente trouxe. O
+terminal à direita já está autenticado e não pede nada.
 ====
 endif::[]

@@ -33,6 +33,12 @@ asciidoc:
     # atributo vazio, a pagina troca a linha de credencial por um ponteiro
     # honesto. Se um dia um valor de mentira fosse parar aqui, o participante
     # o leria como se fosse a senha do ambiente dele.
+    # O console do OpenShift e OUTRA credencial: a persona do Keycloak nao
+    # tem papel de RBAC no cluster, entao escrever a persona aqui produziria
+    # um login que acontece e uma tela vazia. Nasce vazia, e a pagina aponta
+    # para a pagina do pedido no RHDP, que e de onde ela vem de verdade.
+    usuario_console: ''
+    senha_console: ''
     usuario_persona: plat-eng
     senha_persona: ''
     keycloak_admin_user: ''

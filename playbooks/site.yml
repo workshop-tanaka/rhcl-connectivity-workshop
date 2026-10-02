@@ -149,6 +149,9 @@
         - { name: tempo-tempo-jaegerui, ns: tracing-system }
         - { name: rede-de-servicos-network-observer, ns: travel-db }
         - { name: devspaces, ns: openshift-devspaces }
+        # O Keycloak e a tela das CREDENCIAIS: e dele que saem as personas
+        # com que se entra no console, no GitLab e no portal.
+        - { name: keycloak, ns: keycloak }
         # O portal e a tela da parte 3.2. Rota ausente devolve lista vazia,
         # e o "+ ['']" do 'Host por tela' faz o atributo nascer vazio em vez
         # de quebrar o playbook -- o mesmo default das outras cinco.
@@ -201,6 +204,42 @@
     # responde um JSON de caminhos. Com o Cluster Observability Operator a
     # aba do console vence; sem ele, a UI do Jaeger em /<tenant>. Mesma
     # decisao do _traces_url() no demo.sh.
+    # As credenciais que o conteudo ESCREVE ao lado de cada tela. Saem do
+    # cluster como todo o resto -- nenhuma mora em arquivo deste repositorio, e
+    # nenhuma e copiada de documento. O 'no_log' cobre o log do Job.
+    #
+    # Secret ausente devolve lista vazia, o atributo nasce VAZIO, e a pagina
+    # troca a linha de credencial por um ponteiro honesto. E o caso normal no
+    # RHDP: 'identidade' nao esta em demo.stages, entao Keycloak e GitLab nao
+    # existem ali -- e o material precisa dizer isso em vez de imprimir um par
+    # que nao vale.
+    - name: Ler as credenciais das telas
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        name: "{{ item.name }}"
+        namespace: "{{ item.ns }}"
+      loop:
+        # a senha das personas (plat-eng, app-dev, os tres parceiros)
+        - { name: rhcl-identity-secrets, ns: keycloak }
+        # o admin do SERVIDOR Keycloak -- outra coisa, e confundir as duas e o
+        # erro classico; por isso o conteudo diz qual e qual
+        - { name: keycloak-initial-admin, ns: keycloak }
+        - { name: grafana-admin-credentials, ns: monitoring }
+        - { name: gitlab-gitlab-initial-root-password, ns: gitlab-system }
+      register: r_cred
+      no_log: true
+
+    - name: Credencial por sistema
+      ansible.builtin.set_fact:
+        _cred: >-
+          {{ _cred | default({}) | combine({item.item.name:
+             ((item.resources | map(attribute='data') | list) + [{}]) | first}) }}
+      loop: "{{ r_cred.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+      no_log: true
+
     - name: O Cluster Observability Operator esta instalado?
       kubernetes.core.k8s_info:
         api_version: apiextensions.k8s.io/v1
@@ -260,6 +299,32 @@
             {{ ('https://' ~ _telas['devspaces'] ~ '/#https://' ~ _gitlab_host
                 ~ '/rhcl/policies/rhcl-policies')
                if (_telas['devspaces'] and _gitlab_host) else '' }}
+          # --- credenciais, escritas ao lado de cada tela -------------------
+          # Vazia quando o sistema nao existe neste ambiente; a pagina trata.
+          keycloak_url: >-
+            {{ ('https://' ~ _telas['keycloak']) if _telas['keycloak'] else '' }}
+          gitlab_url: "{{ ('https://' ~ _gitlab_host) if _gitlab_host else '' }}"
+          # O console do OpenShift NAO usa a persona: ela nao tem papel de RBAC
+          # no cluster, e escreve-la aqui daria um login que acontece numa tela
+          # vazia. Nos dois ambientes que existem hoje essa credencial vem de
+          # FORA do cluster (a pagina do pedido no RHDP), entao fica vazia de
+          # proposito e a pagina aponta para lá. Preencher so faz sentido no dia
+          # em que o provisionamento criar um usuario de console proprio.
+          usuario_console: ""
+          senha_console: ""
+          usuario_persona: "{{ 'plat-eng' if _cred['rhcl-identity-secrets'] else '' }}"
+          senha_persona: >-
+            {{ _cred['rhcl-identity-secrets']['KC_PERSONA_PASSWORD'] | default('') | b64decode }}
+          keycloak_admin_user: >-
+            {{ _cred['keycloak-initial-admin']['username'] | default('') | b64decode }}
+          keycloak_admin_senha: >-
+            {{ _cred['keycloak-initial-admin']['password'] | default('') | b64decode }}
+          grafana_user: >-
+            {{ _cred['grafana-admin-credentials']['GF_SECURITY_ADMIN_USER'] | default('') | b64decode }}
+          grafana_senha: >-
+            {{ _cred['grafana-admin-credentials']['GF_SECURITY_ADMIN_PASSWORD'] | default('') | b64decode }}
+          gitlab_root_senha: >-
+            {{ _cred['gitlab-gitlab-initial-root-password']['password'] | default('') | b64decode }}
           demo_repo_url: "{{ demo_repo_url }}"
           demo_ref: "{{ demo_ref }}"
 
