@@ -4,6 +4,7 @@ ifeval::["{senha_persona}" != ""]
 [NOTE.credencial]
 ====
 **Para entrar:** botão **Keycloak** e então usuário `{usuario_persona}` ·
-senha `{senha_persona}` -- a mesma persona do console e do GitLab.
+senha `{senha_persona}` -- a mesma persona do GitLab. (O console do
+OpenShift é outra credencial: ver xref:acessos.adoc[Seus acessos].)
 ====
 endif::[]
