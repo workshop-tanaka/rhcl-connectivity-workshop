@@ -65,7 +65,7 @@ Um `HTTPRoute` publica o `travels` em:
 
 [cols="1,3"]
 |===
-| endereço | `https://{api_host}`
+| endereço | `\https://{api_host}`
 |===
 
 Dois caminhos interessam ao workshop:
@@ -104,7 +104,7 @@ um trace com vários saltos, e o Módulo 2 tem o que proteger.
 [NOTE]
 ====
 A API **não** expõe `/flights` nem `/hotels` na borda: esses serviços só são
-alcançáveis por dentro. Chamar `https://{api_host}/flights/Amsterdam` responde
+alcançáveis por dentro. Chamar `\https://{api_host}/flights/Amsterdam` responde
 `404` -- e isso é desenho, não falta.
 ====
 
