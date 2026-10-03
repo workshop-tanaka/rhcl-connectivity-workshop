@@ -91,11 +91,11 @@ vem esse certificado e quem o renova.
 
 == O que tentar primeiro
 
-Abra a pasta **Ato 1** e rode *GET travels SEM chave*. Olhe a aba
+Abra a pasta **A borda é fechada** e rode *GET travels SEM chave*. Olhe a aba
 **Headers** da resposta: lá está o `x-ext-auth-reason` da estação 3, na
 interface em vez do terminal.
 
-Depois, na pasta **Ato 2**, rode *estourar o free* -- é o `429` mudo da
+Depois, na pasta **Planos comerciais**, rode *estourar o free* -- é o `429` mudo da
 estação 4, e você pode conferir na mesma aba que não há nenhum cabeçalho
 explicando o limite.
 

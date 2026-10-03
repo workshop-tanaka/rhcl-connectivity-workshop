@@ -77,11 +77,11 @@ dados, Service Mesh, Interconnect, portais e portal do desenvolvedor. Leva
 
 [source,text]
 ----
-  ✓ sem chave -> 401 (Ato 1)
+  ✓ sem chave -> 401 (a borda fechada)
   ✓ cota diaria: gold 99980/100000, free 989/1000, silver 9987/10000
-  ✓ tier free: 3 servidas, 5 limitadas (Ato 2)
+  ✓ tier free: 3 servidas, 5 limitadas (planos comerciais)
   ...
-[OK] demo pronta.
+[OK] o ambiente esta inteiro
 ----
 
 Como ler o resultado:
