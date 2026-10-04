@@ -47,13 +47,28 @@ TLSPolicy/DNSPolicy (3b) **não** entra neste workshop.
 7. escreve o ConfigMap `userinfo`.
 
 A camada de demo (`base/`) **não** é um Application do Argo de propósito: quatro
-atos editam objetos ao vivo (canário, fault injection, Limitador a zero,
+passos editam objetos ao vivo (canário, fault injection, Limitador a zero,
 PERMISSIVE) e `selfHeal` os reverteria em segundos.
 
-## Promover uma versão nova da demo
+## Promover uma versão nova: as quatro refs de uma onda
 
-Mude `demo.ref` em `values.yaml` para a tag nova e faça commit. O Job nunca
-clona `main`.
+Desde a `workshop-v0.18` **nada aqui flutua**. Promover é mover as quatro para
+a tag nova, e o CI falha se uma delas divergir ou voltar para um branch:
+
+| ref | arquivo |
+| --- | --- |
+| `demo.ref` | `values.yaml` — o repositório da demo (o motor) |
+| `ansible.repository.branch` | `values.yaml` — o playbook |
+| `showroom.content.repoRef` | `values.yaml` — o conteúdo Antora |
+| `revision` | `catalog/rhcl-connectivity-workshop.yaml` — o chart |
+
+Antes era só `demo.ref`, e as outras três em `main`. A consequência aparecia
+longe: o ambiente pedido na segunda e o pedido na quarta **não eram o mesmo
+workshop**, e uma correção no meio da semana fazia os antigos divergirem sem
+explicação. É a lacuna G1 do `docs/FROTA.md` no repositório da demo.
+
+O preço disso: corrigir conteúdo deixou de ser push no `main`. Uma correção de
+página precisa de tag nova (ou mover a tag) e de recriar o pod do Showroom.
 
 ## `rollout restart` NÃO atualiza os atributos
 
@@ -123,9 +138,17 @@ ficam de outro dono. O playbook anota o Deployment com
 ## Testar localmente
 
 ```bash
+bash scripts/valida-conteudo.sh          # o que o CI roda: render + links + nav
 helm lint . && helm template t . --set deployer.domain=apps.exemplo.com | head -50
 ansible-playbook --syntax-check -i localhost, playbooks/site.yml
 ```
+
+O `valida-conteudo.sh` mede o **HTML renderizado**, não o fonte, e é por um
+motivo: em 2026-10-02 um endereço da API abria dentro do painel do Showroom e
+derrubava o workshop, com o `^` (`target=_blank`) presente em 100% dos macros
+de link — o defeito estava numa URL **auto-linkada**, fora de macro, que
+nenhuma leitura do `.adoc` pegaria. Ele precisa do `asciidoctor`
+(`gem install --user-install --no-document asciidoctor`).
 
 O conteúdo Antora renderiza com o [showroom-content](https://github.com/rhpds/showroom-content)
 ou qualquer Antora 3 (`npx antora site.yml`).

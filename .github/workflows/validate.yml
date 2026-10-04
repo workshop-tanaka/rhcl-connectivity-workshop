@@ -1,0 +1,100 @@
+# CI deste repositorio. Ate 2026-10-04 nao havia nenhuma, e o conteudo chegava
+# ao Showroom sem nunca ter sido construido fora do pod -- erro de sintaxe e
+# link quebrado so apareciam para o participante.
+#
+# O que isto guarda, e por que cada um:
+#
+#   conteudo   as 45 paginas renderizam, todo link externo abre em aba nova, e
+#              o nav casa com os arquivos. O link e o motivo de existir: o '^'
+#              estava em 100% dos macros e o defeito estava fora deles, numa
+#              URL auto-linkada -- coisa que so o HTML mostra.
+#   yaml       o chart, o playbook e o catalog ainda sao YAML valido. O Job do
+#              RHDP falha 25 minutos adentro quando nao sao.
+#   refs       as refs da onda nao voltaram para 'main'. Uma delas em branch
+#              faz dois ambientes da mesma onda servirem conteudos diferentes
+#              (a lacuna G1 do docs/FROTA.md na demo).
+name: validate
+
+on:
+  push:
+    branches: [main]
+    tags: ['workshop-v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  conteudo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: asciidoctor
+        run: gem install --no-document asciidoctor
+
+      - name: o conteudo renderiza e os links abrem em aba nova
+        run: bash scripts/valida-conteudo.sh
+
+  yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: sintaxe de todo YAML versionado
+        run: |
+          python3 -m pip install --quiet PyYAML
+          # Os templates do Helm NAO sao YAML (tem {{ }}), por isso ficam fora.
+          git ls-files '*.yaml' '*.yml' | grep -v '^templates/' | while read -r f; do
+            python3 -c "import sys,yaml; list(yaml.safe_load_all(open(sys.argv[1])))" "$f" \
+              || { echo "FALHA de sintaxe em $f"; exit 1; }
+          done
+
+      - name: sintaxe de todo shell versionado
+        run: git ls-files '*.sh' | xargs -r -n1 bash -n
+
+  refs-da-onda:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: as quatro refs carregam o mesmo nome, e nenhuma e branch
+        run: |
+          python3 - <<'PY'
+          import re, sys
+
+          def ler(arq, chave):
+              for l in open(arq):
+                  m = re.match(r'\s*%s:\s*"?([^"#\s]+)"?' % chave, l)
+                  if m:
+                      return m.group(1)
+              return None
+
+          refs = {
+              'values.yaml demo.ref':                  ler('values.yaml', 'ref'),
+              'values.yaml ansible.repository.branch': ler('values.yaml', 'branch'),
+              'values.yaml showroom.content.repoRef':  ler('values.yaml', 'repoRef'),
+              'catalog revision':                      ler('catalog/rhcl-connectivity-workshop.yaml', 'revision'),
+          }
+          for k, v in refs.items():
+              print('  %-42s %s' % (k, v))
+
+          ruim = [k for k, v in refs.items() if not v or not v.startswith('workshop-v')]
+          if ruim:
+              print('\nFALHA: ref que nao e tag da onda (esperado workshop-v*):')
+              for k in ruim:
+                  print('  -', k, '->', refs[k])
+              print('\nUma ref em branch faz o ambiente pedido hoje e o de amanha nao serem')
+              print('o mesmo workshop. Ver docs/FROTA.md (G1) no repositorio da demo.')
+              sys.exit(1)
+
+          distintas = set(refs.values())
+          if len(distintas) != 1:
+              print('\nFALHA: as refs nao carregam o MESMO nome:', sorted(distintas))
+              print('A onda e um trio de refs congelado; divergir aqui e divergir no ambiente.')
+              sys.exit(1)
+
+          print('\nOK: a onda inteira em %s' % distintas.pop())
+          PY
