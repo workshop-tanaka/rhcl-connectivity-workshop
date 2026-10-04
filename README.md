@@ -30,7 +30,15 @@ Item **Field Sourced Content - OpenShift Base**, com:
 | `cluster_size` | `multinode`, 3 workers |
 | `create_multi_user` | `false` — o desenho é single-tenant (um Gateway, um `kuadrant-system`) |
 | `existing_gitops` | `false` — o CI instala o GitOps; o Job não |
-| repositório | `https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git`, `main`, path `.` |
+| repositório | `https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git`, **a tag da onda** (não `main`), path `.` |
+
+[IMPORTANT]
+O campo de revisão do pedido é a **quarta** ref da onda, e a única que não está
+num arquivo deste repositório — ninguém a valida por você, e o CI não a alcança.
+Digitar `main` ali anula o resto do congelamento: o ambiente passa a montar o
+chart do branch, e dois pedidos em dias diferentes deixam de ser o mesmo
+workshop. Veja a seção de promoção abaixo para a tag corrente.
+
 
 Não há ELB nem DNS público nesse item: o Gateway é publicado por Route
 passthrough com o certificado do próprio cluster. Por isso o ato de
