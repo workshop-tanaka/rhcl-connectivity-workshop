@@ -533,6 +533,44 @@
             demo_repo: "{{ demo_repo_url }}@{{ demo_ref }}"
             cluster_domain: "{{ cluster_domain }}"
 
+    # ------------------------------------------------------------------ 8
+    # O ambiente se recusa a nascer quebrado.
+    #
+    # O passo 5 gateia no 'preflight.sh core', que pergunta se a PLATAFORMA
+    # serve a demo. Este pergunta outra coisa: se o Showroom entrega ESTE
+    # ambiente a quem o pediu -- atributo resolvido (e nao o placeholder do
+    # content/antora.yml), pagina servida com o hostname deste cluster, e o
+    # terminal com os scripts que o conteudo manda rodar.
+    #
+    # A segunda e a que faltava: a tag workshop-v0.17 nao tinha 13 dos scripts
+    # citados pelo conteudo, e um ambiente com ela nascia VERDE no preflight e
+    # quebrado para quem o usava. Descoberto por acidente em 2026-10-04.
+    #
+    # Nao da para gatear isto no passo 5: ali o Showroom ainda nao existe.
+    - name: A tag da demo tem o modo 'showroom'?
+      ansible.builtin.command:
+        cmd: grep -q 'showroom) ;;' scripts/preflight.sh
+        chdir: "{{ _demo_dir }}"
+      register: r_tem_showroom
+      failed_when: false
+      changed_when: false
+
+    # Condicionado de proposito: demo.ref aponta para uma TAG, e tags anteriores
+    # a esta nao conhecem o modo. Sem a condicao, promover para tras quebraria o
+    # provisionamento inteiro por causa de uma verificacao que nem existe la.
+    - name: "preflight.sh showroom -- o participante recebe o ambiente dele?"
+      ansible.builtin.command:
+        cmd: bash scripts/preflight.sh showroom
+        chdir: "{{ _demo_dir }}"
+      register: r_sr
+      changed_when: false
+      failed_when: r_sr.rc != 0
+      when: r_tem_showroom.rc == 0
+
+    - name: preflight showroom
+      ansible.builtin.debug:
+        msg: "{{ r_sr.stdout_lines | default(['(modo ausente nesta tag da demo -- verificacao omitida)']) }}"
+
     - name: Pronto
       ansible.builtin.debug:
         msg:
