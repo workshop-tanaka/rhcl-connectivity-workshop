@@ -492,14 +492,62 @@
                     workingDir: /home/lab-user/rhcl-connectivity-demo
       failed_when: false
 
+    # O patch acima dispara um ROLLOUT, e a tarefa seguinte entrava no pod
+    # ANTIGO -- que a essa altura esta terminando. Em zxljq e kjlhz
+    # (2026-10-04) o Job morreu aqui, aos 49 minutos, com
+    #
+    #   unable to upgrade connection: container not found ("terminal")
+    #
+    # depois de 40 tarefas certas: plataforma provisionada, Showroom no ar,
+    # terminal clonado. Nao era defeito de ambiente -- era uma corrida nossa,
+    # que vinha passando por sorte de tempo.
+    #
+    # Esperar o rollout e REDESCOBRIR o pod e o que faltava. 'r_showroom_pod2'
+    # foi lido antes do patch e nao serve mais.
+    - name: Esperar o rollout do workingDir
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: showroom
+        namespace: "{{ _showroom_ns }}"
+      register: r_dep3
+      retries: 60
+      delay: 10
+      until:
+        - r_dep3.resources | length > 0
+        - r_dep3.resources[0].status.observedGeneration | default(0) >= r_dep3.resources[0].metadata.generation
+        - r_dep3.resources[0].status.updatedReplicas | default(0) == 1
+        - r_dep3.resources[0].status.readyReplicas | default(0) == 1
+        - r_dep3.resources[0].status.replicas | default(0) == 1
+
+    - name: Descobrir o pod do Showroom depois do workingDir
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: "{{ _showroom_ns }}"
+        label_selectors:
+          - app.kubernetes.io/name=showroom
+        field_selectors:
+          - status.phase=Running
+      register: r_showroom_pod3
+      retries: 30
+      delay: 10
+      until:
+        - r_showroom_pod3.resources | length > 0
+        - (r_showroom_pod3.resources[0].status.containerStatuses | selectattr('ready','equalto',true) | list | length) == (r_showroom_pod3.resources[0].status.containerStatuses | length)
+
     - name: Conferir que os scripts chegaram
       kubernetes.core.k8s_exec:
         namespace: "{{ _showroom_ns }}"
-        pod: "{{ r_showroom_pod2.resources[0].metadata.name }}"
+        pod: "{{ r_showroom_pod3.resources[0].metadata.name }}"
         container: terminal
         command: bash -lc "ls /home/lab-user/rhcl-connectivity-demo/scripts/demo.sh"
       register: r_conf
-      failed_when: r_conf.rc != 0
+      # 'r_conf.rc' sozinho MASCARA a causa: quando o modulo falha antes de
+      # produzir rc, o Ansible reporta "object of type 'dict' has no attribute
+      # 'rc'" em vez do erro de verdade. O default deixa a mensagem original
+      # aparecer.
+      failed_when: r_conf.rc | default(1) != 0
 
     # ------------------------------------------------------------------ 7
     - name: userinfo para o RHDP
