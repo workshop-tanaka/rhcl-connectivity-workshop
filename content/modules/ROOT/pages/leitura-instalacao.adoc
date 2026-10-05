@@ -18,7 +18,7 @@ include::partial$diagrama.adoc[]
 [mermaid]
 ....
 flowchart LR
-  A["1. operators<br/>Service Mesh e Connectivity Link"] --> B["2. Service Mesh<br/>traz a GatewayClass"]
+  A["1. operators<br/>Connectivity Link e o provedor de Gateway"] --> B["2. Service Mesh<br/>traz a GatewayClass"]
   B --> C["3. CR Kuadrant<br/>liga a plataforma"]
   C --> D["4. Gateway<br/>TLS e publicacao"]
   D --> E["5. policies<br/>sobre o Gateway e as rotas"]
@@ -27,11 +27,33 @@ flowchart LR
 Nenhum passo instala nada **dentro** da aplicação. A travel-agency não sabe que
 o Connectivity Link existe.
 
-== 1. Dois operators
+== 1. O Connectivity Link e um provedor de Gateway
 
-O Connectivity Link se apoia no Gateway API e num provedor de Gateway. Neste
-ambiente o provedor é o OpenShift Service Mesh 3. São duas instalações pelo
-OperatorHub:
+O Connectivity Link não cria Gateways: ele aplica policies sobre os que um
+**provedor de Gateway API** cria. O requisito é esse provedor -- e há mais de
+uma forma de atendê-lo.
+
+[NOTE]
+====
+**O Service Mesh não é requisito do Connectivity Link.** A partir do OpenShift
+4.19 o Gateway API é nativo da plataforma, e dá para usar o Connectivity Link
+sobre ele, sem instalar o Service Mesh.
+
+Este ambiente usa o OpenShift Service Mesh 3 como provedor porque o workshop
+vai além da borda. Duas coisas aqui dependem do Service Mesh propriamente
+dito:
+
+* o **Módulo 2** inteiro -- mTLS entre serviços, autorização leste-oeste,
+  canário e circuit breaker são funções do Service Mesh, com sidecar nos pods
+  da aplicação;
+* o campo **`mtls.enable`** do passo 3, que põe o Authorino e o Limitador no
+  Service Mesh.
+
+Quem precisa só da borda -- autenticação, limites e planos, o que o Módulo 1
+mostra -- pode ficar com o Gateway API nativo.
+====
+
+Aqui são duas instalações pelo OperatorHub:
 
 [cols="1,2,2",options="header"]
 |===
@@ -88,11 +110,13 @@ oc get csv -n kuadrant-system | grep -E 'rhcl|authorino|limitador|dns-operator'
 | publica nomes em provedores de DNS, quando há `DNSPolicy`
 |===
 
-== 2. O Service Mesh vem antes
+== 2. O provedor vem antes
 
-O Connectivity Link não cria Gateways: ele governa os que o provedor cria. Por
-isso o Service Mesh é configurado primeiro -- um CR `Istio` e um `IstioCNI` --
-e é dele que nasce a `GatewayClass` chamada `istio`.
+Como o Connectivity Link governa Gateways que outro componente cria, o
+provedor é configurado primeiro. Neste ambiente é o Service Mesh -- um CR
+`Istio` e um `IstioCNI` -- e é dele que nasce a `GatewayClass` chamada
+`istio`. Com o Gateway API nativo do OpenShift, a classe seria outra, e o
+resto desta página valeria igual.
 
 [source,bash,role="execute"]
 ----
