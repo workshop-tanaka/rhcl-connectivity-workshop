@@ -1,0 +1,163 @@
+= Leitura: multi-tenancy com o Connectivity Link
+:navtitle: Leitura: multi-tenancy
+
+**Leitura · ~8 min · não muda estado**
+
+A pergunta chega cedo em qualquer conversa sobre plataforma de API: *"dá para
+vários times usarem o mesmo cluster, cada um com as suas APIs, sem um enxergar
+ou atrapalhar o outro?"*
+
+A resposta curta é: sim para os dados, com ressalvas para o que é
+compartilhado. Esta página mostra o que o Connectivity Link oferece para isso,
+o que ele deixa para o OpenShift, e onde está o limite.
+
+== Não existe "tenant" no produto
+
+O Connectivity Link não tem um objeto chamado tenant. A unidade de isolamento
+é o **namespace**, e quem separa um namespace do outro são o Kubernetes e o
+Gateway API. O produto acrescenta regras próprias sobre essa base.
+
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  subgraph PLAT["plataforma -- uma por cluster"]
+    OP["Connectivity Link<br/>operator"] --- AU["Authorino"] --- LI["Limitador"]
+  end
+  subgraph TA["time A"]
+    GA["Gateway A"] --> RA["rotas e policies de A"]
+  end
+  subgraph TB["time B"]
+    GB["Gateway B"] --> RB["rotas e policies de B"]
+  end
+  GA -.-> AU
+  GB -.-> AU
+  GA -.-> LI
+  GB -.-> LI
+....
+
+== O que o produto dá
+
+=== Dois donos: o do Gateway e o da rota
+
+O Gateway API separa de propósito quem cria o `Gateway` de quem cria a
+`HTTPRoute`. O time de plataforma é dono da porta de entrada; o time de
+aplicação é dono das rotas que passam por ela. É a
+xref:m1-04-papeis.adoc[parte 1.4] deste workshop.
+
+E o `Gateway` declara de quais namespaces aceita rotas:
+
+[source,bash,role="execute"]
+----
+oc get gateway prod-web -n ingress-gateway \
+  -o jsonpath='{.spec.listeners[*].allowedRoutes}{"\n"}'
+----
+
+Com `from: Selector`, só os namespaces com um rótulo determinado conseguem
+anexar rotas àquele Gateway.
+
+=== A policy só alcança o próprio namespace
+
+Toda policy do Connectivity Link aponta para o seu alvo por um `targetRef`, e
+esse alvo é um `Gateway` ou uma rota **do mesmo namespace** da policy:
+
+[source,bash,role="execute"]
+----
+oc get authpolicy travel-agency-authpolicy -n travel-agency \
+  -o jsonpath='{.spec.targetRef}{"\n"}'
+----
+
+Não há campo de namespace ali. Um time não consegue escrever uma policy que
+governe a rota de outro time.
+
+=== Padrão e teto
+
+Uma policy no `Gateway` vale para todas as rotas anexadas a ele, de duas
+formas:
+
+[cols="1,3",options="header"]
+|===
+| forma | o que significa
+
+| padrão (`defaults`)
+| vale enquanto a rota não trouxer a própria policy. O time de aplicação pode
+  substituí-la
+
+| teto (`overrides`)
+| vale sempre. A rota não consegue derrubá-la
+|===
+
+É assim que a plataforma impõe uma regra a todos os times sem escrever em
+nenhuma rota. Neste workshop o "nega tudo" do Gateway é um padrão, e a policy
+da rota o substitui -- é o `Overridden` que a
+xref:m1-03-precedencia.adoc[parte 1.3] mostra.
+
+=== Contadores por rota
+
+O Limitador conta as requisições por namespace e por policy. O limite de um
+time não consome o do outro, e zerar os contadores de um não mexe nos demais.
+
+== O que fica para o OpenShift
+
+O produto governa a borda. Três coisas ele deixa para a plataforma por baixo:
+
+[cols="1,3",options="header"]
+|===
+| o quê | com o quê se resolve
+
+| quem pode ler e alterar cada objeto
+| RBAC do OpenShift, por namespace
+
+| o tráfego **dentro** do cluster
+| `NetworkPolicy` e o Service Mesh. Uma chave de API protege a porta da rua;
+  quem já está dentro do cluster alcança o serviço de outro namespace sem
+  passar pelo Gateway, a menos que algo o impeça. É a fronteira leste-oeste
+  da xref:m2-01-leste-oeste.adoc[parte 2.1]
+
+| regras que o Gateway API não expressa
+| controle de admissão -- por exemplo, exigir que o hostname de uma rota
+  pertença ao time que a criou
+|===
+
+== O que é compartilhado, e não se separa
+
+O Connectivity Link tem **um plano de controle por cluster**: um operator, um
+Authorino e um Limitador atendem a todos os Gateways.
+
+[source,bash,role="execute"]
+----
+oc get pods -n kuadrant-system
+----
+
+Disso saem quatro consequências que vale conhecer antes de desenhar:
+
+* **Disponibilidade é comum.** Se o Authorino cair, cai para todos os times.
+* **A visão é uma só.** A tela de topologia de policies desenha o cluster
+  inteiro; não há uma por time.
+* **As chaves de API moram, por padrão, num namespace comum.** O Authorino as
+  procura no namespace dele, salvo com `allNamespaces: true` na policy.
+* **As métricas de consumo nascem na plataforma**, não no namespace de cada
+  time.
+
+== Em resumo
+
+[cols="1,2",options="header"]
+|===
+| se você precisa de | o caminho é
+
+| times do mesmo cliente dividindo um cluster, sem um alterar o que é do outro
+| um cluster, com namespace por time, Gateway por time, RBAC e
+  `NetworkPolicy`. É o desenho comum, e o produto foi pensado para ele
+
+| times que não podem nem saber da existência uns dos outros
+| o mesmo, mais chaves e métricas por namespace e a topologia restrita ao
+  time de plataforma
+
+| clientes diferentes, ou a garantia de que a falha de um não atinge o outro
+| um cluster por cliente. Só assim o plano de controle também é separado
+|===
+
+O Connectivity Link oferece multi-tenancy **por namespace e por papel**, sobre
+um plano de controle compartilhado. Vale decidir cedo qual das três linhas
+acima é a sua.
