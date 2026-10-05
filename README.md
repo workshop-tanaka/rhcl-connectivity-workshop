@@ -22,6 +22,12 @@ rhcl-connectivity-workshop/
 
 ## Como pedir no RHDP
 
+> **O passo a passo completo de uma entrega** — escolher entre um cluster por
+> participante e uma turma por cluster, dimensionar, subir, conferir e atualizar
+> com a turma no ar — está em
+> [docs/IMPLANTACAO.md](https://github.com/workshop-tanaka/rhcl-connectivity-demo/blob/main/docs/IMPLANTACAO.md),
+> no repositório da demo. O que segue aqui é só o pedido.
+
 Item **Field Sourced Content - OpenShift Base**, com:
 
 | parâmetro | valor |
