@@ -177,8 +177,8 @@ assunto é *de onde vem a identidade de quem chama*.
 
 == E as APIs que você mesmo vai criar
 
-No Módulo 1 você publica uma API nova, do zero -- primeiro à mão, para sentir
-o que falta, e depois pelo caminho pavimentado do portal. Essa API é sua, nasce
+No Módulo 1 você publica uma API nova, do zero -- à mão, para sentir
+o que falta, e depois lê como ela nasceria pelo caminho pavimentado do portal. Essa API é sua, nasce
 e morre dentro do módulo, e não toca em nada descrito nesta página.
 
 == Confira você mesmo

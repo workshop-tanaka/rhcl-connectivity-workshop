@@ -1,7 +1,7 @@
-= 1.7 A mesma API, pelo caminho pavimentado
-:navtitle: 1.7 O caminho pavimentado
+= 1.7 Leitura: a mesma API, pelo caminho pavimentado
+:navtitle: 1.7 Leitura: o caminho pavimentado
 
-**A quem pertence:** Desenvolvedor (quem consome o caminho) e Engenheiro de Plataforma (quem o constrói). · **12 min** · **muda estado**
+**Leitura · ~8 min · não muda estado**
 
 [WARNING.antes]
 ====
@@ -14,48 +14,47 @@ Na parte anterior você publicou uma API do zero. Quatro arquivos, quatro
 momentos, e um checklist no fim listando tudo que ainda faltava: telemetria
 por plano, mTLS, identidade de serviço, canário, catálogo.
 
-Agora a mesma API, pelo caminho que a plataforma oferece.
-
-== Abra o portal
-
-{rhdh_url}[Red Hat Developer Hub^] -- o catálogo do ambiente.
-
-include::partial$entrar-rhdh.adoc[]
-
-No menu à esquerda: **Create**. Você verá seis templates; o desta parte é o
-**1. API como produto — projeto, Service Mesh e Connectivity Link**.
+Agora a mesma API, pelo caminho que a plataforma oferece -- o *golden path*.
 
 [NOTE]
 ====
-Os templates não estão embutidos no portal: ele os lê do GitLab deste
-ambiente, do mesmo repositório que o Módulo 1 usou para mostrar a
-configuração versionada. Template também é código, e também tem histórico.
+**Esta parte é leitura, e não há nada a executar.** O caminho pavimentado
+passa pelo Red Hat Developer Hub e por um GitLab, que este ambiente de
+workshop não instala. O que você vai ver é o que acontece nele, com os
+arquivos reais do template que o percorre -- os mesmos que estão no
+repositório deste workshop.
 ====
 
-== Preencha: três decisões, quinze defaults
+== O ponto de partida: um formulário
+
+No Developer Hub, o desenvolvedor abre **Create** e escolhe o template
+**1. API como produto — projeto, Service Mesh e Connectivity Link**.
+
+O template não está embutido no portal: ele é lido de um repositório git.
+Template também é código, e também tem histórico.
 
 O formulário tem cinco seções e dezoito campos. Isso assusta à primeira
-vista, e não deveria: **só três exigem decisão sua**.
+vista, e não deveria: **só três exigem decisão de quem preenche**.
 
 [cols="1,2,2",options="header"]
 |===
-| campo | o que colocar | por quê
+| campo | o que se coloca | por quê
 
 | `name`
 | um nome curto, por exemplo `echo-pavimentado`
 | vira o namespace, o hostname e o nome de todos os objetos
 
 | `appsDomain`
-| `{cluster_domain}`
-| o domínio deste cluster, para montar o hostname da rota
+| o domínio de apps do cluster
+| para montar o hostname da rota
 
 | `repoUrl`
-| o picker já vem travado em `rhcl/apis` -- só complete o nome do projeto
+| só o nome do projeto -- o destino já vem travado num subgrupo
 | é o subgrupo que o GitOps observa
 |===
 
-Os outros quinze já vêm preenchidos, e vale olhar três deles antes de seguir,
-porque são decisões de produto disfarçadas de campo de formulário:
+Os outros quinze já vêm preenchidos. Três deles merecem atenção, porque são
+decisões de produto disfarçadas de campo de formulário:
 
 [cols="1,1,2",options="header"]
 |===
@@ -63,7 +62,8 @@ porque são decisões de produto disfarçadas de campo de formulário:
 
 | `planPreset`
 | `three-tier`
-| nasce com os três planos comerciais, como o do Módulo 1 -- e não com um só
+| a API nasce com os três planos comerciais, como a do Módulo 1 -- e não com
+  um só
 
 | `mtlsStrict`
 | `true`
@@ -75,119 +75,104 @@ porque são decisões de produto disfarçadas de campo de formulário:
   consegue, nem por engano
 |===
 
-Clique em **Create**.
-
-== O que aconteceu
+== O que acontece ao clicar em Create
 
 include::partial$diagrama.adoc[]
 
 [mermaid]
 ....
 flowchart LR
-  F["voce<br/>3 decisoes no formulario"] -->|"fetch"| T["template renderizado"]
-  T -->|"publish"| G["projeto novo no GitLab<br/>rhcl/apis"]
+  F["desenvolvedor<br/>3 decisoes no formulario"] -->|"fetch"| T["template renderizado"]
+  T -->|"publish"| G["repositorio novo no git"]
   G -->|"register"| P["catalogo do portal"]
   G -.->|"o ApplicationSet varre<br/>o subgrupo a cada 180s"| AR["Argo CD"]
-  AR -->|"aplica"| C["cluster<br/>23 objetos"]
+  AR -->|"aplica"| C["cluster"]
 ....
 
 **Nenhum passo é "fazer deploy", e não há `oc apply` em lugar nenhum.** A
-configuração foi para o git, e é o GitOps que a traz para o cluster.
+configuração vai para o git, e é o GitOps que a traz para o cluster: um
+`ApplicationSet` varre o subgrupo e adota todo repositório que tenha um
+diretório `manifests/`.
 
-== Espere o Argo (até ~3 min)
+A condição de adoção é o **subgrupo**, não um rótulo. Não há passo a lembrar:
+o formulário já travava o destino lá, e por isso aquele campo não oferecia
+escolha.
 
-O `ApplicationSet` chamado `rhcl-golden-path` varre o subgrupo `rhcl/apis` e
-adota todo projeto que tenha um diretório `manifests/`. O intervalo de varredura
-é de 180 segundos.
+== O repositório que nasce
 
-[source,bash,role="execute"]
+Você escreveu **quatro arquivos** na parte 1.6. O template gera **vinte e
+três**. Este é o repositório inteiro, como ele nasce:
+
+[source,text]
 ----
-oc get applications -n openshift-gitops | grep -v travel
-----
-
-Quando a sua API aparecer na lista, o Argo já a está aplicando.
-
-[NOTE]
-====
-A condição de adoção é o **subgrupo**, não um rótulo. Não há topic a marcar
-nem passo a lembrar: se o projeto está em `rhcl/apis` e tem `manifests/`, ele
-entra. O `RepoUrlPicker` do formulário já travava o destino lá -- por isso
-você não teve escolha a fazer nesse campo.
-====
-
-== Confira com o verify que nasceu junto
-
-O repositório gerado traz um `verify.sh` -- o preflight **deste** serviço,
-percorrendo a mesma cadeia que o `scripts/demo.sh check` percorre para a
-travel-agency.
-
-[source,bash,role="execute",subs="attributes+"]
-----
-( cd /tmp && git clone -q "{repo_apis}/<o-nome-que-voce-deu>.git" api-nova \
-  && cd api-nova && bash verify.sh )
-----
-
-== Agora compare
-
-Esta é a parte que importa. Você escreveu **quatro arquivos** na parte 1.6.
-O template gerou **vinte e três**.
-
-[source,bash,role="execute"]
-----
-ls /tmp/api-nova/manifests/
+echo-pavimentado/
+├── manifests/
+│   ├── 00-namespace.yaml             o namespace, já no Service Mesh
+│   ├── 01-podmonitor.yaml            telemetria
+│   ├── 10-serviceaccount.yaml        identidade própria do serviço
+│   ├── 11-deployment.yaml
+│   ├── 12-service.yaml
+│   ├── 20-httproute.yaml             a rota no Gateway
+│   ├── 21-route.yaml                 a publicação no router
+│   ├── 30-authpolicy.yaml            quem entra
+│   ├── 31-planpolicy.yaml            quanto passa, por plano
+│   ├── 40-apiproduct.yaml            a API como produto no portal
+│   ├── 50-peerauthentication.yaml    mTLS obrigatório
+│   ├── 51-authorizationpolicy.yaml   quem pode chamar
+│   ├── 52-destinationrule.yaml       canário já declarado
+│   ├── 53-virtualservice.yaml        canário já declarado
+│   └── kustomization.yaml
+├── catalog-info.yaml                 a entidade no catálogo
+├── openapi.yaml                      o contrato, publicado no portal
+├── docs/index.md + mkdocs.yml        documentação junto do código
+├── consumers/                        uma assinatura de cliente por pull request
+├── gitops/application.yaml           o Application do Argo
+├── verify.sh                         o preflight deste serviço
+└── README.md
 ----
 
-[cols="1,2",options="header"]
-|===
-| o que você já tinha escrito à mão | o que veio a mais
+Compare com o checklist que fechou a parte 1.6. Cada item que lá aparecia
+como "falta" é uma linha aqui: a telemetria é o `01`, a identidade de serviço
+é o `10`, o mTLS é o `50`, o canário são o `52` e o `53`, o catálogo são o
+`40` e o `catalog-info.yaml`.
 
-a|
-* `00-namespace.yaml`
-* `11-deployment.yaml`
-* `12-service.yaml`
-* `20-httproute.yaml`
-* `30-authpolicy.yaml`
-* `31-planpolicy.yaml`
-a|
-* `01-podmonitor.yaml` -- telemetria, que faltava
-* `10-serviceaccount.yaml` -- identidade própria do serviço
-* `21-route.yaml` -- a publicação no router
-* `40-apiproduct.yaml` -- a API como produto no portal
-* `50-peerauthentication.yaml` -- mTLS obrigatório
-* `51-authorizationpolicy.yaml` -- quem pode chamar
-* `52-destinationrule.yaml` + `53-virtualservice.yaml` -- canário já declarado
-* `kustomization.yaml`
-|===
+== Um campo do formulário, lido no arquivo
 
-E fora de `manifests/`, mais sete arquivos que a parte 1.6 nem mencionou:
+Vale seguir uma decisão do formulário até o arquivo que ela produz. O campo
+`allowedCallers` veio preenchido com `ingress-gateway/prod-web-istio`. Este é
+o `51-authorizationpolicy.yaml` que sai dele:
 
-[cols="1,2",options="header"]
-|===
-| arquivo | para que
+[source,yaml]
+----
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: echo-pavimentado-callers
+  namespace: echo-pavimentado
+spec:
+  selector:
+    matchLabels:
+      app: echo-pavimentado
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/ingress-gateway/sa/prod-web-istio
+----
 
-| `catalog-info.yaml`
-| a entidade no catálogo -- é assim que a API vira algo pesquisável
+Uma linha no formulário, e o serviço nasce aceitando chamada de **uma**
+identidade: a do Gateway. É a mesma fronteira leste-oeste que o Módulo 2
+exercita -- só que aqui ninguém precisou lembrar de escrevê-la.
 
-| `openapi.yaml`
-| o contrato, que o portal publica para quem for consumir
-
-| `docs/index.md` + `mkdocs.yml`
-| documentação viajando junto com o código
-
-| `consumers/`
-| onde cada assinatura de cliente será registrada, por pull request
-
-| `gitops/application.yaml`
-| o Application do Argo, para quem preferir aplicar à mão
-
-| `verify.sh`
-| o preflight próprio, que você acabou de rodar
-|===
+O `mtlsStrict` faz o mesmo com o `50-peerauthentication.yaml`: `true` no
+formulário vira `mode: STRICT` no arquivo. E o `planPreset` decide se o
+`31-planpolicy.yaml` nasce com os tiers `gold`, `silver` e `free`.
 
 == O que isso prova
 
 Não é sobre digitar menos. Os vinte e três arquivos seriam escrevíveis à mão
--- você escreveu seis deles em dez minutos.
+-- você escreveu quatro deles em dez minutos.
 
 São duas outras coisas:
 
@@ -196,23 +181,19 @@ esqueça o mTLS, ou publique sem plano comercial, ou suba um endpoint que
 qualquer pod do cluster possa chamar. Não porque haja uma convenção escrita
 num wiki -- porque o formulário não oferece a alternativa.
 
-**A configuração passou a ter dono, data e revisão.** O que você fez à mão na
-parte 1.6 existia **só no cluster**: ninguém sabia quem criou, quando, nem por
-quê. Aqui os mesmos objetos nasceram num repositório, com autor e histórico.
-Mudar uma policy vira um merge request que alguém revisa.
+**A configuração passa a ter dono, data e revisão.** O que você fez à mão na
+parte 1.6 existe **só no cluster**: ninguém sabe quem criou, quando, nem por
+quê. Pelo template os mesmos objetos nascem num repositório, com autor e
+histórico. Mudar uma policy vira um merge request que alguém revisa.
 
-E essa segunda diferença é exatamente o que a próxima parte vai auditar.
+E essa segunda diferença é exatamente o que a próxima parte audita.
 
-== Limpando
+== Onde isto vira prática
 
-A API que você criou fica no ar até ser removida. Para desfazer:
+Percorrer o caminho pavimentado com as próprias mãos -- criar o produto,
+assinar como cliente e publicar uma segunda versão, tudo por pull request --
+pede o Developer Hub e um GitLab no ambiente, e é assunto para um módulo
+próprio, mais amplo que esta parte.
 
-[source,bash,role="execute"]
-----
-bash scripts/golden-path-limpa.sh
-----
-
-Ele remove o Application do Argo, o namespace e o projeto no GitLab -- nessa
-ordem, que importa: apagar o namespace antes do Application faria o Argo
-recriá-lo.
-
+Os templates estão no repositório do workshop, em `rhdh/templates/`, para
+quem quiser lê-los inteiros.

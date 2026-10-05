@@ -15,7 +15,7 @@ Ao final deste módulo você consegue explicar, com o ambiente na mão:
 * quem, dentro da organização, tem permissão para escrever cada tipo de regra;
 * como tudo isso vira número que a área de negócio entende;
 * publicar uma API do zero à mão, e sentir o que falta nela;
-* refazer a **mesma** API pelo caminho pavimentado do portal, e comparar;
+* ler a **mesma** API nascendo pelo caminho pavimentado do portal, e comparar;
 * auditar o próprio rastro por quatro fontes diferentes, e reconstituir o uso
   de uma chave vazada;
 * distinguir a chave de API, que identifica um sistema, do token, que
@@ -47,9 +47,9 @@ neste cluster, quantos `Gateway` faz sentido ter, e onde o Connectivity Link
 e o Service Mesh se sobrepõem. Ela não é obrigatória, mas é onde a diferença entre elas fica
 explícita.
 
-**1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, refaz pelo
-caminho pavimentado, e audita o que fez. Estas criam objetos, e cada página diz
-como desfazer.
+**1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, lê como ela
+nasceria pelo caminho pavimentado, e audita o que fez. A 1.6 e a 1.8 criam
+objetos, e cada página diz como desfazer; a 1.7 é leitura.
 
 **1.9 e 1.10 — o que fica em volta da chave.** A outra credencial, a de uma
 pessoa, e o certificado que protege todas as chamadas. A 1.10 cria e remove um

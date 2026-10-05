@@ -32,9 +32,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 
 | xref:m1-00-intro.adoc[**1** — Connectivity Link: a API como produto]
 | fechar uma API sem tocar na aplicação, servir planos comerciais no mesmo
-  endereço, publicar uma API do zero à mão e depois pelo caminho pavimentado,
+  endereço, publicar uma API do zero à mão e compará-la com o caminho pavimentado,
   auditar o próprio rastro, e cuidar da identidade e do certificado
-| ~87 min
+| ~83 min
 
 | xref:m2-00-intro.adoc[**2** — Service Mesh: a fronteira de dentro]
 | proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo,
@@ -134,7 +134,7 @@ As que dependem de outra:
 | 1.6 De aberta a governada
 | as partes 1.1, 1.3 e 1.4
 
-| 1.7 O caminho pavimentado
+| 1.7 Leitura: o caminho pavimentado
 | a parte 1.6 -- ela é o contraste inteiro
 
 | 1.8 Quatro perguntas, quatro fontes
