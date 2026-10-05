@@ -164,18 +164,14 @@ se resolve na borda, com dois cabeçalhos no `HTTPRoute`, sem tocar na
 aplicação.
 ====
 
-== O banco não está no cluster
+== O banco está no cluster -- por enquanto
 
-Detalhe que muda a leitura de vários módulos: o `mysqldb` que a aplicação usa
-**não roda em `travel-agency`**. Ele vive em outro site, alcançado por um
-túnel do Red Hat Service Interconnect.
+O `mysqldb` que a aplicação usa roda em `travel-agency`, ao lado dos outros
+serviços e dentro do Service Mesh. Os 45 destinos saem dele.
 
-Na prática isso significa que aqueles 45 destinos atravessam uma fronteira
-antes de chegar até você. A parte 4.4 abre esse túnel e mostra o tráfego
-passando por ele.
-
-É o cenário mais comum em cliente real -- *"esse banco não vai para o
-Kubernetes"* -- e por isso está no ambiente desde o começo, não como um extra.
+Em cliente real é comum que não seja assim -- *"esse banco não vai para o
+Kubernetes"* -- e alcançá-lo de fora do cluster, sem VPN e sem expor nada, é
+o assunto do xref:m4-00-intro.adoc[Módulo 4], que está a caminho.
 
 == A segunda API: `echo-api`
 
@@ -204,6 +200,5 @@ oc get deploy,svc -n travel-agency
 curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 200; echo
 ----
 
-O primeiro mostra os sete serviços; o segundo, os destinos que vieram do banco
-do outro lado do túnel.
+O primeiro mostra os sete serviços; o segundo, os destinos que vieram do banco.
 

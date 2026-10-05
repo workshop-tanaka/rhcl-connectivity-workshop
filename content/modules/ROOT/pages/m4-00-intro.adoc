@@ -1,9 +1,35 @@
-= Módulo 4 — Service Interconnect: o que não mora aqui
-:navtitle: Módulo 4 — Introdução
+= Módulo 4 — Service Interconnect (em breve)
+:navtitle: Módulo 4 — Em breve
 
-**Duas partes · cerca de 14 minutos · nenhuma muda estado**
+**Em breve · proposta de conteúdo, sujeita a mudança**
 
 **Produto protagonista:** Red Hat Service Interconnect
+
+[NOTE]
+====
+Este módulo ainda não existe neste ambiente. Aqui o banco da aplicação roda
+**dentro** do cluster, no Service Mesh, e por isso não há túnel para abrir.
+Esta página descreve o que o módulo vai cobrir quando o ambiente trouxer o
+banco para fora.
+====
+
+== A ideia
+
+Os Módulos 1 e 2 governam duas fronteiras: quem entra pela borda, e quem fala
+com quem dentro do cluster. Falta a terceira -- o que a aplicação precisa e
+que **não roda aqui**.
+
+É a objeção mais comum em cliente real, e ela chega sempre com a mesma frase:
+*"esse banco não vai para o Kubernetes."*
+
+Ela quase nunca é preguiça. É licenciamento, é auditoria, é um time que não
+vai migrar neste trimestre, é hardware que ainda não depreciou. A resposta
+honesta não é insistir na migração -- é conectar.
+
+E há uma diferença que vale nomear: os outros módulos tratam de **governança**
+(quem pode o quê). Este trata de **conectividade** (como alcançar). São
+problemas diferentes, e o Service Interconnect resolve o segundo sem opinar
+sobre o primeiro.
 
 == O que você vai conseguir fazer
 
@@ -14,30 +40,26 @@
 * reconhecer quando essa é a resposta certa, e quando não é;
 * dizer, salto a salto, o que está cifrado no caminho até essa dependência.
 
-== Por que isto tem módulo próprio
+== As partes propostas
 
-Porque é a objeção mais comum em cliente real, e ela chega sempre com a mesma
-frase: *"esse banco não vai para o Kubernetes."*
+[cols="1,3,2",options="header"]
+|===
+| parte | o que acontece | o que fica provado
 
-Ela quase nunca é preguiça. É licenciamento, é auditoria, é um time que não
-vai migrar neste trimestre, é hardware que ainda não depreciou. A resposta
-honesta não é insistir na migração -- é conectar.
+| 4.1 A dependência que não mora aqui
+| o banco sai do cluster e passa a ser alcançado por uma rede de serviços; a
+  aplicação continua chamando o mesmo nome
+| conectar não exigiu VPN, porta de entrada nem mudança na aplicação
 
-E há uma diferença que vale nomear: os Módulos 1 a 4 tratam de **governança**
-(quem pode o quê). Este trata de **conectividade** (como alcançar). São
-problemas diferentes, e o Service Interconnect resolve o segundo sem opinar
-sobre o primeiro.
+| 4.2 O que o túnel protege, e o que não
+| o caminho até o banco, lido salto a salto: o que o túnel cifra, e os dois
+  trechos locais que ficam de fora
+| "temos mTLS" é uma frase sobre saltos, e a parte
+  xref:m2-04-canal.adoc[2.4] já mostra como medir cada um
+|===
 
-== O que você precisa antes
+== O que este módulo pede do ambiente
 
-Nenhum módulo. Mas ele fecha o arco: depois dele, as três fronteiras da
-xref:fronteiras.adoc[página das fronteiras] terão sido percorridas.
-
-== Uma observação sobre este ambiente
-
-O banco desta aplicação **já está** do outro lado do túnel desde o começo do
-workshop. Aqueles 45 destinos que você vem recebendo desde o Módulo 1
-atravessaram essa fronteira toda vez.
-
-Esta parte não monta o túnel -- ela abre a tampa e mostra o que já estava
-acontecendo.
+Um segundo site com o banco, e o Service Interconnect ligando os dois. As duas
+partes já estão escritas; o que falta é o ambiente do workshop subir essa
+rede.

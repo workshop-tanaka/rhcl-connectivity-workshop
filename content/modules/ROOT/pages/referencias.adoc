@@ -17,7 +17,7 @@ ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
 | Módulo 2, e a instrumentação que o Módulo 3 usa
 
 | https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Red Hat Service Interconnect^]
-| Módulo 4
+| Módulo 4, em breve
 
 | https://docs.redhat.com/en/documentation/red_hat_developer_hub[Red Hat Developer Hub^]
 | parte 1.7, o caminho pavimentado

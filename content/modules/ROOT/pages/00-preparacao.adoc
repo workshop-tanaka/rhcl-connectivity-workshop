@@ -72,7 +72,7 @@ bash scripts/demo.sh check --auto
 ----
 
 Percorre a cadeia inteira -- operadores, gateway, policies, chaves, caminho de
-dados, Service Mesh, Interconnect, portais e portal do desenvolvedor. Leva
+dados, Service Mesh, portais e portal do desenvolvedor. Leva
 **cerca de dois minutos** e termina assim:
 
 [source,text]

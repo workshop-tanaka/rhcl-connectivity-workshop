@@ -2,7 +2,8 @@
 :navtitle: Interlúdio: as três fronteiras
 
 Você acabou de governar **uma** fronteira: quem entra. Uma aplicação
-distribuída tem três, e cada uma é governada por um produto diferente.
+distribuída tem três, e cada uma é governada por um produto diferente. Este
+workshop percorre duas com as mãos; a terceira está a caminho.
 
 Esta página é a ponte para os próximos módulos. Confundir as três é a origem
 de boa parte das dúvidas que aparecem depois -- e agora você tem a primeira na
@@ -24,8 +25,8 @@ flowchart LR
     T --> H[hotels]
     T --> C[cars]
   end
-  subgraph SI["ENTRE SITES · Service Interconnect"]
-    DB[("banco<br/>fora do cluster")]
+  subgraph SI["ENTRE SITES · Service Interconnect (em breve)"]
+    DB[("banco<br/>quando fica fora do cluster")]
   end
   P -->|HTTPS| G
   G -->|"quem entra,<br/>quanto passa"| T
@@ -52,6 +53,10 @@ flowchart LR
   em RHEL, um serviço em outra nuvem
 | **Red Hat Service Interconnect**
 |===
+
+Neste ambiente o banco roda **dentro** do cluster, no Service Mesh: a terceira
+fronteira ainda não está montada aqui. Ela aparece no desenho porque é parte
+do raciocínio, e é o assunto do xref:m4-00-intro.adoc[Módulo 4], em breve.
 
 == Por que a divisão importa na prática
 
@@ -90,18 +95,18 @@ alcançável.
 O que ele **não** faz: política. Ele resolve conectividade, não governança.
 
 https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Documentação^]
-· Módulo xref:m4-00-intro.adoc[4]
+· Módulo xref:m4-00-intro.adoc[4], em breve
 
 == As três juntas, numa chamada só
 
-Vale guardar esta sequência, porque ela é o workshop inteiro em quatro linhas:
+Vale guardar esta sequência, porque ela é o desenho inteiro em quatro linhas:
 
 . um parceiro chama a API de viagens -- o **Connectivity Link** decide se
   ele entra, sob qual plano, e conta a chamada;
 . o `travels` chama `flights`, `hotels` e `cars` -- o **Service Mesh** decide
   se cada um desses saltos é permitido, e os instrumenta;
-. esses serviços precisam do banco, que não está no cluster -- o **Service
-  Interconnect** carrega essa conversa por um túnel;
+. esses serviços precisam do banco -- quando ele não está no cluster, o
+  **Service Interconnect** carrega essa conversa por um túnel;
 . a resposta volta pelo mesmo caminho.
 
 Uma requisição, três fronteiras, três produtos. E nenhum deles exigiu mudança

@@ -21,7 +21,8 @@ conceitos conforme aparecem, com os links da documentação oficial de cada um.
 
 == Como o workshop está organizado
 
-Quatro módulos, cada um com uma introdução própria e partes numeradas.
+Três módulos para percorrer, cada um com uma introdução própria e partes
+numeradas, e dois anunciados como "em breve".
 Cada um tem um produto protagonista -- a
 xref:fronteiras.adoc[página das fronteiras] explica a divisão. Dá para
 fazer na ordem, ou escolher pelo que interessa ao seu dia.
@@ -49,7 +50,7 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
 | alcançar uma dependência que não roda no cluster, sem VPN e sem expor nada,
   e saber o que o túnel protege
-| ~14 min
+| em breve
 
 | xref:m5-00-intro.adoc[**5** — O caminho pavimentado]
 | publicar, assinar e evoluir uma API por formulário e pull request, com o
@@ -66,7 +67,7 @@ apresenta os três produtos e a fronteira de cada um.
 
 == Três trilhas, por tempo disponível
 
-Os quatro módulos levam cerca de **2 h 40**; com os Extras, perto de **4 h**.
+Os três módulos levam cerca de **2 h 20**; com os Extras, perto de **3 h 40**.
 Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 [cols="1,1,3",options="header"]
@@ -81,12 +82,12 @@ Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
   fronteira, que é a pergunta que sempre vem
 
 | **completa**
-| ~2 h 40
-| os quatro módulos na ordem, sem os Extras. É a trilha que o
+| ~2 h 20
+| os três módulos na ordem, sem os Extras. É a trilha que o
   xref:99-encerramento.adoc[Encerramento] pressupõe
 
 | **aprofundada**
-| ~4 h
+| ~3 h 40
 | a completa mais os xref:extras.adoc[Extras] que interessarem ao seu dia
 |===
 

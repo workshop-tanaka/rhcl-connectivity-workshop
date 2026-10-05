@@ -9,8 +9,10 @@ no meio dessa mudança, descobriu que o produto mais valioso dela não é o site
 
 == Onde a Rota Viagens está hoje
 
-Os serviços já foram para o OpenShift. O banco de dados, não: ele continua
-fora do cluster, como acontece na maioria das migrações reais.
+Os serviços já foram para o OpenShift, e neste ambiente o banco de dados veio
+junto. Na maioria das migrações reais ele fica de fora -- e alcançá-lo sem
+abrir a rede é o assunto do xref:m4-00-intro.adoc[Módulo 4], que está a
+caminho.
 
 include::partial$diagrama.adoc[]
 
@@ -25,7 +27,7 @@ flowchart LR
   T --> I["insurances<br/><i>v1</i>"]
   T -->|"90%"| D1["discounts<br/><b>v1</b>"]
   T -.->|"10%"| D2["discounts<br/><b>v2</b>"]
-  F & H & C & I -.->|"Service Interconnect"| DB[("banco<br/>fora do cluster")]
+  F & H & C & I --> DB[("banco<br/>mysqldb")]
   classDef versaoNova fill:#fff4e0,stroke:#c08a2e,stroke-width:2px
   class D2 versaoNova
 ....

@@ -35,10 +35,8 @@
 * xref:m3-04-degrada.adoc[3.4 Quando a policy cai]
 * xref:m3-05-alerta.adoc[3.5 O alerta]
 
-.Módulo 4 — Service Interconnect
-* xref:m4-00-intro.adoc[Introdução]
-* xref:m4-01-interconnect.adoc[4.1 A dependência que não mora aqui]
-* xref:m4-02-tunel.adoc[4.2 O que o túnel protege]
+.Módulo 4 — Service Interconnect (em breve)
+* xref:m4-00-intro.adoc[Em breve: a proposta do módulo]
 
 .Módulo 5 — O caminho pavimentado (em breve)
 * xref:m5-00-intro.adoc[Em breve: a proposta do módulo]

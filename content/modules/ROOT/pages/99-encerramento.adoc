@@ -3,7 +3,8 @@
 
 == O que você percorreu
 
-Quatro módulos, três produtos, e **uma aplicação que não mudou uma linha**. O
+Três módulos, duas fronteiras governadas, e **uma aplicação que não mudou uma
+linha**. O
 binário do `travels` é o mesmo do primeiro ao último exercício.
 
 [cols="1,2",options="header"]
@@ -18,11 +19,7 @@ binário do `travels` é o mesmo do primeiro ao último exercício.
 | Uma chave de API abre a porta da rua, não o cofre: dentro, quem autoriza é a
   identidade do serviço.
 
-| **entre sites** -- o que não mora aqui
-| O componente que "não vai para o Kubernetes" não precisa ir. Precisa ser
-  alcançável.
-
-| e sobre as três
+| e sobre as duas
 | Observabilidade e diagnóstico: seguir uma requisição salto a salto, e dizer
   em qual de seis lugares uma recusa morreu.
 |===

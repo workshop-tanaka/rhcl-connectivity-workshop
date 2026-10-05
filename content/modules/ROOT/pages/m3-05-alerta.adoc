@@ -200,7 +200,8 @@ uma recusa morreu, prever o que o tráfego faz quando a plataforma falha -- e
 fazer a plataforma avisar quando a proteção cai sem ninguém sentir.
 
 Falta a terceira fronteira: o que a aplicação precisa e que **não roda aqui**.
-É o xref:m4-00-intro.adoc[Módulo 4], e ele fecha o workshop.
+É o assunto do xref:m4-00-intro.adoc[Módulo 4], que está a caminho -- a página
+dele descreve o que vai cobrir.
 
 Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
 workshop e diz como devolver o ambiente ao estado inicial.

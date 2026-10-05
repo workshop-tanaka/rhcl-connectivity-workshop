@@ -178,17 +178,15 @@ reportada por quem recebe a chamada.
   ORIGEM                          DESTINO                               CANAL
   ingress-gateway/prod-web-istio  travel-agency/travels-v1              ✓ mTLS
   travel-agency/travels-v1        travel-agency/hotels-v1               ✓ mTLS
-  travel-agency/travels-v1        travel-agency/discounts-v1            ✓ mTLS
+  travel-agency/hotels-v1         travel-agency/mysqldb                 ✓ mTLS
   ...
   (fora do mesh)                  kuadrant-system/authorino             ✗ texto claro  (Prometheus ...)
 
   Destinos SEM sidecar (so quem envia reporta):
   ingress-gateway/echo-web-istio  echo-api/echo-api (echo-api)          ✗ TEXTO CLARO
-  travel-agency/hotels-v1         travel-db/skupper-router (mysqldb)    ✗ TEXTO CLARO
 
 4. O banco: Skupper e MySQL
-  ✓ Link travel-db-remoto/para-o-cluster (Ready): TLS mutuo do proprio Skupper
-  ✗ MySQL em travel-db-remoto: 1417 conexoes desde que subiu, 0 com TLS
+  nenhum Link do Skupper -- o banco nao atravessa site
 ----
 
 Se a seção 3 vier vazia, o Service Mesh não viu tráfego na janela. Rode
@@ -205,31 +203,31 @@ flowchart LR
   GW -->|"mTLS"| LI["Limitador"]
   GW -->|"mTLS"| TR["travels"]
   TR -->|"mTLS"| HO["hotels"]
-  HO -->|"TEXTO CLARO"| S1["skupper-router<br/>site local"]
-  S1 -->|"mTLS do Skupper"| S2["skupper-router<br/>site remoto"]
-  S2 -->|"TEXTO CLARO"| DB[("MySQL")]
+  HO -->|"mTLS"| DB[("mysqldb")]
+  GW -->|"TEXTO CLARO"| EC["echo-api<br/>fora do mesh"]
 ....
 
 Leia o mapa de cima para baixo:
 
-* **Até o `hotels`, tudo é cifrado.** A borda tem TLS de servidor. Do Gateway
-  em diante, até o Authorino, o Limitador e os serviços da aplicação, é mTLS.
+* **Do cliente ao banco, o caminho da travel-agency é cifrado.** A borda tem
+  TLS de servidor. Do Gateway em diante, até o Authorino, o Limitador, os
+  serviços da aplicação e o `mysqldb`, é mTLS -- o banco roda no cluster, com
+  sidecar.
 * **O Prometheus em texto claro é de propósito.** É a exceção da porta de
   métricas, da seção anterior.
 * **O `echo-api` da parte xref:m1-09-identidade.adoc[1.9] está fora do mesh.**
-  O Gateway entrega a requisição a ele em texto claro.
-* **O `hotels` fala com o banco em texto claro.** O `skupper-router` não tem
-  sidecar, e o Envoy do `hotels` só faz mTLS quando há um sidecar do outro
-  lado. O Istio chama isso de *auto mTLS*: ele não recusa, só não cifra.
-* **O Skupper cifra entre os routers**, com o TLS mútuo dele, e não entre a
-  aplicação e o router, nem do router até o banco.
-* **E o MySQL nunca negociou TLS.** As queries e os resultados passam legíveis
-  nos dois saltos locais.
+  O Gateway entrega a requisição a ele em texto claro. O Envoy só faz mTLS
+  quando há um sidecar do outro lado; o Istio chama isso de *auto mTLS*: ele
+  não recusa, só não cifra. A linha só aparece se a `echo-api` recebeu tráfego
+  na janela.
 
-Nenhum destes saltos dá erro, e a parte xref:m4-01-interconnect.adoc[4.1]
-funciona com eles do jeito que estão. O mapa não é um defeito a corrigir
-agora: é **onde a frase "temos mTLS" deixa de ser verdade**. Quem responde por
-esse trecho é o Service Interconnect e o próprio banco, e não o Service Mesh.
+Esse salto não dá erro. O mapa não é um defeito a corrigir agora: é **onde a
+frase "temos mTLS" deixa de ser verdade**.
+
+E vale saber o que muda quando o banco sai do cluster, que é o caso comum em
+cliente real: o caminho até ele ganha um túnel, e com o túnel dois trechos
+locais que o Service Mesh não cifra. É o que o
+xref:m4-00-intro.adoc[Módulo 4], em breve, vai medir com este mesmo comando.
 
 == Configuração
 
@@ -251,7 +249,7 @@ enquanto isso acontece.
 "Temos mTLS" é uma frase sobre um **conjunto de saltos**, não sobre o cluster.
 A parte 2.1 cobriu os saltos entre os serviços. O salto entre o Gateway e quem
 decide ficou de fora até alguém olhar o `config_dump` e perguntar. E o mapa
-mostra que ainda há dois saltos de fora, até o banco.
+mostra que ainda há um salto de fora, até a `echo-api`.
 
 E a correção foi **um campo declarado**, com status que diz se pegou
 (`mtlsAuthorino=true`), e não um procedimento. É a tese deste workshop na
