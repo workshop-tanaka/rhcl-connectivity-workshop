@@ -68,6 +68,15 @@ Um `HTTPRoute` publica o `travels` em:
 | endereço | `\https://{api_host}`
 |===
 
+[NOTE]
+====
+**Abrir esse endereço no navegador responde `401`, e é o esperado.** A API
+nasce fechada: sem uma chave de API na requisição, a borda nega antes de a
+aplicação ser consultada -- e o navegador não manda chave nenhuma. Não é o
+ambiente fora do ar; é a primeira policy do workshop funcionando. A
+xref:m1-01-fechada.adoc[parte 1.1] começa exatamente por esse `401`.
+====
+
 Dois caminhos interessam ao workshop:
 
 === `GET /travels` -- a lista de destinos
@@ -104,8 +113,10 @@ um trace com vários saltos, e o Módulo 2 tem o que proteger.
 [NOTE]
 ====
 A API **não** expõe `/flights` nem `/hotels` na borda: esses serviços só são
-alcançáveis por dentro. Chamar `\https://{api_host}/flights/Amsterdam` responde
-`404` -- e isso é desenho, não falta.
+alcançáveis por dentro. Chamar `\https://{api_host}/flights/Amsterdam` com uma
+chave válida responde `404` -- e isso é desenho, não falta. Sem chave a
+resposta é `401`, como em qualquer caminho: a borda confere quem chama antes
+de olhar para onde.
 ====
 
 == Os três portais de parceiro
