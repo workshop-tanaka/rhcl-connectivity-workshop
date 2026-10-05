@@ -180,6 +180,33 @@ não há senha a digitar. Confira:
 oc whoami && oc get httproute -A
 ----
 
+A resposta do `oc whoami` é uma identidade de serviço
+(`system:serviceaccount:...`), e não o seu usuário. É de propósito: o terminal
+trabalha *por* você sem guardar a sua senha, e é essa identidade que tem as
+permissões que os comandos do workshop usam. Não a troque.
+
+ifeval::["{senha_console}" != ""]
+.Quer ver a sua identidade pessoal no terminal?
+[%collapsible]
+====
+Entre num arquivo de sessão *à parte*, que não mexe na sessão do terminal:
+
+[source,bash,role="execute"]
+----
+KUBECONFIG=/tmp/eu.kubeconfig oc login -u {usuario_console} -p '{senha_console}' \
+  --server=https://kubernetes.default.svc \
+  --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+KUBECONFIG=/tmp/eu.kubeconfig oc whoami
+----
+
+O segundo comando responde com o seu usuário. Repare no `KUBECONFIG=` na
+frente dos dois: sem ele, o `oc login` substituiria a sessão do terminal, e os
+comandos dos módulos passariam a falhar por falta de permissão -- o seu
+usuário enxerga só o seu ambiente, e os scripts precisam ler também a
+plataforma.
+====
+endif::[]
+
 Os comandos dos módulos são executados a partir do diretório do workshop, que
 já está no lugar certo quando o terminal abre.
 
