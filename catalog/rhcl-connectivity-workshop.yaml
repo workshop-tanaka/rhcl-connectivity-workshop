@@ -11,7 +11,7 @@ description: >-
   publico). Chart na raiz do repositorio.
 owner: Sandro Tanaka (@sandrotanaka)
 repoURL: https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git
-revision: workshop-v0.21   # a terceira ref da onda -- o chart tambem nao flutua
+revision: workshop-v0.22   # a terceira ref da onda -- o chart tambem nao flutua
 chartPath: "."
 requires:
   virt: false
