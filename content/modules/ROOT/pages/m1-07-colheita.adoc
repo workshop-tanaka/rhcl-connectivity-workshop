@@ -123,8 +123,8 @@ travel-agency.
 
 [source,bash,role="execute",subs="attributes+"]
 ----
-cd /tmp && git clone -q "{repo_apis}/<o-nome-que-voce-deu>.git" api-nova \
-  && cd api-nova && bash verify.sh
+( cd /tmp && git clone -q "{repo_apis}/<o-nome-que-voce-deu>.git" api-nova \
+  && cd api-nova && bash verify.sh )
 ----
 
 == Agora compare
