@@ -40,6 +40,9 @@
 * xref:m4-01-interconnect.adoc[4.1 A dependência que não mora aqui]
 * xref:m4-02-tunel.adoc[4.2 O que o túnel protege]
 
+.Módulo 5 — O caminho pavimentado (em breve)
+* xref:m5-00-intro.adoc[Em breve: a proposta do módulo]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]

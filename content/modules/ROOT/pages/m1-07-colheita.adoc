@@ -21,8 +21,7 @@ Agora a mesma API, pelo caminho que a plataforma oferece -- o *golden path*.
 **Esta parte é leitura, e não há nada a executar.** O caminho pavimentado
 passa pelo Red Hat Developer Hub e por um GitLab, que este ambiente de
 workshop não instala. O que você vai ver é o que acontece nele, com os
-arquivos reais do template que o percorre -- os mesmos que estão no
-repositório deste workshop.
+arquivos reais do template que o percorre.
 ====
 
 == O ponto de partida: um formulário
@@ -192,8 +191,8 @@ E essa segunda diferença é exatamente o que a próxima parte audita.
 
 Percorrer o caminho pavimentado com as próprias mãos -- criar o produto,
 assinar como cliente e publicar uma segunda versão, tudo por pull request --
-pede o Developer Hub e um GitLab no ambiente, e é assunto para um módulo
-próprio, mais amplo que esta parte.
+pede o Developer Hub e um GitLab no ambiente, e é assunto do
+xref:m5-00-intro.adoc[Módulo 5], que está a caminho. A página dele descreve o
+que vai cobrir.
 
-Os templates estão no repositório do workshop, em `rhdh/templates/`, para
-quem quiser lê-los inteiros.
+Os templates estão em https://github.com/workshop-tanaka/rhcl-connectivity-demo/tree/main/rhdh/templates[`rhdh/templates/`^], para quem quiser lê-los inteiros.

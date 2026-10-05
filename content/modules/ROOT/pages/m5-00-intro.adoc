@@ -1,0 +1,86 @@
+= Módulo 5 — O caminho pavimentado (em breve)
+:navtitle: Módulo 5 — Em breve
+
+**Em breve · proposta de conteúdo, sujeita a mudança**
+
+**Produtos protagonistas:** Red Hat Developer Hub e OpenShift GitOps -- com o
+Connectivity Link e o Service Mesh por baixo.
+
+[NOTE]
+====
+Este módulo ainda não existe neste ambiente: ele pede o Developer Hub e um
+GitLab instalados, que o workshop de hoje não sobe. Esta página descreve o que
+ele vai cobrir. A xref:m1-07-colheita.adoc[parte 1.7] é a leitura que o
+antecipa.
+====
+
+== A ideia
+
+Os Módulos 1 a 4 mostram **o que** a plataforma governa: a borda, o tráfego
+entre serviços, o que se observa e o que atravessa clusters. Em todos eles a
+configuração é aplicada por comando.
+
+O Módulo 5 mostra **como uma equipe chega lá sem comando nenhum**. Um
+formulário no portal vira um repositório; o repositório vira o estado do
+cluster; e cada mudança depois disso é um pull request que alguém revisa.
+
+A parte 1.7 mostra esse caminho no papel. Aqui você o percorre.
+
+== O que você vai conseguir fazer
+
+* publicar uma API completa -- namespace no Service Mesh, policies de borda,
+  plano comercial e fronteira leste-oeste -- preenchendo três campos;
+* pedir acesso a uma API como consumidor, por pull request, e ver a aprovação
+  acontecer no portal;
+* publicar a segunda versão de um serviço com canário declarado, sem tocar no
+  cluster;
+* acompanhar a imagem de um serviço da pipeline até a assinatura, e saber o
+  que barra uma imagem sem procedência;
+* responder "quem mudou isto, quando e com autorização de quem" olhando o
+  histórico do repositório.
+
+== As partes propostas
+
+[cols="1,3,2",options="header"]
+|===
+| parte | o que acontece | o que fica provado
+
+| 5.1 Adotar uma aplicação
+| uma aplicação que já roda no cluster entra no portal: ganha repositório,
+  entrada no catálogo e passa a ser aplicada pelo Argo
+| não há passo de deploy -- o git é a origem, o cluster é a consequência
+
+| 5.2 A API como produto
+| a mesma API da parte 1.6, criada pelo template: três decisões no
+  formulário, vinte e três arquivos no repositório
+| um serviço não consegue nascer sem mTLS, plano e fronteira leste-oeste
+
+| 5.3 Assinar uma API
+| o outro lado: um consumidor pede uma chave abrindo um pull request no
+  repositório da API, e a aprovação acontece no portal
+| acesso a uma API passa a ter pedido, aprovador e histórico
+
+| 5.4 Publicar uma v2
+| a segunda versão sobe ao lado da primeira, com uma fração do tráfego
+  declarada num pull request
+| o canário do Módulo 2 deixa de ser um comando e vira uma mudança revisada
+
+| 5.5 A imagem tem procedência
+| o serviço nasce com pipeline própria: portão de qualidade, varredura e
+  assinatura registrada
+| a cadeia de suprimento faz parte do caminho, não é um passo à parte
+
+| 5.6 Operar pelo portal
+| o estado das policies, dos planos e do consumo, visto de dentro do
+  Developer Hub
+| o desenvolvedor acompanha a própria API sem precisar de acesso ao cluster
+|===
+
+== O que este módulo pede do ambiente
+
+Developer Hub, um GitLab e o OpenShift GitOps observando os repositórios que
+os templates criam. É mais do que os outros módulos pedem, e é por isso que
+ele vem separado.
+
+Os seis templates já existem, no repositório da demonstração que este workshop
+usa: https://github.com/workshop-tanaka/rhcl-connectivity-demo/tree/main/rhdh/templates[`rhdh/templates/`^]. Quem quiser adiantar a leitura pode começar por eles.
