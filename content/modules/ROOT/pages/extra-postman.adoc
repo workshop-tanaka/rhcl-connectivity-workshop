@@ -29,14 +29,17 @@ identidade.
 O motivo da separação é o mesmo do workshop inteiro: o cluster é efêmero, e
 valor copiado em arquivo envelhece.
 
-== 1. Baixe a coleção
+== 1. Copie a coleção
 
-Ela está no GitLab deste ambiente:
+Ela está no terminal do workshop. Mostre o conteúdo:
 
-{repo_no_ambiente}/-/blob/main/postman/rhcl-demo.postman_collection.json[rhcl-demo.postman_collection.json^]
+[source,bash,role="execute"]
+----
+cat postman/rhcl-demo.postman_collection.json
+----
 
-Use o botão de download da página (o ícone à direita, acima do conteúdo) para
-salvar o arquivo na sua máquina.
+Selecione tudo, copie, e no Postman use **Import** e cole o texto -- ele
+aceita o JSON colado, sem precisar de arquivo.
 
 == 2. Gere o _environment_
 

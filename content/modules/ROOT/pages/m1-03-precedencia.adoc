@@ -46,12 +46,16 @@ declaração virou configuração de data plane sem ninguém escrever.
 A precedência não está num arquivo: está no **status**. Mas os dois lados do
 par estão, e vale vê-los lado a lado no editor:
 
-Compare os dois lados do par:
-{config_url}/base/policies-security/prod-web-deny-all.yaml[prod-web-deny-all.yaml^]
-(o teto, que mira o **Gateway**) e
-{config_url}/base/policies-security/travel-agency-authpolicy.yaml[travel-agency-authpolicy.yaml^]
-(a exceção, que mira a **rota**). A diferença entre os dois é uma linha: o
-`targetRef`.
+Compare os dois lados do par: a `prod-web-deny-all` (o teto, que mira o
+**Gateway**) e a `travel-agency-authpolicy` (a exceção, que mira a **rota**).
+A diferença entre os dois é uma linha, o `targetRef`:
+
+[source,bash,role="execute"]
+----
+oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{.spec.targetRef}{"\n"}'
+oc get authpolicy travel-agency-authpolicy -n travel-agency -o jsonpath='{.spec.targetRef}{"\n"}'
+----
+
 
 {ide_url}[Abrir o repositório de policies no Dev Spaces^] se preferir os dois
 lado a lado num editor.

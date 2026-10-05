@@ -62,11 +62,21 @@ nunca foi acordada.
 
 == Configuração
 
-{config_url}/base/policies-security/travel-agency-authpolicy.yaml[travel-agency-authpolicy.yaml^]
--- a policy que recusa. São vinte linhas, e não há código de aplicação nenhum
-ali. O par é
-{config_url}/base/policies-security/prod-web-deny-all.yaml[prod-web-deny-all.yaml^]:
-o teto do gateway que ela sobrepõe.
+A `AuthPolicy` `travel-agency-authpolicy` é a policy que recusa. São vinte
+linhas, e não há código de aplicação nenhum ali:
+
+[source,bash,role="execute"]
+----
+oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml
+----
+
+O par dela é a `prod-web-deny-all`, o teto do gateway que ela sobrepõe:
+
+[source,bash,role="execute"]
+----
+oc get authpolicy prod-web-deny-all -n ingress-gateway -o yaml
+----
+
 
 Os dois arquivos vivem no GitLab **deste cluster**, com histórico e autoria --
 não é um link para documentação, é a configuração que está no ar.

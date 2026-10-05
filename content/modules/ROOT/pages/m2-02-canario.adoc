@@ -39,8 +39,14 @@ acelerando enquanto o verde esvazia.
 
 == Configuração
 
-{config_url}/base/mesh/virtualservice-discounts.yaml[virtualservice-discounts.yaml^]
--- o peso é uma linha neste arquivo, e mudá-la é o que a parte faz cinco vezes.
+O `VirtualService` `discounts` -- o peso é uma linha nele, e mudá-la é o que a
+parte faz cinco vezes:
+
+[source,bash,role="execute"]
+----
+oc get virtualservice discounts -n travel-agency -o yaml
+----
+
 
 == O que isso prova
 

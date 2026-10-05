@@ -21,32 +21,33 @@ NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
 
 === Onde a configuração vive
 
-Tudo o que as partes citam está publicado no GitLab **deste cluster**, e cada
-página linka o arquivo exato. Vale saber o mapa:
+A configuração que as partes citam está **no cluster**, e cada página traz o
+comando que a mostra -- por exemplo:
+
+[source,bash,role="execute"]
+----
+oc get planpolicy travels-plans -n travel-agency -o yaml
+----
+
+O que você lê assim é o objeto em vigor, com o status que a plataforma
+escreveu nele. Os mesmos objetos existem como arquivo no terminal, para quem
+quiser ver como foram declarados:
+
+[source,bash,role="execute"]
+----
+ls base/
+----
 
 [cols="2,3",options="header"]
 |===
-| Projeto | O que tem
+| Diretório | O que tem
 
-| {repo_policies}[rhcl/policies/rhcl-policies^]
-| a camada de policies -- AuthPolicy, PlanPolicy, TelemetryPolicy, e o
-  `base/mesh/` com VirtualService, DestinationRule, PeerAuthentication e
-  AuthorizationPolicy. É o que as partes 1 a 4, 7 e 7b abrem.
+| `base/policies-*`
+| a camada de policies -- AuthPolicy, PlanPolicy e TelemetryPolicy
 
-| {repo_no_ambiente}[rhcl/base/rhcl-connectivity-demo^]
-| a documentação, os templates do portal e os workloads da aplicação
-
-| `rhcl/travel/*`
-| um projeto por serviço (travels, flights, hotels, cars, insurances,
-  discounts) -- é o que o Argo CD aplica
+| `base/mesh/`
+| VirtualService, DestinationRule, PeerAuthentication e AuthorizationPolicy
 |===
-
-include::partial$entrar-gitlab.adoc[]
-
-{ide_url}[Abrir as policies no Dev Spaces^] sobe um IDE no próprio cluster com
-esse repositório. Nada aqui depende de repositório fora do ambiente.
-
-include::partial$entrar-ocp.adoc[]
 
 [NOTE]
 ====

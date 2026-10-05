@@ -95,10 +95,6 @@ delas é adivinhada, todas saem deste cluster.
 | o caminho de uma requisição, salto a salto
 | {traces_url}[abrir^]
 
-| GitLab
-| a configuração versionada deste ambiente
-| {repo_policies}[abrir^]
-
 | Dev Spaces
 | editar a configuração sem instalar nada
 | {ide_url}[abrir^]

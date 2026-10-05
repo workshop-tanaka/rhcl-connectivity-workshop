@@ -82,5 +82,4 @@ Developer Hub, um GitLab e o OpenShift GitOps observando os repositórios que
 os templates criam. É mais do que os outros módulos pedem, e é por isso que
 ele vem separado.
 
-Os seis templates já existem, no repositório da demonstração que este workshop
-usa: https://github.com/workshop-tanaka/rhcl-connectivity-demo/tree/main/rhdh/templates[`rhdh/templates/`^]. Quem quiser adiantar a leitura pode começar por eles.
+Os seis templates já existem, em `rhdh/templates/`, no material deste workshop.

@@ -215,10 +215,17 @@ remove a chave que sobrou.
 A quarta fonte não é de graça: a dimensão que permite perguntar *quem
 consumiu* vem da TelemetryPolicy da parte 1.5, não do audit log.
 
-{config_url}/base/policies-telemetry/prod-web-telemetry.yaml[prod-web-telemetry.yaml^]
--- é ela que carimba o plano na métrica. O par é
-{config_url}/base/policies-telemetry/istio-partner-dimension.yaml[istio-partner-dimension.yaml^],
-que leva a mesma dimensão para o Service Mesh. Sem as duas, o consumo existe
+É a `TelemetryPolicy` `prod-web-telemetry` que carimba o plano na métrica. O
+par é a `Telemetry` `partner-dimension`, que leva a mesma dimensão para o
+Service Mesh:
+
+[source,bash,role="execute"]
+----
+oc get telemetrypolicy prod-web-telemetry -n ingress-gateway -o yaml
+oc get telemetries.telemetry.istio.io partner-dimension -n ingress-gateway -o yaml
+----
+
+ Sem as duas, o consumo existe
 agregado e a pergunta "quem" fica sem resposta.
 
 == O que isso prova

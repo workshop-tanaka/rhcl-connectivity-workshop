@@ -195,4 +195,4 @@ pede o Developer Hub e um GitLab no ambiente, e é assunto do
 xref:m5-00-intro.adoc[Módulo 5], que está a caminho. A página dele descreve o
 que vai cobrir.
 
-Os templates estão em https://github.com/workshop-tanaka/rhcl-connectivity-demo/tree/main/rhdh/templates[`rhdh/templates/`^], para quem quiser lê-los inteiros.
+Os templates fazem parte do material deste workshop, em `rhdh/templates/`.

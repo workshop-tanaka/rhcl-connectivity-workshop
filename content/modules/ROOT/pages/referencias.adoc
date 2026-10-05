@@ -85,11 +85,12 @@ vale copiar antes de devolver a reserva.
 |===
 | onde | o que é
 
-| {repo_policies}[a configuração, no GitLab^]
-| toda policy que você viu, versionada, com histórico e autoria
+| `base/`, no terminal
+| toda policy que você viu, como foi declarada -- `oc get <tipo> <nome> -o yaml`
+  mostra a mesma coisa em vigor
 
-| {repo_no_ambiente}[o repositório da demo, no GitLab^]
-| os scripts, os manifests e a documentação interna
+| `scripts/`, no terminal
+| os scripts que as partes rodam
 
 | {rhdh_url}[o catálogo no Developer Hub^]
 | as APIs modeladas como produto, com os templates
@@ -125,8 +126,8 @@ ls docs/
 
 === A coleção do Postman
 
-{repo_no_ambiente}/-/blob/main/postman/rhcl-demo.postman_collection.json[rhcl-demo.postman_collection.json^]
--- as chamadas dos módulos, prontas. O passo a passo está em
+`postman/rhcl-demo.postman_collection.json`, no terminal -- as chamadas dos
+módulos, prontas. O passo a passo está em
 xref:extra-postman.adoc[Testar a API no Postman].
 
 == Para levar no bolso

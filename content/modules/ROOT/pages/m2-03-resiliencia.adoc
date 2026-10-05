@@ -60,9 +60,9 @@ https://istio.io/latest/docs/tasks/traffic-management/circuit-breaking/[Circuit 
 
 `platform-reference/mesh/destinationrule-discounts-circuitbreaker.yaml` --
 fora do kustomization de propósito, para não entrar sem alguém pedir. Está no
-terminal, em `/home/lab-user/rhcl-connectivity-demo`; a DestinationRule que ele
-sobrepõe é a
-{config_url}/base/mesh/destinationrule-discounts.yaml[destinationrule-discounts.yaml^].
+terminal, em `/home/lab-user/rhcl-connectivity-demo`; a `DestinationRule` que ele
+sobrepõe é a `discounts`, e `oc get destinationrule discounts -n travel-agency -o yaml`
+a mostra.
 
 == A parte honesta
 

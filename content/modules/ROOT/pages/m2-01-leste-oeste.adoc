@@ -51,13 +51,26 @@ include::partial$entrar-grafana.adoc[]
 
 == Configuração
 
-{repo_policies}/-/tree/main/base/mesh[base/mesh/^] -- quatro arquivos, um por
-movimento:
+Quatro objetos, um por movimento:
 
-* {config_url}/base/mesh/peerauthentication-strict.yaml[peerauthentication-strict.yaml^] -- exige mTLS
-* {config_url}/base/mesh/authorizationpolicy-discounts.yaml[authorizationpolicy-discounts.yaml^] -- compara a identidade provada
-* {config_url}/base/mesh/virtualservice-discounts.yaml[virtualservice-discounts.yaml^] -- a divisão 90/10
-* {config_url}/base/mesh/destinationrule-discounts.yaml[destinationrule-discounts.yaml^] -- os subsets v1 e v2
+* a `PeerAuthentication` `travel-agency-mtls` -- exige mTLS
+* a `AuthorizationPolicy` `discounts-only-sellers` -- compara a identidade provada
+* o `VirtualService` `discounts` -- a divisão 90/10
+* a `DestinationRule` `discounts` -- os subsets v1 e v2
+
+Os quatro, como estão no cluster:
+
+[source,bash,role="execute"]
+----
+oc get peerauthentication,authorizationpolicy,virtualservice,destinationrule -n travel-agency
+----
+
+E um deles por inteiro -- troque o tipo e o nome para ler os outros:
+
+[source,bash,role="execute"]
+----
+oc get authorizationpolicy discounts-only-sellers -n travel-agency -o yaml
+----
 
 [source,bash,role="execute"]
 ----
