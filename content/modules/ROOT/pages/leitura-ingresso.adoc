@@ -232,10 +232,11 @@ leste-oeste é do Service Mesh.**
 
 === Preciso do Service Mesh instalado para ter o Gateway do Connectivity Link?
 
-**Sim.** O Connectivity Link **não implementa Gateway API**: ele não traz
-`GatewayClass` nenhuma, e a única deste cluster tem como controlador
-`istio.io/gateway-controller`, que é do Service Mesh. Quem materializa o pod
-do gateway é o Service Mesh; o Connectivity Link **anexa políticas** a ele.
+**Neste cluster, sim. No produto, não.** O Connectivity Link **não implementa
+Gateway API**: ele não traz `GatewayClass` nenhuma, e precisa de um provedor
+que a implemente. Aqui o provedor é o Service Mesh -- a classe em uso tem como
+controlador `istio.io/gateway-controller`. Quem materializa o pod do gateway é
+o Service Mesh; o Connectivity Link **anexa políticas** a ele.
 
 Dá para ver isso no nome dos próprios controladores do operador, no log:
 
@@ -254,6 +255,46 @@ Connectivity Link -- o `bookinfo-gateway` acima é a prova. E a combinação
 suportada de versões dos dois produtos sai da
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
 do Connectivity Link^], não daqui.
+
+=== E o Gateway nativo do OpenShift, o `openshift-default`?
+
+É o outro provedor possível, e dispensa instalar o Service Mesh. A partir do
+OpenShift 4.19 a plataforma traz a própria implementação de Gateway API, e o
+Connectivity Link 1.4 é suportado sobre ela.
+
+[cols="1,2",options="header"]
+|===
+| | provedor nativo (`openshift-default`)
+
+| `GatewayClass`
+| `openshift-default`, com controlador `openshift.io/gateway-controller/v1`
+
+| onde mora o `Gateway`
+| em `openshift-ingress`, junto com os dos outros times -- não num namespace
+  de cada dono, como aqui
+
+| como é publicado
+| o `Service` nasce do tipo `LoadBalancer`. Num cluster sem balanceador de
+  nuvem, isso pede o MetalLB. `ClusterIP` com uma `Route` na frente, que é o
+  desenho deste workshop, não é o caminho suportado ali
+
+| convivência
+| o Service Mesh 2.x no cluster **bloqueia** o Gateway API nativo
+|===
+
+O que **não muda** de um provedor para o outro são as policies: `AuthPolicy`,
+`RateLimitPolicy`, `TLSPolicy` e as demais são do Connectivity Link e se
+escrevem do mesmo jeito. Tudo o que o Módulo 1 mostra vale nos dois.
+
+O que muda é a topologia, e com ela quem pode o quê. A policy só aponta para
+um recurso do **próprio namespace**: com todos os Gateways em
+`openshift-ingress`, as policies de Gateway de todos os times moram juntas, e
+a separação entre quem as edita passa a ser por RBAC, não por namespace.
+
+NOTE: Este cluster não tem a classe `openshift-default` -- confira com
+`oc get gatewayclass`. A escolha pelo Service Mesh 3 como provedor foi por
+causa do Módulo 2, que depende dele. Quem precisa só da borda pode ficar com
+o provedor nativo.
 
 == O que isso prova
 
