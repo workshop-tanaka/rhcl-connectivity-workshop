@@ -278,8 +278,16 @@ Connectivity Link 1.4 é suportado sobre ela.
   nuvem, isso pede o MetalLB. `ClusterIP` com uma `Route` na frente, que é o
   desenho deste workshop, não é o caminho suportado ali
 
-| convivência
-| o Service Mesh 2.x no cluster **bloqueia** o Gateway API nativo
+| convivência com o Service Mesh 2.x
+| não há. Com uma assinatura do Service Mesh 2.x ativa, a instalação do
+  provedor **falha** quando a `GatewayClass` é criada, e `Gateway` e
+  `HTTPRoute` ficam sem efeito. No 4.19 a falha é silenciosa; do 4.20 em
+  diante o operador `ingress` aparece `Degraded`
+
+| convivência com o Service Mesh 3
+| os dois sobem lado a lado, cada um com o seu `istiod` e a **sua autoridade
+  certificadora**. Um Gateway nativo não fala mTLS com uma carga do
+  Service Mesh enquanto os dois não confiarem na mesma raiz
 |===
 
 O que **não muda** de um provedor para o outro são as policies: `AuthPolicy`,
