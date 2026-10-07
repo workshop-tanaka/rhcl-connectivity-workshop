@@ -1,7 +1,7 @@
 = Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Dez partes e uma leitura · cerca de 87 minutos · as partes 1.6 a 1.8 e a 1.10 criam objetos**
+**Oito partes em três blocos · cerca de 55 minutos · as partes 1.6 e 1.8 criam objetos**
 
 **Produto protagonista:** Red Hat Connectivity Link
 
@@ -15,9 +15,6 @@ Ao final deste módulo você consegue explicar, com o ambiente na mão:
 * quem, dentro da organização, tem permissão para escrever cada tipo de regra;
 * como tudo isso vira número que a área de negócio entende;
 * publicar uma API do zero à mão, e sentir o que falta nela;
-* ler a **mesma** API nascendo pelo caminho pavimentado do portal, e comparar;
-* auditar o próprio rastro por quatro fontes diferentes, e reconstituir o uso
-  de uma chave vazada;
 * distinguir a chave de API, que identifica um sistema, do token, que
   identifica uma pessoa;
 * dizer quem renova o certificado da borda -- e provar que alguém renova.
@@ -34,28 +31,56 @@ plataforma em vez de um acessório da aplicação.
 
 == Como percorrer
 
-Só a xref:00-preparacao.adoc[Preparação] é pré-requisito. Dentro do módulo há
-três blocos, e dá para parar entre eles:
+Só a xref:00-preparacao.adoc[Preparação] é pré-requisito. O módulo tem três
+blocos, e cada um fecha sozinho: dá para parar ao fim de qualquer um.
 
-**1.1 a 1.5 — a API que já existe.** Você observa e mede uma API que outra
-pessoa configurou. Nada muda de estado. A 1.5 lê os dados que a 1.2 gera, então
-vale não pular a 1.2.
+[cols="2,3,1,1",options="header"]
+|===
+| bloco | partes | tempo | muda estado
 
-Antes da 1.6 há uma xref:leitura-ingresso.adoc[leitura de oito minutos] sobre
-`Route`, `Ingress` e Gateway API -- as três gerações de ingresso que convivem
-neste cluster, quantos `Gateway` faz sentido ter, e onde o Connectivity Link
-e o Service Mesh se sobrepõem. Ela não é obrigatória, mas é onde a diferença entre elas fica
-explícita.
+| **A. A API que já existe**
+| xref:m1-01-fechada.adoc[1.1] a xref:m1-05-negocio.adoc[1.5]. Você observa e
+  mede uma API que outra pessoa configurou. A 1.5 lê os dados que a 1.2 gera,
+  então vale não pular a 1.2
+| 27 min
+| não
 
-**1.6 a 1.8 — a API que é sua.** Você publica uma do zero à mão, lê como ela
-nasceria pelo caminho pavimentado, e audita o que fez. A 1.6 e a 1.8 criam
-objetos, e cada página diz como desfazer; a 1.7 é leitura.
+| **B. A API que é sua**
+| xref:m1-06-exposta.adoc[1.6]. Você publica uma do zero, à mão, e sente o que
+  a configuração custa
+| 10 min
+| sim; a página diz como desfazer
 
-**1.9 e 1.10 — o que fica em volta da chave.** A outra credencial, a de uma
-pessoa, e o certificado que protege todas as chamadas. A 1.10 cria e remove um
-namespace próprio.
+| **C. Em volta da chave**
+| xref:m1-07-identidade.adoc[1.7] e xref:m1-08-certificado.adoc[1.8]. A outra
+  credencial, a de uma pessoa, e o certificado que protege todas as chamadas
+| 18 min
+| a 1.8 cria e remove um namespace próprio
+|===
 
-Se o tempo for curto, parar na 1.5 deixa um bloco completo e coerente.
+Se o tempo for curto, o bloco A sozinho é completo e coerente.
+
+=== Para entender a plataforma
+
+Três leituras ficam **fora do percurso**, no fim do módulo. Nenhuma é
+pré-requisito; cada parte aponta para a sua quando a pergunta aparece.
+
+* xref:leitura-ingresso.adoc[Route, Ingress e Gateway API] -- as três gerações
+  de ingresso que convivem neste cluster. A 1.6 é onde ela faz falta.
+* xref:leitura-multitenancy.adoc[Multi-tenancy] -- como várias equipes dividem
+  a mesma borda. Vem da 1.4.
+* xref:leitura-instalacao.adoc[Instalação e configuração] -- como o que você
+  está usando foi montado.
+
+=== O que saiu daqui
+
+Duas partes que já estiveram neste módulo mudaram de lugar, porque o assunto
+delas é de outro:
+
+* a leitura sobre o **caminho pavimentado** é a
+  xref:m5-01-colheita.adoc[5.1], no Módulo 5;
+* **Quatro perguntas, quatro fontes**, sobre auditoria, é a
+  xref:m3-06-auditoria.adoc[3.6], no Módulo 3.
 
 == Onde isso te deixa
 

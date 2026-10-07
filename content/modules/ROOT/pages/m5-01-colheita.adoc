@@ -1,5 +1,5 @@
-= 1.7 Leitura: a mesma API, pelo caminho pavimentado
-:navtitle: 1.7 Leitura: o caminho pavimentado
+= 5.1 Leitura: a mesma API, pelo caminho pavimentado
+:navtitle: 5.1 Leitura: o caminho pavimentado
 
 **Leitura · ~8 min · não muda estado**
 

@@ -1,7 +1,7 @@
 = 2.4 O salto que o Service Mesh não cobria
 :navtitle: 2.4 O salto que o mesh não cobria
 
-**A quem pertence:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **10 min** · só lê
+**Para quem:** Segurança e Engenheiro de Plataforma -- onde o mTLS começa e onde ele termina. · **10 min** · só lê
 
 [NOTE.antes]
 ====
@@ -73,7 +73,7 @@ chave, `200` com chave, `429` no plano free. A chave era validada, só que
 chegava ao validador **legível** para qualquer um que enxergasse aquele
 tráfego dentro do cluster.
 
-É o mesmo tipo de achado da parte xref:m1-10-certificado.adoc[1.10]: tudo
+É o mesmo tipo de achado da parte xref:m1-08-certificado.adoc[1.8]: tudo
 funciona, e é justamente por isso que ninguém olha.
 
 == A correção é um campo
@@ -215,7 +215,7 @@ Leia o mapa de cima para baixo:
   sidecar.
 * **O Prometheus em texto claro é de propósito.** É a exceção da porta de
   métricas, da seção anterior.
-* **O `echo-api` da parte xref:m1-09-identidade.adoc[1.9] está fora do mesh.**
+* **O `echo-api` da parte xref:m1-07-identidade.adoc[1.7] está fora do mesh.**
   O Gateway entrega a requisição a ele em texto claro. O Envoy só faz mTLS
   quando há um sidecar do outro lado; o Istio chama isso de *auto mTLS*: ele
   não recusa, só não cifra. A linha só aparece se a `echo-api` recebeu tráfego

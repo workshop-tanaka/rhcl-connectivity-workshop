@@ -1,7 +1,7 @@
 = 1.1 A API está fechada por padrão
 :navtitle: 1.1 Fechada por padrão
 
-**Persona:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **5 min**
+**Para quem:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **5 min**
 
 [NOTE.antes]
 ====
@@ -157,3 +157,11 @@ mesmo de antes de existir policy. Quem recusou foi o gateway, e a regra vale
 para qualquer rota anexada a ele. É essa a diferença entre uma plataforma de
 API e uma biblioteca de autenticação dentro de cada serviço.
 
+== Para ir além
+
+Opcionais, e os dois partem desta mesma porta fechada:
+
+* xref:extra-listas.adoc[Listas de permissão e bloqueio] -- "libera só a faixa
+  de IP do parceiro": o que chega até o Gateway, e qual lista não se forja.
+* xref:extra-saida.adoc[A saída também é borda] -- a mesma autenticação e o
+  mesmo limite, virados para o que a aplicação chama lá fora.

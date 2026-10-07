@@ -26,7 +26,7 @@ pressupõe.
 | xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 | integração B2B em que o parceiro se identifica por **certificado**, e não por
   chave. Inclui o que **não** funciona nesta versão, e o contorno medido
-| 1.9
+| 1.7
 
 | xref:extra-tokens-ia.adoc[Limite por token (IA)]
 | expor modelos de IA, onde o que custa é o **token** e não a requisição. O

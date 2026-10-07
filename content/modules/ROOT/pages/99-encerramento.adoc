@@ -37,7 +37,7 @@ DNS público, certificado e DNS -- todas mirando o mesmo Gateway, todas com
 status próprio, nenhuma escondida num campo de anotação.
 
 E uma ressalva que o workshop fez questão de medir em vez de omitir:
-**`Enforced=True` não é promessa de efeito.** A parte 1.9 mostra uma policy
+**`Enforced=True` não é promessa de efeito.** A parte 1.7 mostra uma policy
 aceita, programada, com status verde -- e sem efeito nenhum sobre o tráfego.
 Quem confia no status sem medir o comportamento acredita num limite que não
 existe.

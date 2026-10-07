@@ -1,7 +1,7 @@
-= 1.10 O certificado tem dono?
-:navtitle: 1.10 O certificado tem dono?
+= 1.8 O certificado tem dono?
+:navtitle: 1.8 O certificado tem dono?
 
-**A quem pertence:** Engenheiro de Plataforma, e quem fica de plantão no dia do vencimento. · **10 min** · **cria e remove um namespace próprio**
+**Para quem:** Engenheiro de Plataforma, e quem fica de plantão no dia do vencimento. · **10 min** · **cria e remove um namespace próprio**
 
 [NOTE.antes]
 ====
@@ -149,7 +149,7 @@ e o Gateway:
 
 Você não escreveu o `Certificate`, nem listou os nomes do certificado. A
 policy leu o listener do Gateway e pediu o que ele precisa. É o mesmo padrão
-da parte xref:m1-09-identidade.adoc[1.9]: a intenção declarada, o objeto
+da parte xref:m1-07-identidade.adoc[1.7]: a intenção declarada, o objeto
 derivado, com dono.
 
 === O que o cliente vê
@@ -231,12 +231,17 @@ tem status, dono e renovação.
 É a mesma tese do Módulo 1 inteiro, agora na camada mais esquecida da borda:
 o que não está declarado como policy funciona por acaso, até o dia em que para.
 
+== Para ir além
+
+* xref:extra-dns.adoc[O nome também é policy (DNS)] -- o par desta parte: quem
+  cria o nome da API, declarado junto com o Gateway.
+
 == Você concluiu o Módulo 1
 
-Você publicou uma API do zero, transformou-a de aberta em governada uma regra
-por vez, auditou o próprio rastro por quatro fontes diferentes, viu os dois
-jeitos de identificar quem está do outro lado -- e perguntou quem é o dono do
-certificado que protege tudo isso.
+Você viu uma API fechada por padrão atender três planos no mesmo endereço,
+publicou outra do zero e a transformou de aberta em governada uma regra por
+vez, viu os dois jeitos de identificar quem está do outro lado -- e perguntou
+quem é o dono do certificado que protege tudo isso.
 
 Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
 governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego

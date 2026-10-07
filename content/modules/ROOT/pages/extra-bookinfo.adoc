@@ -3,7 +3,7 @@
 
 **Opcional · ~6 min · muda estado e desfaz no fim**
 
-**A quem pertence:** Arquitetura e Engenheiro de Plataforma -- quem precisa
+**Para quem:** Arquitetura e Engenheiro de Plataforma -- quem precisa
 explicar o que o Service Mesh decide, o que o Connectivity Link decide, e por
 que não é a mesma coisa.
 

@@ -1,7 +1,7 @@
 = 1.4 Quem pode o quê
 :navtitle: 1.4 Quem pode o quê
 
-**A quem pertence:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **7 min**
+**Para quem:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **7 min**
 
 [NOTE.antes]
 ====
@@ -172,3 +172,7 @@ entre times para isso funcionar. O cluster é quem recusa. É essa a diferença
 entre uma plataforma de API e um gateway com um documento de boas práticas ao
 lado.
 
+== Para ir além
+
+* A leitura xref:leitura-multitenancy.adoc[Multi-tenancy] -- como várias
+  equipes, e não só dois papéis, dividem a mesma borda.

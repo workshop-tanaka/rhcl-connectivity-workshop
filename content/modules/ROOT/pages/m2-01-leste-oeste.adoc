@@ -1,7 +1,7 @@
 = 2.1 A borda não é a única fronteira
 :navtitle: 2.1 A borda não é a única fronteira
 
-**Persona:** Segurança e Engenheiro de Plataforma -- identidade de serviço, não de cliente. · **8 min** · mesh no estado base
+**Para quem:** Segurança e Engenheiro de Plataforma -- identidade de serviço, não de cliente. · **8 min** · mesh no estado base
 
 [WARNING.antes]
 ====

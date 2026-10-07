@@ -1,7 +1,7 @@
 = 3.5 A plataforma avisando sobre si mesma
 :navtitle: 3.5 O alerta
 
-**A quem pertence:** Operação/SRE, e quem está de plantão. · **10 min** · **muda estado**
+**Para quem:** Operação/SRE, e quem está de plantão. · **10 min** · **muda estado**
 
 [WARNING.antes]
 ====
@@ -192,6 +192,12 @@ governança ainda está de pé. A primeira é obrigatória e todo mundo faz. A
 segunda só é possível quando as policies têm status próprio e esse status vira
 métrica -- e é aí que uma plataforma de API se separa de um gateway com
 recursos extras.
+
+== Uma parte a mais, se sobrar tempo
+
+A xref:m3-06-auditoria.adoc[3.6] fecha o módulo por outro lado: em vez de
+diagnosticar uma falha, **auditar** o que foi feito -- quatro perguntas, e a
+fonte que responde cada uma.
 
 == Você concluiu o Módulo 3
 

@@ -3,7 +3,7 @@
 
 **Opcional · ~8 min · não muda estado**
 
-**A quem pertence:** Desenvolvedor de serviços internos, e Arquitetura.
+**Para quem:** Desenvolvedor de serviços internos, e Arquitetura.
 
 [NOTE.antes]
 ====

@@ -1,7 +1,7 @@
 = 2.3 Circuit breaker: dois `503`, e como distingui-los
 :navtitle: 2.3 Circuit breaker
 
-**A quem pertence:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte 2.1
+**Para quem:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte 2.1
 
 [NOTE.antes]
 ====

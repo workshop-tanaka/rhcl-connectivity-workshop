@@ -57,7 +57,7 @@ flowchart LR
 O router do OpenShift **continua existindo**, e está na frente. Com
 `passthrough` ele não abre a conexão: repassa os bytes. Quem termina o TLS,
 valida a chave e conta o consumo é o Envoy do `Gateway` -- por isso o
-certificado da parte xref:m1-10-certificado.adoc[1.10] é um Secret do Gateway,
+certificado da parte xref:m1-08-certificado.adoc[1.8] é um Secret do Gateway,
 e não do router.
 
 [IMPORTANT]
@@ -126,7 +126,7 @@ e um Service de Envoy próprios. Neste cluster há três, e eles não são iguai
 
 | `echo-web`
 | `ingress-gateway`
-| **sim** -- é a borda da API com OIDC da parte 1.9
+| **sim** -- é a borda da API com OIDC da parte 1.7
 
 | `bookinfo-gateway`
 | `bookinfo`
@@ -210,7 +210,7 @@ sobreposição?" é justa. Há -- em três lugares, e só neles:
 
 | o **certificado** da borda
 | o listener aponta para um Secret
-| `TLSPolicy` cria e renova esse Secret (parte xref:m1-10-certificado.adoc[1.10])
+| `TLSPolicy` cria e renova esse Secret (parte xref:m1-08-certificado.adoc[1.8])
 
 | o **nome DNS** da borda
 | —

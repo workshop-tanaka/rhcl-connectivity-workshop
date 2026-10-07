@@ -1,7 +1,7 @@
 = 1.3 Precedência de policies é explícita
 :navtitle: 1.3 Precedência de policies
 
-**Persona:** Engenheiro de Plataforma -- quem responde "qual policy venceu?" sem arqueologia. · **4 min**
+**Para quem:** Engenheiro de Plataforma -- quem responde "qual policy venceu?" sem arqueologia. · **4 min**
 
 [NOTE.antes]
 ====
@@ -74,3 +74,7 @@ ler. Numa pilha de anotações de ingress ou de `EnvoyFilter` solto, responder
 "qual regra valeu para esta rota?" é arqueologia -- e costuma terminar em
 tentativa e erro no ambiente de produção.
 
+== Para ir além
+
+* xref:extra-contextos.adoc[Uma API, vários contextos] -- a precedência em três
+  níveis: Gateway, rota e regra.

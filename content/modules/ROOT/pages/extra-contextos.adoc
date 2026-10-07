@@ -3,7 +3,7 @@
 
 **Opcional · ~14 min · cria e remove namespaces próprios**
 
-**A quem pertence:** Arquitetura e Engenheiro de Plataforma -- quem publica uma API com dez caminhos e precisa tratá-los de formas diferentes.
+**Para quem:** Arquitetura e Engenheiro de Plataforma -- quem publica uma API com dez caminhos e precisa tratá-los de formas diferentes.
 
 [NOTE.antes]
 ====
@@ -243,7 +243,7 @@ varia.**
 
 Enquanto ela dura, a rota responde sem policy nenhuma. É o argumento mais
 concreto a favor do caminho pavimentado da parte
-xref:m1-07-colheita.adoc[1.7]: lá, a rota e a policy dela nascem no mesmo
+xref:m5-01-colheita.adoc[5.1]: lá, a rota e a policy dela nascem no mesmo
 commit -- e não há janela.
 
 == A outra estratégia: uma policy com predicados

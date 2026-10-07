@@ -1,7 +1,7 @@
-= 1.9 E quando quem consome é uma pessoa?
-:navtitle: 1.9 Chave ou identidade
+= 1.7 E quando quem consome é uma pessoa?
+:navtitle: 1.7 Chave ou identidade
 
-**A quem pertence:** Segurança, e quem desenha o produto de API. · **8 min** · **não muda estado**
+**Para quem:** Segurança, e quem desenha o produto de API. · **8 min** · **não muda estado**
 
 [NOTE.antes]
 ====
@@ -153,7 +153,7 @@ mão.
 
 Quando a intenção -- "este produto usa OIDC, com este provider" -- é o objeto
 declarado, o fluxo correto é **derivado**, e derivado igual para todo mundo. É
-a mesma lógica da parte xref:m1-07-colheita.adoc[1.7]: o valor não é digitar
+a mesma lógica da parte xref:m5-01-colheita.adoc[5.1]: o valor não é digitar
 menos, é não conseguir nascer errado.
 
 Ver
@@ -194,8 +194,13 @@ navega.
 Credencial de sistema e credencial de pessoa não competem: respondem a
 perguntas diferentes, e a plataforma precisa das duas.
 
+== Para ir além
+
+* xref:extra-parceiro-certificado.adoc[Parceiro com certificado] -- a terceira
+  credencial: o parceiro que se identifica por certificado.
+
 == Falta uma camada
 
 Chave ou token, toda credencial desta parte viajou dentro de TLS -- e o
 certificado que protege essa viagem ninguém olhou ainda. A parte
-xref:m1-10-certificado.adoc[1.10] pergunta quem é o dono dele.
+xref:m1-08-certificado.adoc[1.8] pergunta quem é o dono dele.

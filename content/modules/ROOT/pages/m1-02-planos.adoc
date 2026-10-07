@@ -1,13 +1,13 @@
 = 1.2 Nem todo cliente é igual
 :navtitle: 1.2 Nem todo cliente é igual
 
-**Persona:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **7 min** · alimenta a parte 1.5
+**Para quem:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **7 min** · alimenta a parte 1.5
 
 [NOTE.antes]
 ====
 **Antes:** cota do dia com folga e 11 s desde a última rajada. Nenhuma parte
 antes -- mas **é este que produz o que a parte 1.5 lê**: sem ele (ou o
-aquecimento) nos 15 min anteriores, o Grafana do 4 sai vazio.
+aquecimento) nos 15 min anteriores, o painel da parte 1.5 sai vazio.
 ====
 
 Mesma rota, mesma aplicação, mesmo path. Três chaves diferentes, três
@@ -173,3 +173,8 @@ num Secret. Criar um tier novo é acrescentar um bloco de trinta linhas; mover
 um cliente de plano é editar esse label. Nenhum dos dois passa por build,
 deploy ou mudança de código.
 
+== Para ir além
+
+* xref:extra-tokens-ia.adoc[Limite por token (IA)] -- quando o que custa não é
+  a requisição, é o token.
+* xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo].

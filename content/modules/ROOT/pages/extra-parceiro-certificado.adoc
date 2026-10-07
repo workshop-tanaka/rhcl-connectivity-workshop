@@ -3,12 +3,12 @@
 
 **Opcional · ~6 min · cria e remove um namespace próprio**
 
-**A quem pertence:** Arquitetura e Segurança -- a integração B2B em que o
+**Para quem:** Arquitetura e Segurança -- a integração B2B em que o
 parceiro não quer chave de API.
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:m1-09-identidade.adoc[1.9], que compara chave e
+**Antes:** a parte xref:m1-07-identidade.adoc[1.7], que compara chave e
 token. Esta página traz a terceira credencial: o certificado de cliente.
 ====
 

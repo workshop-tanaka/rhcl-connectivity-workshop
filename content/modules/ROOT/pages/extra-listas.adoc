@@ -3,7 +3,7 @@
 
 **Opcional · ~9 min · cria e remove um namespace próprio**
 
-**A quem pertence:** Segurança e Arquitetura -- e quem já recebeu o pedido "libera só a faixa de IP do parceiro".
+**Para quem:** Segurança e Arquitetura -- e quem já recebeu o pedido "libera só a faixa de IP do parceiro".
 
 [NOTE.antes]
 ====
@@ -221,7 +221,7 @@ de operadora sem mudar de resposta.
 
 | `Route` `edge` em vez de `passthrough`
 | passa a existir um `X-Forwarded-For`. O preço é mover a terminação TLS para
-  o router, e a parte xref:m1-10-certificado.adoc[1.10] deixa de valer como
+  o router, e a parte xref:m1-08-certificado.adoc[1.8] deixa de valer como
   está. Por padrão o router **acrescenta** ao cabeçalho que o cliente mandou,
   e o valor forjado segue na frente: quem lê o primeiro endereço precisa da
   anotação `haproxy.router.openshift.io/set-forwarded-headers: replace` na

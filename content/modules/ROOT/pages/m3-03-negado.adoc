@@ -1,7 +1,7 @@
 = 3.3 Onde a requisição morreu
 :navtitle: 3.3 Onde a requisição morreu
 
-**A quem pertence:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **12 min** · **não muda estado**
+**Para quem:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **12 min** · **não muda estado**
 
 [NOTE.antes]
 ====
@@ -287,7 +287,7 @@ existe.
 Diagnóstico não é adivinhação: é **descarte**. Cada sintoma elimina um
 pedaço do caminho, e os dois cabeçalhos certos eliminam mais da metade dele.
 
-E há uma simetria que vale notar: é a **mesma evidência** que a parte 1.7 usa
+E há uma simetria que vale notar: é a **mesma evidência** que a parte 3.6 usa
 para auditar. A auditoria parte da mudança e pergunta o efeito; o diagnóstico
 parte do efeito e pergunta a mudança.
 

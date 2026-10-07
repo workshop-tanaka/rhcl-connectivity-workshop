@@ -1,7 +1,7 @@
 = 1.5 Isso vira número de negócio
 :navtitle: 1.5 Isso vira número
 
-**Persona:** Negócio (a pergunta é dele) e Operação (quem mantém a cadeia que responde). · **4 min** · **depois da parte 1.2**
+**Para quem:** Negócio (a pergunta é dele) e Operação (quem mantém a cadeia que responde). · **4 min** · **depois da parte 1.2**
 
 [WARNING.antes]
 ====
@@ -83,15 +83,15 @@ Prometheus → Thanos → Grafana -- já existia no cluster. O que a camada de d
 acrescentou foi **uma dimensão**: o label `plan`. É a diferença entre saber
 quantos 429 houve e saber que o tier free está saturando.
 
-== Fim da primeira metade do Módulo 1
+== Fim do bloco A
 
 A API deste ambiente está fechada por padrão, atende três planos comerciais
 diferentes no mesmo endereço, e o consumo de cada cliente aparece em painel --
 e nada disso passou por uma linha de código da aplicação.
 
-Até aqui você **observou** uma API que outra pessoa configurou. Da
-xref:m1-06-exposta.adoc[parte 1.6] em diante é você quem publica -- e sente o
-que a configuração custa.
+Até aqui você **observou** uma API que outra pessoa configurou. No bloco B, a
+xref:m1-06-exposta.adoc[parte 1.6], é você quem publica -- e sente o que a
+configuração custa.
 
 Se quiser parar por aqui, este é um bloco completo: o
 xref:99-encerramento.adoc[Encerramento] fecha o workshop e diz como devolver o

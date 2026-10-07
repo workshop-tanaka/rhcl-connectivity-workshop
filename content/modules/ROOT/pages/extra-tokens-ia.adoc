@@ -3,7 +3,7 @@
 
 **Opcional · ~6 min · cria e remove um namespace próprio**
 
-**A quem pertence:** Engenheiro de Plataforma e Arquitetura -- quem vai expor
+**Para quem:** Engenheiro de Plataforma e Arquitetura -- quem vai expor
 modelos de IA para outros times.
 
 [NOTE.antes]

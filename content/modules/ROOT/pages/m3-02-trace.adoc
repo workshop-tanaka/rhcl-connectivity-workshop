@@ -1,7 +1,7 @@
 = 3.2 O que um contador não responde
 :navtitle: 3.2 O que um contador não responde
 
-**Persona:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte 3.1**
+**Para quem:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte 3.1**
 
 [WARNING.antes]
 ====

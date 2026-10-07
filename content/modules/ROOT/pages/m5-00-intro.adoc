@@ -10,7 +10,7 @@ Connectivity Link e o Service Mesh por baixo.
 ====
 Este módulo ainda não existe neste ambiente: ele pede o Developer Hub e um
 GitLab instalados, que o workshop de hoje não sobe. Esta página descreve o que
-ele vai cobrir. A xref:m1-07-colheita.adoc[parte 1.7] é a leitura que o
+ele vai cobrir. A xref:m5-01-colheita.adoc[parte 5.1] é a leitura que o
 antecipa.
 ====
 
@@ -24,7 +24,7 @@ O Módulo 5 mostra **como uma equipe chega lá sem comando nenhum**. Um
 formulário no portal vira um repositório; o repositório vira o estado do
 cluster; e cada mudança depois disso é um pull request que alguém revisa.
 
-A parte 1.7 mostra esse caminho no papel. Aqui você o percorre.
+A parte 5.1 mostra esse caminho no papel. Aqui você o percorre.
 
 == O que você vai conseguir fazer
 

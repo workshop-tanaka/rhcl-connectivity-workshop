@@ -33,9 +33,9 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 
 | xref:m1-00-intro.adoc[**1** — Connectivity Link: a API como produto]
 | fechar uma API sem tocar na aplicação, servir planos comerciais no mesmo
-  endereço, publicar uma API do zero à mão e compará-la com o caminho pavimentado,
-  auditar o próprio rastro, e cuidar da identidade e do certificado
-| ~83 min
+  endereço, publicar uma API do zero à mão, e cuidar da identidade e do
+  certificado. Em três blocos, e dá para parar ao fim de cada um
+| ~55 min
 
 | xref:m2-00-intro.adoc[**2** — Service Mesh: a fronteira de dentro]
 | proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo,
@@ -44,7 +44,8 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 
 | xref:m3-00-intro.adoc[**3** — Observar e diagnosticar as duas fronteiras]
 | seguir uma requisição salto a salto, dizer em qual de seis lugares uma recusa
-  morreu, e prever o que o tráfego faz quando a plataforma falha
+  morreu, prever o que o tráfego faz quando a plataforma falha, e auditar o
+  próprio rastro
 | ~33 min
 
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
@@ -110,7 +111,7 @@ por onde começar:
 | Módulo 3 inteiro, em especial a parte 3.3, que é diagnóstico de chamado
 
 | desenvolvimento
-| as partes 1.6 e 1.7 -- é onde você escreve a configuração, e sente o que custa
+| a parte 1.6 -- é onde você escreve a configuração, e sente o que custa -- e depois a leitura 5.1
 
 | arquitetura
 | a xref:fronteiras.adoc[página das fronteiras], e depois os Módulos 2 e 4
@@ -140,10 +141,10 @@ As que dependem de outra:
 | 1.6 De aberta a governada
 | as partes 1.1, 1.3 e 1.4
 
-| 1.7 Leitura: o caminho pavimentado
+| 5.1 Leitura: o caminho pavimentado
 | a parte 1.6 -- ela é o contraste inteiro
 
-| 1.8 Quatro perguntas, quatro fontes
+| 3.6 Quatro perguntas, quatro fontes
 | o rastro que os Módulos 1 e 2 deixam
 
 | 2.2 e 2.3

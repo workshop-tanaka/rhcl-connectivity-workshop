@@ -3,7 +3,7 @@
 
 **Opcional · ~10 min · cria e remove um namespace próprio**
 
-**A quem pertence:** Segurança e Arquitetura -- e quem já ouviu "e o que a nossa aplicação chama lá fora, quem controla?".
+**Para quem:** Segurança e Arquitetura -- e quem já ouviu "e o que a nossa aplicação chama lá fora, quem controla?".
 
 [NOTE.antes]
 ====

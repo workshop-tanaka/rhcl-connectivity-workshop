@@ -20,7 +20,7 @@ ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
 | Módulo 4, em breve
 
 | https://docs.redhat.com/en/documentation/red_hat_developer_hub[Red Hat Developer Hub^]
-| parte 1.7, o caminho pavimentado
+| parte 5.1, o caminho pavimentado
 
 | https://docs.redhat.com/en/documentation/openshift_container_platform[OpenShift Container Platform^]
 | a base de tudo
@@ -62,10 +62,10 @@ workshop vem daqui:
 | quem emite o certificado que a `TLSPolicy` declara
 
 | https://argo-cd.readthedocs.io/[Argo CD^]
-| quem aplica no cluster o que a parte 1.7 publica no git
+| quem aplica no cluster o que a parte 5.1 publica no git
 
 | https://backstage.io/docs/features/software-templates/[Backstage Software Templates^]
-| o mecanismo por trás do template que a parte 1.7 usa
+| o mecanismo por trás do template que a parte 5.1 usa
 |===
 
 == Especificação HTTP

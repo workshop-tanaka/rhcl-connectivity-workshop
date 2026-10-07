@@ -1,7 +1,7 @@
 = 3.4 O que acontece quando a policy cai
 :navtitle: 3.4 Quando a policy cai
 
-**Persona:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
+**Para quem:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
 
 [NOTE.antes]
 ====

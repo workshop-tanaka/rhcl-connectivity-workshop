@@ -1,7 +1,7 @@
 = 3.1 O caminho todo é rastreável
 :navtitle: 3.1 O caminho é rastreável
 
-**Persona:** Operação/SRE e Desenvolvedor -- a mesma tela serve a incidente e a debug. · **3 min**
+**Para quem:** Operação/SRE e Desenvolvedor -- a mesma tela serve a incidente e a debug. · **3 min**
 
 [NOTE.antes]
 ====
