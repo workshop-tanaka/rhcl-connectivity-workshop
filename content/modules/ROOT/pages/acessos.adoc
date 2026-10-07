@@ -98,11 +98,34 @@ delas é adivinhada, todas saem deste cluster.
 | Dev Spaces
 | editar a configuração sem instalar nada
 | {ide_url}[abrir^]
+
+| O seu repositório
+| os arquivos do roteiro já com os nomes do seu ambiente; só você enxerga
+| {repo_no_ambiente}[abrir^]
+
+| O roteiro
+| os mesmos arquivos, iguais para a turma, somente leitura
+| {roteiro_url}[abrir^]
 |===
 
 === Console do OpenShift, Traces e Dev Spaces
 
 include::partial$entrar-ocp.adoc[]
+
+ifeval::["{repo_no_ambiente}" != ""]
+=== O seu repositório e o roteiro
+
+Os dois ficam no GitLab deste ambiente. Na tela de login, clique em **Entrar
+com o usuario do console** e use o mesmo usuário e a mesma senha do Console do
+OpenShift -- não há conta separada.
+
+* **O seu repositório** é a cópia que está no terminal do guia, em
+  `/home/lab-user/rhcl-connectivity-demo`: policies, overlays e os scripts que
+  as partes mandam rodar, com os namespaces e hostnames do seu ambiente. Pode
+  editar e criar branch à vontade; nada dali é aplicado ao cluster sozinho.
+* **O roteiro** traz os mesmos arquivos com os nomes genéricos. Serve para
+  comparar com os seus, e ninguém da turma escreve nele.
+endif::[]
 
 === Grafana
 

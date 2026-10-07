@@ -28,6 +28,7 @@ asciidoc:
     ide_url: https://devspaces.apps.cluster-guid.dominio.exemplo/#https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
     keycloak_url: https://sso.apps.cluster-guid.dominio.exemplo
     gitlab_url: https://gitlab.apps.cluster-guid.dominio.exemplo
+    roteiro_url: https://gitlab.apps.cluster-guid.dominio.exemplo/workshop/roteiro
     # A linha de credencial de cada tela sai daqui -- e SO do cluster, na
     # hora. Aqui elas nascem VAZIAS de proposito, e e a escolha segura: com o
     # atributo vazio, a pagina troca a linha de credencial por um ponteiro
