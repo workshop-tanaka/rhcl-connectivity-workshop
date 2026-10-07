@@ -51,6 +51,12 @@ pressupõe.
   NAT e CDN
 | 1.1
 
+| xref:extra-saida.adoc[A saída também é borda]
+| "e o que a aplicação chama lá fora, quem controla?": um Gateway de saída com
+  o mesmo limite e a mesma autenticação da entrada, a credencial que não pode
+  seguir para o destino, e a regra de rede sem a qual ele é só uma sugestão
+| 1.2
+
 | xref:leitura-waf.adoc[Leitura: onde entra o WAF]
 | o desenho recomendado (WAF fora, identidade dentro), quando trazê-lo para o
   Envoy, e o que é do produto e o que é seu. **Só leitura**, sem exercício

@@ -57,7 +57,7 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
   Developer Hub e o GitOps
 | em breve
 
-| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras], xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos], xref:extra-listas.adoc[Listas de permissão e bloqueio], e as leituras sobre xref:leitura-waf.adoc[WAF] e xref:leitura-websocket.adoc[WebSocket]
+| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras], xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos], xref:extra-listas.adoc[Listas de permissão e bloqueio], xref:extra-saida.adoc[A saída também é borda], e as leituras sobre xref:leitura-waf.adoc[WAF] e xref:leitura-websocket.adoc[WebSocket]
 | opcionais, em qualquer ordem e a qualquer momento
 | ~75 min
 |===

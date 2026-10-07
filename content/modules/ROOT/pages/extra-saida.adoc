@@ -1,0 +1,180 @@
+= A saída também é borda
+:navtitle: A saída também é borda
+
+**Opcional · ~10 min · cria e remove um namespace próprio**
+
+**A quem pertence:** Segurança e Arquitetura -- e quem já ouviu "e o que a nossa aplicação chama lá fora, quem controla?".
+
+[NOTE.antes]
+====
+**Antes:** as partes xref:m1-01-fechada.adoc[1.1] e xref:m1-02-planos.adoc[1.2].
+As policies daqui são as mesmas de lá, presas a um Gateway virado para fora.
+====
+
+O workshop inteiro olha para quem **entra**. A pergunta seguinte é a contrária:
+a aplicação chama um parceiro, um provedor de pagamento, uma API pública -- e
+quem conta, limita e autentica essas chamadas?
+
+== Terminal
+
+[source,bash,role="execute"]
+----
+bash scripts/saida.sh
+----
+
+Cerca de quatro minutos, num namespace próprio. O laboratório sobe uma
+aplicação com sidecar e um **destino de fora**: um serviço que devolve os
+cabeçalhos que recebeu, alcançado pelo nome público. É assim que se vê o que
+saiu.
+
+== 1. Sem nada, a aplicação sai direto
+
+[source,text]
+----
+http  para o destino       200
+https para o destino       200
+o que o destino recebeu    {"pela_saida": null, "authorization": null}
+----
+
+O sidecar deixa passar o destino que não conhece. Nada conta, limita ou
+autentica essa chamada.
+
+== 2. Um Gateway de saída
+
+São quatro objetos, todos do namespace da aplicação -- nenhum pede permissão
+de cluster:
+
+[cols="1,3",options="header"]
+|===
+| objeto | o que faz
+
+| `ServiceEntry`
+| declara o destino externo: é o que dá nome a ele dentro do Service Mesh
+
+| `Gateway`, classe `istio`
+| o mesmo tipo da borda de entrada. A anotação
+  `networking.istio.io/service-type: ClusterIP` o deixa sem publicação: só
+  recebe de dentro
+
+| `HTTPRoute` presa ao `ServiceEntry`
+| quem chama o destino a partir de um sidecar é mandado ao Gateway
+
+| `HTTPRoute` presa ao `Gateway`
+| do Gateway para fora. É nela que entram os filtros
+|===
+
+[source,text]
+----
+http para o destino        200
+o que o destino recebeu    {"pela_saida": "gateway", "authorization": null}
+----
+
+A aplicação não mudou uma linha: chama o mesmo endereço. O sidecar desviou
+para o Gateway, e o destino recebeu o cabeçalho que a rota de saída acrescenta.
+
+== 3. O limite da entrada, na saída
+
+[source,yaml]
+----
+kind: RateLimitPolicy
+spec:
+  targetRef: {kind: Gateway, name: saida}
+  limits:
+    para-fora:
+      rates: [{limit: 3, window: 10s}]
+----
+
+[source,text]
+----
+seis chamadas seguidas     200 200 200 429 429 429
+----
+
+A contagem é do Gateway. O destino nem fica sabendo das chamadas que passaram
+do limite -- que é o que se quer quando o limite é do **contrato** com o
+parceiro e estourá-lo custa dinheiro.
+
+== 4. Só sai quem se identifica -- e a credencial não sai junto
+
+Uma `AuthPolicy` no Gateway de saída, por chave de API, como na parte 1.1:
+
+[source,text]
+----
+sem credencial             401
+credencial errada          401
+credencial certa           200
+o que o destino recebeu    {"pela_saida": "gateway", "authorization": "APIKEY pode-sair"}
+----
+
+A última linha é o motivo desta seção. A chave que autoriza a **saída** foi
+entregue ao destino externo: o Gateway confere o cabeçalho e depois o repassa,
+como qualquer outro. O script acrescenta à rota de saída a remoção dele:
+
+[source,yaml]
+----
+filters:
+- type: RequestHeaderModifier
+  requestHeaderModifier:
+    set:    [{name: x-saida, value: gateway}]
+    remove: [authorization]
+----
+
+[source,text]
+----
+com 'remove' na rota de saida   {"pela_saida": "gateway", "authorization": null}
+----
+
+A autenticação continua valendo, porque o Gateway lê o cabeçalho antes de a
+rota o remover.
+
+== 5. Sem rede, o Gateway de saída é só uma sugestão
+
+[source,text]
+----
+https direto, por fora do Gateway   200
+----
+
+O `ServiceEntry` declara a porta 80. Pela 443 o sidecar não reconhece o
+destino e deixa passar -- sem credencial, sem limite, sem registro. Quem fecha
+isso é uma `NetworkPolicy` de saída:
+
+[source,yaml]
+----
+spec:
+  podSelector:
+    matchExpressions:
+    - {key: gateway.networking.k8s.io/gateway-name, operator: DoesNotExist}   # <1>
+  policyTypes: [Egress]
+  egress:
+  - to: [{namespaceSelector: {}}]                                             # <2>
+----
+<1> Vale para todo pod do namespace que **não** é Gateway.
+<2> Esses pods só falam com pods do cluster. O Gateway de saída fica fora da
+regra: é o único que alcança o mundo.
+
+[source,text]
+----
+https direto, depois da regra    000   (a conexão morre no timeout)
+http pelo Gateway, com a chave   200
+----
+
+WARNING: A regra fecha também o caminho até o router. Uma aplicação que chame
+um nome `apps.` do próprio cluster passa a precisar de um `ServiceEntry` para
+ele, ou de uma exceção na regra.
+
+== O que isto não faz
+
+Um Gateway de saída dá **um ponto único**: é onde se conta, limita, autentica e
+registra o que sai. Ele **não** dá IP de origem fixo. Quando o parceiro exige
+"só aceito chamadas deste IP", a resposta é da rede do OpenShift (`EgressIP`),
+que é de administrador e este exercício não cobre.
+
+== O que isso prova
+
+A borda de saída usa as mesmas peças da de entrada -- `Gateway`, `HTTPRoute`,
+`RateLimitPolicy`, `AuthPolicy` -- e os mesmos papéis: quem cuida da plataforma
+declara o Gateway e a regra de rede, quem cuida da aplicação declara o destino
+e o que vale para ele. E, como na entrada, a policy sozinha não fecha nada: é
+a rede que tira o caminho que não passa por ela.
+
+TIP: Se o exercício for interrompido, `bash scripts/saida.sh limpa` remove o
+namespace.
