@@ -30,21 +30,32 @@ Gateway de duas formas e compara o que sobrevive do cliente em cada uma.
 
 [source,text]
 ----
-Route edge           {"xff": "100.64.0.6,10.233.2.2", ...}
-Route passthrough    {"xff": "10.235.0.2", ...}
-de dentro, direto    {"xff": "10.233.0.109", ...}
+Route edge           {"xff": "10.10.10.34,10.233.2.2", ...}
+Route passthrough    {"xff": "10.233.2.2", ...}
+de dentro, direto    {"xff": "10.234.1.8", ...}
 ----
+
+Os endereços variam de cluster para cluster; o que importa é **de quem** é
+cada um.
 
 * **Com `passthrough`** -- que é como a API deste workshop é publicada -- não
   há informação nenhuma do cliente. O router repassa bytes; o endereço que
   aparece é o do próprio router.
-* **Com `edge`**, o router termina o TLS e escreve o `X-Forwarded-For`. Mas o
-  primeiro endereço é o **NAT da borda** (`100.64.x` é faixa de NAT de
-  operadora), não o cliente. Meu IP público real, medido no mesmo instante,
-  não aparece em lugar nenhum.
+* **Com `edge`**, o router termina o TLS e escreve o `X-Forwarded-For`. O
+  primeiro endereço é o de quem chegou até o router -- e aqui esse alguém é o
+  **nó** onde o seu terminal roda, não o seu terminal. Os terminais da turma
+  que estão no mesmo nó chegam com o mesmo endereço.
+* **De dentro, direto no Gateway**, sem passar pelo router, aparece o IP do
+  pod que chamou.
+
+De um notebook, pela internet, a linha `edge` muda de valor e não de natureza:
+medido neste tipo de ambiente, o primeiro endereço foi `100.64.0.6`, uma faixa
+de NAT de operadora. O IP público real de quem chamou, conferido no mesmo
+instante, não apareceu em lugar nenhum.
 
 **Primeira conclusão:** neste tipo de borda, "liberar a faixa do parceiro"
-libera *todo mundo que passa pelo mesmo NAT*.
+libera *todo mundo que chega pelo mesmo NAT* -- ou, daqui do terminal, todo
+mundo que está no mesmo nó.
 
 == 2. A lista existe, e vale por contexto
 
@@ -57,9 +68,12 @@ spec:
       so-quem-vem-da-borda:
         patternMatching:
           patterns:
-          - predicate: 'request.headers["x-forwarded-for"].startsWith("100.64.")'
+          - predicate: 'request.headers["x-forwarded-for"].startsWith("10.10.")'   # <2>
 ----
 <1> A lista vale **só no contexto `/restrito`** -- mesma rota, mesmo hostname.
+<2> O script monta o prefixo com o que chegou na seção 1, em vez de trazer um
+valor escrito: a mesma lista com `100.64.` passaria de um notebook e falharia
+daqui.
 
 [source,text]
 ----
