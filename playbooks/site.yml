@@ -95,6 +95,27 @@
       register: r_stage
       changed_when: true
 
+    # O repositorio do workshop, quando a etapa 'gitlab' rodou: federa o login
+    # ao Keycloak dos participantes e publica o roteiro. O projeto de cada
+    # participante sai depois, no 'tenant.sh turma', porque depende da copia
+    # dele. Idempotente: reexecutar nao reinicia o GitLab ja federado.
+    - name: GitLab -- login pelo usuario do console e o roteiro
+      ansible.builtin.shell:
+        cmd: "bash scripts/gitlab-turma.sh login && bash scripts/gitlab-turma.sh semeia roteiro"
+        chdir: "{{ _demo_dir }}"
+      when: "'gitlab' in (demo_stages | split)"
+      register: r_gitlab_turma
+      changed_when: true
+      # NAO DERRUBA O PEDIDO. Sem o repositorio o workshop inteiro funciona: o
+      # guia so perde as linhas de repositorio, que saem quando o atributo
+      # vem vazio. Falhar aqui jogaria fora um cluster pronto por um extra.
+      failed_when: false
+
+    - name: GitLab -- o que o passo disse
+      ansible.builtin.debug:
+        msg: "{{ (r_gitlab_turma.stdout_lines | default([]))[-6:] + (r_gitlab_turma.stderr_lines | default([]))[-3:] }}"
+      when: "'gitlab' in (demo_stages | split)"
+
     - name: provision.sh -- as ultimas linhas de cada etapa
       ansible.builtin.debug:
         msg: "{{ item.item }}: {{ item.stdout_lines[-3:] }}"
@@ -271,17 +292,23 @@
           #                                    policies, o mesh e as chaves
           #   rhcl/base/rhcl-connectivity-demo docs, rhdh e os workloads
           # Apontar o IDE para o 'base' procurando policy nao acha nada.
+          # NO WORKSHOP o GitLab tem outra forma (scripts/gitlab-turma.sh da
+          # demo): 'workshop/roteiro', igual para todos, e um projeto privado
+          # por participante. O guia do INSTRUTOR aponta para o roteiro; o de
+          # cada participante e reapontado para o projeto dele pelo tenant.sh.
+          # Os caminhos 'rhcl/...' acima sao os da demo com golden path, que o
+          # workshop nao sobe -- apontar para eles dava link morto.
           repo_no_ambiente: >-
-            {{ ('https://' ~ _gitlab_host ~ '/rhcl/base/rhcl-connectivity-demo')
+            {{ ('https://' ~ _gitlab_host ~ '/workshop/roteiro')
                if _gitlab_host else '' }}
           repo_policies: >-
-            {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies')
+            {{ ('https://' ~ _gitlab_host ~ '/workshop/roteiro')
                if _gitlab_host else '' }}
-          # O subgrupo onde o golden path publica. Nasce VAZIO: quem o povoa e
-          # o template do portal, na parte 3.2.
-          repo_apis: >-
-            {{ ('https://' ~ _gitlab_host ~ '/rhcl/apis')
+          roteiro_url: >-
+            {{ ('https://' ~ _gitlab_host ~ '/workshop/roteiro')
                if _gitlab_host else '' }}
+          # o golden path nao faz parte do workshop
+          repo_apis: ''
           rhdh_url: >-
             {{ ('https://' ~ _telas['backstage-developer-hub'])
                if _telas['backstage-developer-hub'] else '' }}
@@ -293,12 +320,11 @@
             {{ ('https://' ~ _telas['portal-red']) if _telas['portal-red'] else '' }}
           # Prefixo pronto para linkar UM arquivo: {config_url}/<caminho>
           config_url: >-
-            {{ ('https://' ~ _gitlab_host ~ '/rhcl/policies/rhcl-policies/-/blob/main')
+            {{ ('https://' ~ _gitlab_host ~ '/workshop/roteiro/-/blob/main')
                if _gitlab_host else '' }}
-          ide_url: >-
-            {{ ('https://' ~ _telas['devspaces'] ~ '/#https://' ~ _gitlab_host
-                ~ '/rhcl/policies/rhcl-policies')
-               if (_telas['devspaces'] and _gitlab_host) else '' }}
+          # Vazio ate o Dev Spaces abrir o projeto do participante: o link
+          # antigo apontava para um repositorio que o workshop nao tem.
+          ide_url: ''
           # --- credenciais, escritas ao lado de cada tela -------------------
           # Vazia quando o sistema nao existe neste ambiente; a pagina trata.
           keycloak_url: >-
