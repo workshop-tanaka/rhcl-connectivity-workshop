@@ -23,7 +23,7 @@ endereço chega até o Gateway?**
 bash scripts/listas.sh
 ----
 
-Cerca de dois minutos, num namespace próprio. O laboratório publica o **mesmo**
+Alguns minutos, num namespace próprio. O laboratório publica o **mesmo**
 Gateway de duas formas e compara o que sobrevive do cliente em cada uma.
 
 == 1. Que endereço sobrevive
@@ -91,7 +91,42 @@ ele, porque esse cliente é sempre "um salto antes".
 xref:extra-parceiro-certificado.adoc[Parceiro com certificado]: cabeçalho só
 vale quando alguém confiável o escreve.
 
-== 4. O que fecha a forja é rede, não policy
+== 4. O endereço da conexão não se forja
+
+A `AuthPolicy` também enxerga **quem abriu a conexão** com o Gateway. Não é um
+cabeçalho, então o cliente não tem onde escrever:
+
+[source,yaml]
+----
+authorization:
+  so-este-pod:
+    patternMatching:
+      patterns:
+      - predicate: 'source.address.startsWith("10.234.1.13:")'   # <1>
+----
+<1> O IP do pod `cliente` do laboratório, que o script lê na hora. O valor
+chega como `IP:porta`, daí os dois-pontos no fim.
+
+[source,text]
+----
+/restrito do pod liberado, direto   200
+/restrito pelo router               403
+/restrito pelo router, FORJANDO     403
+----
+
+Forjar o `X-Forwarded-For` deixou de adiantar: a lista não lê o cabeçalho. É
+assim que se libera **um** consumidor de dentro do cluster pelo endereço dele
+-- consulta-se o IP do pod (`hostname -i`) e escreve-se na lista.
+
+O limite é o da seção 1, visto do outro lado. Pelo router, quem abre a conexão
+é sempre o router: na borda pública esta lista só sabe dizer "veio do router",
+e todos os clientes de fora são o mesmo. E o IP de um pod muda quando ele
+reinicia, então a lista envelhece junto.
+
+== 5. O que fecha a forja da lista por cabeçalho é rede, não policy
+
+O script volta à lista por `X-Forwarded-For` da seção 2, que é a que serve para
+quem vem de fora, e fecha o caminho que a tornava forjável.
 
 [source,text]
 ----
@@ -135,7 +170,7 @@ sub-rede de cada nó, que o cluster publica na anotação
 `k8s.ovn.org/node-subnets`. O script os descobre; nada fica escrito à mão.
 ====
 
-== 5. A lista que não depende da rede
+== 6. A lista que não depende da rede
 
 [source,text]
 ----
@@ -173,7 +208,16 @@ de operadora sem mudar de resposta.
 | `Route` `edge` em vez de `passthrough`
 | passa a existir um `X-Forwarded-For`. O preço é mover a terminação TLS para
   o router, e a parte xref:m1-10-certificado.adoc[1.10] deixa de valer como
-  está
+  está. Por padrão o router **acrescenta** ao cabeçalho que o cliente mandou,
+  e o valor forjado segue na frente: quem lê o primeiro endereço precisa da
+  anotação `haproxy.router.openshift.io/set-forwarded-headers: replace` na
+  `Route`
+
+| `Route` `reencrypt`
+| o mesmo `X-Forwarded-For`, com o trecho router -> Gateway cifrado. O
+  listener do Gateway não pode ter `hostname` (o router não envia o nome ao
+  backend, e a resposta vira `503`), e a `Route` leva o certificado do
+  listener em `destinationCACertificate`
 
 | PROXY protocol
 | **não serve aqui**: a opção `protocol: PROXY` do `IngressController` é sobre
