@@ -125,6 +125,14 @@ OpenShift -- não há conta separada.
   editar e criar branch à vontade; nada dali é aplicado ao cluster sozinho.
 * **O roteiro** traz os mesmos arquivos com os nomes genéricos. Serve para
   comparar com os seus, e ninguém da turma escreve nele.
+
+O diretório do terminal já é um clone do seu repositório. `git status`,
+`git commit` e `git push` funcionam dali, sem digitar credencial:
+
+[source,bash,role="execute"]
+----
+git status -sb
+----
 endif::[]
 
 === Grafana
