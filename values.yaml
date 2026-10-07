@@ -29,7 +29,7 @@ namespace:
 # mudar 'ref'. Nunca 'main': a demo evolui, o workshop nao pode quebrar junto.
 demo:
   repoUrl: "https://github.com/workshop-tanaka/rhcl-connectivity-demo.git"
-  ref: "workshop-v0.27"
+  ref: "workshop-v0.28"
   # etapas do provision.sh, na ordem. Sem 'gitlab', 'gitops' (o Field Content
   # CI ja instala o GitOps) e sem os pesados (cicd, registry, security).
   # 'consoles' entra pelo Kiali e pelos PodMonitors do Service Mesh (sem eles
@@ -49,12 +49,18 @@ ansible:
     # torna dois ambientes comparaveis: com 'main' aqui, o pedido de segunda e
     # o de quarta nao sao o mesmo workshop, e uma correcao no meio da semana faz
     # os antigos divergirem sem explicacao. Ver docs/FROTA.md (G1) na demo.
-    branch: "workshop-v0.27"
+    branch: "workshop-v0.28"
     path: "playbooks"
   playbook: "site.yml"
   requirements:
     - ansible-core
-    - kubernetes
+    # FIXADO. Sem versao, o Job instalava a ultima a cada pedido: a 37.0.0
+    # tirou 'kubernetes.client.apis.core_v1_api', que o k8s_exec do
+    # kubernetes.core 3.2.0 importa, e o provisionamento passou a morrer em
+    # "name 'core_v1_api' is not defined" no passo que prepara o terminal --
+    # com o cluster inteiro ja de pe (medido em 2026-10-07, reaplicando a onda;
+    # a 34.1.0 importa, conferido).
+    - kubernetes==34.1.0
     - PyYAML
     - requests
   collections:
@@ -66,7 +72,7 @@ showroom:
     repoUrl: "https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git"
     # idem: o Showroom constroi o conteudo na subida do pod, e com 'main' cada
     # pod recriado podia servir um conteudo diferente do que foi validado.
-    repoRef: "workshop-v0.27"
+    repoRef: "workshop-v0.28"
     antoraPlaybook: "site.yml"
   # guid entra no nome do namespace (showroom-<guid>) e no titulo
   guid: "rhcl"
