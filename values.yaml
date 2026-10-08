@@ -52,7 +52,7 @@ demo:
 # Hoje so o menu muda; o provisionamento ainda instala os tres produtos em
 # qualquer sessao. Valor fora da lista e tratado como vazio.
 workshop:
-  foco: ""
+  foco: "rhcl"
 
 ansible:
   repository:
