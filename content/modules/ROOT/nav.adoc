@@ -1,10 +1,14 @@
+.A solução de conectividade
 * xref:index.adoc[Sobre este workshop]
+* xref:sessoes.adoc[As sessões deste workshop]
+* xref:fronteiras.adoc[As três fronteiras]
 * xref:historia.adoc[A história por trás deste workshop]
 * xref:aplicacao.adoc[A aplicação e as APIs]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
 
-.Módulo 1 — Connectivity Link
+ifndef::foco_ossm,foco_rhsi[]
+.Connectivity Link — a API como produto
 * xref:m1-00-intro.adoc[Introdução]
 * xref:m1-01-fechada.adoc[1.1 Fechada por padrão]
 * xref:m1-02-planos.adoc[1.2 Nem todo cliente é igual]
@@ -15,47 +19,75 @@
 * xref:m1-07-identidade.adoc[1.7 Chave ou identidade]
 * xref:m1-08-certificado.adoc[1.8 O certificado tem dono?]
 * xref:leitura-ingresso.adoc[Leitura: Route, Ingress e Gateway API]
-* xref:leitura-instalacao.adoc[Leitura: instalação e configuração]
 * xref:leitura-multitenancy.adoc[Leitura: multi-tenancy]
+endif::[]
 
-* xref:fronteiras.adoc[Interlúdio: as três fronteiras]
-
-.Módulo 2 — Service Mesh
+ifndef::foco_rhcl,foco_rhsi[]
+.Service Mesh — a fronteira de dentro
 * xref:m2-00-intro.adoc[Introdução]
 * xref:m2-01-leste-oeste.adoc[2.1 A borda não é a única fronteira]
 * xref:m2-02-canario.adoc[2.2 A promoção ao vivo]
 * xref:m2-03-resiliencia.adoc[2.3 Circuit breaker]
 * xref:m2-04-canal.adoc[2.4 O salto que o mesh não cobria]
+endif::[]
 
-.Módulo 3 — Observar e diagnosticar
+ifndef::foco_rhsi[]
+.Observar e diagnosticar
 * xref:m3-00-intro.adoc[Introdução]
+endif::[]
+ifndef::foco_rhcl,foco_rhsi[]
 * xref:m3-01-rastreavel.adoc[3.1 O caminho é rastreável]
 * xref:m3-02-trace.adoc[3.2 O que um contador não responde]
+endif::[]
+ifndef::foco_ossm,foco_rhsi[]
 * xref:m3-03-negado.adoc[3.3 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[3.4 Quando a policy cai]
 * xref:m3-05-alerta.adoc[3.5 O alerta]
 * xref:m3-06-auditoria.adoc[3.6 Quatro perguntas, quatro fontes]
+endif::[]
 
-.Módulo 4 — Service Interconnect (em breve)
-* xref:m4-00-intro.adoc[Em breve: a proposta do módulo]
+ifndef::foco_rhcl,foco_ossm[]
+.Service Interconnect — o que não mora aqui (em preparação)
+* xref:m4-00-intro.adoc[A proposta do módulo]
+endif::[]
 
-.Módulo 5 — O caminho pavimentado (em breve)
-* xref:m5-00-intro.adoc[Em breve: a proposta do módulo]
+ifndef::foco_ossm,foco_rhsi[]
+.O caminho pavimentado (em preparação)
+* xref:m5-00-intro.adoc[A proposta do módulo]
 * xref:m5-01-colheita.adoc[5.1 Leitura: o caminho pavimentado]
+endif::[]
 
+ifndef::foco_ossm,foco_rhsi[]
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
 * xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 * xref:extra-tokens-ia.adoc[Limite por token (IA)]
-* xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
 * xref:extra-dns.adoc[O nome também é policy (DNS)]
 * xref:extra-contextos.adoc[Uma API, vários contextos]
 * xref:extra-listas.adoc[Listas de permissão e bloqueio]
-* xref:extra-saida.adoc[A saída também é borda]
 * xref:leitura-waf.adoc[Leitura: onde entra o WAF]
 * xref:leitura-websocket.adoc[Leitura: WebSocket]
+endif::[]
+ifndef::foco_rhcl,foco_ossm,foco_rhsi[]
+* xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
+* xref:extra-saida.adoc[A saída também é borda]
+endif::[]
+
+.Leituras de apoio
+ifdef::foco_ossm,foco_rhsi[]
+* xref:papel-rhcl.adoc[Leitura: o papel do Connectivity Link]
+endif::[]
+ifdef::foco_rhcl,foco_rhsi[]
+* xref:papel-ossm.adoc[Leitura: o papel do Service Mesh]
+endif::[]
+ifdef::foco_rhcl,foco_ossm[]
+* xref:papel-rhsi.adoc[Leitura: o papel do Service Interconnect]
+endif::[]
+ifndef::foco_rhsi[]
+* xref:leitura-instalacao.adoc[Leitura: instalação e configuração]
+endif::[]
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]

@@ -1,13 +1,13 @@
-= Interlúdio: as três fronteiras
-:navtitle: Interlúdio: as três fronteiras
+= A solução de conectividade: as três fronteiras
+:navtitle: As três fronteiras
 
-Você acabou de governar **uma** fronteira: quem entra. Uma aplicação
-distribuída tem três, e cada uma é governada por um produto diferente. Este
-workshop percorre duas com as mãos; a terceira está a caminho.
+Uma aplicação distribuída tem três fronteiras, e cada uma é governada por um
+produto diferente. Este workshop tem uma sessão para cada produto e uma que
+percorre os três; em qualquer delas, esta página é o mapa.
 
-Esta página é a ponte para os próximos módulos. Confundir as três é a origem
-de boa parte das dúvidas que aparecem depois -- e agora você tem a primeira na
-mão para comparar.
+Confundir as três é a origem de boa parte das dúvidas que aparecem depois:
+pedir ao produto de uma fronteira o que é de outra. Vale ler antes de começar,
+e voltar aqui quando a pergunta for *"e isso, quem resolve?"*.
 
 include::partial$diagrama.adoc[]
 
@@ -54,9 +54,12 @@ flowchart LR
 | **Red Hat Service Interconnect**
 |===
 
-Neste ambiente o banco roda **dentro** do cluster, no Service Mesh: a terceira
-fronteira ainda não está montada aqui. Ela aparece no desenho porque é parte
-do raciocínio, e é o assunto do xref:m4-00-intro.adoc[Módulo 4], em breve.
+Neste ambiente o banco roda **dentro** do cluster: a terceira fronteira ainda
+não está montada aqui. Ela aparece no desenho porque é parte do raciocínio, e é
+o assunto do xref:m4-00-intro.adoc[Módulo 4], em preparação.
+
+A xref:sessoes.adoc[página das sessões] diz qual destas fronteiras o seu
+ambiente pratica, e onde estão as leituras sobre as outras.
 
 == Por que a divisão importa na prática
 

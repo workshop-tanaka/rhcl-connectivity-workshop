@@ -1,0 +1,69 @@
+= Leitura: o papel do Connectivity Link
+:navtitle: Leitura: o papel do Connectivity Link
+
+**Leitura · ~5 min · não muda estado**
+
+Esta sessão não pratica o Red Hat Connectivity Link. Esta página diz o que ele
+faz, para você saber onde ele entraria -- e o que **não** pedir ao produto que
+você está vendo.
+
+== A pergunta que ele responde
+
+*Quem pode chamar a minha API, em quais condições, e como eu provo isso?*
+
+Ele opera na **porta de entrada**, a fronteira norte-sul. Para ele todo
+chamador é alguém de fora, identificado por uma credencial.
+
+[cols="1,3",options="header"]
+|===
+| o que ele declara | em uma frase
+
+| `AuthPolicy`
+| quem entra: chave de API, token de uma pessoa ou certificado -- e a API nasce
+  fechada, sem uma linha de código na aplicação
+
+| `RateLimitPolicy` e `PlanPolicy`
+| quanto passa: um limite geral, e limites diferentes para cada plano
+  comercial no mesmo endereço
+
+| `TLSPolicy` e `DNSPolicy`
+| o certificado e o nome da API, com dono e renovação
+
+| `TelemetryPolicy`
+| o consumo de cada cliente virando número
+|===
+
+Tudo isso é preso a um `Gateway` ou a uma rota do Gateway API, e a
+**precedência** entre as regras fica escrita no status de cada uma: quem cuida
+da plataforma põe o teto, quem cuida da aplicação declara a exceção dela.
+
+== O que ele não sabe
+
+O que acontece **depois** que a chamada entrou. Passada a borda, ele não tem
+mais opinião: não sabe qual serviço chamou qual, nem se aquele salto era
+permitido.
+
+É por isso que uma chave de API válida não diz nada sobre o que pode acontecer
+lá dentro. Essa é a pergunta do Service Mesh.
+
+== Onde ele entraria nesta aplicação
+
+Na frente do `travels`. O parceiro chama a API de viagens; o Connectivity Link
+decide se ele entra, sob qual plano, e conta a chamada. Só então a requisição
+chega ao primeiro serviço -- e a partir dali é o assunto desta sessão.
+
+== O que muda quando os dois andam juntos
+
+* **Uma identidade de cada lado.** Na borda, quem chama é um parceiro com uma
+  credencial. Lá dentro, quem chama é um serviço com um certificado. São
+  perguntas diferentes, e nenhum dos dois produtos responde a do outro.
+* **O diagnóstico de uma recusa passa a ter mais lugares.** A mesma resposta
+  de erro pode ter nascido na borda ou num salto interno, e distinguir as duas
+  é metade do trabalho de suporte.
+
+== Onde praticar
+
+Na sessão de Connectivity Link, ou na completa. A
+xref:sessoes.adoc[página das sessões] diz o que cada uma cobre, e a
+xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
+requisição só.

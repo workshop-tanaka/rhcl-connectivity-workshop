@@ -63,8 +63,10 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | ~75 min
 |===
 
-Entre o Módulo 1 e o 2 há um xref:fronteiras.adoc[interlúdio curto] que
-apresenta os três produtos e a fronteira de cada um.
+A xref:fronteiras.adoc[página das três fronteiras] apresenta os três produtos
+e a fronteira de cada um, e a xref:sessoes.adoc[página das sessões] diz qual
+deles o seu ambiente pratica: o workshop existe em sessões dedicadas a um
+produto e numa sessão completa, e o menu mostra só o que pertence à sua.
 
 == Três trilhas, por tempo disponível
 

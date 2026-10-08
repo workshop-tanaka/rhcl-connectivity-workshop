@@ -1,0 +1,72 @@
+= Leitura: o papel do Service Mesh
+:navtitle: Leitura: o papel do Service Mesh
+
+**Leitura · ~5 min · não muda estado**
+
+Esta sessão não pratica o Red Hat OpenShift Service Mesh. Esta página diz o
+que ele faz, para você saber onde ele entraria -- e o que **não** pedir ao
+produto que você está vendo.
+
+== A pergunta que ele responde
+
+*Depois que a chamada entrou, quem pode falar com quem lá dentro?*
+
+Ele opera **entre os serviços** da aplicação, a fronteira leste-oeste.
+
+[cols="1,3",options="header"]
+|===
+| o que ele dá | em uma frase
+
+| identidade por serviço
+| cada serviço ganha um certificado, e a conversa entre eles é cifrada e
+  autenticada dos dois lados (mTLS), sem mudar a aplicação
+
+| autorização entre serviços
+| regras do tipo "só o `travels` chama o `flights`", recusadas pelo próprio
+  proxy
+
+| controle de tráfego
+| mandar dez por cento das chamadas para uma versão nova, e cortar um destino
+  que começou a falhar
+
+| rastreio
+| o caminho de uma requisição, salto a salto, sem instrumentar o código
+|===
+
+== O que ele não sabe
+
+Quem é o **cliente comercial** do outro lado da borda. Para o Service Mesh,
+tudo que vem do Gateway é "o Gateway": ele não distingue o parceiro do plano
+gratuito do parceiro do plano completo, e não conta consumo por contrato.
+
+Plano, cota e chave de API são perguntas do Connectivity Link.
+
+== Onde ele entraria nesta aplicação
+
+Atrás do `travels`. A API de viagens responde chamando `flights`, `hotels`,
+`cars` e `insurances`; o Service Mesh decide se cada um desses saltos é
+permitido, e os instrumenta.
+
+== O Service Mesh é requisito do Connectivity Link?
+
+Não. O Connectivity Link precisa de um **provedor de Gateway API**, e há mais
+de um. Num ambiente o provedor pode ser o próprio Service Mesh; noutro, o
+Gateway que o OpenShift traz. Ter o Gateway vindo do Service Mesh não quer
+dizer que a aplicação esteja nele: sem o proxy ao lado de cada serviço, não há
+mTLS entre eles nem autorização de salto.
+
+== O que muda quando os dois andam juntos
+
+* **A chave abre a porta da rua, não o cofre.** A borda decide quem entra; o
+  Service Mesh decide o que quem entrou pode alcançar.
+* **A conversa do Gateway com a autenticação e com o limite também pode ser
+  cifrada**, porque passa a haver uma identidade de serviço dos dois lados.
+* **O rastro fica inteiro.** O trace começa na borda e segue por dentro, e uma
+  recusa pode ser localizada em qualquer um dos dois.
+
+== Onde praticar
+
+Na sessão de Service Mesh, ou na completa. A
+xref:sessoes.adoc[página das sessões] diz o que cada uma cobre, e a
+xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
+requisição só.

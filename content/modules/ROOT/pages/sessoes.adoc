@@ -1,0 +1,86 @@
+= As sessões deste workshop
+:navtitle: As sessões deste workshop
+
+O workshop existe em quatro sessões. Três são **dedicadas a um produto**, para
+quem veio por ele; a quarta percorre os três juntos. O ambiente que você
+recebeu foi montado para uma delas, e o menu ao lado mostra só o que pertence a
+ela.
+
+ifdef::foco_rhcl[]
+[IMPORTANT]
+====
+**Esta é a sessão de Red Hat Connectivity Link.** O percurso é o da borda:
+quem entra na API, sob qual plano, e como isso vira evidência.
+====
+endif::[]
+ifdef::foco_ossm[]
+[IMPORTANT]
+====
+**Esta é a sessão de Red Hat OpenShift Service Mesh.** O percurso é o do
+tráfego entre os serviços: identidade, autorização, promoção de versão e
+rastreio.
+====
+endif::[]
+ifdef::foco_rhsi[]
+[IMPORTANT]
+====
+**Esta é a sessão de Red Hat Service Interconnect.** O módulo prático ainda
+não existe neste ambiente; o que há aqui é a proposta dele e as leituras que o
+situam.
+====
+endif::[]
+ifndef::foco_rhcl,foco_ossm,foco_rhsi[]
+[IMPORTANT]
+====
+**Esta é a sessão completa.** Os módulos dos três produtos estão no menu, na
+ordem em que uma requisição os atravessa.
+====
+endif::[]
+
+[cols="2,3,3",options="header"]
+|===
+| sessão | a pergunta que ela responde | o que você pratica
+
+| **Connectivity Link**
+| quem pode chamar a minha API, quanto, e como eu provo isso?
+| o xref:m1-00-intro.adoc[Módulo 1] em três blocos, o diagnóstico e o alerta
+  da borda, e os Extras de borda
+
+| **Service Mesh**
+| depois que a chamada entrou, quem pode falar com quem lá dentro?
+| o xref:m2-00-intro.adoc[Módulo 2], e o rastreio de uma requisição salto a
+  salto
+
+| **Service Interconnect**
+| e o que a aplicação precisa e que não roda neste cluster?
+| em preparação: hoje, a xref:m4-00-intro.adoc[proposta do módulo]
+
+| **Completa**
+| como as três respostas se encaixam numa requisição só?
+| tudo acima, mais as partes que só fazem sentido com dois produtos lado a
+  lado
+|===
+
+== O que é igual em todas
+
+A primeira seção do menu, **A solução de conectividade**, é a mesma nas quatro
+sessões: a xref:fronteiras.adoc[página das três fronteiras], a aplicação de
+viagens, os seus acessos e a preparação. Quem fizer duas sessões vai reler
+essas páginas -- é de propósito, para cada sessão fechar sozinha.
+
+Algumas partes também aparecem em mais de uma sessão, porque o assunto delas
+cruza a fronteira entre dois produtos. Onde isso acontece, a página avisa.
+
+== E os produtos que ficaram de fora desta sessão
+
+Uma sessão dedicada não finge que os outros dois produtos não existem. Para
+cada produto que **não** está no percurso, há uma leitura curta no fim do menu
+dizendo o que ele resolve, o que ele não sabe, e em que ponto desta mesma
+aplicação ele entraria:
+
+* xref:papel-rhcl.adoc[O papel do Connectivity Link]
+* xref:papel-ossm.adoc[O papel do Service Mesh]
+* xref:papel-rhsi.adoc[O papel do Service Interconnect]
+
+São leituras, sem comando. Servem para a conversa que sempre vem no fim: *"e
+isso que você mostrou, o outro produto não faz?"*

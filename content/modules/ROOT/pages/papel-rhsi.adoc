@@ -1,0 +1,46 @@
+= Leitura: o papel do Service Interconnect
+:navtitle: Leitura: o papel do Service Interconnect
+
+**Leitura · ~4 min · não muda estado**
+
+Esta sessão não pratica o Red Hat Service Interconnect. Esta página diz o que
+ele faz, para você saber onde ele entraria -- e o que **não** pedir ao produto
+que você está vendo.
+
+== A pergunta que ele responde
+
+*E o que a aplicação precisa e que não roda neste cluster?*
+
+Um banco numa máquina virtual, um serviço em outro cluster, um sistema que
+ficou no datacenter. É a fronteira **entre sites**.
+
+O Service Interconnect liga esses lugares por um túnel com autenticação dos
+dois lados, sem VPN, sem abrir porta de entrada no lado que fica protegido e
+sem publicar o recurso na internet. Para a aplicação, o que está longe passa a
+ter um nome de serviço local.
+
+== O que ele não faz
+
+**Política.** Ele resolve conectividade, não governança: não autentica
+parceiro, não aplica plano, não decide qual serviço pode chamar qual. Quem fica
+de fora continua de fora -- e mesmo assim alcançável, por quem tem o túnel.
+
+== Onde ele entraria nesta aplicação
+
+No fim da cadeia. Os serviços de viagens leem de um banco; neste ambiente ele
+roda dentro do cluster. No dia em que esse banco for de outro time, noutro
+lugar, é o Service Interconnect que carrega essa conversa.
+
+== O que muda quando ele anda com os outros dois
+
+* **Com o Service Mesh:** o mTLS do Service Mesh termina na borda do cluster. O
+  salto até o que ficou fora precisa de outra proteção, e é a do túnel.
+* **Com o Connectivity Link:** nada se sobrepõe. Um cuida de quem entra pela
+  frente; o outro, do que a aplicação busca lá atrás.
+
+== Onde praticar
+
+A sessão de Service Interconnect está em preparação. A
+xref:m4-00-intro.adoc[proposta do módulo] descreve o que ela vai cobrir, e a
+xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
+requisição só.
