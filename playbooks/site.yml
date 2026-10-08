@@ -89,6 +89,10 @@
         OPTIONAL: "{{ demo_optional }}"
         TIMEOUT: "{{ demo_timeout }}"
         CUSTOM_CONSOLE: "0"
+        # A sessao 'rhcl' muda o AMBIENTE: o provision.sh sobe o cluster sem
+        # Service Mesh, com o Gateway do provedor nativo do OpenShift. As outras
+        # so mudam o menu do guia.
+        FOCO: "{{ workshop_foco | default('') }}"
       loop: "{{ demo_stages | split }}"
       loop_control:
         label: "{{ item }}"
