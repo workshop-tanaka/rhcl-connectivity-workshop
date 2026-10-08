@@ -368,6 +368,29 @@
     # nem e gravavel. A ordem nao resolve; o que resolve e FIXAR a SCC do pod
     # (openshift.io/required-scc, abaixo, depois do deploy). O binding fica
     # aqui antes so para o namespace e o subject existirem de uma vez.
+    # A SESSAO DESTE AMBIENTE (values: workshop.foco). O menu do guia decide por
+    # 'ifdef' sobre foco_rhcl / foco_ossm / foco_rhsi; na sessao completa nenhum
+    # dos tres existe, entao o atributo so e acrescentado quando ha foco.
+    - name: Sessao do workshop -- o atributo que escolhe o menu
+      ansible.builtin.set_fact:
+        _user_data: "{{ _user_data | combine({'foco_' ~ workshop_foco: '1'}) }}"
+      when: (workshop_foco | default('')) in ['rhcl', 'ossm', 'rhsi']
+
+    # E a mesma informacao no cluster, para quem sobe a turma depois: o
+    # tenant.sh le daqui a sessao de cada participante, sem ninguem ter de
+    # repetir o valor do pedido.
+    - name: Sessao do workshop -- gravada no cluster
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: rhcl-workshop-sessao
+            namespace: rhcl-workshop-runner
+          data:
+            foco: "{{ (workshop_foco | default('')) if (workshop_foco | default('')) in ['rhcl', 'ossm', 'rhsi'] else '' }}"
+
     - name: Namespace do Showroom (para o binding poder nascer antes do pod)
       kubernetes.core.k8s:
         state: present

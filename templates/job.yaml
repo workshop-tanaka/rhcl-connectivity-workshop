@@ -55,6 +55,8 @@ spec:
           value: {{ .Values.demo.optional | quote }}
         - name: DEMO_TIMEOUT
           value: {{ .Values.demo.timeout | quote }}
+        - name: WORKSHOP_FOCO
+          value: {{ (.Values.workshop).foco | default "" | quote }}
         - name: SHOWROOM_REPO_URL
           value: {{ .Values.showroom.content.repoUrl | quote }}
         - name: SHOWROOM_REPO_REF
@@ -133,6 +135,7 @@ spec:
             -e "demo_stages='${DEMO_STAGES}'" \
             -e "demo_optional=${DEMO_OPTIONAL}" \
             -e "demo_timeout=${DEMO_TIMEOUT}" \
+            -e "workshop_foco=${WORKSHOP_FOCO}" \
             -e "showroom_repo_url=${SHOWROOM_REPO_URL}" \
             -e "showroom_repo_ref=${SHOWROOM_REPO_REF}" \
             -e "showroom_playbook=${SHOWROOM_PLAYBOOK}" \
