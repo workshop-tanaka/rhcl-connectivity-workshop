@@ -15,6 +15,7 @@ para toda rota anexada, e **cedem** onde a rota declara a sua.
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh ato3
@@ -23,6 +24,84 @@ bash scripts/demo.sh ato3
 O que tem de aparecer: `Enforced=False`, e a mensagem **nomeia** quem venceu
 -- as policies das duas rotas. Depois, os artefatos que o PlanPolicy gerou
 sozinho: um contador por tier no Limitador e os predicados no filtro do Envoy.
+endif::[]
+ifdef::foco_rhcl[]
+Nada aqui muda o ambiente: são três leituras, uma por passo.
+
+== Passo 1 -- pergunte ao teto se ele está valendo
+
+A `prod-web-deny-all` é a policy que nega tudo, presa ao Gateway. O comando lê
+só as condições do status dela.
+
+[source,bash,role="execute"]
+----
+oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{range .status.conditions[*]}{.type}={.status} ({.message}){"\n"}{end}'
+----
+
+[source,text]
+----
+Accepted=True (AuthPolicy has been accepted)
+Enforced=False (AuthPolicy is overridden by [travel-agency/travel-agency-authpolicy])
+----
+
+.O que este comando faz?
+[%collapsible]
+====
+`-o jsonpath` escolhe o que mostrar do objeto. Aqui ele percorre a lista
+`status.conditions` e imprime, de cada condição, o tipo, o valor e a mensagem.
+É o mesmo que `oc get ... -o yaml` mostra no fim do arquivo, sem o resto.
+====
+
+**O que isso diz:** `Accepted=True` -- a policy foi entendida. `Enforced=False`
+-- ela **não** está valendo, e a mensagem **nomeia** quem a sobrepôs: a policy
+da rota da API de viagens. O teto não foi apagado nem falhou; ele cedeu, e
+disse para quem.
+
+== Passo 2 -- a mesma pergunta, para o limite
+
+O Gateway também carrega um limite padrão, a `ingress-gateway-rlp-lowlimits`.
+
+[source,bash,role="execute"]
+----
+oc get ratelimitpolicy ingress-gateway-rlp-lowlimits -n ingress-gateway -o jsonpath='{range .status.conditions[*]}{.type}={.status} ({.message}){"\n"}{end}'
+----
+
+[source,text]
+----
+Accepted=True (RateLimitPolicy has been accepted)
+Enforced=False (RateLimitPolicy is overridden by [travel-agency/travels-plans])
+----
+
+**O que isso diz:** a regra é a mesma para acesso e para limite. Quem venceu
+aqui foram os planos comerciais da rota. Numa pilha de anotações de ingress,
+responder "qual regra valeu para esta rota?" é arqueologia; aqui é um campo.
+
+== Passo 3 -- veja no que a policy virou, dentro do Gateway
+
+Ninguém escreveu à mão o que o Gateway executa. O comando abre a configuração
+que o Connectivity Link gerou para ele e filtra as linhas que falam de plano.
+
+[source,bash,role="execute"]
+----
+oc get envoyfilter kuadrant-prod-web -n ingress-gateway -o jsonpath='{.spec.configPatches[0].patch.value.typed_config.value.config.configuration.value}' | python3 -m json.tool | grep -E 'auth.kuadrant.plan|metrics.labels'
+----
+
+[source,text]
+----
+                                "auth.kuadrant.plan == \"free\""
+                                "auth.kuadrant.plan == \"gold\""
+                                "auth.kuadrant.plan == \"silver\""
+                                "auth.kuadrant.plan == \"unclassified\""
+        "metrics.labels.method": "request.method",
+        "metrics.labels.plan": "auth.kuadrant.plan",
+        "metrics.labels.vhost": "request.host"
+----
+
+**O que isso diz:** uma policy declarativa de trinta linhas virou regra dentro
+do proxy: um predicado por plano, e o plano como rótulo de métrica. É o que a
+parte xref:m1-02-planos.adoc[{p-planos}] vai medir pelo lado de fora, e a
+xref:m1-05-negocio.adoc[{p-negocio}] vai transformar em painel.
+endif::[]
 
 == Navegador
 
