@@ -267,14 +267,14 @@ O segundo arquivo é a `TLSPolicy`: ela mira o Gateway e nomeia o emissor.
 [source,bash,role="execute"]
 ----
 oc apply -f passos/certificado/02-tlspolicy.yaml
-oc wait --for=condition=Ready certificate --all -n tls-lab --timeout=90s
+oc wait --for=condition=Enforced tlspolicy/lab -n tls-lab --timeout=90s
 oc get certificate -n tls-lab -o jsonpath='{range .items[*]}{.metadata.name}  dono={.metadata.ownerReferences[0].kind}  secret={.spec.secretName}  renova em {.status.renewalTime}{"\n"}{end}'
 oc get gateway lab -n tls-lab -o jsonpath='{range .status.listeners[0].conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'
 ----
 
 [source,text]
 ----
-certificate.cert-manager.io/lab-https condition met
+tlspolicy.kuadrant.io/lab condition met
 lab-https  dono=TLSPolicy  secret=tls-lab-cert  renova em ...
 Accepted=True Accepted
 Conflicted=False NoConflicts
