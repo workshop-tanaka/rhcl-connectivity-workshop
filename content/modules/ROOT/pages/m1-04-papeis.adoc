@@ -50,12 +50,18 @@ flowchart TB
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh papeis
 ----
 
 O passo tem duas camadas. Vale entender a diferença entre elas.
+endif::[]
+ifdef::foco_rhcl[]
+São duas camadas: a primeira **pergunta** ao cluster o que cada papel pode; a
+segunda **age** como o desenvolvedor.
+endif::[]
 
 === Camada 1: a matriz, perguntada ao cluster
 
@@ -110,6 +116,7 @@ deste ambiente; as outras duas são o modelo que a
 xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] descreve.
 ====
 
+ifndef::foco_rhcl[]
 === Camada 2: você entra como o desenvolvedor
 
 O passo faz um `oc login` real, pelo Keycloak, que é o provedor de identidade
@@ -139,6 +146,71 @@ E, na mesma sessão, a policy da rota dele:
 planpolicy.extensions.kuadrant.io/travels-plans patched
 ----
 
+endif::[]
+ifdef::foco_rhcl[]
+=== Camada 2: você age como o desenvolvedor
+
+Perguntar não é o mesmo que tentar. Os próximos comandos são executados **com
+a identidade do desenvolvedor**, e a sua sessão não muda: a identidade vai em
+cada comando, e não num login.
+
+==== Tente mexer no teto da plataforma
+
+O comando tenta pôr uma anotação na `prod-web-deny-all`, a policy que nega
+tudo no Gateway.
+
+[source,bash,role="execute"]
+----
+oc patch authpolicy prod-web-deny-all -n ingress-gateway --type=merge -p '{"metadata":{"annotations":{"teste":"1"}}}' --as=app-dev
+----
+
+[source,text]
+----
+Error from server (Forbidden): authpolicies.kuadrant.io "prod-web-deny-all" is forbidden:
+User "..." cannot get resource "authpolicies" in API group "kuadrant.io" in the namespace "ingress-gateway"
+----
+
+**O que isso diz:** leia a mensagem inteira. Ela traz o **nome de quem
+tentou**. Isso não é convenção de equipe, nem revisão de código, nem um
+combinado que alguém pode furar com pressa: é o apiserver recusando.
+
+==== E o que ele pode
+
+Primeiro, **ver** o Gateway a que a rota dele se prende:
+
+[source,bash,role="execute"]
+----
+oc get gateway prod-web -n ingress-gateway --as=app-dev
+----
+
+[source,text]
+----
+NAME       CLASS   ADDRESS                                            PROGRAMMED   AGE
+prod-web   istio   prod-web-istio.ingress-gateway.svc.cluster.local   True         ...
+----
+
+Depois, **mudar** a policy comercial da rota dele. O comando põe uma anotação
+na `PlanPolicy`, e o seguinte a tira:
+
+[source,bash,role="execute"]
+----
+oc annotate planpolicy travels-plans -n travel-agency rhcl.demo/tocado-por=dev --overwrite --as=app-dev
+oc annotate planpolicy travels-plans -n travel-agency rhcl.demo/tocado-por- --as=app-dev
+----
+
+[source,text]
+----
+planpolicy.extensions.kuadrant.io/travels-plans annotated
+planpolicy.extensions.kuadrant.io/travels-plans annotated
+----
+
+**O que isso diz:** ele vê o Gateway e não o muda; muda a policy da rota dele
+sem pedir a ninguém. E essa policy **prevalece** sobre a do Gateway -- foi o
+que o status mostrou na parte xref:m1-03-precedencia.adoc[{p-precedencia}].
+Precedência sem privilégio: o desenvolvedor governa o que é dele e não alcança
+o que não é, e quem recusa é o cluster.
+
+endif::[]
 == Evidência
 
 [source,bash,role="execute"]
@@ -146,10 +218,12 @@ planpolicy.extensions.kuadrant.io/travels-plans patched
 oc get gateway prod-web -n ingress-gateway -o jsonpath='{.spec.listeners[0].allowedRoutes.namespaces.from}{"\n"}'
 ----
 
-A resposta é `All`. **A delegação não é um combinado verbal: está escrita no
-próprio Gateway.** O operador da plataforma declarou que qualquer namespace
-pode anexar rota ao `prod-web` -- e é por isso que o desenvolvedor publica sem
-pedir nada a ninguém.
+A resposta é `All` ou `Selector`. **A delegação não é um combinado verbal:
+está escrita no próprio Gateway.** Com `All`, quem cuida da plataforma declarou
+que qualquer namespace pode anexar rota ao `prod-web`; com `Selector`, só os
+namespaces que carregam um rótulo -- é o caso de um ambiente de turma, em que o
+Gateway de cada participante aceita rota só dos namespaces dele. Nos dois, o
+desenvolvedor publica sem pedir nada a ninguém.
 
 == Configuração
 

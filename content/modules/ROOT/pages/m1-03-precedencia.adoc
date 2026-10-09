@@ -57,6 +57,10 @@ Enforced=False (AuthPolicy is overridden by [travel-agency/travel-agency-authpol
 da rota da API de viagens. O teto não foi apagado nem falhou; ele cedeu, e
 disse para quem.
 
+A lista entre colchetes traz **todas** as rotas que sobrepuseram o teto. Se
+você voltar aqui depois de publicar a sua própria API, na parte
+xref:m1-06-exposta.adoc[{p-exposta}], ela aparece ali também.
+
 == Passo 2 -- a mesma pergunta, para o limite
 
 O Gateway também carrega um limite padrão, a `ingress-gateway-rlp-lowlimits`.
