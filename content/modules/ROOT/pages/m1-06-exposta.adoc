@@ -21,6 +21,7 @@ endif::[]
 esperar dela.
 ====
 
+ifndef::foco_rhcl[]
 Até agora você observou uma API que **já estava** governada. Neste exercício
 você publica uma do zero e a leva, um passo por vez, de completamente aberta a
 governada -- e cada passo é **uma policy**.
@@ -130,14 +131,222 @@ serviço, canário, pipeline e o registro no catálogo.
 aceita, o teste deu 200 -- e a única coisa que impediu um estrago foi o teto
 que outra pessoa tinha escrito antes.
 
+endif::[]
+ifdef::foco_rhcl[]
+Até agora você observou uma borda que **já estava** governada. Aqui você
+publica uma API do zero e a leva, um passo por vez, de completamente aberta a
+governada. Cada passo aplica **um arquivo**, e cada arquivo é uma decisão.
+
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  M1["<b>1-2</b> Route solta<br/>200 para qualquer um"] --> M2["<b>3-4</b> HTTPRoute no Gateway<br/>403: o teto da plataforma"]
+  M2 --> M3["<b>5</b> AuthPolicy da rota<br/>401 sem chave, 200 com chave"]
+  M3 --> M4["<b>6</b> PlanPolicy<br/>429 acima da cota"]
+....
+
+Os seis arquivos estão no seu repositório, em `passos/exposta/`. Vale abrir
+cada um antes de aplicar: nenhum tem mais de quarenta linhas.
+
+[source,bash,role="execute"]
+----
+ls passos/exposta/
+----
+
+== Passo 1 -- a aplicação
+
+O que uma equipe de aplicação entrega no primeiro dia: um Deployment e o
+Service dele. Nada no arquivo fala de segurança, de limite ou de quem pode
+chamar.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/exposta/01-aplicacao.yaml
+oc rollout status deploy/echo -n echo-exposta --timeout=120s
+----
+
+[source,text]
+----
+deployment "echo" successfully rolled out
+----
+
+== Passo 2 -- a `Route` que você já sabe usar
+
+O caminho que quase todo serviço segue: publica uma `Route`, e está no ar.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/exposta/02-route-solta.yaml
+curl -s -o /dev/null -w '%{http_code}\n' https://$(oc get route echo-solto -n echo-exposta -o jsonpath='{.spec.host}')/
+----
+
+[source,text]
+----
+200
+----
+
+**O que isso diz:** sem chave, sem limite, sem registro de quem chamou. **E não
+há nada de errado com esse YAML** -- ele está correto, e é exatamente por isso
+que passaria em qualquer revisão de código.
+
+O que falta não está no arquivo, e sim no formato: uma `Route` carrega
+hostname, TLS e destino num objeto só. Não há onde a plataforma pendurar uma
+regra, nem um segundo dono para a porta -- é a diferença que a
+xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] descreve.
+
+== Passo 3 -- a mesma API, pela porta da plataforma
+
+Agora uma `HTTPRoute`, presa ao Gateway `prod-web`. Abra o arquivo e repare no
+que **não** está nele: nenhuma regra de acesso.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/exposta/03-httproute.yaml
+----
+
+A rota existe, mas o hostname novo ainda não chega até o Gateway. Falta quem
+cuida da plataforma publicá-lo.
+
+== Passo 4 -- a plataforma publica o hostname
+
+Neste ambiente o Gateway não tem balanceador próprio: cada hostname ganha uma
+`Route` em modo passthrough, no namespace do Gateway. É um arquivo de outro
+dono -- e é por isso que é outro passo.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc apply -f passos/exposta/04-publica-no-router.yaml
+curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
+----
+
+[source,text]
+----
+sem chave: 403
+----
+
+**O que isso diz:** `403` -- e a API é sua, e você não escreveu nenhuma
+negativa.
+
+O Gateway carrega a AuthPolicy `prod-web-deny-all`, escrita por quem cuida da
+plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não é
+"aberto até alguém fechar": é o contrário. É a mesma borda fechada da parte
+xref:m1-01-fechada.adoc[{p-fechada}], agora impedindo a **sua** API de ir ao ar
+sem ninguém olhando.
+
+[WARNING]
+====
+**Se a resposta for `200`, repita o `curl`.** O teto leva alguns segundos para
+alcançar uma rota recém-criada: medido neste ambiente, a primeira chamada logo
+depois do `apply` passou, e a seguinte, três segundos depois, já foi negada.
+Vale guardar: uma rota nova fica **aberta por alguns segundos**, e quem publica
+algo sensível espera o `403` antes de divulgar o endereço.
+====
+
+== Passo 5 -- uma chave, e a policy que a aceita nesta rota
+
+O arquivo traz duas coisas: a chave, e uma `AuthPolicy` que mira **a sua
+rota**, não o Gateway. O segundo comando espera a policy entrar em vigor.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc apply -f passos/exposta/05-chave-e-authpolicy.yaml
+oc wait --for=condition=Enforced authpolicy/echo-exposta-authpolicy -n echo-exposta --timeout=90s
+curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
+curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://echo-exposta.{cluster_domain}/?APIKEY=chave-do-echo-exposta"
+----
+
+[source,text]
+----
+authpolicy.kuadrant.io/echo-exposta-authpolicy condition met
+sem chave: 401
+com chave: 200
+----
+
+**O que isso diz:** o `403` virou `401` sem chave e `200` com chave. A sua
+policy venceu o teto. E o teto registrou isso:
+
+[source,bash,role="execute"]
+----
+oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{.status.conditions[?(@.type=="Enforced")].message}{"\n"}'
+----
+
+[source,text]
+----
+AuthPolicy is overridden by [echo-exposta/echo-exposta-authpolicy ...]
+----
+
+**O próprio teto declara que cedeu, e nomeia quem o sobrepôs.** São dois alvos
+diferentes: ele mira o `Gateway`, a sua mira a `HTTPRoute`. O mais específico
+prevalece. A parte xref:m1-03-precedencia.adoc[{p-precedencia}] mostrou isso
+numa policy que outra pessoa escreveu; aqui o `overridden` tem o nome da que
+**você** acabou de criar.
+
+== Passo 6 -- quem entra está resolvido; falta quanto pode
+
+Uma `PlanPolicy` com um plano `experimental`, de 3 chamadas a cada 10 segundos.
+O laço faz seis chamadas seguidas com a mesma chave.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc apply -f passos/exposta/06-plano.yaml
+oc wait --for=condition=Enforced planpolicy/echo-exposta-plans -n echo-exposta --timeout=90s
+for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w '%{http_code} ' "https://echo-exposta.{cluster_domain}/?APIKEY=chave-do-echo-exposta"; done; echo
+----
+
+[source,text]
+----
+planpolicy.extensions.kuadrant.io/echo-exposta-plans condition met
+200 200 200 429 429 429
+----
+
+**O que isso diz:** as três primeiras passaram, e a quarta já voltou `429`. O
+limite não está na aplicação nem no Gateway: está num objeto que você
+escreveu, preso à sua rota.
+
+Se vierem seis `200`, espere dez segundos e repita o laço: a janela é de 10 s
+e o limite pode levar alguns segundos a mais para chegar ao Gateway.
+
+== E o que ainda falta
+
+[source,bash,role="execute"]
+----
+bash scripts/exposta-checklist.sh echo-exposta
+----
+
+É um inventário do que a sua API tem e do que não tem. Seis arquivos depois,
+ainda faltam telemetria por plano, identidade de serviço, canário, pipeline e
+o registro no catálogo. E nada disso falhou: simplesmente não existe.
+
+== Limpando
+
+Um comando desfaz os seis arquivos:
+
+[source,bash,role="execute"]
+----
+oc delete -f passos/exposta/ --ignore-not-found
+----
+
+endif::[]
 == O que o template geraria, para a mesma API
 
+ifndef::foco_rhcl[]
 Dezessete manifests. Você escreveu quatro, e levou dez minutos.
 
 Mas a diferença que mais importa não aparece em `oc get`: **o que você fez
 existe só no cluster.** Ninguém sabe quem criou, quando, nem por quê. Não há
 revisão, não há histórico, e a próxima mudança será outro `oc apply` de alguém
 numa terça-feira.
+endif::[]
+ifdef::foco_rhcl[]
+Dezessete manifests. Você aplicou seis, e levou dez minutos.
+
+Mas a diferença que mais importa não aparece em `oc get`: os seus arquivos
+estão num repositório, e **quem os aplicou foi você, à mão**. Nada garante que
+o cluster é o que está no Git: não houve revisão, e a próxima mudança será
+outro `oc apply` de alguém numa terça-feira.
+endif::[]
 
 Pelo template, os mesmos objetos nascem num **repositório**: com autor, data e
 merge request. O Argo aplica. Mudar uma policy passa a ser um PR que alguém
@@ -164,9 +373,10 @@ endif::[]
 ifdef::foco_rhcl[]
 == O que você tem, e o que vem depois
 
-Você escreveu quatro arquivos e levou dez minutos. É o jeito certo de entender
+Você aplicou seis arquivos e levou dez minutos. É o jeito certo de entender
 cada policy, e deixa de ser o jeito certo quando a segunda API chega: a
-xref:fase-esteira.adoc[fase 5] leva esses arquivos para um repositório, e a
+xref:fase-esteira.adoc[fase 5] faz esses mesmos arquivos chegarem ao cluster
+por merge request, e a
 leitura xref:m5-01-colheita.adoc[{p-colheita}] mostra a **mesma** API nascendo
 de um formulário.
 endif::[]

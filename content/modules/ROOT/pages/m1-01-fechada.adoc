@@ -21,6 +21,7 @@ endif::[]
 
 Esta é a API de viagens que já rodava. Vamos chamá-la sem credencial nenhuma.
 
+ifndef::foco_rhcl[]
 == Terminal
 
 [source,bash,role="execute"]
@@ -31,6 +32,86 @@ bash scripts/demo.sh ato1
 O que tem de aparecer: `401` nas duas chamadas -- sem chave e com chave
 inválida -- e o motivo no **cabeçalho**, não no corpo:
 `x-ext-auth-reason: credential not found`.
+endif::[]
+ifdef::foco_rhcl[]
+== Passo 1 -- chame a API sem credencial nenhuma
+
+O comando pede só os cabeçalhos da resposta, que é onde a borda explica o que
+decidiu.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -s -o /dev/null -D - https://{api_host}/travels | grep -iE '^HTTP|www-authenticate|x-ext-auth-reason'
+----
+
+[source,text]
+----
+HTTP/2 401
+www-authenticate: APIKEY realm="api-key-authn"
+x-ext-auth-reason: credential not found
+----
+
+**O que isso diz:** a recusa veio com o motivo, e o motivo está no cabeçalho,
+não no corpo. `credential not found` é a borda dizendo que nem chegou a
+conferir nada: não havia o que conferir.
+
+== Passo 2 -- agora com uma chave que não existe
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -s -o /dev/null -D - "https://{api_host}/travels?APIKEY=nao-existe" | grep -iE '^HTTP|www-authenticate|x-ext-auth-reason'
+----
+
+[source,text]
+----
+HTTP/2 401
+www-authenticate: APIKEY realm="api-key-authn"
+x-ext-auth-reason: the API Key provided is invalid
+----
+
+**O que isso diz:** o código é o mesmo `401`, e o motivo mudou. Quem atende
+um chamado de "não consigo acessar" começa por essa linha: ela separa quem
+esqueceu a chave de quem tem a chave errada.
+
+== Passo 3 -- e com uma chave que vale
+
+A chave abaixo é a sua chave de teste do plano gold, a mesma da página
+xref:acessos.adoc[Seus acessos].
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -s -o /dev/null -w '%{http_code}\n' "https://{api_host}/travels?APIKEY={api_key_gold}"
+----
+
+[source,text]
+----
+200
+----
+
+**O que isso diz:** mesmo endereço, mesma aplicação, e a única diferença entre
+o `401` e o `200` é a credencial. Nenhuma linha do `travels` trata disso.
+
+== Passo 4 -- a chave certa, na API errada
+
+No mesmo ambiente há uma segunda API, a `echo-api`. Mande a ela a chave que
+acabou de funcionar:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -s -o /dev/null -w '%{http_code}\n' "https://echo-travels.{cluster_domain}/?APIKEY={api_key_gold}"
+----
+
+[source,text]
+----
+302
+----
+
+**O que isso diz:** a chave não foi recusada, foi **ignorada**. A `echo-api`
+não aceita chave de API: ela manda quem chega fazer login. Duas APIs, o mesmo
+tipo de Gateway, credenciais diferentes -- a fronteira é por **API**, não "tem
+chave ou não tem". A parte xref:m1-07-identidade.adoc[{p-identidade}] volta a
+ela.
+endif::[]
 
 == Navegador: os dois lados da mesma porta
 
