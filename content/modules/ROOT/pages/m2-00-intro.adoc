@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Módulo 2 — Service Mesh: a fronteira de dentro
 :navtitle: Módulo 2 — Introdução
 
@@ -27,12 +28,12 @@ Este módulo é sobre essa segunda fronteira, a **leste-oeste**.
 
 == O que você precisa antes
 
-O Módulo 1. As partes 2.2, 2.3 e 2.4 partem do estado que a 2.1 estabelece, então
+O Módulo 1. As partes {p-canario}, {p-resiliencia} e {p-canal} partem do estado que a {p-leste} estabelece, então
 vale fazê-las na ordem.
 
 == Aviso
 
-As partes 2.1 a 2.3 alteram configuração de tráfego e a revertem no fim. Se você
+As partes {p-leste} a {p-resiliencia} alteram configuração de tráfego e a revertem no fim. Se você
 interromper uma delas no meio, o comando `bash scripts/demo.sh mesh_base`
 devolve tudo ao estado inicial.
 

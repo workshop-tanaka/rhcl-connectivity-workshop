@@ -1,4 +1,5 @@
-= O nome da API também é policy
+include::partial$numeros.adoc[]
+= {p-dns}O nome da API também é policy
 :navtitle: O nome também é policy (DNS)
 
 **Opcional · ~7 min · cria e remove um namespace próprio**
@@ -7,7 +8,7 @@
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:m1-06-exposta.adoc[1.6], que publica uma API com
+**Antes:** a parte xref:m1-06-exposta.adoc[{p-exposta}], que publica uma API com
 `HTTPRoute` num Gateway. Aqui entra a peça que falta: **o nome** pelo qual
 alguém a encontra.
 ====
@@ -81,8 +82,8 @@ DNSRecord authoritative-record-...  provedor=coredns   Ready=True
 
 Você não escreveu registro nenhum. **O operador leu o listener do Gateway** e
 derivou o nome, o tipo e o destino -- o mesmo padrão da parte
-xref:m1-08-certificado.adoc[1.8] com a `TLSPolicy`, e da
-xref:m1-07-identidade.adoc[1.7] com a `OIDCPolicy`: intenção declarada, objeto
+xref:m1-08-certificado.adoc[{p-certificado}] com a `TLSPolicy`, e da
+xref:m1-07-identidade.adoc[{p-identidade}] com a `OIDCPolicy`: intenção declarada, objeto
 derivado, com dono.
 
 E repare em **como o CoreDNS descobre o registro**: pelo label

@@ -1,11 +1,12 @@
-= 5.1 Leitura: a mesma API, pelo caminho pavimentado
-:navtitle: 5.1 Leitura: o caminho pavimentado
+include::partial$numeros.adoc[]
+= {p-colheita} Leitura: a mesma API, pelo caminho pavimentado
+:navtitle: {p-colheita} Leitura: o caminho pavimentado
 
 **Leitura · ~8 min · não muda estado**
 
 [WARNING.antes]
 ====
-**Antes: a parte 1.6.** Ela é o contraste inteiro desta aqui. Sem ter escrito
+**Antes: a parte {p-exposta}.** Ela é o contraste inteiro desta aqui. Sem ter escrito
 os quatro arquivos à mão, o que vem a seguir parece só um formulário
 conveniente.
 ====
@@ -61,7 +62,7 @@ decisões de produto disfarçadas de campo de formulário:
 
 | `planPreset`
 | `three-tier`
-| a API nasce com os três planos comerciais, como a do Módulo 1 -- e não com
+| a API nasce com os três planos comerciais, como a do {m1} -- e não com
   um só
 
 | `mtlsStrict`
@@ -99,7 +100,7 @@ escolha.
 
 == O repositório que nasce
 
-Você escreveu **quatro arquivos** na parte 1.6. O template gera **vinte e
+Você escreveu **quatro arquivos** na parte {p-exposta}. O template gera **vinte e
 três**. Este é o repositório inteiro, como ele nasce:
 
 [source,text]
@@ -130,7 +131,7 @@ echo-pavimentado/
 └── README.md
 ----
 
-Compare com o checklist que fechou a parte 1.6. Cada item que lá aparecia
+Compare com o checklist que fechou a parte {p-exposta}. Cada item que lá aparecia
 como "falta" é uma linha aqui: a telemetria é o `01`, a identidade de serviço
 é o `10`, o mTLS é o `50`, o canário são o `52` e o `53`, o catálogo são o
 `40` e o `catalog-info.yaml`.
@@ -161,7 +162,7 @@ spec:
 ----
 
 Uma linha no formulário, e o serviço nasce aceitando chamada de **uma**
-identidade: a do Gateway. É a mesma fronteira leste-oeste que o Módulo 2
+identidade: a do Gateway. É a mesma fronteira leste-oeste que o {m2}
 exercita -- só que aqui ninguém precisou lembrar de escrevê-la.
 
 O `mtlsStrict` faz o mesmo com o `50-peerauthentication.yaml`: `true` no
@@ -181,7 +182,7 @@ qualquer pod do cluster possa chamar. Não porque haja uma convenção escrita
 num wiki -- porque o formulário não oferece a alternativa.
 
 **A configuração passa a ter dono, data e revisão.** O que você fez à mão na
-parte 1.6 existe **só no cluster**: ninguém sabe quem criou, quando, nem por
+parte {p-exposta} existe **só no cluster**: ninguém sabe quem criou, quando, nem por
 quê. Pelo template os mesmos objetos nascem num repositório, com autor e
 histórico. Mudar uma policy vira um merge request que alguém revisa.
 
@@ -192,7 +193,7 @@ E essa segunda diferença é exatamente o que a próxima parte audita.
 Percorrer o caminho pavimentado com as próprias mãos -- criar o produto,
 assinar como cliente e publicar uma segunda versão, tudo por pull request --
 pede o Developer Hub e um GitLab no ambiente, e é assunto do
-xref:m5-00-intro.adoc[Módulo 5], que está a caminho. A página dele descreve o
+xref:m5-00-intro.adoc[{m5}], que está a caminho. A página dele descreve o
 que vai cobrir.
 
 Os templates fazem parte do material deste workshop, em `rhdh/templates/`.

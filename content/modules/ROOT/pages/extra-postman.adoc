@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Testar a API no Postman
 :navtitle: Postman
 
@@ -5,7 +6,7 @@
 
 O terminal prova o ponto com menos cliques, mas a maioria das pessoas testa API
 no Postman -- e ver os cabeçalhos numa interface ajuda a fixar o que os
-Módulos 1 e 3 mostraram.
+{m1e3} mostraram.
 
 A coleção cobre mais que um módulo: as chamadas recusadas, os três planos
 comerciais lado a lado, o estouro de cota determinístico, e a autenticação por
@@ -88,7 +89,7 @@ curl -s -o /dev/null -w 'verificacao: %{ssl_verify_result} (0 = confiavel)\n' ht
 
 Se a verificação falhar num ambiente seu, o motivo é o certificado daquele
 ambiente, não a API -- e desligar a verificação no Postman esconde o problema
-em vez de resolvê-lo. A parte xref:m1-08-certificado.adoc[1.8] mostra de onde
+em vez de resolvê-lo. A parte xref:m1-08-certificado.adoc[{p-certificado}] mostra de onde
 vem esse certificado e quem o renova.
 ====
 

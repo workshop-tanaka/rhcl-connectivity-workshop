@@ -1,11 +1,12 @@
-= 1.7 E quando quem consome é uma pessoa?
-:navtitle: 1.7 Chave ou identidade
+include::partial$numeros.adoc[]
+= {p-identidade} E quando quem consome é uma pessoa?
+:navtitle: {p-identidade} Chave ou identidade
 
 **Para quem:** Segurança, e quem desenha o produto de API. · **8 min** · **não muda estado**
 
 [NOTE.antes]
 ====
-**Antes: a parte 1.1.** Ela mostrou a chave de API funcionando. Esta responde
+**Antes: a parte {p-fechada}.** Ela mostrou a chave de API funcionando. Esta responde
 a pergunta que sobra: **e se o consumidor não for um programa?**
 ====
 
@@ -102,7 +103,7 @@ Olhe a coluna da esquerda: **`302` e `401` são recusas diferentes de propósito
 ====
 O `404` **com** token é a prova de que passou: é resposta da **aplicação**, que
 não tem aquela rota. Uma requisição barrada nunca chega no app -- e a parte
-xref:m3-03-negado.adoc[3.3] usa exatamente essa distinção para dizer onde uma
+xref:m3-03-negado.adoc[{p-negado}] usa exatamente essa distinção para dizer onde uma
 chamada morreu.
 ====
 
@@ -153,7 +154,7 @@ mão.
 
 Quando a intenção -- "este produto usa OIDC, com este provider" -- é o objeto
 declarado, o fluxo correto é **derivado**, e derivado igual para todo mundo. É
-a mesma lógica da parte xref:m5-01-colheita.adoc[5.1]: o valor não é digitar
+a mesma lógica da parte xref:m5-01-colheita.adoc[{p-colheita}]: o valor não é digitar
 menos, é não conseguir nascer errado.
 
 Ver
@@ -199,8 +200,21 @@ perguntas diferentes, e a plataforma precisa das duas.
 * xref:extra-parceiro-certificado.adoc[Parceiro com certificado] -- a terceira
   credencial: o parceiro que se identifica por certificado.
 
+ifndef::foco_rhcl[]
 == Falta uma camada
 
 Chave ou token, toda credencial desta parte viajou dentro de TLS -- e o
 certificado que protege essa viagem ninguém olhou ainda. A parte
-xref:m1-08-certificado.adoc[1.8] pergunta quem é o dono dele.
+xref:m1-08-certificado.adoc[{p-certificado}] pergunta quem é o dono dele.
+endif::[]
+ifdef::foco_rhcl[]
+== Fim da fase 3
+
+Chave ou token, toda credencial desta parte viajou dentro de TLS, sob o
+certificado que a parte xref:m1-08-certificado.adoc[{p-certificado}] deixou com
+dono.
+
+A primeira API está publicada, tem nome e sabe quem a chama. A
+xref:m1-02-planos.adoc[fase 4] trata do que o negócio pede em seguida: clientes
+que pagam diferente, no mesmo endereço.
+endif::[]

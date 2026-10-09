@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = A história por trás deste workshop
 :navtitle: A história
 
@@ -11,7 +12,7 @@ no meio dessa mudança, descobriu que o produto mais valioso dela não é o site
 
 Os serviços já foram para o OpenShift, e neste ambiente o banco de dados veio
 junto. Na maioria das migrações reais ele fica de fora -- e alcançá-lo sem
-abrir a rede é o assunto do xref:m4-00-intro.adoc[Módulo 4], que está a
+abrir a rede é o assunto do xref:m4-00-intro.adoc[{m4}], que está a
 caminho.
 
 include::partial$diagrama.adoc[]
@@ -38,7 +39,7 @@ os outros cinco.
 Repare no `discounts`: ele tem **duas versões no ar ao mesmo tempo**, e o
 tráfego se divide entre elas -- 90% para a v1, 10% para a v2. Nenhum outro
 serviço tem isso, e não é acaso: é o par que torna possível promover uma
-versão nova sem trocar a imagem de um Deployment, e é o que a parte 2.2
+versão nova sem trocar a imagem de um Deployment, e é o que a parte {p-canario}
 exercita.
 
 Os detalhes de cada serviço estão em xref:aplicacao.adoc[A aplicação e as APIs].
@@ -92,17 +93,28 @@ papel do **desenvolvedor** que publica uma API, e em outros o de quem está
 **de plantão** quando um parceiro abre chamado.
 
 A troca de papel não é enfeite: parte do que o workshop mostra só faz sentido
-quando você sente a recusa do lado de quem **não** tem permissão. A parte 1.4
+quando você sente a recusa do lado de quem **não** tem permissão. A parte {p-papeis}
 faz exatamente isso.
 
 == Como o workshop ataca esses problemas
 
+ifndef::foco_rhcl[]
 Os quatro módulos resolvem os quatro problemas, nessa ordem -- o
 xref:index.adoc[Sobre este workshop] traz a tabela com o que cada um entrega e
 quanto tempo leva.
 
 O caminho curto: o **Módulo 1** resolve os problemas 1, 2 e 4 sozinho. Os
 outros três tratam do que a borda não alcança.
+endif::[]
+ifdef::foco_rhcl[]
+Esta sessão resolve os problemas 1, 2 e 4, que são os da borda -- o
+xref:index.adoc[Sobre este workshop] traz as fases, o que cada uma entrega e
+quanto tempo leva.
+
+O problema 3 é do que a borda não alcança. As leituras sobre o
+xref:papel-ossm.adoc[Service Mesh] e o xref:papel-rhsi.adoc[Service Interconnect]
+dizem que produto o resolve, e em que ponto desta mesma aplicação.
+endif::[]
 
 == A tese que o workshop defende
 

@@ -1,0 +1,59 @@
+include::partial$numeros.adoc[]
+= Fase 5 — Da mão para a esteira (em preparação)
+:navtitle: A proposta da fase
+
+**Para quem:** Engenheiro de Plataforma e Desenvolvedor -- e quem responde por mudança em produção.
+
+[NOTE]
+====
+Esta fase está em preparação. A página diz o que ela vai cobrir e por que vem
+neste ponto do percurso; ainda não há comando para rodar.
+====
+
+== Por que neste ponto
+
+Até aqui, tudo foi feito com `oc apply`, por uma pessoa, num terminal. É assim
+que todo projeto começa, e é o jeito certo de entender cada policy.
+
+Deixa de ser o jeito certo quando a segunda API chega. A partir daí aparecem as
+perguntas que um terminal não responde: quem mudou este limite, quem aprovou, o
+que estava valendo ontem, e como voltar atrás.
+
+A configuração da borda são arquivos. Esta fase trata os arquivos como o que
+são: código, com dono, revisão e histórico.
+
+== O que você vai conseguir fazer
+
+[cols="1,3,3",options="header"]
+|===
+| parte | o que você faz | o que isso prova
+
+| O repositório é a fonte
+| lê o seu repositório e compara o que está no Git com o que está no cluster
+| a configuração da borda cabe em arquivos com dono e histórico
+
+| Mudança por merge request
+| muda o limite de um plano num branch, abre o merge request e aprova; a
+  mudança chega ao cluster sem ninguém rodar `oc apply`
+| a mudança tem autor, revisão e data
+
+| A esteira confere antes
+| abre um merge request com uma rota sem `AuthPolicy` e vê a conferência recusar
+| a regra da plataforma vira portão, não lembrete
+
+| Desvio e reversão
+| edita uma policy direto no cluster, vê o desvio acusado, e desfaz a mudança
+  anterior com um revert
+| o Git manda, e voltar atrás é um commit
+|===
+
+== O que já existe no seu ambiente
+
+O seu repositório, com os arquivos do roteiro já nos nomes do seu ambiente:
+{repo_no_ambiente}[abrir^]. É dele que esta fase vai partir.
+
+== Onde isso continua
+
+A xref:m5-01-colheita.adoc[leitura {p-colheita}] mostra o passo seguinte desta
+mesma esteira: em vez de alguém escrever os arquivos, eles nascem de um
+formulário.

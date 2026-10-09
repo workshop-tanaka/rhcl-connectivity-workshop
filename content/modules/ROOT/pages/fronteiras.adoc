@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = A solução de conectividade: as três fronteiras
 :navtitle: As três fronteiras
 
@@ -56,7 +57,7 @@ flowchart LR
 
 Neste ambiente o banco roda **dentro** do cluster: a terceira fronteira ainda
 não está montada aqui. Ela aparece no desenho porque é parte do raciocínio, e é
-o assunto do xref:m4-00-intro.adoc[Módulo 4], em preparação.
+o assunto do xref:m4-00-intro.adoc[{m4}], em preparação.
 
 A xref:sessoes.adoc[página das sessões] diz qual destas fronteiras o seu
 ambiente pratica, e onde estão as leituras sobre as outras.
@@ -75,8 +76,14 @@ O que ele **não** sabe: o que acontece depois que a chamada entrou. Uma vez
 passada a borda, ele não tem mais opinião.
 
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Documentação^]
+ifndef::foco_rhcl[]
 · Módulo xref:m1-00-intro.adoc[1] inteiro, e o diagnóstico do
-xref:m3-00-intro.adoc[Módulo 3]
+xref:m3-00-intro.adoc[{m3}]
+endif::[]
+ifdef::foco_rhcl[]
+· nesta sessão: da xref:leitura-instalacao.adoc[fase 1] à
+xref:m3-00-intro.adoc[fase 6]
+endif::[]
 
 === Service Mesh: quem fala com quem, lá dentro
 
@@ -87,7 +94,12 @@ O que ele **não** sabe: quem é o cliente comercial do outro lado da borda. Par
 o Service Mesh, tudo que vem do Gateway é *"o Gateway"*.
 
 https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Documentação^]
+ifndef::foco_rhcl[]
 · Módulo xref:m2-00-intro.adoc[2]
+endif::[]
+ifdef::foco_rhcl[]
+· fora desta sessão: xref:papel-ossm.adoc[o papel do Service Mesh]
+endif::[]
 
 === Service Interconnect: como alcançar o que ficou fora
 
@@ -98,7 +110,12 @@ alcançável.
 O que ele **não** faz: política. Ele resolve conectividade, não governança.
 
 https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Documentação^]
+ifndef::foco_rhcl[]
 · Módulo xref:m4-00-intro.adoc[4], em breve
+endif::[]
+ifdef::foco_rhcl[]
+· fora desta sessão: xref:papel-rhsi.adoc[o papel do Service Interconnect]
+endif::[]
 
 == As três juntas, numa chamada só
 

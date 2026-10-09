@@ -1,11 +1,12 @@
+include::partial$numeros.adoc[]
 = 2.3 Circuit breaker: dois `503`, e como distingui-los
 :navtitle: 2.3 Circuit breaker
 
-**Para quem:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte 2.1
+**Para quem:** Operação/SRE -- response flags do Envoy, ejeção de instância, e o que fault injection não prova. · **5 min** · **muda estado** · depois da parte {p-leste}
 
 [NOTE.antes]
 ====
-**Antes:** a parte 2.1 -- a carga sai do `cars` porque a
+**Antes:** a parte {p-leste} -- a carga sai do `cars` porque a
 AuthorizationPolicy dele só aceita os vendedores. Tecnicamente roda sozinho:
 DestinationRule como `base/mesh/` declara e pods v1 e v2 de pé.
 ====
@@ -83,7 +84,7 @@ plataforma opostas com o mesmo código de erro.
 
 == Falta um salto
 
-Na parte 2.1 você mediu o mTLS entre os serviços da aplicação. Mas antes de
+Na parte {p-leste} você mediu o mTLS entre os serviços da aplicação. Mas antes de
 chegar a eles, toda requisição passa por duas chamadas que não aparecem no
 grafo: do Gateway ao Authorino e ao Limitador. A parte
-xref:m2-04-canal.adoc[2.4] pergunta se esse salto também é cifrado.
+xref:m2-04-canal.adoc[{p-canal}] pergunta se esse salto também é cifrado.

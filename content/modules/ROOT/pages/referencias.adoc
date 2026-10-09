@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Materiais de referência
 :navtitle: Materiais de referência
 
@@ -11,16 +12,16 @@ ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
 | produto | onde aparece no workshop
 
 | https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Red Hat Connectivity Link^]
-| Módulo 1 inteiro, e o diagnóstico do Módulo 3
+| {m1} inteiro, e o diagnóstico do {m3}
 
 | https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Red Hat OpenShift Service Mesh^]
-| Módulo 2, e a instrumentação que o Módulo 3 usa
+| {m2}, e a instrumentação que o {m3} usa
 
 | https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Red Hat Service Interconnect^]
-| Módulo 4, em breve
+| {m4}, em breve
 
 | https://docs.redhat.com/en/documentation/red_hat_developer_hub[Red Hat Developer Hub^]
-| parte 5.1, o caminho pavimentado
+| parte {p-colheita}, o caminho pavimentado
 
 | https://docs.redhat.com/en/documentation/openshift_container_platform[OpenShift Container Platform^]
 | a base de tudo
@@ -44,7 +45,7 @@ workshop vem daqui:
 | projeto | o que define
 
 | https://gateway-api.sigs.k8s.io/[Gateway API^]
-| `Gateway`, `HTTPRoute`, `GRPCRoute` e o modelo de papéis que a parte 1.4
+| `Gateway`, `HTTPRoute`, `GRPCRoute` e o modelo de papéis que a parte {p-papeis}
   exercita
 
 | https://docs.kuadrant.io/[Kuadrant^]
@@ -62,15 +63,15 @@ workshop vem daqui:
 | quem emite o certificado que a `TLSPolicy` declara
 
 | https://argo-cd.readthedocs.io/[Argo CD^]
-| quem aplica no cluster o que a parte 5.1 publica no git
+| quem aplica no cluster o que a parte {p-colheita} publica no git
 
 | https://backstage.io/docs/features/software-templates/[Backstage Software Templates^]
-| o mecanismo por trás do template que a parte 5.1 usa
+| o mecanismo por trás do template que a parte {p-colheita} usa
 |===
 
 == Especificação HTTP
 
-Os códigos que o Módulo 3 ensina a distinguir:
+Os códigos que o {m3} ensina a distinguir:
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401[401 Unauthorized^]
 · https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429[429 Too Many Requests^]

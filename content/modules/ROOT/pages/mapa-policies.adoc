@@ -1,0 +1,121 @@
+include::partial$numeros.adoc[]
+= O Connectivity Link em uma página
+:navtitle: O Connectivity Link em uma página
+
+**Leitura · ~5 min · não muda estado**
+
+**Momento do projeto:** dia 0, com a plataforma recém-instalada · **Quem lê:** todos
+
+Antes de usar o produto, vale saber o tamanho dele. O Connectivity Link cabe
+numa página: uma pergunta, quatro componentes e oito tipos de policy. Esta é
+a página para onde voltar quando um nome aparecer no meio de uma parte.
+
+== A pergunta que ele responde
+
+*Quem pode chamar a minha API, em quais condições, e como eu provo isso?*
+
+Ele opera na **porta de entrada**. Para ele todo chamador é alguém de fora,
+identificado por uma credencial.
+
+== Do que ele é feito
+
+[cols="1,3",options="header"]
+|===
+| componente | o que faz
+
+| o operator
+| lê as policies e traduz cada uma em configuração do Gateway
+
+| Authorino
+| decide **quem entra**: confere chave de API, token ou certificado
+
+| Limitador
+| decide **quanto passa**: conta as requisições contra o limite
+
+| o filtro no Gateway
+| a cada requisição, pergunta aos dois acima antes de entregar à aplicação
+|===
+
+Nenhum deles fica na aplicação. É por isso que o binário do `travels` não muda
+do primeiro ao último exercício.
+
+== As policies, e onde você encontra cada uma
+
+Toda policy é presa a um `Gateway` ou a uma rota (`HTTPRoute`), e isso já diz
+quem costuma ser o dono: o Gateway é de quem cuida da plataforma, a rota é de
+quem cuida da aplicação.
+
+[cols="2,3,2,1",options="header"]
+|===
+| policy | a pergunta dela | costuma ser de | nesta sessão
+
+| `AuthPolicy`
+| quem entra?
+| plataforma (o teto, no Gateway) e aplicação (a regra da rota)
+| xref:m1-01-fechada.adoc[{p-fechada}], xref:m1-06-exposta.adoc[{p-exposta}]
+
+| `RateLimitPolicy`
+| quanto passa, para todo mundo?
+| plataforma (o padrão) e aplicação (a exceção)
+| xref:m1-03-precedencia.adoc[{p-precedencia}]
+
+| `PlanPolicy`
+| quanto passa, para cada plano comercial?
+| produto e aplicação
+| xref:m1-02-planos.adoc[{p-planos}]
+
+| `TelemetryPolicy`
+| como o consumo vira número, por plano?
+| plataforma
+| xref:m1-05-negocio.adoc[{p-negocio}]
+
+| `OIDCPolicy`
+| e quando quem chama é uma pessoa, com login?
+| aplicação
+| xref:m1-07-identidade.adoc[{p-identidade}]
+
+| `TLSPolicy`
+| quem é o dono do certificado da borda?
+| plataforma
+| xref:m1-08-certificado.adoc[{p-certificado}]
+
+| `DNSPolicy`
+| quem cria o nome da API?
+| plataforma
+ifdef::foco_rhcl[]
+| xref:extra-dns.adoc[{p-dns}]
+endif::[]
+ifndef::foco_rhcl[]
+| xref:extra-dns.adoc[Extra de DNS]
+endif::[]
+
+| `TokenRateLimitPolicy`
+| e quando o que custa é o token de um modelo de IA, não a requisição?
+| aplicação
+| xref:extra-tokens-ia.adoc[Extra]
+|===
+
+Duas coisas valem para todas:
+
+* **Cada policy tem status próprio.** `Accepted` diz que ela foi entendida;
+  `Enforced` diz que está valendo. Quando duas disputam o mesmo alvo, o status
+  de uma delas diz que cedeu, e para qual.
+* **A precedência é declarada, não adivinhada.** Quem cuida da plataforma põe
+  o teto; quem cuida da aplicação declara a exceção dela. A parte
+  xref:m1-03-precedencia.adoc[{p-precedencia}] mostra isso acontecendo.
+
+== O que ele não faz
+
+Passada a borda, ele não tem mais opinião: não sabe qual serviço chamou qual,
+nem alcança o que roda fora do cluster. Essas são as perguntas de outros dois
+produtos, e a xref:fronteiras.adoc[página das três fronteiras] mostra onde cada
+um entra.
+
+ifdef::foco_rhcl[]
+[NOTE]
+====
+**Nenhum dos dois é requisito.** Neste ambiente o Connectivity Link roda sobre o
+Gateway API que o próprio OpenShift traz, sem Service Mesh. A
+xref:leitura-instalacao.adoc[página anterior] mostra como isso foi montado.
+====
+endif::[]

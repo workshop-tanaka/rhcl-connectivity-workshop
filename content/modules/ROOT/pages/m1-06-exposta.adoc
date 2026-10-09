@@ -1,11 +1,22 @@
-= 1.6 De aberta a governada, um passo por vez
-:navtitle: 1.6 De aberta a governada
+include::partial$numeros.adoc[]
+= {p-exposta} De aberta a governada, um passo por vez
+:navtitle: {p-exposta} De aberta a governada
 
 **Para quem:** Desenvolvedor -- e ao Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
 
+ifdef::foco_rhcl[]
+[TIP]
+====
+**Fase 3 -- A primeira API.** Ainda o dia 1, e a borda troca de mãos: quem faz
+agora é o time da aplicação, dentro dos limites que a plataforma deixou. Três
+partes, cerca de 25 minutos: publicar, dar nome, e decidir como o consumidor se
+identifica.
+====
+endif::[]
+
 [NOTE.antes]
 ====
-**Antes:** a parte 1.1 (a frase que este aprofunda), a parte 1.3 (precedência) e a parte 1.4
+**Antes:** a parte {p-fechada} (a frase que este aprofunda), a parte {p-precedencia} (precedência) e a parte {p-papeis}
 (os papéis). Aqui você vai publicar uma API, e é bom já saber o que
 esperar dela.
 ====
@@ -70,7 +81,7 @@ Plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não 
 
 [IMPORTANT]
 ====
-Isto muda o que você entendeu na parte 1.1. A API de viagens não está fechada
+Isto muda o que você entendeu na parte {p-fechada}. A API de viagens não está fechada
 porque plataformas fecham coisas -- ela está fechada porque **alguém escreveu
 um deny-all no Gateway**. E foi esse mesmo deny-all que acabou de impedir a
 **sua** API de ir ao ar sem ninguém olhando.
@@ -97,7 +108,7 @@ AuthPolicy is overridden by [echo-exposta/echo-exposta-authpolicy ...]
 alvos diferentes: o teto mira o `Gateway`, a sua mira a `HTTPRoute`. O mais
 específico prevalece.
 
-A parte 1.3 mostrou isso numa policy que outra pessoa escreveu. Aqui o
+A parte {p-precedencia} mostrou isso numa policy que outra pessoa escreveu. Aqui o
 `overridden` tem o nome da policy que **você** acabou de criar.
 
 == Momento 4 -- quem entra está resolvido; falta quanto pode
@@ -143,14 +154,39 @@ configuração em algo que tem dono, data e revisão.
 concorda e alguém esquece numa terça-feira, e uma plataforma.
 
 
+ifndef::foco_rhcl[]
 == Fim do bloco B
 
 Você escreveu quatro arquivos e levou dez minutos. A **mesma** API nasce de um
 formulário pelo caminho que a plataforma oferece; a comparação está na leitura
-xref:m5-01-colheita.adoc[5.1], no Módulo 5, e vale os oito minutos.
+xref:m5-01-colheita.adoc[{p-colheita}], no Módulo 5, e vale os oito minutos.
+endif::[]
+ifdef::foco_rhcl[]
+== O que você tem, e o que vem depois
+
+Você escreveu quatro arquivos e levou dez minutos. É o jeito certo de entender
+cada policy, e deixa de ser o jeito certo quando a segunda API chega: a
+xref:fase-esteira.adoc[fase 5] leva esses arquivos para um repositório, e a
+leitura xref:m5-01-colheita.adoc[{p-colheita}] mostra a **mesma** API nascendo
+de um formulário.
+endif::[]
 
 Se a diferença entre `Route`, `Ingress` e `Gateway` ainda não ficou clara, a
 leitura xref:leitura-ingresso.adoc[Route, Ingress e Gateway API] é sobre isso.
 
+ifndef::foco_rhcl[]
 O bloco C trata do que fica em volta da chave. Siga para a
-xref:m1-07-identidade.adoc[parte 1.7].
+xref:m1-07-identidade.adoc[parte {p-identidade}].
+endif::[]
+ifdef::foco_rhcl[]
+A API responde, mas só para quem conhece o endereço que o cluster deu a ela.
+A xref:extra-dns.adoc[parte {p-dns}] trata do nome; a
+xref:m1-07-identidade.adoc[parte {p-identidade}], de quem está do outro lado da
+chave.
+
+[NOTE]
+====
+**Aqui entraria o Service Mesh.** A API está governada na entrada. O que os serviços atrás dela fazem entre si, daqui não se enxerga. Esta sessão não o pratica; a
+xref:papel-ossm.adoc[leitura sobre o papel dele] diz o que ele faria aqui.
+====
+endif::[]

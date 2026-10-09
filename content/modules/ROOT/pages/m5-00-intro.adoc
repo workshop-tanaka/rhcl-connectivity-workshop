@@ -1,5 +1,12 @@
+include::partial$numeros.adoc[]
+ifndef::foco_rhcl[]
 = Módulo 5 — O caminho pavimentado (em breve)
 :navtitle: Módulo 5 — Em breve
+endif::[]
+ifdef::foco_rhcl[]
+= O caminho pavimentado (em breve)
+:navtitle: O caminho pavimentado: a proposta
+endif::[]
 
 **Em breve · proposta de conteúdo, sujeita a mudança**
 
@@ -10,21 +17,28 @@ Connectivity Link e o Service Mesh por baixo.
 ====
 Este módulo ainda não existe neste ambiente: ele pede o Developer Hub e um
 GitLab instalados, que o workshop de hoje não sobe. Esta página descreve o que
-ele vai cobrir. A xref:m5-01-colheita.adoc[parte 5.1] é a leitura que o
+ele vai cobrir. A xref:m5-01-colheita.adoc[parte {p-colheita}] é a leitura que o
 antecipa.
 ====
 
 == A ideia
 
+ifndef::foco_rhcl[]
 Os Módulos 1 a 4 mostram **o que** a plataforma governa: a borda, o tráfego
 entre serviços, o que se observa e o que atravessa clusters. Em todos eles a
 configuração é aplicada por comando.
+endif::[]
+ifdef::foco_rhcl[]
+As fases anteriores mostram **o que** a plataforma governa na borda, e a fase 5
+leva a configuração para um repositório. Em todas elas alguém ainda escreve os
+arquivos.
+endif::[]
 
-O Módulo 5 mostra **como uma equipe chega lá sem comando nenhum**. Um
+O {m5} mostra **como uma equipe chega lá sem comando nenhum**. Um
 formulário no portal vira um repositório; o repositório vira o estado do
 cluster; e cada mudança depois disso é um pull request que alguém revisa.
 
-A parte 5.1 mostra esse caminho no papel. Aqui você o percorre.
+A parte {p-colheita} mostra esse caminho no papel. Aqui você o percorre.
 
 == O que você vai conseguir fazer
 
@@ -51,7 +65,7 @@ A parte 5.1 mostra esse caminho no papel. Aqui você o percorre.
 | não há passo de deploy -- o git é a origem, o cluster é a consequência
 
 | 5.2 A API como produto
-| a mesma API da parte 1.6, criada pelo template: três decisões no
+| a mesma API da parte {p-exposta}, criada pelo template: três decisões no
   formulário, vinte e três arquivos no repositório
 | um serviço não consegue nascer sem mTLS, plano e fronteira leste-oeste
 
@@ -63,7 +77,7 @@ A parte 5.1 mostra esse caminho no papel. Aqui você o percorre.
 | 5.4 Publicar uma v2
 | a segunda versão sobe ao lado da primeira, com uma fração do tráfego
   declarada num pull request
-| o canário do Módulo 2 deixa de ser um comando e vira uma mudança revisada
+| o canário do {m2} deixa de ser um comando e vira uma mudança revisada
 
 | 5.5 A imagem tem procedência
 | o serviço nasce com pipeline própria: portão de qualidade, varredura e

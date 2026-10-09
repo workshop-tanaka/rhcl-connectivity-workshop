@@ -1,7 +1,15 @@
+include::partial$numeros.adoc[]
+ifndef::foco_rhcl[]
 = Módulo 3 — Observar e diagnosticar as duas fronteiras
 :navtitle: Módulo 3 — Introdução
+endif::[]
+ifdef::foco_rhcl[]
+= Fase 6 — Operação: a borda no dia a dia
+:navtitle: Introdução
+endif::[]
 
-**Cinco partes e uma opcional · cerca de 33 minutos, mais 10 da 3.6 · duas delas mudam estado**
+ifndef::foco_rhcl[]
+**Cinco partes e uma opcional · cerca de 33 minutos, mais 10 da {p-auditoria} · duas delas mudam estado**
 
 **Produtos:** Connectivity Link e Service Mesh -- a observabilidade é dos dois
 
@@ -26,13 +34,55 @@ mais que qualquer ferramenta: diagnóstico não é adivinhar onde parou, é
 
 == O que você precisa antes
 
-Os Módulos 1 e 2 -- e é por isso que este vem depois deles. A parte 3.3
+Os Módulos 1 e 2 -- e é por isso que este vem depois deles. A parte {p-negado}
 percorre seis lugares onde uma chamada pode morrer, e dois deles são do Service
 Mesh: sem o Módulo 2, `sidecar` e `AuthorizationPolicy` seriam palavras novas
 no meio de um exercício de diagnóstico.
 
-== Aviso sobre a parte 3.4
+== Aviso sobre a parte {p-degrada}
 
 Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
 você interromper com `Ctrl-C`. As outras três não alteram nada.
+endif::[]
+ifdef::foco_rhcl[]
 
+**Quatro partes · cerca de 36 minutos · uma delas muda estado e devolve**
+
+**Momento do projeto:** do dia 2 em diante · **Quem faz:** operação, suporte e SRE
+
+== O que você vai conseguir fazer
+
+* olhar uma recusa de API e dizer em qual lugar da borda ela parou;
+* prever o que acontece com o tráfego quando um componente da plataforma cai;
+* fazer a plataforma **avisar sobre si mesma** -- inclusive quando o tráfego
+  está perfeito e ninguém reclama;
+* responder quem mudou o quê, com a fonte que prova cada resposta.
+
+== A ideia que atravessa as quatro partes
+
+Medir é fácil; **atribuir** é difícil. Um gráfico diz que houve erro. Ele não
+diz de quem, nem onde, nem por quê.
+
+Esta fase é sobre a diferença entre os dois, e sobre uma disciplina que vale
+mais que qualquer ferramenta: diagnóstico não é adivinhar onde parou, é
+**descartar** onde não parou.
+
+== O que você precisa antes
+
+As fases 2 a 4. A parte {p-negado} percorre os lugares onde uma chamada pode
+morrer, e cada um deles é uma decisão que você já tomou: a borda fechada, a
+credencial, o plano.
+
+[NOTE]
+====
+**Aqui entraria o Service Mesh.** Com ele, o diagnóstico ganha dois lugares a
+mais, do lado de dentro, e uma ferramenta nova: seguir a requisição salto a
+salto. Esta sessão não o pratica; a xref:papel-ossm.adoc[leitura sobre o papel
+dele] diz o que ele faria aqui.
+====
+
+== Aviso sobre a parte {p-degrada}
+
+Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
+você interromper com `Ctrl-C`. As outras três não alteram nada.
+endif::[]

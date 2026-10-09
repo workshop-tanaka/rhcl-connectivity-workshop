@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Connectivity Link -- a API como plataforma
 :page-authorship: Sandro Tanaka
 
@@ -9,16 +10,30 @@ Uma aplicação de viagens, sem uma linha de código sobre segurança ou limites
 servindo três clientes com direitos diferentes -- e tudo isso decidido por uma
 camada na frente dela.
 
+ifndef::foco_rhcl[]
 É essa camada que o workshop explora: o que ela faz, como se observa quando
 falha, quem tem permissão para mudá-la, e o que acontece além da porta de
 entrada.
+endif::[]
+ifdef::foco_rhcl[]
+É essa camada que esta sessão constrói, na ordem em que um projeto real a
+constrói: a plataforma, a borda, a primeira API, a API como produto, e a
+operação.
+endif::[]
 
 [NOTE]
 ====
+ifndef::foco_rhcl[]
 **Não é preciso conhecer os produtos de antemão.** Cada módulo apresenta os
 conceitos conforme aparecem, com os links da documentação oficial de cada um.
+endif::[]
+ifdef::foco_rhcl[]
+**Não é preciso conhecer o produto de antemão.** Cada fase apresenta os
+conceitos conforme aparecem, com os links da documentação oficial.
+endif::[]
 ====
 
+ifndef::foco_rhcl[]
 == Como o workshop está organizado
 
 Três módulos para percorrer, cada um com uma introdução própria e partes
@@ -79,8 +94,8 @@ Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 | **rápida**
 | ~1 h
-| xref:00-preparacao.adoc[Preparação], partes 1.1 a 1.5 e a parte
-  xref:m2-01-leste-oeste.adoc[2.1]. Você vê a API fechada, os planos
+| xref:00-preparacao.adoc[Preparação], partes {p-fechada} a {p-negocio} e a parte
+  xref:m2-01-leste-oeste.adoc[{p-leste}]. Você vê a API fechada, os planos
   comerciais, a precedência, os papéis, o número de negócio -- e a segunda
   fronteira, que é a pergunta que sempre vem
 
@@ -107,13 +122,13 @@ por onde começar:
 | se o seu dia é | comece por
 
 | segurança, ou plataforma
-| Módulo 1, e depois a parte 2.1 -- a chave de API abre a porta da rua, não o cofre
+| Módulo 1, e depois a parte {p-leste} -- a chave de API abre a porta da rua, não o cofre
 
 | operação, suporte ou SRE
-| Módulo 3 inteiro, em especial a parte 3.3, que é diagnóstico de chamado
+| Módulo 3 inteiro, em especial a parte {p-negado}, que é diagnóstico de chamado
 
 | desenvolvimento
-| a parte 1.6 -- é onde você escreve a configuração, e sente o que custa -- e depois a leitura 5.1
+| a parte {p-exposta} -- é onde você escreve a configuração, e sente o que custa -- e depois a leitura {p-colheita}
 
 | arquitetura
 | a xref:fronteiras.adoc[página das fronteiras], e depois os Módulos 2 e 4
@@ -134,25 +149,30 @@ As que dependem de outra:
 |===
 | parte | precisa de
 
-| 1.5 Isso vira número
-| a parte 1.2 nos últimos 15 minutos -- ela só lê o que a 1.2 gera
+| {p-negocio} Isso vira número
+| a parte {p-planos} nos últimos 15 minutos -- ela só lê o que a {p-planos} gera
 
-| 3.2 O que um contador não responde
-| a parte 3.1 na última hora
+| {p-trace} O que um contador não responde
+| a parte {p-rastreavel} na última hora
 
-| 1.6 De aberta a governada
-| as partes 1.1, 1.3 e 1.4
+| {p-exposta} De aberta a governada
+| as partes {p-fechada}, {p-precedencia} e {p-papeis}
 
-| 5.1 Leitura: o caminho pavimentado
-| a parte 1.6 -- ela é o contraste inteiro
+| {p-colheita} Leitura: o caminho pavimentado
+| a parte {p-exposta} -- ela é o contraste inteiro
 
-| 3.6 Quatro perguntas, quatro fontes
+| {p-auditoria} Quatro perguntas, quatro fontes
 | o rastro que os Módulos 1 e 2 deixam
 
-| 2.2 e 2.3
-| o estado que a parte 2.1 estabelece
+| {p-canario} e {p-resiliencia}
+| o estado que a parte {p-leste} estabelece
 |===
 
+endif::[]
+ifdef::foco_rhcl[]
+include::partial$percurso-rhcl.adoc[]
+
+endif::[]
 == O ambiente
 
 Este cluster foi criado do zero para você. Tudo que o conteúdo cita -- hosts,

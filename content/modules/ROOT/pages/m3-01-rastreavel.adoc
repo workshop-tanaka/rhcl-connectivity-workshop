@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = 3.1 O caminho todo é rastreável
 :navtitle: 3.1 O caminho é rastreável
 
@@ -5,8 +6,8 @@
 
 [NOTE.antes]
 ====
-**Antes:** nada -- gera o próprio tráfego de fan-out, e não precisa da parte 1.2.
-O que ele gera, a parte 3.2 aproveita.
+**Antes:** nada -- gera o próprio tráfego de fan-out, e não precisa da parte {p-planos}.
+O que ele gera, a parte {p-trace} aproveita.
 ====
 
 O tráfego de `/travels` **não** atravessa o Service Mesh: a resposta é local

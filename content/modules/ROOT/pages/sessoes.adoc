@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = As sessões deste workshop
 :navtitle: As sessões deste workshop
 
@@ -10,7 +11,16 @@ ifdef::foco_rhcl[]
 [IMPORTANT]
 ====
 **Esta é a sessão de Red Hat Connectivity Link.** O percurso é o da borda:
-quem entra na API, sob qual plano, e como isso vira evidência.
+quem entra na API, sob qual plano, e como isso vira evidência -- na ordem em
+que um projeto real acontece, da plataforma instalada à operação.
+====
+
+[NOTE]
+====
+**Aqui o Connectivity Link roda sozinho.** Este ambiente não tem Service Mesh:
+quem atende os Gateways é o Gateway API que o próprio OpenShift traz. Tudo o
+que você vai fazer nesta sessão vale assim, sem outro produto por baixo -- e a
+xref:leitura-instalacao.adoc[fase 1] mostra como isso foi montado.
 ====
 endif::[]
 ifdef::foco_ossm[]
@@ -43,8 +53,8 @@ endif::[]
 
 | **Connectivity Link**
 | quem pode chamar a minha API, quanto, e como eu provo isso?
-| o xref:m1-00-intro.adoc[Módulo 1] em três blocos, o diagnóstico e o alerta
-  da borda, e os Extras de borda
+| um projeto de borda do começo ao fim, em fases: a plataforma, a borda, a
+  primeira API, a API como produto, a esteira e a operação
 
 | **Service Mesh**
 | depois que a chamada entrou, quem pode falar com quem lá dentro?

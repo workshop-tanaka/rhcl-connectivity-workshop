@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Leitura: Route, Ingress e Gateway API
 :navtitle: Leitura: Route, Ingress e Gateway API
 
@@ -6,7 +7,7 @@
 Até aqui você usou `Gateway` e `HTTPRoute` sem que ninguém explicasse por que
 não é uma `Route` do OpenShift, que é o jeito que todo mundo já conhece. A
 resposta importa, porque **os três convivem neste cluster** -- e a próxima
-parte, a xref:m1-06-exposta.adoc[1.6], começa justamente publicando uma
+parte, a xref:m1-06-exposta.adoc[{p-exposta}], começa justamente publicando uma
 `Route` para depois trocá-la.
 
 include::partial$diagrama.adoc[]
@@ -57,7 +58,7 @@ flowchart LR
 O router do OpenShift **continua existindo**, e está na frente. Com
 `passthrough` ele não abre a conexão: repassa os bytes. Quem termina o TLS,
 valida a chave e conta o consumo é o Envoy do `Gateway` -- por isso o
-certificado da parte xref:m1-08-certificado.adoc[1.8] é um Secret do Gateway,
+certificado da parte xref:m1-08-certificado.adoc[{p-certificado}] é um Secret do Gateway,
 e não do router.
 
 [IMPORTANT]
@@ -86,7 +87,7 @@ Gateway, não de quem o publica.
 | quem tem `edit` no namespace -- não há separação
 | o mesmo
 | **papéis separados**: a porta é do Engenheiro de Plataforma, a rota é do
-  time da aplicação (parte xref:m1-04-papeis.adoc[1.4])
+  time da aplicação (parte xref:m1-04-papeis.adoc[{p-papeis}])
 
 | **onde se pendura regra**
 | em lugar nenhum: o que existe são anotações específicas do produto
@@ -103,7 +104,7 @@ Gateway, não de quem o publica.
 | condição de admissão
 | endereço publicado
 | **condições por rota e por policy** -- `Accepted`, `Programmed`,
-  `Enforced` (parte xref:m1-03-precedencia.adoc[1.3])
+  `Enforced` (parte xref:m1-03-precedencia.adoc[{p-precedencia}])
 
 | **portabilidade**
 | só OpenShift
@@ -126,7 +127,7 @@ e um Service de Envoy próprios. Neste cluster há três, e eles não são iguai
 
 | `echo-web`
 | `ingress-gateway`
-| **sim** -- é a borda da API com OIDC da parte 1.7
+| **sim** -- é a borda da API com OIDC da parte {p-identidade}
 
 | `bookinfo-gateway`
 | `bookinfo`
@@ -165,7 +166,7 @@ não por ser de outro tipo.
 Três consequências práticas:
 
 * **O teto não atravessa gateways.** O `prod-web-deny-all` da parte
-  xref:m1-06-exposta.adoc[1.6] vale para as rotas anexadas ao `prod-web`, e
+  xref:m1-06-exposta.adoc[{p-exposta}] vale para as rotas anexadas ao `prod-web`, e
   para mais nenhuma. Foi por isso que as amostras do Istio subiram com gateway
   próprio: uma rota delas pendurada no `prod-web` nasceria negada.
 * **Cada gateway custa um pod de Envoy**, e um jeito de ser publicado -- aqui,
@@ -219,7 +220,7 @@ sobreposição?" é justa. Há -- em três lugares, e só neles:
 
 | o **certificado** da borda
 | o listener aponta para um Secret
-| `TLSPolicy` cria e renova esse Secret (parte xref:m1-08-certificado.adoc[1.8])
+| `TLSPolicy` cria e renova esse Secret (parte xref:m1-08-certificado.adoc[{p-certificado}])
 
 | o **nome DNS** da borda
 | —
@@ -234,7 +235,7 @@ Nos três pontos marcados, a regra prática é simples: **decida em um lugar
 só**. Uma `AuthorizationPolicy` do Istio e uma `AuthPolicy` do Connectivity
 Link sobre a mesma rota funcionam ao mesmo tempo, e uma recusa passa a ter
 duas origens possíveis -- exatamente o que a parte
-xref:m3-03-negado.adoc[3.3] ensina a separar.
+xref:m3-03-negado.adoc[{p-negado}] ensina a separar.
 
 A divisão que este workshop usa: **a borda é do Connectivity Link, o
 leste-oeste é do Service Mesh.**
@@ -299,19 +300,39 @@ Connectivity Link 1.4 é suportado sobre ela.
   Service Mesh enquanto os dois não confiarem na mesma raiz
 |===
 
+ifdef::foco_rhcl[]
+[IMPORTANT]
+====
+**Este ambiente usa o provedor nativo, com duas escolhas de laboratório.** O
+Gateway de cada participante mora no namespace dele, e não em
+`openshift-ingress`; e é publicado por `ClusterIP` com uma `Route` na frente,
+porque o cluster da turma não tem balanceador. As duas funcionam -- é o que
+você usa nesta sessão -- e as duas estão **fora** do desenho que a tabela acima
+descreve como suportado. Num projeto real, siga o da documentação.
+====
+
+endif::[]
 O que **não muda** de um provedor para o outro são as policies: `AuthPolicy`,
 `RateLimitPolicy`, `TLSPolicy` e as demais são do Connectivity Link e se
-escrevem do mesmo jeito. Tudo o que o Módulo 1 mostra vale nos dois.
+escrevem do mesmo jeito. Tudo o que o {m1} mostra vale nos dois.
 
 O que muda é a topologia, e com ela quem pode o quê. A policy só aponta para
 um recurso do **próprio namespace**: com todos os Gateways em
 `openshift-ingress`, as policies de Gateway de todos os times moram juntas, e
 a separação entre quem as edita passa a ser por RBAC, não por namespace.
 
+ifndef::foco_rhcl[]
 NOTE: Este cluster não tem a classe `openshift-default` -- confira com
 `oc get gatewayclass`. A escolha pelo Service Mesh 3 como provedor foi por
-causa do Módulo 2, que depende dele. Quem precisa só da borda pode ficar com
+causa do {m2}, que depende dele. Quem precisa só da borda pode ficar com
 o provedor nativo.
+endif::[]
+ifdef::foco_rhcl[]
+NOTE: Este cluster usa o provedor nativo -- confira com `oc get gatewayclass`:
+o controller das duas classes é `openshift.io/gateway-controller/v1`. A
+classe se chama `istio` por escolha deste ambiente, para os manifests valerem
+iguais nas duas formas de instalar.
+endif::[]
 
 == O que isso prova
 
@@ -320,7 +341,7 @@ A diferença que sustenta este workshop não é "um objeto mais novo". É a
 
 Enquanto hostname, TLS e destino moram num objeto só, não existe onde escrever
 o teto da plataforma: quem publica decide tudo. Com `Gateway` e `HTTPRoute`
-separados, existe um lugar para o `deny-all` da parte 1.6, outro para a
+separados, existe um lugar para o `deny-all` da parte {p-exposta}, outro para a
 liberação da sua rota, e um terceiro conjunto de objetos -- as policies -- que
 diz o que vale em cada um.
 

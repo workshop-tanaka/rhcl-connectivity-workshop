@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = A saída também é borda
 :navtitle: A saída também é borda
 
@@ -7,7 +8,7 @@
 
 [NOTE.antes]
 ====
-**Antes:** as partes xref:m1-01-fechada.adoc[1.1] e xref:m1-02-planos.adoc[1.2].
+**Antes:** as partes xref:m1-01-fechada.adoc[{p-fechada}] e xref:m1-02-planos.adoc[{p-planos}].
 As policies daqui são as mesmas de lá, presas a um Gateway virado para fora.
 ====
 
@@ -95,7 +96,7 @@ parceiro e estourá-lo custa dinheiro.
 
 == 4. Só sai quem se identifica -- e a credencial não sai junto
 
-Uma `AuthPolicy` no Gateway de saída, por chave de API, como na parte 1.1:
+Uma `AuthPolicy` no Gateway de saída, por chave de API, como na parte {p-fechada}:
 
 [source,text]
 ----

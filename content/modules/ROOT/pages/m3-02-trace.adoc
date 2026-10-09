@@ -1,17 +1,18 @@
+include::partial$numeros.adoc[]
 = 3.2 O que um contador não responde
 :navtitle: 3.2 O que um contador não responde
 
-**Para quem:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte 3.1**
+**Para quem:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte {p-rastreavel}**
 
 [WARNING.antes]
 ====
-**Antes: a parte 3.1** (ou `bash scripts/traffic.sh mesh`) na última hora, para
+**Antes: a parte {p-rastreavel}** (ou `bash scripts/traffic.sh mesh`) na última hora, para
 o terceiro movimento, que procura traces de fan-out do `travels`. Os dois
 primeiros geram as próprias chamadas. Se faltar, o script pergunta se dispara
-a parte 3.1 agora.
+a parte {p-rastreavel} agora.
 ====
 
-A parte 1.5 mostrou a métrica, que **agrega**. O trace **correlaciona**: amarra
+A parte {p-negocio} mostrou a métrica, que **agrega**. O trace **correlaciona**: amarra
 os pedaços de uma requisição. Quando alguém pergunta "quanto essa policy me
 custa em latência?", nenhum contador responde.
 

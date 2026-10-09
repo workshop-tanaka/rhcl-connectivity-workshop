@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = 0. Preparação
 :navtitle: 0. Preparação
 
@@ -57,7 +58,7 @@ Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
   depende do cluster -- fixá-lo num manifesto quebraria o próximo ambiente.
   Veja o objeto real com `oc get gateway prod-web -n ingress-gateway -o yaml`.
 * **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o circuit breaker
-  da parte 2.3) é a plataforma que a demo *pressupõe*, não o que ela governa.
+  da parte {p-resiliencia}) é a plataforma que a demo *pressupõe*, não o que ela governa.
   Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
 ====
 
@@ -92,7 +93,7 @@ Como ler o resultado:
 | o que aparece | o que fazer
 
 | `[OK]` no fim
-| siga para a parte 1.1
+| siga para a parte {p-fechada}
 
 | `!` amarelo
 | **não bloqueia.** Degrada uma parte específica, e a linha diz qual
@@ -121,6 +122,36 @@ Ela termina em `[OK] núcleo pronto`. É a que vale rodar se uma parte devolver
 um número estranho no meio do caminho.
 ====
 
+ifdef::foco_rhcl[]
+== Veja pronto, antes de começar
+
+Esta sessão segue a ordem de um projeto, e um projeto começa pela plataforma,
+não pelo resultado. Antes de voltar ao começo da história, vale ver em dois
+minutos **aonde ela chega**: a mesma API, no mesmo endereço, tratando três
+clientes de três jeitos.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://{api_host}/travels
+bash scripts/traffic.sh tiers
+----
+
+[source,text]
+----
+sem chave: 401
+
+free           (3/10s)      200 200 200 429 429 429 429 429 429 429 429 429 429 429   -> 3 ok, 11 limitadas
+gold           (30/10s)     200 200 200 200 200 200 200 200 200 200 200 200 200 200   -> 14 ok, 0 limitadas
+silver         (10/10s)     200 200 200 200 200 200 200 200 200 200 429 429 429 429   -> 10 ok, 4 limitadas
+----
+
+Sem credencial, ninguém entra. Com credencial, cada plano recebe o que
+contratou -- e a aplicação não tem uma linha de código sobre isso.
+
+As fases seguintes mostram **como se chega aqui**, uma decisão por vez, e quem
+toma cada uma.
+
+endif::[]
 == 3. As telas
 
 [source,bash,role="execute"]
@@ -146,9 +177,9 @@ endif::[]
 |===
 | Grafana | {grafana_url}/d/rhcl-evidencia[Evidência das partes^] -- um painel por parte
 ifndef::foco_rhcl[]
-| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes 3.1 e 2.1)
+| Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes {p-rastreavel} e {p-leste})
 endif::[]
-| Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork da parte 1.3
+| Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork da parte {p-precedencia}
 |===
 
 include::partial$entrar-grafana.adoc[]
@@ -164,7 +195,7 @@ include::partial$entrar-ocp.adoc[]
 Cada passo **pausa antes de executar**: `Enter` segue, `p` pula, `Ctrl-C` sai.
 Ele mostra o comando na tela antes de rodar, roda, e diz o que olhar na saída.
 
-Três coisas que valem saber antes da parte 1.1:
+Três coisas que valem saber antes da parte {p-fechada}:
 
 [cols="1,3"]
 |===
@@ -186,8 +217,15 @@ bash scripts/demo.sh aquece --auto
 ----
 
 Três minutos de tráfego de fundo e **depois** o reset das cotas. Sem ele o
-Grafana da parte 1.5 mostra linha achatada. A ordem soak → reset é obrigatória:
+Grafana da parte {p-negocio} mostra linha achatada. A ordem soak → reset é obrigatória:
 o aquecimento queima cota diária, e o reset a devolve.
 
+ifndef::foco_rhcl[]
 Pronto. Siga para o xref:m1-01-fechada.adoc[Módulo 1].
+endif::[]
+ifdef::foco_rhcl[]
+Pronto. Siga para a xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e
+Gateway API], que diz de onde este projeto parte, ou direto para a
+xref:leitura-instalacao.adoc[Fase 1].
+endif::[]
 

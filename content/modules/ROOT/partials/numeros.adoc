@@ -1,0 +1,69 @@
+// A NUMERACAO DAS PARTES, POR SESSAO. Toda pagina inclui este arquivo antes do
+// titulo, e nenhuma escreve numero de parte a mao: a mesma pagina e '1.1' na
+// sessao completa e '2.1' na sessao de Connectivity Link, que segue a ordem de
+// um projeto real. Mudar a ordem de uma sessao e mudar este arquivo e o nav.
+
+ifndef::foco_rhcl[]
+:p-fechada: 1.1
+:p-planos: 1.2
+:p-precedencia: 1.3
+:p-papeis: 1.4
+:p-negocio: 1.5
+:p-exposta: 1.6
+:p-identidade: 1.7
+:p-certificado: 1.8
+:p-leste: 2.1
+:p-canario: 2.2
+:p-resiliencia: 2.3
+:p-canal: 2.4
+:p-rastreavel: 3.1
+:p-trace: 3.2
+:p-negado: 3.3
+:p-degrada: 3.4
+:p-alerta: 3.5
+:p-auditoria: 3.6
+:p-colheita: 5.1
+:p-dns:
+:p-contextos:
+:p-listas:
+:m1: Módulo 1
+:m2: Módulo 2
+:m3: Módulo 3
+:m4: Módulo 4
+:m5: Módulo 5
+:m1e3: Módulos 1 e 3
+endif::[]
+
+ifdef::foco_rhcl[]
+:p-fechada: 2.1
+:p-planos: 4.1
+:p-precedencia: 2.2
+:p-papeis: 2.3
+:p-negocio: 4.2
+:p-exposta: 3.1
+:p-identidade: 3.3
+:p-certificado: 2.4
+:p-leste: 2.1 da sessão de Service Mesh
+:p-canario: 2.2 da sessão de Service Mesh
+:p-resiliencia: 2.3 da sessão de Service Mesh
+:p-canal: 2.4 da sessão de Service Mesh
+:p-rastreavel: 3.1 da sessão de Service Mesh
+:p-trace: 3.2 da sessão de Service Mesh
+:p-negado: 6.1
+:p-degrada: 6.2
+:p-alerta: 6.3
+:p-auditoria: 6.4
+:p-colheita: 7.1
+:p-dns: 3.2{sp}
+:p-contextos: 4.3{sp}
+:p-listas: 4.4{sp}
+// Na sessao de Connectivity Link nao ha modulos, ha fases. Onde a pagina dizia
+// 'Modulo N', sai o nome do trecho correspondente -- todos no masculino, para
+// a frase em volta continuar concordando.
+:m1: percurso da borda
+:m2: Módulo 2 da sessão de Service Mesh
+:m3: bloco de operação
+:m4: Módulo 4 da sessão de Service Interconnect
+:m5: caminho pavimentado
+:m1e3: percursos da borda e de operação
+endif::[]

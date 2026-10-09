@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Seus acessos
 :navtitle: Seus acessos
 
@@ -18,12 +19,17 @@ A aplicação de viagens, que é o objeto de quase todos os módulos:
 | endereço | `\https://{api_host}/travels`
 |===
 
+ifndef::foco_rhcl[]
 Sem credencial ela responde `401` -- e isso é o Módulo 1.
+endif::[]
+ifdef::foco_rhcl[]
+Sem credencial ela responde `401` -- e isso é a parte {p-fechada}.
+endif::[]
 
 == As três chaves
 
 Cada uma representa um cliente num plano comercial diferente. É a diferença
-entre elas que o Módulo 1 explora:
+entre elas que o {m1} explora:
 
 [cols="1,1,2",options="header"]
 |===
@@ -52,14 +58,14 @@ curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 300
 [NOTE]
 ====
 Chave em URL é o mais fácil de demonstrar, e **não** é o que se usa em
-produção -- query string entra em log de acesso. O Módulo 1 mostra que o
+produção -- query string entra em log de acesso. O {m1} mostra que o
 mesmo mecanismo aceita cabeçalho.
 ====
 
 == Os três portais de parceiro
 
 Cada um consome a API com a chave de um plano diferente. Vale deixar os três
-abertos em abas separadas -- o Módulo 1 pede isso.
+abertos em abas separadas -- o {m1} pede isso.
 
 [cols="1,1,2",options="header"]
 |===

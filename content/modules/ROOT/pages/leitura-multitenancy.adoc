@@ -1,7 +1,18 @@
+include::partial$numeros.adoc[]
 = Leitura: multi-tenancy com o Connectivity Link
 :navtitle: Leitura: multi-tenancy
 
 **Leitura · ~8 min · não muda estado**
+
+ifdef::foco_rhcl[]
+[TIP]
+====
+**Fase 7 -- Escala, e o que vem depois.** É o trimestre seguinte, e a conversa
+é de arquitetura: mais times na mesma plataforma, a configuração nascendo de
+um formulário, e as duas fronteiras que esta sessão não pratica. Só leitura,
+cerca de 25 minutos.
+====
+endif::[]
 
 A pergunta chega cedo em qualquer conversa sobre plataforma de API: *"dá para
 vários times usarem o mesmo cluster, cada um com as suas APIs, sem um enxergar
@@ -44,7 +55,7 @@ flowchart TB
 O Gateway API separa de propósito quem cria o `Gateway` de quem cria a
 `HTTPRoute`. O time de plataforma é dono da porta de entrada; o time de
 aplicação é dono das rotas que passam por ela. É a
-xref:m1-04-papeis.adoc[parte 1.4] deste workshop.
+xref:m1-04-papeis.adoc[parte {p-papeis}] deste workshop.
 
 E o `Gateway` declara de quais namespaces aceita rotas:
 
@@ -91,7 +102,7 @@ formas:
 É assim que a plataforma impõe uma regra a todos os times sem escrever em
 nenhuma rota. Neste workshop o "nega tudo" do Gateway é um padrão, e a policy
 da rota o substitui -- é o `Overridden` que a
-xref:m1-03-precedencia.adoc[parte 1.3] mostra.
+xref:m1-03-precedencia.adoc[parte {p-precedencia}] mostra.
 
 === Contadores por rota
 
@@ -113,7 +124,7 @@ O produto governa a borda. Três coisas ele deixa para a plataforma por baixo:
 | `NetworkPolicy` e o Service Mesh. Uma chave de API protege a porta da rua;
   quem já está dentro do cluster alcança o serviço de outro namespace sem
   passar pelo Gateway, a menos que algo o impeça. É a fronteira leste-oeste
-  da xref:m2-01-leste-oeste.adoc[parte 2.1]
+  da xref:m2-01-leste-oeste.adoc[parte {p-leste}]
 
 | regras que o Gateway API não expressa
 | controle de admissão -- por exemplo, exigir que o hostname de uma rota

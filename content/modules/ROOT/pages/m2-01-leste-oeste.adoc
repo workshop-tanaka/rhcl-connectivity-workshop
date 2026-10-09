@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = 2.1 A borda não é a única fronteira
 :navtitle: 2.1 A borda não é a única fronteira
 
@@ -6,14 +7,14 @@
 [WARNING.antes]
 ====
 **Antes: o estado base do Service Mesh** -- mTLS `STRICT`, `discounts` em
-90/10, sem fault injection. Nenhuma parte antes; mas as partes 2.2, 2.3 e o passo `falha` mexem
+90/10, sem fault injection. Nenhuma parte antes; mas as partes {p-canario}, {p-resiliencia} e o passo `falha` mexem
 nesse estado e o devolvem ao sair, e um Ctrl-C no meio deles não. O script
 confere os três ao começar e oferece o passo `mesh_base` (~5 s) se algo
 estiver fora.
 ====
 
 Esta parte é do Service Mesh, não do RHCL, e existe porque a pergunta vem
-sozinha depois da parte 1.1: "então a chave de API protege tudo?". Não protege --
+sozinha depois da parte {p-fechada}: "então a chave de API protege tudo?". Não protege --
 ela abre a porta da rua. E o argumento fecha porque é o **mesmo** Envoy nas
 duas pontas.
 

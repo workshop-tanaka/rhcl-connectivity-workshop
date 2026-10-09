@@ -1,4 +1,5 @@
-= Listas de permissão e bloqueio
+include::partial$numeros.adoc[]
+= {p-listas}Listas de permissão e bloqueio
 :navtitle: Listas de permissão e bloqueio
 
 **Opcional · ~9 min · cria e remove um namespace próprio**
@@ -7,8 +8,14 @@
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:m1-01-fechada.adoc[1.1] e, de preferência, o Extra
+ifndef::foco_rhcl[]
+**Antes:** a parte xref:m1-01-fechada.adoc[{p-fechada}] e, de preferência, o Extra
 xref:extra-contextos.adoc[Uma API, vários contextos] -- a lista aqui é aplicada
+endif::[]
+ifdef::foco_rhcl[]
+**Antes:** a parte xref:m1-01-fechada.adoc[{p-fechada}] e, de preferência, a parte
+xref:extra-contextos.adoc[{p-contextos}] -- a lista aqui é aplicada
+endif::[]
 a **um contexto**, e não à API inteira.
 ====
 
@@ -221,7 +228,7 @@ de operadora sem mudar de resposta.
 
 | `Route` `edge` em vez de `passthrough`
 | passa a existir um `X-Forwarded-For`. O preço é mover a terminação TLS para
-  o router, e a parte xref:m1-08-certificado.adoc[1.8] deixa de valer como
+  o router, e a parte xref:m1-08-certificado.adoc[{p-certificado}] deixa de valer como
   está. Por padrão o router **acrescenta** ao cabeçalho que o cliente mandou,
   e o valor forjado segue na frente: quem lê o primeiro endereço precisa da
   anotação `haproxy.router.openshift.io/set-forwarded-headers: replace` na

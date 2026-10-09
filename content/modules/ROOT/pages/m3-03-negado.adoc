@@ -1,20 +1,21 @@
-= 3.3 Onde a requisição morreu
-:navtitle: 3.3 Onde a requisição morreu
+include::partial$numeros.adoc[]
+= {p-negado} Onde a requisição morreu
+:navtitle: {p-negado} Onde a requisição morreu
 
 **Para quem:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **12 min** · **não muda estado**
 
 [NOTE.antes]
 ====
-**Antes:** nenhum módulo. Este roda sozinho, a qualquer hora.
+**Antes:** nada. Roda sozinho, a qualquer hora.
 ====
 
-**Ao final deste módulo** você consegue olhar uma recusa de API e dizer em
+**Ao final desta parte** você consegue olhar uma recusa de API e dizer em
 qual de seis lugares a chamada morreu -- e, mais útil no dia a dia, quais
 lugares você já pode **descartar** sem investigar.
 
 == Cinco palavras, antes de começar
 
-Se os termos abaixo forem novos para você, está tudo bem: o módulo inteiro
+Se os termos abaixo forem novos para você, está tudo bem: a parte inteira
 funciona sem conhecê-los de antemão. Eles estão aqui para quando você quiser
 ir além.
 
@@ -55,7 +56,7 @@ https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Documen
 
 == O método: apostar antes de rodar
 
-Este módulo **não é para assistir**. Cada estação descreve um sintoma e pára,
+Esta parte **não é para assistir**. Cada estação descreve um sintoma e pára,
 esperando que você **aposte** em qual é a causa antes de ver a resposta.
 
 A aposta errada ensina mais que a saída certa lida em silêncio. Erre à
@@ -106,6 +107,18 @@ flowchart TD
 | o comportamento contradiz a configuração
 | confirme **antes** do resto
 |===
+
+ifdef::foco_rhcl[]
+[NOTE]
+====
+**Aqui entraria o Service Mesh.** A estação 5 é dele: o sidecar de um serviço
+recusando a chamada de outro. Neste ambiente não há sidecar, e o script mostra
+o que isso significa -- os dois serviços são atendidos, sem ninguém perguntar
+quem chama. As outras cinco estações são da borda, e valem aqui inteiras. A
+xref:papel-ossm.adoc[leitura sobre o papel do Service Mesh] diz o que ele
+acrescentaria.
+====
+endif::[]
 
 == Terminal
 
@@ -207,7 +220,7 @@ Quem recusa não é a aplicação nem o Gateway: é o **sidecar** do serviço de
 destino, aplicando uma `AuthorizationPolicy` sobre a identidade mTLS de quem
 chamou. A frase `RBAC: access denied` no corpo é a assinatura dessa recusa.
 
-O módulo mostra duas chamadas ao mesmo destino, de origens diferentes: uma
+A parte mostra duas chamadas ao mesmo destino, de origens diferentes: uma
 recebe `403`, a outra `404`. E aqui **o `404` é boa notícia** -- só quem foi
 atendido pode responder "não tenho essa página". Quem é recusado nunca chega
 a existir para o serviço do outro lado.
@@ -254,7 +267,7 @@ Se errar, o próprio resultado diz qual módulo rever.
 
 == A cola, para levar embora
 
-Este é o artefato do módulo -- o que sobrevive ao workshop:
+Este é o artefato da parte -- o que sobrevive ao workshop:
 
 [source,bash,role="execute"]
 ----
@@ -287,7 +300,7 @@ existe.
 Diagnóstico não é adivinhação: é **descarte**. Cada sintoma elimina um
 pedaço do caminho, e os dois cabeçalhos certos eliminam mais da metade dele.
 
-E há uma simetria que vale notar: é a **mesma evidência** que a parte 3.6 usa
+E há uma simetria que vale notar: é a **mesma evidência** que a parte {p-auditoria} usa
 para auditar. A auditoria parte da mudança e pergunta o efeito; o diagnóstico
 parte do efeito e pergunta a mudança.
 

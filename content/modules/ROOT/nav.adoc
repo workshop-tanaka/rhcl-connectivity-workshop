@@ -7,6 +7,62 @@
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
 
+// A SESSAO DE CONNECTIVITY LINK TEM MENU PROPRIO, na ordem de um projeto real:
+// a plataforma, a borda, a primeira API, o produto, a esteira, a operacao. Os
+// numeros das partes vem de partials/numeros.adoc -- mudar a ordem aqui e la.
+ifdef::foco_rhcl[]
+* xref:leitura-ingresso.adoc[Leitura: Route, Ingress e Gateway API]
+
+.Fase 1 — A plataforma no ar
+* xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
+* xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
+.Fase 2 — A borda
+* xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
+* xref:m1-03-precedencia.adoc[2.2 Precedência de policies]
+* xref:m1-04-papeis.adoc[2.3 Quem pode o quê]
+* xref:m1-08-certificado.adoc[2.4 O certificado tem dono?]
+
+.Fase 3 — A primeira API
+* xref:m1-06-exposta.adoc[3.1 De aberta a governada]
+* xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
+* xref:m1-07-identidade.adoc[3.3 Chave ou identidade]
+
+.Fase 4 — A API vira produto
+* xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
+* xref:m1-05-negocio.adoc[4.2 Isso vira número]
+* xref:extra-contextos.adoc[4.3 Uma API, vários contextos]
+* xref:extra-listas.adoc[4.4 Listas de permissão e bloqueio]
+
+.Fase 5 — Da mão para a esteira (em preparação)
+* xref:fase-esteira.adoc[A proposta da fase]
+
+.Fase 6 — Operação
+* xref:m3-00-intro.adoc[Introdução]
+* xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
+* xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
+* xref:m3-05-alerta.adoc[6.3 O alerta]
+* xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes]
+
+.Fase 7 — Escala, e o que vem depois
+* xref:leitura-multitenancy.adoc[Leitura: multi-tenancy]
+* xref:m5-00-intro.adoc[O caminho pavimentado: a proposta]
+* xref:m5-01-colheita.adoc[7.1 Leitura: o caminho pavimentado]
+* xref:papel-ossm.adoc[Leitura: o papel do Service Mesh]
+* xref:papel-rhsi.adoc[Leitura: o papel do Service Interconnect]
+
+.Extras — opcionais, em qualquer ordem
+* xref:extras.adoc[Extras: qual escolher]
+* xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
+* xref:extra-postman.adoc[Testar a API no Postman]
+* xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
+* xref:extra-tokens-ia.adoc[Limite por token (IA)]
+* xref:leitura-waf.adoc[Leitura: onde entra o WAF]
+* xref:leitura-websocket.adoc[Leitura: WebSocket]
+endif::[]
+
+// As outras sessoes: o menu por modulo.
+ifndef::foco_rhcl[]
 ifndef::foco_ossm,foco_rhsi[]
 .Connectivity Link — a API como produto
 * xref:m1-00-intro.adoc[Introdução]
@@ -87,6 +143,7 @@ ifdef::foco_rhcl,foco_ossm[]
 endif::[]
 ifndef::foco_rhsi[]
 * xref:leitura-instalacao.adoc[Leitura: instalação e configuração]
+endif::[]
 endif::[]
 
 .Para fechar

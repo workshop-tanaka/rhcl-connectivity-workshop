@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Leitura: onde entra o WAF
 :navtitle: Leitura: onde entra o WAF
 
@@ -84,6 +85,6 @@ Cada camada responde uma pergunta, e o erro é sempre o mesmo: pedir a uma
 camada a resposta da outra.
 
 Identidade e cota são do Connectivity Link (parte
-xref:m1-02-planos.adoc[1.2]); tráfego entre serviços é do Service Mesh (parte
-xref:m2-01-leste-oeste.adoc[2.1]); bloquear um parceiro é contrato, e o Extra
+xref:m1-02-planos.adoc[{p-planos}]); tráfego entre serviços é do Service Mesh (parte
+xref:m2-01-leste-oeste.adoc[{p-leste}]); bloquear um parceiro é contrato, e o Extra
 xref:extra-listas.adoc[Listas de permissão e bloqueio] mostra por quê.

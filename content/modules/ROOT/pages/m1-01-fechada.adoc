@@ -1,7 +1,18 @@
-= 1.1 A API está fechada por padrão
-:navtitle: 1.1 Fechada por padrão
+include::partial$numeros.adoc[]
+= {p-fechada} A API está fechada por padrão
+:navtitle: {p-fechada} Fechada por padrão
 
 **Para quem:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **5 min**
+
+ifdef::foco_rhcl[]
+[TIP]
+====
+**Fase 2 -- A borda.** É o dia 1 do projeto, e quem faz é o time de plataforma.
+Antes de qualquer API existir, a borda nasce fechada, com as regras de
+precedência à vista, com papéis separados e com um certificado que tem dono.
+Quatro partes, cerca de 26 minutos.
+====
+endif::[]
 
 [NOTE.antes]
 ====

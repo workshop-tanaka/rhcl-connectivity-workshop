@@ -1,11 +1,12 @@
-= 1.4 Quem pode o quê
-:navtitle: 1.4 Quem pode o quê
+include::partial$numeros.adoc[]
+= {p-papeis} Quem pode o quê
+:navtitle: {p-papeis} Quem pode o quê
 
 **Para quem:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **7 min**
 
 [NOTE.antes]
 ====
-**Antes:** nenhuma parte. Faz muito mais sentido logo depois da 1.3, que mostra a
+**Antes:** nenhuma parte. Faz muito mais sentido logo depois da {p-precedencia}, que mostra a
 precedência no status; aqui ela deixa de ser afirmação.
 ====
 
@@ -27,7 +28,7 @@ Connectivity Link herda os três. Dois deles aparecem neste exercício:
   autenticação, plano comercial, telemetria
 |===
 
-A parte 1.3 mostrou a precedência num campo de status. Aqui quem responde é o
+A parte {p-precedencia} mostrou a precedência num campo de status. Aqui quem responde é o
 **apiserver**.
 
 include::partial$diagrama.adoc[]
@@ -91,7 +92,7 @@ exatamente o que o Gateway API existe para eliminar.
 A matriz acima só existe porque a porta e a rota são **dois objetos**. Numa
 `Route`, hostname, TLS e destino moram juntos, e quem tem permissão de editá-la
 decide os três. Não há um objeto "gateway" onde o Engenheiro de Plataforma
-escreva um teto -- e o `deny-all` da parte xref:m1-06-exposta.adoc[1.6] não
+escreva um teto -- e o `deny-all` da parte xref:m1-06-exposta.adoc[{p-exposta}] não
 teria onde existir.
 
 Neste cluster dá para ver a diferença na prática:
@@ -165,7 +166,7 @@ Um `Role` no namespace da aplicação e um `ClusterRole` de leitura só para
 
 **Precedência sem privilégio.** O desenvolvedor governa o que é dele e não
 alcança o que não é -- e a policy dele *prevalece* sobre a do gateway na rota
-dele, que foi o que a parte 1.3 mostrou no status.
+dele, que foi o que a parte {p-precedencia} mostrou no status.
 
 Ninguém precisou escrever um processo, um checklist de revisão ou um acordo
 entre times para isso funcionar. O cluster é quem recusa. É essa a diferença

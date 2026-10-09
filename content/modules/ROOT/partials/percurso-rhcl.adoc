@@ -1,0 +1,172 @@
+// O percurso da sessao de Connectivity Link, incluido pela pagina inicial.
+// A ordem e a de um projeto real; os numeros vem de partials/numeros.adoc.
+== Como esta sessão está organizada
+
+Esta sessão segue a ordem de um **projeto real** de Connectivity Link: da
+plataforma instalada até a operação. Cada fase diz em que momento do projeto
+ela acontece e quem costuma fazê-la -- porque num projeto de verdade a borda
+troca de mãos várias vezes.
+
+[cols="2,2,2,4,1",options="header"]
+|===
+| fase | momento do projeto | quem faz | o que você sai sabendo fazer | tempo
+
+| **0 -- Ponto de partida** +
+  a seção _A solução de conectividade_, no topo do menu
+| antes de tudo
+| todos
+| dizer o que a aplicação é, com o que se entra em cada tela, e de que tipo de
+  ingresso este projeto parte
+| ~20 min
+
+| xref:leitura-instalacao.adoc[**1 -- A plataforma no ar**]
+| dia 0
+| plataforma
+| dizer do que o Connectivity Link precisa para existir, e reconhecer cada tipo
+  de policy pelo nome
+| ~15 min
+
+| xref:m1-01-fechada.adoc[**2 -- A borda**]
+| dia 1
+| plataforma
+| fechar a borda por padrão, ler no status qual regra vence, separar quem cuida
+  do Gateway de quem cuida da rota, e dar dono ao certificado
+| ~26 min
+
+| xref:m1-06-exposta.adoc[**3 -- A primeira API**]
+| dia 1
+| aplicação
+| publicar uma API do zero, dar a ela um nome, e escolher entre chave e
+  identidade
+| ~25 min
+
+| xref:m1-02-planos.adoc[**4 -- A API vira produto**]
+| as semanas seguintes
+| produto e aplicação
+| servir planos comerciais no mesmo endereço, transformar o consumo em número,
+  e descer a regra até um caminho ou uma lista
+| ~34 min
+
+| xref:fase-esteira.adoc[**5 -- Da mão para a esteira**]
+| quando a segunda API chega
+| plataforma e aplicação
+| tratar a configuração da borda como código, com revisão e histórico
+| em preparação
+
+| xref:m3-00-intro.adoc[**6 -- Operação**]
+| do dia 2 em diante
+| operação
+| dizer onde uma recusa morreu, prever o que o tráfego faz quando a plataforma
+  falha, fazer a plataforma avisar, e auditar o que foi feito
+| ~36 min
+
+| xref:leitura-multitenancy.adoc[**7 -- Escala, e o que vem depois**]
+| o trimestre seguinte
+| arquitetura
+| dividir a plataforma entre times, e dizer onde entram o Service Mesh e o
+  Service Interconnect
+| ~25 min, só leitura
+
+| xref:extras.adoc[**Extras**]
+| quando o assunto aparecer
+| quem se interessar
+| gRPC, Postman, parceiro com certificado, limite por token, WAF e WebSocket
+| opcionais
+|===
+
+Só o Connectivity Link é praticado aqui, e ele roda sozinho: este ambiente não
+tem Service Mesh. A xref:sessoes.adoc[página das sessões] explica, e a
+xref:fronteiras.adoc[página das três fronteiras] mostra onde os outros dois
+produtos entrariam.
+
+== Três trilhas, por tempo disponível
+
+As fases 1 a 4 e a 6 levam cerca de **2 h 15**; com a preparação e as leituras
+da fase 7, perto de **3 h**. Ninguém precisa fazer tudo de uma vez -- três
+recortes fecham sozinhos:
+
+[cols="1,1,3",options="header"]
+|===
+| trilha | tempo | o que fazer
+
+| **rápida**
+| ~50 min
+| xref:00-preparacao.adoc[Preparação], as partes {p-fechada} a {p-papeis}, a
+  {p-exposta}, e as partes {p-planos} e {p-negocio}. Você vê a borda fechada,
+  publica uma API e a vê virar produto
+
+| **completa**
+| ~2 h 15
+| as fases 1 a 4 e a 6, na ordem. É a trilha que o
+  xref:99-encerramento.adoc[Encerramento] pressupõe
+
+| **aprofundada**
+| ~3 h, mais os Extras
+| a completa, as leituras da fase 7 e os xref:extras.adoc[Extras] que
+  interessarem ao seu dia
+|===
+
+Se o tempo acabar no meio, pare no fim de uma parte: cada uma fecha o próprio
+raciocínio, e o bloco *Antes* da seguinte diz o que ela pressupõe.
+
+== Por onde começar, pelo seu dia
+
+Cada parte abre dizendo **a quem o problema pertence**. Use isso para escolher:
+
+[cols="1,3",options="header"]
+|===
+| se o seu dia é | comece por
+
+| segurança, ou plataforma
+| as fases 1 e 2 -- é onde a borda nasce fechada e ganha dono
+
+| desenvolvimento
+| a parte {p-exposta} -- é onde você escreve a configuração, e sente o que custa
+
+| produto, ou negócio
+| as partes {p-planos} e {p-negocio} -- planos no mesmo endereço, e o consumo
+  em painel
+
+| operação, suporte ou SRE
+| a fase 6 inteira, em especial a parte {p-negado}, que é diagnóstico de chamado
+
+| arquitetura
+| a xref:fronteiras.adoc[página das fronteiras], e depois a fase 7
+|===
+
+== A ordem dentro de uma fase
+
+As partes rodam soltas, mas algumas **leem** o que outra produziu -- e uma
+parte sem o dado que ela espera sai com painel vazio, sem erro nenhum.
+
+Cada página abre com um bloco *Antes* dizendo o que pressupõe. E o terminal
+confere sozinho: quando falta, ele **pergunta** se roda a parte anterior e
+volta ao ponto onde você estava.
+
+As que dependem de outra:
+
+[cols="1,3",options="header"]
+|===
+| parte | precisa de
+
+| {p-exposta} De aberta a governada
+| as partes {p-fechada}, {p-precedencia} e {p-papeis}
+
+| {p-dns}O nome também é policy
+| a parte {p-exposta}
+
+| {p-negocio} Isso vira número
+| a parte {p-planos} nos últimos 15 minutos -- ela só lê o que a {p-planos} gera
+
+| {p-contextos}Uma API, vários contextos
+| as partes {p-precedencia} e {p-exposta}
+
+| {p-listas}Listas de permissão e bloqueio
+| a parte {p-fechada} e, de preferência, a {p-contextos}
+
+| {p-auditoria} Quatro perguntas, quatro fontes
+| o rastro que as partes {p-papeis} e {p-planos} deixam
+
+| {p-colheita} Leitura: o caminho pavimentado
+| a parte {p-exposta} -- ela é o contraste inteiro
+|===

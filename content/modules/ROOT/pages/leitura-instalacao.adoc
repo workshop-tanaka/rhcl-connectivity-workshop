@@ -1,14 +1,28 @@
+include::partial$numeros.adoc[]
+ifndef::foco_rhcl[]
 = Leitura: como o Connectivity Link foi instalado e configurado
 :navtitle: Leitura: instalação e configuração
+endif::[]
+ifdef::foco_rhcl[]
+= Fase 1 — A plataforma no ar: como o Connectivity Link foi instalado
+:navtitle: Como a plataforma foi instalada
+endif::[]
 
+ifndef::foco_rhcl[]
 **Leitura · ~10 min · não muda estado**
+endif::[]
+ifdef::foco_rhcl[]
+**Leitura, com comandos que só leem · ~10 min · não muda estado**
+
+**Momento do projeto:** dia 0 · **Quem faz:** o time de plataforma
+endif::[]
 
 O ambiente chegou pronto às suas mãos: a API já estava publicada e já
 respondia `401`. Esta página mostra o que foi feito antes de você chegar, na
 ordem em que foi feito -- e cada peça pode ser conferida no cluster, com
 comandos que só leem.
 
-Vale lê-la antes da xref:m1-06-exposta.adoc[parte 1.6], em que você publica
+Vale lê-la antes da xref:m1-06-exposta.adoc[parte {p-exposta}], em que você publica
 uma API do zero: lá fica claro o que é seu e o que a plataforma já entregava.
 
 == O caminho inteiro, em cinco passos
@@ -18,7 +32,12 @@ include::partial$diagrama.adoc[]
 [mermaid]
 ....
 flowchart LR
+ifndef::foco_rhcl[]
   A["1. operators<br/>Connectivity Link e o provedor de Gateway"] --> B["2. Service Mesh<br/>traz a GatewayClass"]
+endif::[]
+ifdef::foco_rhcl[]
+  A["1. operator<br/>Connectivity Link"] --> B["2. Gateway API do OpenShift<br/>traz a GatewayClass"]
+endif::[]
   B --> C["3. CR Kuadrant<br/>liga a plataforma"]
   C --> D["4. Gateway<br/>TLS e publicacao"]
   D --> E["5. policies<br/>sobre o Gateway e as rotas"]
@@ -33,6 +52,7 @@ O Connectivity Link não cria Gateways: ele aplica policies sobre os que um
 **provedor de Gateway API** cria. O requisito é esse provedor -- e há mais de
 uma forma de atendê-lo.
 
+ifndef::foco_rhcl[]
 [NOTE]
 ====
 **O Service Mesh não é requisito do Connectivity Link.** A partir do OpenShift
@@ -43,13 +63,13 @@ Este ambiente usa o OpenShift Service Mesh 3 como provedor porque o workshop
 vai além da borda. Duas coisas aqui dependem do Service Mesh propriamente
 dito:
 
-* o **Módulo 2** inteiro -- mTLS entre serviços, autorização leste-oeste,
+* o **{m2}** inteiro -- mTLS entre serviços, autorização leste-oeste,
   canário e circuit breaker são funções do Service Mesh, com sidecar nos pods
   da aplicação;
 * o campo **`mtls.enable`** do passo 3, que põe o Authorino e o Limitador no
   Service Mesh.
 
-Quem precisa só da borda -- autenticação, limites e planos, o que o Módulo 1
+Quem precisa só da borda -- autenticação, limites e planos, o que o {m1}
 mostra -- pode ficar com o Gateway API nativo.
 ====
 
@@ -68,6 +88,35 @@ Aqui são duas instalações pelo OperatorHub:
 | o operator do Kuadrant e, junto com ele, os do Authorino, do Limitador e
   de DNS
 |===
+endif::[]
+ifdef::foco_rhcl[]
+[IMPORTANT]
+====
+**O Service Mesh não é requisito do Connectivity Link, e este ambiente é a
+prova.** A partir do OpenShift 4.19 o Gateway API é nativo da plataforma. Aqui
+o Connectivity Link roda sobre ele, e não há Service Mesh instalado.
+
+O que se perde sem o Service Mesh é o que é função dele: identidade e
+autorização **entre** os serviços, divisão de tráfego entre versões, e o canal
+cifrado entre o Gateway e os componentes do Connectivity Link (o campo
+`mtls.enable` do passo 3). Nada do que esta sessão pratica depende disso.
+====
+
+Aqui é uma instalação só pelo OperatorHub:
+
+[cols="1,2,2",options="header"]
+|===
+| operator | onde é instalado | o que entrega
+
+| Red Hat Connectivity Link
+| `kuadrant-system`, com `OperatorGroup` próprio
+| o operator do Kuadrant e, junto com ele, os do Authorino, do Limitador e
+  de DNS
+|===
+
+O provedor de Gateway não é um operator a mais: vem com o próprio OpenShift,
+e o passo 2 mostra como ele é ligado.
+endif::[]
 
 A instalação do Connectivity Link é uma `Subscription`:
 
@@ -161,9 +210,17 @@ Neste ambiente ele traz duas decisões:
 |===
 | campo | o que faz
 
+ifndef::foco_rhcl[]
 | `mtls.enable: true`
 | põe o Authorino e o Limitador no Service Mesh, e o Gateway passa a falar
-  com os dois por mTLS. A xref:m2-04-canal.adoc[parte 2.4] mede esse salto
+  com os dois por mTLS. A xref:m2-04-canal.adoc[parte {p-canal}] mede esse salto
+endif::[]
+ifdef::foco_rhcl[]
+| `mtls.enable: false`
+| o Gateway fala com o Authorino e o Limitador **sem** mTLS. Ligar esse campo
+  pede o Service Mesh, que é quem dá identidade aos dois lados; sem ele, o
+  canal fica protegido só pelas regras de rede do cluster
+endif::[]
 
 | `components.developerPortal.enabled: true`
 | liga o portal do desenvolvedor: os tipos `APIProduct` e `APIKey` e as telas
@@ -177,6 +234,7 @@ E os componentes que esse objeto fez nascer:
 oc get pods -n kuadrant-system
 ----
 
+ifndef::foco_rhcl[]
 [NOTE]
 ====
 O `mtls.enable` é ligado **na criação** do ambiente, e não depois. Ligá-lo com
@@ -184,6 +242,17 @@ tráfego passando reinicia o Authorino e o Limitador; uma medição registrou
 cerca de 8 segundos de `500` para todas as APIs. A falha foi fechada -- nenhuma
 requisição sem chave passou -- mas é uma janela que não precisa existir.
 ====
+endif::[]
+ifdef::foco_rhcl[]
+[NOTE]
+====
+**Aqui entraria o Service Mesh.** Com ele, o `mtls.enable` vira `true` e o salto
+entre o Gateway e os componentes do Connectivity Link passa a ser cifrado e
+autenticado. É uma decisão para tomar **na criação** do ambiente: ligá-lo com
+tráfego passando reinicia o Authorino e o Limitador. A
+xref:papel-ossm.adoc[leitura sobre o papel do Service Mesh] diz o que mais muda.
+====
+endif::[]
 
 == 4. O Gateway, o certificado e a publicação
 
@@ -199,7 +268,7 @@ Três escolhas estão nele, e cada uma tem um motivo:
 * **O listener é um curinga** (`*.apps...`), e não um hostname exato. É o que
   permite que mais de uma rota se anexe ao mesmo Gateway -- e são as policies
   de Gateway valendo para várias rotas que a
-  xref:m1-03-precedencia.adoc[parte 1.3] usa para mostrar a precedência.
+  xref:m1-03-precedencia.adoc[parte {p-precedencia}] usa para mostrar a precedência.
 * **O TLS termina no Gateway**, com o certificado curinga que o cluster já
   tem. Os hostnames das APIs têm **um rótulo só** (`api-travels.apps...`)
   justamente para caberem nesse curinga.
@@ -226,19 +295,26 @@ foram aplicadas em camadas, na ordem em que as partes as apresentam:
 
 | quem entra
 | `AuthPolicy` -- um teto que nega tudo no Gateway, e a exceção em cada rota
-| partes xref:m1-01-fechada.adoc[1.1] e xref:m1-03-precedencia.adoc[1.3]
+| partes xref:m1-01-fechada.adoc[{p-fechada}] e xref:m1-03-precedencia.adoc[{p-precedencia}]
 
 | quanto passa, por plano
 | `PlanPolicy` -- free, silver e gold
-| parte xref:m1-02-planos.adoc[1.2]
+| parte xref:m1-02-planos.adoc[{p-planos}]
 
 | o que isso vira em número
 | `TelemetryPolicy` -- o plano como dimensão da métrica
-| parte xref:m1-05-negocio.adoc[1.5]
+| parte xref:m1-05-negocio.adoc[{p-negocio}]
 
+ifndef::foco_rhcl[]
 | quem fala com quem, lá dentro
 | `PeerAuthentication` e `AuthorizationPolicy`, do Service Mesh
-| parte xref:m2-01-leste-oeste.adoc[2.1]
+| parte xref:m2-01-leste-oeste.adoc[{p-leste}]
+endif::[]
+ifdef::foco_rhcl[]
+| de quem é o certificado, e quem cria o nome
+| `TLSPolicy` e `DNSPolicy`
+| partes xref:m1-08-certificado.adoc[{p-certificado}] e xref:extra-dns.adoc[{p-dns}]
+endif::[]
 |===
 
 Todas miram um `Gateway` ou uma rota pelo `targetRef`, e todas têm status
@@ -251,13 +327,21 @@ oc get authpolicy,planpolicy -n travel-agency
 
 == O que a instalação também ligou
 
+ifndef::foco_rhcl[]
 Duas coisas que não são do Connectivity Link, e sem as quais metade do
 workshop ficaria sem tela:
 
 * **o monitoramento de workloads do usuário**, no OpenShift. É ele que coleta
-  as métricas do Limitador e dos proxies; sem ele a parte 1.5 não tem número;
+  as métricas do Limitador e dos proxies; sem ele a parte {p-negocio} não tem número;
 * **os operators de observabilidade** -- Kiali, Tempo e OpenTelemetry -- que
   dão o grafo e os traces do Módulo 3.
+endif::[]
+ifdef::foco_rhcl[]
+Uma coisa que não é do Connectivity Link, e sem a qual metade da sessão
+ficaria sem tela: **o monitoramento de workloads do usuário**, no OpenShift. É
+ele que coleta as métricas do Limitador e dos Gateways; sem ele a parte
+{p-negocio} não tem número.
+endif::[]
 
 == Três coisas que a instalação ensinou
 

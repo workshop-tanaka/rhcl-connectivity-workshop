@@ -1,7 +1,8 @@
+include::partial$numeros.adoc[]
 = Módulo 1 — Connectivity Link: a API como produto
 :navtitle: Módulo 1 — Introdução
 
-**Oito partes em três blocos · cerca de 55 minutos · as partes 1.6 e 1.8 criam objetos**
+**Oito partes em três blocos · cerca de 55 minutos · as partes {p-exposta} e {p-certificado} criam objetos**
 
 **Produto protagonista:** Red Hat Connectivity Link
 
@@ -39,23 +40,23 @@ blocos, e cada um fecha sozinho: dá para parar ao fim de qualquer um.
 | bloco | partes | tempo | muda estado
 
 | **A. A API que já existe**
-| xref:m1-01-fechada.adoc[1.1] a xref:m1-05-negocio.adoc[1.5]. Você observa e
-  mede uma API que outra pessoa configurou. A 1.5 lê os dados que a 1.2 gera,
-  então vale não pular a 1.2
+| xref:m1-01-fechada.adoc[{p-fechada}] a xref:m1-05-negocio.adoc[{p-negocio}]. Você observa e
+  mede uma API que outra pessoa configurou. A {p-negocio} lê os dados que a {p-planos} gera,
+  então vale não pular a {p-planos}
 | 27 min
 | não
 
 | **B. A API que é sua**
-| xref:m1-06-exposta.adoc[1.6]. Você publica uma do zero, à mão, e sente o que
+| xref:m1-06-exposta.adoc[{p-exposta}]. Você publica uma do zero, à mão, e sente o que
   a configuração custa
 | 10 min
 | sim; a página diz como desfazer
 
 | **C. Em volta da chave**
-| xref:m1-07-identidade.adoc[1.7] e xref:m1-08-certificado.adoc[1.8]. A outra
+| xref:m1-07-identidade.adoc[{p-identidade}] e xref:m1-08-certificado.adoc[{p-certificado}]. A outra
   credencial, a de uma pessoa, e o certificado que protege todas as chamadas
 | 18 min
-| a 1.8 cria e remove um namespace próprio
+| a {p-certificado} cria e remove um namespace próprio
 |===
 
 Se o tempo for curto, o bloco A sozinho é completo e coerente.
@@ -66,9 +67,9 @@ Três leituras ficam **fora do percurso**, no fim do módulo. Nenhuma é
 pré-requisito; cada parte aponta para a sua quando a pergunta aparece.
 
 * xref:leitura-ingresso.adoc[Route, Ingress e Gateway API] -- as três gerações
-  de ingresso que convivem neste cluster. A 1.6 é onde ela faz falta.
+  de ingresso que convivem neste cluster. A {p-exposta} é onde ela faz falta.
 * xref:leitura-multitenancy.adoc[Multi-tenancy] -- como várias equipes dividem
-  a mesma borda. Vem da 1.4.
+  a mesma borda. Vem da {p-papeis}.
 * xref:leitura-instalacao.adoc[Instalação e configuração] -- como o que você
   está usando foi montado.
 
@@ -78,9 +79,9 @@ Duas partes que já estiveram neste módulo mudaram de lugar, porque o assunto
 delas é de outro:
 
 * a leitura sobre o **caminho pavimentado** é a
-  xref:m5-01-colheita.adoc[5.1], no Módulo 5;
+  xref:m5-01-colheita.adoc[{p-colheita}], no Módulo 5;
 * **Quatro perguntas, quatro fontes**, sobre auditoria, é a
-  xref:m3-06-auditoria.adoc[3.6], no Módulo 3.
+  xref:m3-06-auditoria.adoc[{p-auditoria}], no Módulo 3.
 
 == Onde isso te deixa
 

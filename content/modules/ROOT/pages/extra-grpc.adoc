@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = gRPC: a mesma policy, outro protocolo
 :navtitle: gRPC
 
@@ -7,7 +8,7 @@
 
 [NOTE.antes]
 ====
-**Antes:** a parte 1.1, que mostra a `AuthPolicy` sobre HTTP. Esta página é a
+**Antes:** a parte {p-fechada}, que mostra a `AuthPolicy` sobre HTTP. Esta página é a
 comparação com ela.
 ====
 
@@ -99,5 +100,5 @@ programada, e o campo de status diz que está valendo. O contador diz que não
 está. **Quem confia no status sem medir o comportamento acredita num limite
 que não existe.**
 
-Guarde essa segunda lição: ela reaparece no Módulo 3, quando o assunto for
+Guarde essa segunda lição: ela reaparece no {m3}, quando o assunto for
 diagnosticar o que a plataforma afirma contra o que ela faz.

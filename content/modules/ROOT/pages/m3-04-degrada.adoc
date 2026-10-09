@@ -1,5 +1,6 @@
-= 3.4 O que acontece quando a policy cai
-:navtitle: 3.4 Quando a policy cai
+include::partial$numeros.adoc[]
+= {p-degrada} O que acontece quando a policy cai
+:navtitle: {p-degrada} Quando a policy cai
 
 **Para quem:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
 
@@ -7,7 +8,7 @@
 ====
 **Antes:** o Limitador de pé -- é ele que cai e volta. O exercício gera as
 próprias rajadas, mas faz muito mais sentido depois de você ter visto o `429`
-da parte 1.2. Ao terminar, rodar a parte 1.2 de novo confirma que tudo voltou.
+da parte {p-planos}. Ao terminar, rodar a parte {p-planos} de novo confirma que tudo voltou.
 ====
 
 O que se mede: o rate limit **falha aberto**. Com o Limitador fora, a
@@ -56,4 +57,4 @@ admite.
 O tráfego passou, o cliente não sentiu nada, e o controle de cota estava fora
 do ar. Nenhum painel acusou.
 
-É a pergunta que a xref:m3-05-alerta.adoc[parte 3.5] responde.
+É a pergunta que a xref:m3-05-alerta.adoc[parte {p-alerta}] responde.

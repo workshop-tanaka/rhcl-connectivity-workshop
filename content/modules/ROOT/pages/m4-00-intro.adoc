@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Módulo 4 — Service Interconnect (em breve)
 :navtitle: Módulo 4 — Em breve
 
@@ -55,7 +56,7 @@ sobre o primeiro.
 | o caminho até o banco, lido salto a salto: o que o túnel cifra, e os dois
   trechos locais que ficam de fora
 | "temos mTLS" é uma frase sobre saltos, e a parte
-  xref:m2-04-canal.adoc[2.4] já mostra como medir cada um
+  xref:m2-04-canal.adoc[{p-canal}] já mostra como medir cada um
 |===
 
 == O que este módulo pede do ambiente

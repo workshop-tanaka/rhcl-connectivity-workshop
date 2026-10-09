@@ -1,11 +1,12 @@
-= 3.5 A plataforma avisando sobre si mesma
-:navtitle: 3.5 O alerta
+include::partial$numeros.adoc[]
+= {p-alerta} A plataforma avisando sobre si mesma
+:navtitle: {p-alerta} O alerta
 
 **Para quem:** Operação/SRE, e quem está de plantão. · **10 min** · **muda estado**
 
 [WARNING.antes]
 ====
-**Antes: a parte 3.4.** Ela mostra o Limitador caindo e o tráfego passando. Esta
+**Antes: a parte {p-degrada}.** Ela mostra o Limitador caindo e o tráfego passando. Esta
 responde a pergunta que fica: **e quem te avisa?**
 ====
 
@@ -14,8 +15,8 @@ Tudo que você diagnosticou até aqui foi falha que **alguém sente**: `401`, `4
 
 A proteção que deixou de valer não gera reclamação. O tráfego continua `200`, o
 painel continua verde, e a API está desprotegida. Os dois jeitos de isso
-acontecer já apareceram neste workshop -- a policy sobreposta da parte 1.3 e o
-Limitador fora do ar da parte 3.4 -- e nos dois o material apresentou como
+acontecer já apareceram neste workshop -- a policy sobreposta da parte {p-precedencia} e o
+Limitador fora do ar da parte {p-degrada} -- e nos dois o material apresentou como
 acidente inevitável.
 
 Falta a segunda metade da frase.
@@ -86,7 +87,7 @@ A segunda não deu erro. Não apareceu aviso, não houve log. Ela simplesmente
 ficou `inactive` para sempre, como uma regra saudável cuja condição nunca
 ocorre.
 
-É a mesma família de falha que o Módulo 3 inteiro persegue: **o objeto existe,
+É a mesma família de falha que o {m3} inteiro persegue: **o objeto existe,
 o status é verde, e o efeito não acontece.**
 ====
 
@@ -199,10 +200,16 @@ recursos extras.
 
 == Uma parte a mais, se sobrar tempo
 
-A xref:m3-06-auditoria.adoc[3.6] fecha o módulo por outro lado: em vez de
+ifndef::foco_rhcl[]
+A xref:m3-06-auditoria.adoc[{p-auditoria}] fecha o módulo por outro lado: em vez de
+endif::[]
+ifdef::foco_rhcl[]
+A xref:m3-06-auditoria.adoc[{p-auditoria}] fecha a fase por outro lado: em vez de
+endif::[]
 diagnosticar uma falha, **auditar** o que foi feito -- quatro perguntas, e a
 fonte que responde cada uma.
 
+ifndef::foco_rhcl[]
 == Você concluiu o Módulo 3
 
 Você sabe seguir uma requisição salto a salto, dizer em qual de seis lugares
@@ -210,8 +217,20 @@ uma recusa morreu, prever o que o tráfego faz quando a plataforma falha -- e
 fazer a plataforma avisar quando a proteção cai sem ninguém sentir.
 
 Falta a terceira fronteira: o que a aplicação precisa e que **não roda aqui**.
-É o assunto do xref:m4-00-intro.adoc[Módulo 4], que está a caminho -- a página
+É o assunto do xref:m4-00-intro.adoc[{m4}], que está a caminho -- a página
 dele descreve o que vai cobrir.
+endif::[]
+ifdef::foco_rhcl[]
+== Fim da fase 6
+
+Você sabe dizer em qual lugar da borda uma recusa morreu, prever o que o
+tráfego faz quando a plataforma falha -- e fazer a plataforma avisar quando a
+proteção cai sem ninguém sentir.
+
+A borda está em operação. A xref:leitura-multitenancy.adoc[fase 7] trata do
+que vem quando o projeto cresce: mais times na mesma plataforma, e as duas
+fronteiras que esta sessão não pratica.
+endif::[]
 
 Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
 workshop e diz como devolver o ambiente ao estado inicial.

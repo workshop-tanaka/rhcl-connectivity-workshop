@@ -1,13 +1,23 @@
-= 1.2 Nem todo cliente é igual
-:navtitle: 1.2 Nem todo cliente é igual
+include::partial$numeros.adoc[]
+= {p-planos} Nem todo cliente é igual
+:navtitle: {p-planos} Nem todo cliente é igual
 
-**Para quem:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **7 min** · alimenta a parte 1.5
+**Para quem:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **7 min** · alimenta a parte {p-negocio}
+
+ifdef::foco_rhcl[]
+[TIP]
+====
+**Fase 4 -- A API vira produto.** São as semanas seguintes do projeto, e quem
+puxa é o negócio: clientes que pagam diferente, o consumo em número, e regras
+que descem até um caminho ou uma lista. Quatro partes, cerca de 34 minutos.
+====
+endif::[]
 
 [NOTE.antes]
 ====
 **Antes:** cota do dia com folga e 11 s desde a última rajada. Nenhuma parte
-antes -- mas **é este que produz o que a parte 1.5 lê**: sem ele (ou o
-aquecimento) nos 15 min anteriores, o painel da parte 1.5 sai vazio.
+antes -- mas **é este que produz o que a parte {p-negocio} lê**: sem ele (ou o
+aquecimento) nos 15 min anteriores, o painel da parte {p-negocio} sai vazio.
 ====
 
 Mesma rota, mesma aplicação, mesmo path. Três chaves diferentes, três
@@ -137,12 +147,12 @@ Cada tier do `PlanPolicy` declara **dois limites de naturezas diferentes**:
     grava o plano em annotation, não em label. Sem esse fallback, uma chave
     aprovada pelo portal entra **sem limite nenhum**.
 <2> **`daily` é o contrato comercial.** É a cota que se vende, e ela acumula
-    ao longo do dia. É o que aparece no quinto painel do dashboard da parte 1.5.
+    ao longo do dia. É o que aparece no quinto painel do dashboard da parte {p-negocio}.
 <3> **`custom` é a proteção da infraestrutura.** 30 requisições por 10 s não
     tem nada a ver com o que o cliente comprou: existe para que um cliente em
     laço não derrube o serviço dos outros.
 
-É por isso que a parte 1.2 espera 11 segundos entre as rajadas: sem isso, o tier
+É por isso que a parte {p-planos} espera 11 segundos entre as rajadas: sem isso, o tier
 seguinte herdaria o `429` da janela de 10 s do anterior, e a demonstração
 mediria a coisa errada.
 ====
@@ -156,7 +166,7 @@ A pergunta aparece sempre, e a resposta honesta tem duas partes.
 plano, não por cliente -- é isso que torna o custo previsível quando há
 milhares de consumidores.
 
-**Mas a métrica é por consumidor.** A `TelemetryPolicy` da parte 1.5 acrescenta a
+**Mas a métrica é por consumidor.** A `TelemetryPolicy` da parte {p-negocio} acrescenta a
 dimensão do parceiro, e o dashboard *Consumo por parceiro* quebra o uso por
 cliente. Então a pergunta "quanto o cliente X consumiu este mês?" tem resposta;
 o que não existe é um *limite* individual por cliente sem criar um tier para

@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = 2.4 O salto que o Service Mesh não cobria
 :navtitle: 2.4 O salto que o mesh não cobria
 
@@ -5,7 +6,7 @@
 
 [NOTE.antes]
 ====
-**Antes: a parte 2.1.** Ela mostrou que ninguém fala em texto claro **entre os
+**Antes: a parte {p-leste}.** Ela mostrou que ninguém fala em texto claro **entre os
 serviços** da aplicação. Esta parte pergunta sobre um salto que não aparece no
 grafo do Kiali: o do Gateway até quem decide se a requisição passa.
 ====
@@ -14,7 +15,7 @@ Toda requisição que chega à API faz duas perguntas antes de seguir: ao
 **Authorino** ("esta chave vale?") e ao **Limitador** ("ainda cabe no plano?").
 São duas chamadas gRPC que o Envoy do Gateway faz para fora dele mesmo.
 
-A parte 2.1 mediu o mTLS entre os serviços da aplicação. Mas o Authorino e o
+A parte {p-leste} mediu o mTLS entre os serviços da aplicação. Mas o Authorino e o
 Limitador moram em `kuadrant-system`, e esse namespace, por padrão, **não está
 no Service Mesh**. E a chave de API viaja na query string, então vai junto na
 chamada ao Authorino.
@@ -73,7 +74,7 @@ chave, `200` com chave, `429` no plano free. A chave era validada, só que
 chegava ao validador **legível** para qualquer um que enxergasse aquele
 tráfego dentro do cluster.
 
-É o mesmo tipo de achado da parte xref:m1-08-certificado.adoc[1.8]: tudo
+É o mesmo tipo de achado da parte xref:m1-08-certificado.adoc[{p-certificado}]: tudo
 funciona, e é justamente por isso que ninguém olha.
 
 == A correção é um campo
@@ -124,7 +125,7 @@ criação do ambiente, e não no meio de um exercício.
 **O Prometheus ficou cego.** O Prometheus que coleta as métricas do cluster
 não está no Service Mesh. Com `STRICT`, a coleta do Limitador e do Authorino
 levou *connection reset*. As métricas sumiram, e o alerta da parte
-xref:m3-05-alerta.adoc[3.5], `LimitadorForaDoAr`, **disparou com o Limitador
+xref:m3-05-alerta.adoc[{p-alerta}], `LimitadorForaDoAr`, **disparou com o Limitador
 de pé**.
 
 A correção é abrir **só a porta de métricas** (`8080`) em `PERMISSIVE`. As
@@ -215,7 +216,7 @@ Leia o mapa de cima para baixo:
   sidecar.
 * **O Prometheus em texto claro é de propósito.** É a exceção da porta de
   métricas, da seção anterior.
-* **O `echo-api` da parte xref:m1-07-identidade.adoc[1.7] está fora do mesh.**
+* **O `echo-api` da parte xref:m1-07-identidade.adoc[{p-identidade}] está fora do mesh.**
   O Gateway entrega a requisição a ele em texto claro. O Envoy só faz mTLS
   quando há um sidecar do outro lado; o Istio chama isso de *auto mTLS*: ele
   não recusa, só não cifra. A linha só aparece se a `echo-api` recebeu tráfego
@@ -247,7 +248,7 @@ enquanto isso acontece.
 == O que isso prova
 
 "Temos mTLS" é uma frase sobre um **conjunto de saltos**, não sobre o cluster.
-A parte 2.1 cobriu os saltos entre os serviços. O salto entre o Gateway e quem
+A parte {p-leste} cobriu os saltos entre os serviços. O salto entre o Gateway e quem
 decide ficou de fora até alguém olhar o `config_dump` e perguntar. E o mapa
 mostra que ainda há um salto de fora, até a `echo-api`.
 

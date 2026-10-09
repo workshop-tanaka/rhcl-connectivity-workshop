@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = A aplicação e as APIs
 :navtitle: A aplicação e as APIs
 
@@ -50,13 +51,21 @@ ao fim, que a plataforma fez o trabalho -- e não a aplicação.
 |===
 
 Só o `travels` tem rota externa. Os outros seis existem **atrás** dele, e é
-essa assimetria que o Módulo 2 explora: proteger a entrada não diz nada sobre
+essa assimetria que o {m2} explora: proteger a entrada não diz nada sobre
 o que acontece depois dela.
+
+ifdef::foco_rhcl[]
+[NOTE]
+====
+**Aqui entraria o Service Mesh.** Os seis serviços atrás do `travels` falam entre si sem que a borda saiba. Dar identidade a cada um e dizer quem pode chamar quem é a função dele. Esta sessão não o pratica; a
+xref:papel-ossm.adoc[leitura sobre o papel dele] diz o que ele faria aqui.
+====
+endif::[]
 
 === O `discounts` tem duas versões de propósito
 
 `discounts-v1` e `discounts-v2` rodam ao mesmo tempo. É esse par que torna
-possível a parte 2.2, onde uma fração do tráfego vai para a versão nova sem
+possível a parte {p-canario}, onde uma fração do tráfego vai para a versão nova sem
 ninguém trocar imagem de Deployment.
 
 == A API que você vai chamar
@@ -74,7 +83,7 @@ Um `HTTPRoute` publica o `travels` em:
 nasce fechada: sem uma chave de API na requisição, a borda nega antes de a
 aplicação ser consultada -- e o navegador não manda chave nenhuma. Não é o
 ambiente fora do ar; é a primeira policy do workshop funcionando. A
-xref:m1-01-fechada.adoc[parte 1.1] começa exatamente por esse `401`.
+xref:m1-01-fechada.adoc[parte {p-fechada}] começa exatamente por esse `401`.
 ====
 
 Dois caminhos interessam ao workshop:
@@ -107,8 +116,14 @@ Aqui o `travels` chama os outros serviços e junta tudo numa resposta só:
 ----
 
 **É este caminho que faz a aplicação ser mais que um serviço.** Uma chamada
-externa vira várias internas -- e é por isso que o Módulo 3 consegue mostrar
-um trace com vários saltos, e o Módulo 2 tem o que proteger.
+ifndef::foco_rhcl[]
+externa vira várias internas -- e é por isso que o {m3} consegue mostrar
+um trace com vários saltos, e o {m2} tem o que proteger.
+endif::[]
+ifdef::foco_rhcl[]
+externa vira várias internas -- e é por isso que uma recusa pode nascer em mais
+de um lugar, que é o assunto da fase de operação.
+endif::[]
 
 [NOTE]
 ====
@@ -136,7 +151,7 @@ Viagens e que consome a API como qualquer cliente externo faria.
 
 Os três rodam **a mesma aplicação**, com a mesma imagem. A única diferença
 entre eles é a chave de API que cada um carrega -- e é essa diferença que os
-Módulos 1 e 3 exploram.
+{m1e3} exploram.
 
 .Mais detalhes: onde a chave do parceiro fica, e por que isso importa
 [%collapsible]
@@ -166,12 +181,26 @@ aplicação.
 
 == O banco está no cluster -- por enquanto
 
+ifndef::foco_rhcl[]
 O `mysqldb` que a aplicação usa roda em `travel-agency`, ao lado dos outros
 serviços e dentro do Service Mesh. Os 45 destinos saem dele.
+endif::[]
+ifdef::foco_rhcl[]
+O `mysqldb` que a aplicação usa roda em `travel-agency`, ao lado dos outros
+serviços. Os 45 destinos saem dele.
+endif::[]
 
 Em cliente real é comum que não seja assim -- *"esse banco não vai para o
 Kubernetes"* -- e alcançá-lo de fora do cluster, sem VPN e sem expor nada, é
-o assunto do xref:m4-00-intro.adoc[Módulo 4], que está a caminho.
+o assunto do xref:m4-00-intro.adoc[{m4}], que está a caminho.
+
+ifdef::foco_rhcl[]
+[NOTE]
+====
+**Aqui entraria o Service Interconnect.** Um banco que fica fora do cluster precisa ser alcançado sem VPN e sem porta aberta na internet. Esta sessão não o pratica; a
+xref:papel-rhsi.adoc[leitura sobre o papel dele] diz o que ele faria aqui.
+====
+endif::[]
 
 == A segunda API: `echo-api`
 
@@ -179,14 +208,27 @@ Existe uma segunda aplicação no cluster, bem menor, chamada `echo-api`. Ela
 devolve o que recebe, e serve para demonstrar autenticação por **identidade**
 (OIDC) em vez de chave de API.
 
+ifndef::foco_rhcl[]
 Você não precisa dela nos Módulos 1 e 2. Ela aparece como contraste quando o
 assunto é *de onde vem a identidade de quem chama*.
+endif::[]
+ifdef::foco_rhcl[]
+Ela aparece como contraste quando o assunto é *de onde vem a identidade de
+quem chama*, na parte {p-identidade}.
+endif::[]
 
 == E as APIs que você mesmo vai criar
 
-No Módulo 1 você publica uma API nova, do zero -- à mão, para sentir
+ifndef::foco_rhcl[]
+No {m1} você publica uma API nova, do zero -- à mão, para sentir
 o que falta. Essa API é sua, nasce
 e morre dentro do módulo, e não toca em nada descrito nesta página.
+endif::[]
+ifdef::foco_rhcl[]
+Na fase 3 você publica uma API nova, do zero -- à mão, para sentir
+o que falta. Essa API é sua, nasce
+e morre dentro da parte {p-exposta}, e não toca em nada descrito nesta página.
+endif::[]
 
 == Confira você mesmo
 

@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Limite por token: a API de IA
 :navtitle: Limite por token (IA)
 
@@ -8,7 +9,7 @@ modelos de IA para outros times.
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:m1-02-planos.adoc[1.2], que limita **requisições** por
+**Antes:** a parte xref:m1-02-planos.adoc[{p-planos}], que limita **requisições** por
 plano. Esta página troca a unidade: em API de IA, o que custa é o **token**.
 ====
 

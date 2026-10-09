@@ -1,11 +1,12 @@
-= 1.8 O certificado tem dono?
-:navtitle: 1.8 O certificado tem dono?
+include::partial$numeros.adoc[]
+= {p-certificado} O certificado tem dono?
+:navtitle: {p-certificado} O certificado tem dono?
 
 **Para quem:** Engenheiro de Plataforma, e quem fica de plantão no dia do vencimento. · **10 min** · **cria e remove um namespace próprio**
 
 [NOTE.antes]
 ====
-**Antes: a parte 1.4.** Ela separou quem cuida do Gateway de quem cuida da
+**Antes: a parte {p-papeis}.** Ela separou quem cuida do Gateway de quem cuida da
 rota. O certificado da borda é do primeiro -- e esta parte pergunta se alguém
 está, de fato, cuidando dele.
 ====
@@ -149,7 +150,7 @@ e o Gateway:
 
 Você não escreveu o `Certificate`, nem listou os nomes do certificado. A
 policy leu o listener do Gateway e pediu o que ele precisa. É o mesmo padrão
-da parte xref:m1-07-identidade.adoc[1.7]: a intenção declarada, o objeto
+da parte xref:m1-07-identidade.adoc[{p-identidade}]: a intenção declarada, o objeto
 derivado, com dono.
 
 === O que o cliente vê
@@ -228,7 +229,7 @@ Um certificado válido não é um certificado **governado**. A diferença é se
 existe um objeto declarando que alguém é responsável por ele -- e esse objeto
 tem status, dono e renovação.
 
-É a mesma tese do Módulo 1 inteiro, agora na camada mais esquecida da borda:
+É a mesma tese do {m1} inteiro, agora na camada mais esquecida da borda:
 o que não está declarado como policy funciona por acaso, até o dia em que para.
 
 == Para ir além
@@ -236,6 +237,7 @@ o que não está declarado como policy funciona por acaso, até o dia em que par
 * xref:extra-dns.adoc[O nome também é policy (DNS)] -- o par desta parte: quem
   cria o nome da API, declarado junto com o Gateway.
 
+ifndef::foco_rhcl[]
 == Você concluiu o Módulo 1
 
 Você viu uma API fechada por padrão atender três planos no mesmo endereço,
@@ -244,8 +246,19 @@ vez, viu os dois jeitos de identificar quem está do outro lado -- e perguntou
 quem é o dono do certificado que protege tudo isso.
 
 Tudo isso aconteceu na **borda** -- a fronteira que o Connectivity Link
-governa. O xref:m2-00-intro.adoc[Módulo 2] trata da seguinte: o tráfego
+governa. O xref:m2-00-intro.adoc[{m2}] trata da seguinte: o tráfego
 **entre** os serviços, que daqui não se enxerga.
+endif::[]
+ifdef::foco_rhcl[]
+== Fim da fase 2
+
+A borda existe: nasce fechada, a precedência entre as regras está escrita no
+status, quem cuida do Gateway não é quem cuida da rota, e o certificado tem
+dono.
+
+Falta o que ela vai proteger. A xref:m1-06-exposta.adoc[fase 3] publica a
+primeira API, do zero.
+endif::[]
 
 Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
 workshop e diz como devolver o ambiente ao estado inicial.

@@ -1,8 +1,10 @@
+include::partial$numeros.adoc[]
 = Encerramento
 :navtitle: Encerramento
 
 == O que você percorreu
 
+ifndef::foco_rhcl[]
 Três módulos, duas fronteiras governadas, e **uma aplicação que não mudou uma
 linha**. O
 binário do `travels` é o mesmo do primeiro ao último exercício.
@@ -29,6 +31,65 @@ binário do `travels` é o mesmo do primeiro ao último exercício.
 Se você parou antes do fim, nada aqui deixa de valer -- cada módulo fecha um
 bloco completo. Esta página é o fecho do conjunto, não uma condição para ele.
 ====
+endif::[]
+ifdef::foco_rhcl[]
+Um projeto de borda, do começo ao fim, e **uma aplicação que não mudou uma
+linha**. O binário do `travels` é o mesmo do primeiro ao último exercício.
+
+[cols="1,2",options="header"]
+|===
+| fase do projeto | o que ficou provado
+
+| **a plataforma**
+| O Connectivity Link roda sobre o Gateway API que o OpenShift traz, sem outro
+  produto por baixo.
+
+| **a borda**
+| Ela nasce fechada, a precedência entre as regras está escrita no status,
+  quem cuida do Gateway não é quem cuida da rota, e o certificado tem dono.
+
+| **a primeira API**
+| Quatro arquivos levam uma API de aberta a governada, com nome e com a
+  escolha entre chave e identidade.
+
+| **o produto**
+| Planos comerciais no mesmo endereço, o consumo virando número, e a regra
+  descendo até um caminho ou uma lista.
+
+| **a operação**
+| Dá para dizer onde uma recusa morreu, a plataforma avisa quando a proteção
+  cai, e cada mudança tem uma fonte que a prova.
+|===
+
+[NOTE]
+====
+Se você parou antes do fim, nada aqui deixa de valer -- cada fase fecha um
+bloco completo. Esta página é o fecho do conjunto, não uma condição para ele.
+====
+
+== Onde o projeto continua
+
+Tudo acima aconteceu na **borda**. Um projeto de conectividade tem mais duas
+fronteiras, e cada uma é de outro produto:
+
+[cols="1,2,1",options="header"]
+|===
+| a pergunta que sobra | quem responde | onde ler
+
+| depois que a chamada entrou, quem pode falar com quem lá dentro?
+| Red Hat OpenShift Service Mesh -- identidade por serviço, autorização entre
+  eles e o rastreio de uma requisição salto a salto
+| xref:papel-ossm.adoc[o papel do Service Mesh]
+
+| e o que a aplicação precisa e que não roda neste cluster?
+| Red Hat Service Interconnect -- alcançar o que ficou fora, sem VPN e sem
+  porta aberta
+| xref:papel-rhsi.adoc[o papel do Service Interconnect]
+|===
+
+Nenhum dos dois é requisito do que você fez aqui. Eles entram quando a
+pergunta deles aparecer.
+endif::[]
 
 == A tese, agora que dá para conferir
 
@@ -37,7 +98,7 @@ DNS público, certificado e DNS -- todas mirando o mesmo Gateway, todas com
 status próprio, nenhuma escondida num campo de anotação.
 
 E uma ressalva que o workshop fez questão de medir em vez de omitir:
-**`Enforced=True` não é promessa de efeito.** A parte 1.7 mostra uma policy
+**`Enforced=True` não é promessa de efeito.** A parte {p-identidade} mostra uma policy
 aceita, programada, com status verde -- e sem efeito nenhum sobre o tráfego.
 Quem confia no status sem medir o comportamento acredita num limite que não
 existe.
@@ -52,8 +113,14 @@ inclui dizer onde ela ainda não chega.
 bash scripts/demo.sh pos --auto
 ----
 
+ifndef::foco_rhcl[]
 Procura o que os exercícios deixaram para trás (mTLS em PERMISSIVE, fault
 injection, canário fora de 90/10, cota baixa), ajusta, e revalida. Rode-o
+endif::[]
+ifdef::foco_rhcl[]
+Procura o que os exercícios deixaram para trás (cota baixa, um componente
+que não voltou), ajusta, e revalida. Rode-o
+endif::[]
 quando quiser recomeçar do zero. Para repetir as partes no mesmo dia,
 `bash scripts/demo.sh reset` devolve as cotas diárias.
 
@@ -63,8 +130,13 @@ quando quiser recomeçar do zero. Para repetir as partes no mesmo dia,
 |===
 | JWT/OIDC em vez de API key? | Sim -- a AuthPolicy aceita os dois; a demo usa chave porque cabe numa tela.
 | Cobrança por consumidor? | É por **plano**, e o motivo é técnico: o contador é por tier, e o label do parceiro é dimensão de métrica, não de limite.
-| E se o Limitador cair? | `failureMode: allow` -- a parte 3.4 mede isso. A autenticação é o oposto.
-| Quanto custa em latência? | Duas chamadas gRPC, visíveis no trace -- a parte 3.2 mede isso.
+| E se o Limitador cair? | `failureMode: allow` -- a parte {p-degrada} mede isso. A autenticação é o oposto.
+ifndef::foco_rhcl[]
+| Quanto custa em latência? | Duas chamadas gRPC, visíveis no trace -- a parte {p-trace} mede isso.
+endif::[]
+ifdef::foco_rhcl[]
+| Quanto custa em latência? | Duas chamadas gRPC por requisição: uma ao Authorino, outra ao Limitador. Medir salto a salto é assunto de trace, que vem com o Service Mesh.
+endif::[]
 |===
 
 == Para levar

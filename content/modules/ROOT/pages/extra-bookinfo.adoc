@@ -1,3 +1,4 @@
+include::partial$numeros.adoc[]
 = Uma aplicação, duas fronteiras
 :navtitle: Uma aplicação, duas fronteiras
 
@@ -9,8 +10,8 @@ que não é a mesma coisa.
 
 [NOTE.antes]
 ====
-**Antes:** as partes xref:m2-02-canario.adoc[2.2], que promove uma versão
-nova, e xref:m1-01-fechada.adoc[1.1], que fecha a API. Esta página faz as duas
+**Antes:** as partes xref:m2-02-canario.adoc[{p-canario}], que promove uma versão
+nova, e xref:m1-01-fechada.adoc[{p-fechada}], que fecha a API. Esta página faz as duas
 coisas numa aplicação que não é a de viagens.
 ====
 
@@ -114,7 +115,7 @@ endereço.
 cluster (`productpage` → `details` e `reviews`), e isso não passa pelo
 Gateway. A policy de borda governa quem **entra**. O que os serviços fazem
 entre si é assunto do Service Mesh, como na parte
-xref:m2-01-leste-oeste.adoc[2.1].
+xref:m2-01-leste-oeste.adoc[{p-leste}].
 ====
 
 == O que isso prova
