@@ -241,7 +241,7 @@ ifeval::["{senha_console}" != ""]
 ====
 Entre num arquivo de sessão *à parte*, que não mexe na sessão do terminal:
 
-[source,bash,role="execute"]
+[source,bash,role="execute",subs="attributes+"]
 ----
 KUBECONFIG=/tmp/eu.kubeconfig oc login -u {usuario_console} -p '{senha_console}' \
   --server=https://kubernetes.default.svc \

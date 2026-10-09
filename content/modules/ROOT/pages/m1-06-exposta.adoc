@@ -218,7 +218,8 @@ dono -- e é por isso que é outro passo.
 [source,bash,role="execute",subs="attributes+"]
 ----
 oc apply -f passos/exposta/04-publica-no-router.yaml
-curl -s -o /dev/null --retry 5 --retry-delay 2 -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
+sleep 5
+curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
 ----
 
 [source,text]
@@ -235,8 +236,8 @@ plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não 
 xref:m1-01-fechada.adoc[{p-fechada}], agora impedindo a **sua** API de ir ao ar
 sem ninguém olhando.
 
-O `--retry` está ali porque o router leva um ou dois segundos para conhecer um
-hostname novo, e até lá responde `503`.
+O `sleep` está ali porque o router leva alguns segundos para conhecer um
+hostname novo, e até lá responde `503`. Se ainda vier `503`, repita só o `curl`.
 
 [WARNING]
 ====
