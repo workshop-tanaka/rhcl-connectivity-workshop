@@ -218,7 +218,7 @@ dono -- e é por isso que é outro passo.
 [source,bash,role="execute",subs="attributes+"]
 ----
 oc apply -f passos/exposta/04-publica-no-router.yaml
-curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
+curl -s -o /dev/null --retry 5 --retry-delay 2 -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
 ----
 
 [source,text]
@@ -235,6 +235,9 @@ plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não 
 xref:m1-01-fechada.adoc[{p-fechada}], agora impedindo a **sua** API de ir ao ar
 sem ninguém olhando.
 
+O `--retry` está ali porque o router leva um ou dois segundos para conhecer um
+hostname novo, e até lá responde `503`.
+
 [WARNING]
 ====
 **Se a resposta for `200`, repita o `curl`.** O teto leva alguns segundos para
@@ -247,14 +250,16 @@ algo sensível espera o `403` antes de divulgar o endereço.
 == Passo 5 -- uma chave, e a policy que a aceita nesta rota
 
 O arquivo traz duas coisas: a chave, e uma `AuthPolicy` que mira **a sua
-rota**, não o Gateway. O segundo comando espera a policy entrar em vigor.
+rota**, não o Gateway. A chave foi sorteada para você e mora num `Secret`; o
+comando a lê de lá, em vez de trazê-la escrita.
 
 [source,bash,role="execute",subs="attributes+"]
 ----
 oc apply -f passos/exposta/05-chave-e-authpolicy.yaml
 oc wait --for=condition=Enforced authpolicy/echo-exposta-authpolicy -n echo-exposta --timeout=90s
+CHAVE=$(oc get secret apikey-echo-exposta -n echo-exposta -o jsonpath='{.data.api_key}' | base64 -d)
 curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
-curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://echo-exposta.{cluster_domain}/?APIKEY=chave-do-echo-exposta"
+curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://echo-exposta.{cluster_domain}/?APIKEY=$CHAVE"
 ----
 
 [source,text]
@@ -292,7 +297,8 @@ O laço faz seis chamadas seguidas com a mesma chave.
 ----
 oc apply -f passos/exposta/06-plano.yaml
 oc wait --for=condition=Enforced planpolicy/echo-exposta-plans -n echo-exposta --timeout=90s
-for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w '%{http_code} ' "https://echo-exposta.{cluster_domain}/?APIKEY=chave-do-echo-exposta"; done; echo
+CHAVE=$(oc get secret apikey-echo-exposta -n echo-exposta -o jsonpath='{.data.api_key}' | base64 -d)
+for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w '%{http_code} ' "https://echo-exposta.{cluster_domain}/?APIKEY=$CHAVE"; done; echo
 ----
 
 [source,text]
