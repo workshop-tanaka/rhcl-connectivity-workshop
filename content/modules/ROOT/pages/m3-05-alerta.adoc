@@ -157,12 +157,16 @@ volta em segundos. Um `oc scale deploy --replicas=0` parece funcionar, o pod
 some, e volta antes da medição -- o que faz a rajada seguinte levar `429` de
 novo, que é o oposto do que o exercício quer provar.
 
-O caminho é pelo próprio recurso:
+O caminho é pelo próprio recurso, e é o que o script da prova faz por você:
 
-[source,bash,role="execute"]
+[source,bash]
 ----
 oc patch limitador limitador -n kuadrant-system --type=merge -p '{"spec":{"replicas":0}}'
 ----
+
+Este comando é para ler, não para rodar. O Limitador é da plataforma: derrubá-lo
+à mão tira o limite de todas as APIs que ele serve, e ninguém o traz de volta
+por você.
 
 == No console
 

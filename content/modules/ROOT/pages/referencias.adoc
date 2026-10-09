@@ -99,29 +99,31 @@ vale copiar antes de devolver a reserva.
 | consumo por plano e por parceiro
 |===
 
-=== A documentação interna do repositório
+=== O que há na sua cópia de trabalho
 
-No terminal, dentro de `docs/`:
+No terminal, na raiz do repositório:
 
 [cols="1,2",options="header"]
 |===
-| arquivo | para quê
+| diretório | para quê
 
-| `RUNBOOK.md`
-| o porquê de cada passo, as perguntas que sempre aparecem, e as armadilhas
-  já medidas
+| `base/`
+| os manifests do ambiente: a aplicação, as rotas e as policies que o roteiro
+  aplica e altera
 
-| `CONHECIMENTO.md`
-| o estado do ambiente, o ruído benigno que não se persegue, e as decisões
-  fechadas
+| `overlays/`
+| o que muda de um ambiente para outro, sobre a mesma base
 
-| `SAMPLES.md`
-| as amostras do Istio que acompanham o ambiente, e o que cada uma mede
+| `scripts/`
+| os scripts que o roteiro chama -- cada um imprime o comando que executa
+
+| `postman/`
+| a coleção e o ambiente do Postman, descritos logo abaixo
 |===
 
 [source,bash,role="execute"]
 ----
-ls docs/
+ls
 ----
 
 === A coleção do Postman

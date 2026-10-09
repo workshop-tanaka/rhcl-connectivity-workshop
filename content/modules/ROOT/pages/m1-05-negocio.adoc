@@ -55,8 +55,15 @@ control plane, o CNI (um pod por nó), os pods de `Gateway` e os sidecars.
 Também traz o que a subscrição conta -- requisições por dia e número de
 `Gateway`.
 
+ifndef::foco_rhcl[]
 O número que costuma surpreender: **os sidecars reservam mais CPU que todo o
-resto somado**. O custo da plataforma é a malha, não o gateway.
+resto somado**. O custo da plataforma é o Service Mesh, não o gateway.
+endif::[]
+ifdef::foco_rhcl[]
+Nesta sessão não há Service Mesh, e os painéis dele ficam vazios. O que pesa
+aqui são os pods de `Gateway`: um por `Gateway`, entre 300 e 370 MiB cada, com as
+policies carregadas.
+endif::[]
 
 Duas leituras cuidadosas, que estão na tela: reserva e uso são coisas
 diferentes, e o painel de custo por 1.000 requisições só tem sentido sob

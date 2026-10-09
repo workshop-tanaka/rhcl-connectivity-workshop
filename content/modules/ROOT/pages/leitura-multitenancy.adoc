@@ -139,6 +139,14 @@ Disso saem quatro consequências que vale conhecer antes de desenhar:
   procura no namespace dele, salvo com `allNamespaces: true` na policy.
 * **As métricas de consumo nascem na plataforma**, não no namespace de cada
   time.
+ifdef::foco_rhcl[]
+* **O Gateway conhece os serviços do cluster inteiro.** Nesta sessão quem
+  atende os Gateways é o provedor nativo do OpenShift, e ele entrega a cada
+  Gateway os nomes e endereços de todos os serviços, inclusive os dos outros
+  times. É leitura, não acesso -- chegar até eles continua sendo assunto de
+  `NetworkPolicy`. Restringir o que cada proxy enxerga é função do Service
+  Mesh, descrita na xref:papel-ossm.adoc[leitura sobre ele].
+endif::[]
 
 == Em resumo
 

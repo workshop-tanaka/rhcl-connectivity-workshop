@@ -87,6 +87,7 @@ delas é adivinhada, todas saem deste cluster.
 | os painéis de consumo e de evidência
 | {grafana_url}[abrir^]
 
+ifndef::foco_rhcl[]
 | Kiali
 | o grafo de quem fala com quem
 | {kiali_url}[abrir^]
@@ -94,6 +95,7 @@ delas é adivinhada, todas saem deste cluster.
 | Traces
 | o caminho de uma requisição, salto a salto
 | {traces_url}[abrir^]
+endif::[]
 
 | Dev Spaces
 | editar a configuração sem instalar nada
@@ -108,7 +110,12 @@ delas é adivinhada, todas saem deste cluster.
 | {roteiro_url}[abrir^]
 |===
 
+ifndef::foco_rhcl[]
 === Console do OpenShift, Traces e Dev Spaces
+endif::[]
+ifdef::foco_rhcl[]
+=== Console do OpenShift e Dev Spaces
+endif::[]
 
 include::partial$entrar-ocp.adoc[]
 
@@ -139,9 +146,19 @@ endif::[]
 
 include::partial$entrar-grafana.adoc[]
 
+ifndef::foco_rhcl[]
 === Kiali
 
 include::partial$entrar-kiali.adoc[]
+endif::[]
+ifdef::foco_rhcl[]
+[NOTE]
+====
+Esta sessão não tem Kiali nem a tela de Traces: as duas vêm do Service Mesh,
+que fica fora dela. A xref:papel-ossm.adoc[leitura sobre o Service Mesh] diz o
+que elas mostram.
+====
+endif::[]
 
 ifeval::["{senha_persona}" != ""]
 === GitLab e Developer Hub
@@ -255,6 +272,6 @@ terminal saiu do diretório do workshop. Volte com:
 
 [source,bash,role="execute"]
 ----
-cd ~/rhcl-connectivity-demo
+cd /home/lab-user/rhcl-connectivity-demo
 ----
 

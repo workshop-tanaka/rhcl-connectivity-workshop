@@ -147,11 +147,20 @@ neles que mora o wasm que chama o Authorino e o Limitador:
 [source,bash,role="execute"]
 ----
 oc exec -n ingress-gateway deploy/prod-web-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
+----
+
+A resposta é `1`: o filtro está no listener. Num Gateway da mesma classe que
+nunca recebeu policy -- o `bookinfo-gateway` das amostras do Istio, onde o
+ambiente as tem -- a mesma pergunta responde `0`:
+
+[source,bash]
+----
 oc exec -n bookinfo deploy/bookinfo-gateway-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
 ----
 
-`1` no primeiro, `0` no segundo. **Um gateway vira "do Connectivity Link" ao
-receber uma policy**, e não por ser de outro tipo.
+Este segundo comando é para ler, não para rodar: as amostras ficam fora do seu
+ambiente. **Um gateway vira "do Connectivity Link" ao receber uma policy**, e
+não por ser de outro tipo.
 
 Três consequências práticas:
 

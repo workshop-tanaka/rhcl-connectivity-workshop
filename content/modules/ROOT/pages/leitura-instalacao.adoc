@@ -113,7 +113,10 @@ oc get csv -n kuadrant-system | grep -E 'rhcl|authorino|limitador|dns-operator'
 == 2. O provedor vem antes
 
 Como o Connectivity Link governa Gateways que outro componente cria, o
-provedor é configurado primeiro. Neste ambiente é o Service Mesh -- um CR
+provedor é configurado primeiro.
+
+ifndef::foco_rhcl[]
+Neste ambiente é o Service Mesh -- um CR
 `Istio` e um `IstioCNI` -- e é dele que nasce a `GatewayClass` chamada
 `istio`. Com o Gateway API nativo do OpenShift, a classe seria outra, e o
 resto desta página valeria igual.
@@ -123,6 +126,22 @@ resto desta página valeria igual.
 oc get gatewayclass
 oc get istio default -o jsonpath='{.spec.version}{"\n"}'
 ----
+endif::[]
+ifdef::foco_rhcl[]
+Neste ambiente é o Gateway API nativo do OpenShift: o próprio cluster instala e
+mantém um Istio só para atender Gateways, sem Service Mesh. A `GatewayClass` se
+chama `istio`, e o controller dela é `openshift.io/gateway-controller/v1`. Com o
+Service Mesh como provedor haveria um CR `Istio` e um `IstioCNI` no lugar, e o
+resto desta página valeria igual.
+
+[source,bash,role="execute"]
+----
+oc get gatewayclass
+----
+
+A classe `openshift-default`, que aparece ao lado, é a que faz o cluster
+instalar esse Istio; nenhum Gateway do workshop a usa.
+endif::[]
 
 Sem essa classe, um `Gateway` declarado fica sem ninguém para atendê-lo.
 
