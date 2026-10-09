@@ -101,6 +101,7 @@ flowchart LR
 Sem a `TLSPolicy`, o `Secret` continua lá -- e ninguém renova. É o achado da
 leitura acima, desenhado.
 
+ifndef::foco_rhcl[]
 == A prova: uma TLSPolicy de ponta a ponta
 
 [source,bash,role="execute"]
@@ -207,6 +208,172 @@ Se a prova for interrompida no meio, limpe com
 `bash scripts/certificado.sh limpa`.
 ====
 
+endif::[]
+ifdef::foco_rhcl[]
+== A prova: uma TLSPolicy de ponta a ponta
+
+A prova acontece num **projeto só dela**, `tls-lab`, que você cria agora e
+apaga no fim. São cinco passos e dois arquivos, em `passos/certificado/`.
+
+[IMPORTANT]
+====
+**Por que não no Gateway da API.** A `TLSPolicy` escreve no Secret que o
+listener declara. No `prod-web`, esse Secret é compartilhado por todas as APIs
+-- aplicar a policy ali trocaria o certificado de todas de uma vez. O Gateway
+do exercício tem Secret próprio, emissor próprio e endereço próprio.
+====
+
+=== Passo 1 -- um Gateway sem certificado
+
+O arquivo declara um Gateway com HTTPS que aponta para o Secret
+`tls-lab-cert`. Ninguém criou esse Secret.
+
+[source,bash,role="execute"]
+----
+oc new-project tls-lab --skip-config-write
+oc apply -f passos/certificado/01-gateway-sem-certificado.yaml
+oc wait --for=jsonpath='{.status.listeners[0].conditions[?(@.type=="ResolvedRefs")].status}'=False gateway/lab -n tls-lab --timeout=60s
+oc get gateway lab -n tls-lab -o jsonpath='{range .status.listeners[0].conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'
+----
+
+[source,text]
+----
+Accepted=True Accepted
+Conflicted=False NoConflicts
+Programmed=False Invalid
+ResolvedRefs=False InvalidCertificateRef
+----
+
+**O que isso diz:** o Gateway foi aceito, mas não consegue servir. O listener
+aponta para um Secret que não existe, e o status diz exatamente isso:
+`InvalidCertificateRef`. Do lado do cliente, a conexão nem começa:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -sk -o /dev/null https://tls-lab.{cluster_domain}/ ; echo "exit=$?"
+----
+
+[source,text]
+----
+exit=35
+----
+
+O `exit=35` é o `curl` dizendo que o handshake TLS não completou.
+
+=== Passo 2 -- uma policy, e o que ela cria sozinha
+
+O segundo arquivo é a `TLSPolicy`: ela mira o Gateway e nomeia o emissor.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/certificado/02-tlspolicy.yaml
+oc wait --for=condition=Ready certificate --all -n tls-lab --timeout=90s
+oc get certificate -n tls-lab -o jsonpath='{range .items[*]}{.metadata.name}  dono={.metadata.ownerReferences[0].kind}  secret={.spec.secretName}  renova em {.status.renewalTime}{"\n"}{end}'
+oc get gateway lab -n tls-lab -o jsonpath='{range .status.listeners[0].conditions[*]}{.type}={.status} {.reason}{"\n"}{end}'
+----
+
+[source,text]
+----
+certificate.cert-manager.io/lab-https condition met
+lab-https  dono=TLSPolicy  secret=tls-lab-cert  renova em ...
+Accepted=True Accepted
+Conflicted=False NoConflicts
+Programmed=True Programmed
+ResolvedRefs=True ResolvedRefs
+----
+
+**O que isso diz:** você aplicou **uma** policy, e apareceram um
+`Certificate`, o Secret que o Gateway esperava, e uma renovação com data. Você
+não escreveu o `Certificate`, nem listou os nomes do certificado: a policy leu
+o listener do Gateway e pediu o que ele precisa. O dono do certificado é a
+`TLSPolicy`, e o Gateway passou a `Programmed=True`.
+
+Se o Gateway ainda aparecer como `Programmed=False`, repita só o último
+comando: ele leva alguns segundos para ler o Secret novo.
+
+=== Passo 3 -- o que o cliente vê
+
+[source,bash,role="execute",subs="attributes+"]
+----
+curl -sk -o /dev/null -w 'com -k: %{http_code}\n' https://tls-lab.{cluster_domain}/
+curl -s -o /dev/null https://tls-lab.{cluster_domain}/ ; echo "sem -k: exit=$?"
+----
+
+[source,text]
+----
+com -k: 404
+sem -k: exit=60
+----
+
+**O que isso diz:** os dois números dizem coisas diferentes.
+
+* **`404` com `-k`**: o TLS funciona. O `404` é porque não há rota neste
+  Gateway, e está certo -- não há aplicação.
+* **`exit=60` sem `-k`**: o cliente **não confia**. O emissor do exercício é
+  autoassinado.
+
+A policy entrega um certificado; **quem decide se alguém confia nele é o
+emissor**. Troque o `issuerRef` por um emissor de CA pública e a mesma policy,
+sem mudar mais nada, vira um certificado confiável.
+
+=== Passo 4 -- quem é o dono: apague o certificado
+
+[source,bash,role="execute"]
+----
+oc delete secret tls-lab-cert -n tls-lab
+sleep 8
+oc get secret tls-lab-cert -n tls-lab
+oc get certificate -n tls-lab -o jsonpath='revisao={.items[0].status.revision}{"\n"}'
+----
+
+[source,text]
+----
+secret "tls-lab-cert" deleted
+NAME           TYPE                DATA   AGE
+tls-lab-cert   kubernetes.io/tls   3      8s
+revisao=2
+----
+
+**O que isso diz:** você apagou o Secret, e ele existe de novo, com segundos
+de idade. A `revisao=2` é o `Certificate` dizendo que emitiu outra vez.
+Ninguém precisou lembrar. É o mesmo mecanismo que renova o certificado antes
+do vencimento.
+
+=== Passo 5 -- e sem a policy?
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc delete -f passos/certificado/02-tlspolicy.yaml
+sleep 8
+oc get certificate -n tls-lab
+oc get secret tls-lab-cert -n tls-lab
+curl -sk -o /dev/null -w 'com -k: %{http_code}\n' https://tls-lab.{cluster_domain}/
+----
+
+[source,text]
+----
+tlspolicy.kuadrant.io "lab" deleted
+No resources found in tls-lab namespace.
+NAME           TYPE                DATA   AGE
+tls-lab-cert   kubernetes.io/tls   3      ...
+com -k: 404
+----
+
+**O que isso diz: nada quebrou -- e esse é o problema.** O `Certificate` foi
+embora com a policy, mas o Secret ficou. O Gateway continua servindo, e
+ninguém vai renovar.
+
+É exatamente o estado do Secret da API que a primeira parte mostrou:
+certificado válido, sem dono.
+
+=== Limpando
+
+[source,bash,role="execute"]
+----
+oc delete project tls-lab
+----
+
+endif::[]
 == Por que não emitimos um certificado público no exercício
 
 Seria o natural, e o ambiente tem o Issuer para isso. Não usamos por um motivo
