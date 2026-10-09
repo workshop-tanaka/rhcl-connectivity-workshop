@@ -227,9 +227,9 @@ Você sabe dizer em qual lugar da borda uma recusa morreu, prever o que o
 tráfego faz quando a plataforma falha -- e fazer a plataforma avisar quando a
 proteção cai sem ninguém sentir.
 
-A borda está em operação. A xref:leitura-multitenancy.adoc[fase 7] trata do
-que vem quando o projeto cresce: mais times na mesma plataforma, e as duas
-fronteiras que esta sessão não pratica.
+A borda está em operação. A xref:leitura-parceiros.adoc[fase 7] trata do
+que vem quando o projeto cresce: mais parceiros, mais APIs, mais times na
+mesma plataforma, e as duas fronteiras que esta sessão não pratica.
 endif::[]
 
 Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o

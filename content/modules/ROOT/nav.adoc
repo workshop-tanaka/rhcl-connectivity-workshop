@@ -45,6 +45,7 @@ ifdef::foco_rhcl[]
 * xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes]
 
 .Fase 7 — Escala, e o que vem depois
+* xref:leitura-parceiros.adoc[Leitura: muitos parceiros, muitas APIs]
 * xref:leitura-multitenancy.adoc[Leitura: multi-tenancy]
 * xref:m5-00-intro.adoc[O caminho pavimentado: a proposta]
 * xref:m5-01-colheita.adoc[7.1 Leitura: o caminho pavimentado]

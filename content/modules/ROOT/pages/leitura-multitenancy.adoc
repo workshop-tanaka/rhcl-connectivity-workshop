@@ -4,15 +4,6 @@ include::partial$numeros.adoc[]
 
 **Leitura · ~8 min · não muda estado**
 
-ifdef::foco_rhcl[]
-[TIP]
-====
-**Fase 7 -- Escala, e o que vem depois.** É o trimestre seguinte, e a conversa
-é de arquitetura: mais times na mesma plataforma, a configuração nascendo de
-um formulário, e as duas fronteiras que esta sessão não pratica. Só leitura,
-cerca de 25 minutos.
-====
-endif::[]
 
 A pergunta chega cedo em qualquer conversa sobre plataforma de API: *"dá para
 vários times usarem o mesmo cluster, cada um com as suas APIs, sem um enxergar

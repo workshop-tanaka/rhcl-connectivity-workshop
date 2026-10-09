@@ -60,12 +60,12 @@ troca de mãos várias vezes.
   falha, fazer a plataforma avisar, e auditar o que foi feito
 | ~36 min
 
-| xref:leitura-multitenancy.adoc[**7 -- Escala, e o que vem depois**]
+| xref:leitura-parceiros.adoc[**7 -- Escala, e o que vem depois**]
 | o trimestre seguinte
 | arquitetura
-| dividir a plataforma entre times, e dizer onde entram o Service Mesh e o
-  Service Interconnect
-| ~25 min, só leitura
+| decidir como a governança cresce com parceiros e APIs, dividir a plataforma
+  entre times, e dizer onde entram o Service Mesh e o Service Interconnect
+| ~35 min, só leitura
 
 | xref:extras.adoc[**Extras**]
 | quando o assunto aparecer

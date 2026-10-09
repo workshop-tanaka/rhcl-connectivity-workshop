@@ -1,0 +1,250 @@
+include::partial$numeros.adoc[]
+= Leitura: muitos parceiros, muitas APIs
+:navtitle: Leitura: muitos parceiros, muitas APIs
+
+**Leitura · ~9 min · não muda estado**
+
+ifdef::foco_rhcl[]
+[TIP]
+====
+**Fase 7 -- Escala, e o que vem depois.** É o trimestre seguinte, e a conversa
+é de arquitetura: mais parceiros, mais APIs, mais times na mesma plataforma, a
+configuração nascendo de um formulário, e as duas fronteiras que esta sessão
+não pratica. Só leitura, cerca de 35 minutos.
+====
+endif::[]
+
+Tudo o que você fez até aqui foi com uma API e três parceiros. Funciona, e não
+diz nada sobre o que acontece com quarenta APIs e trezentos parceiros.
+
+O que decide se a governança aguenta esse crescimento é uma regra só:
+
+[IMPORTANT]
+====
+**O que cresce com o número de parceiros tem de ser dado, não configuração.**
+Um parceiro novo deve custar uma credencial e um rótulo. Se ele custa uma
+policy nova, um Gateway novo ou um arquivo editado à mão, a conta não fecha.
+====
+
+Esta página percorre as seis decisões que seguem dessa regra. Cada uma traz as
+opções, a que este material recomenda, e a parte em que a peça foi exercitada.
+
+== 1. Quantos Gateways
+
+[cols="2,3,3",options="header"]
+|===
+| opção | quando serve | o que custa
+
+| um Gateway para tudo
+| poucas APIs, um público só
+| um erro de certificado ou de teto alcança todas as APIs de uma vez
+
+| **um Gateway por público** -- parceiros, interno, regulado
+| quase sempre
+| o teto, o certificado, o nome e a telemetria se repetem por Gateway
+
+| um Gateway por API, ou por parceiro
+| exigência que é só daquele parceiro, como certificado de cliente
+| cada Gateway é um pod de proxy -- neste ambiente, entre 300 e 370 MiB cada
+|===
+
+**Recomendado: um por público.** O Gateway é a unidade onde a plataforma
+escreve o teto, e o público é o que muda o teto. A
+xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API]
+detalha quando separar.
+
+== 2. Quem é dono do quê
+
+A resposta que escala é em **camadas**, e ela já está no produto:
+
+[cols="1,2,2",options="header"]
+|===
+| camada | quem escreve | o que escreve
+
+| o teto
+| quem cuida da plataforma, no `Gateway`
+| nega tudo por padrão, o limite que vale para quem não tem plano, o
+  certificado, o nome e a telemetria
+
+| a exceção
+| o time da API, na `HTTPRoute` dele
+| quem pode chamar esta API, e sob quais planos
+
+| o catálogo
+| produto, ou negócio
+| quais planos existem e o que cada um compra
+|===
+
+Duas propriedades sustentam isso sem depender de disciplina. **A policy só
+alcança um recurso do próprio namespace**, então a fronteira entre os donos é
+namespace e RBAC. E **a precedência fica escrita no status**: quando a exceção
+vence o teto, o teto diz que cedeu, e para quem. É o que as partes
+xref:m1-03-precedencia.adoc[{p-precedencia}] e
+xref:m1-04-papeis.adoc[{p-papeis}] mostram, e a
+xref:leitura-multitenancy.adoc[leitura de multi-tenancy] leva isso para vários
+times.
+
+== 3. Como o parceiro se identifica
+
+[cols="2,3,3",options="header"]
+|===
+| opção | o que resolve bem | onde aperta com muitos parceiros
+
+| chave de API
+| o caso simples: um `Secret` por parceiro, com o plano num rótulo
+| cadastro, rotação e revogação são seus, credencial por credencial
+
+| **token de um provedor de identidade** (OIDC)
+| o cadastro, a rotação e a revogação saem das APIs e vão para um lugar só
+| pede um provedor de identidade em que os parceiros existam como clientes
+
+| certificado de cliente
+| integração entre empresas em que o certificado já é a identidade
+| nesta versão a policy não enxerga o certificado do cliente; há um contorno
+  medido, por cabeçalho
+|===
+
+**Recomendado: token, quando os parceiros passam de dezenas.** A chave de API
+continua sendo o caminho curto. A parte
+xref:m1-07-identidade.adoc[{p-identidade}] compara os dois, e o Extra
+xref:extra-parceiro-certificado.adoc[Parceiro com certificado] mede a ressalva
+do terceiro.
+
+[NOTE]
+====
+Este material usa token para **pessoa**, com login. Parceiro como **sistema**,
+com o plano vindo de um atributo do token, é o desenho recomendado acima e
+**não foi exercitado aqui**.
+====
+
+== 4. Como se limita
+
+[cols="2,3,3",options="header"]
+|===
+| opção | quando serve | o que custa
+
+| um plano para cada API
+| APIs sem nada em comum
+| trezentos parceiros vezes quarenta APIs: ninguém sabe o que foi vendido
+
+| **um catálogo comum de planos**
+| quase sempre
+| a exceção precisa virar um plano com nome, e não um ajuste solto
+
+| um limite individual por parceiro
+| contrato negociado caso a caso
+| a configuração volta a crescer com o número de parceiros
+|===
+
+**Recomendado: de três a cinco planos, reaproveitados em todas as APIs.** O
+parceiro entra num plano por um **rótulo na credencial**; mudar o plano dele é
+mudar um rótulo, e nenhuma policy é tocada. É o que a parte
+xref:m1-02-planos.adoc[{p-planos}] faz.
+
+Uma distinção que evita promessa errada: **medir por parceiro não é limitar por
+parceiro.** Neste material o contador de limite é por plano, e o parceiro é uma
+dimensão da métrica -- dá para saber quanto cada um consumiu, na parte
+xref:m1-05-negocio.adoc[{p-negocio}], sem existir um limite para cada um.
+
+Quando uma API tem muitos caminhos com regras diferentes, a policy desce até a
+regra da rota: um hostname só, governado caminho a caminho, em vez de um
+hostname e um certificado para cada variação. É a parte
+xref:extra-contextos.adoc[Uma API, vários contextos].
+
+E quando o pedido for "libera só a faixa de IP do parceiro": o endereço que
+chega à borda costuma ser o do salto anterior, não o do parceiro. Para
+restringir a **um** parceiro, identidade vale mais que endereço -- a parte
+xref:extra-listas.adoc[Listas de permissão e bloqueio] mede por quê.
+
+== 5. Como o parceiro entra
+
+[cols="2,3,3",options="header"]
+|===
+| opção | quando serve | o que custa
+
+| alguém cria a credencial à mão
+| os primeiros parceiros
+| não há registro de quem pediu, quem aprovou, nem quando
+
+| **pedido e aprovação pelo portal**
+| quando há mais de um time publicando API
+| o portal precisa estar instalado e ser a porta única
+
+| credencial como arquivo num repositório
+| ambiente em que tudo já passa por revisão
+| segredo em repositório pede cofre, ou cifra
+|===
+
+**Recomendado: o portal.** O Connectivity Link traz os dois objetos que isso
+pede: o produto de API, que é o que o parceiro enxerga, e o pedido de chave,
+que alguém aprova. O plano faz parte do pedido.
+
+[NOTE]
+====
+Um detalhe medido: a chave que o portal cria grava o plano numa **anotação**, e
+a chave escrita à mão o grava num **rótulo**. As policies deste material leem
+os dois lugares. Uma policy que leia só um deles deixa a chave aprovada pelo
+portal **sem limite nenhum**, e sem erro.
+====
+
+== 6. Como a mudança chega
+
+[cols="2,3,3",options="header"]
+|===
+| opção | quando serve | o que custa
+
+| `oc apply`
+| aprender, e a primeira API
+| ninguém sabe quem mudou, quando, nem como voltar
+
+| **repositório, com revisão e conferência**
+| a partir da segunda API
+| alguém precisa manter a conferência
+
+| formulário que gera o repositório
+| quando publicar API vira rotina de muitos times
+| um portal e os modelos para manter
+|===
+
+**Recomendado: repositório, com uma conferência que recusa rota sem policy de
+acesso.** É a xref:fase-esteira.adoc[fase 5]. O formulário é o passo seguinte,
+na leitura xref:m5-01-colheita.adoc[{p-colheita}].
+
+== O que muda de natureza quando o número cresce
+
+* **A plataforma é uma só por cluster.** Um Authorino e um Limitador atendem
+  todos os Gateways. A disponibilidade é comum, e por isso a plataforma precisa
+  avisar sobre si mesma -- a parte xref:m3-05-alerta.adoc[{p-alerta}].
+* **O operator tem teto de memória.** Com centenas de policies ele passa do
+  limite de fábrica e reinicia, e o que for criado nesse intervalo não é
+  aplicado. Em ambiente grande, o limite é ampliado na instalação.
+* **Status verde não é promessa de efeito.** Quanto mais policies, mais vale
+  medir o tráfego em vez de confiar no status -- e mais vale o alerta que
+  acusa uma policy sobreposta.
+
+== O que este material não mediu
+
+Três coisas que o desenho acima pressupõe e que valem um teste no seu ambiente
+antes de entrarem numa proposta:
+
+* **um contador de limite por credencial**, dentro do mesmo plano;
+* **contadores compartilhados entre réplicas do Limitador**, que é o que alta
+  disponibilidade pede;
+* **o portal em volume**, com dezenas de produtos e centenas de pedidos.
+
+== Em resumo
+
+[cols="1,2",options="header"]
+|===
+| decisão | o recomendado
+
+| Gateways | um por público
+| donos | teto da plataforma, exceção do time da API, catálogo do negócio
+| identidade | token, quando os parceiros passam de dezenas
+| limites | um catálogo de três a cinco planos, e o parceiro entra por rótulo
+| entrada | pedido e aprovação pelo portal
+| mudança | repositório, com conferência antes do merge
+|===
+
+Poucos Gateways, poucos planos, a identidade fora das APIs, e tudo entrando por
+repositório. O que sobra para crescer são credenciais e rótulos.
