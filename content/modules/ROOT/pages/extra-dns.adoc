@@ -42,12 +42,12 @@ bash scripts/dns-nome.sh
 ----
 
 Leva cerca de dois minutos, e remove tudo no fim. O script sobe uma zona de
-mentira (`lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório,
+mentira (`dns-lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório,
 um Gateway próprio, e o cliente é um pod.
 endif::[]
 ifdef::foco_rhcl[]
 A parte acontece num **projeto só dela**, `dns-lab`, com uma zona de mentira
-(`lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório. Os três
+(`dns-lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório. Os três
 arquivos estão em `passos/dns/`.
 
 Monte o laboratório. O arquivo sobe o CoreDNS da zona, uma aplicação, um pod
@@ -70,7 +70,7 @@ pod/cliente condition met
 ----
 
 Abra o arquivo e repare no que **não** está nele: nenhum registro de DNS. O
-Gateway declara que responde por `api.lab.rhcl.internal`, e ninguém criou esse
+Gateway declara que responde por `api.dns-lab.rhcl.internal`, e ninguém criou esse
 nome.
 
 .Se você é administrador do cluster, e não participante de uma turma
@@ -151,7 +151,7 @@ Accepted=True   DNSPolicy has been accepted
 Enforced=True   DNSPolicy has been successfully enforced
 
 DNSRecord authoritative-record-...  provedor=coredns   Ready=True
-  api.lab.rhcl.internal   CNAME -> lab-istio.dns-lab.svc.cluster.local
+  api.dns-lab.rhcl.internal   CNAME -> lab-istio.dns-lab.svc.cluster.local
 ----
 
 Você não escreveu registro nenhum. **O operador leu o listener do Gateway** e
@@ -190,7 +190,7 @@ include::partial$diagrama.adoc[]
 [mermaid]
 ....
 flowchart TB
-  N["api.lab.rhcl.internal<br/><i>o nome publico</i>"] --> K["klb.api...<br/><b>ponto de decisao</b>"]
+  N["api.dns-lab.rhcl.internal<br/><i>o nome publico</i>"] --> K["klb.api...<br/><b>ponto de decisao</b>"]
   K -->|"geo-code: GEO-NA"| G1["geo-na.klb.api..."]
   K -->|"geo-code: * (defaultGeo)"| G1
   G1 -->|"weight: 120"| D1["Gateway deste cluster"]
@@ -228,10 +228,10 @@ a estrutura muda inteira:
 
 [source,text]
 ----
-api.lab.rhcl.internal              CNAME -> klb.api.lab.rhcl.internal
-klb.api.lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=GEO-NA
-klb.api.lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=*
-geo-na.klb.api.lab.rhcl.internal   CNAME -> lab-istio...         weight=120
+api.dns-lab.rhcl.internal              CNAME -> klb.api.dns-lab.rhcl.internal
+klb.api.dns-lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=GEO-NA
+klb.api.dns-lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=*
+geo-na.klb.api.dns-lab.rhcl.internal   CNAME -> lab-istio...         weight=120
 ----
 
 Leia de cima para baixo:
