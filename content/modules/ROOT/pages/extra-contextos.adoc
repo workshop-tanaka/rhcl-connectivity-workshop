@@ -2,7 +2,12 @@ include::partial$numeros.adoc[]
 = {p-contextos}Uma API, vários contextos
 :navtitle: Uma API, vários contextos
 
+ifndef::foco_rhcl[]
 **Opcional · ~14 min · cria e remove namespaces próprios**
+endif::[]
+ifdef::foco_rhcl[]
+**~15 min · cria e remove um projeto próprio**
+endif::[]
 
 **Para quem:** Arquitetura e Engenheiro de Plataforma -- quem publica uma API com dez caminhos e precisa tratá-los de formas diferentes.
 
@@ -21,6 +26,7 @@ Dá, e em três níveis.
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/contextos.sh
@@ -28,6 +34,161 @@ bash scripts/contextos.sh
 
 Leva cerca de dois minutos e remove tudo no fim. O laboratório sobe **um**
 Gateway, **dois** hostnames e **uma** `HTTPRoute` com quatro regras nomeadas.
+endif::[]
+ifdef::foco_rhcl[]
+A parte acontece num **projeto só dela**, `ctx-lab`, e tem cinco passos. Cada
+um aplica um arquivo de `passos/contextos/` e lê a mesma **matriz**: quem entra,
+em qual caminho, sem chave, com a chave free e com a gold. O que ensina é ver a
+matriz mudar de um passo para o outro.
+
+A matriz sai de uma ferramenta pequena, porque os hostnames `*.ctx.lab` não
+existem em DNS nenhum: as chamadas partem de um pod do laboratório.
+
+=== Passo 1 -- o laboratório, sem policy nenhuma
+
+**Um** Gateway, **dois** hostnames, e uma `HTTPRoute` (`api1`) com quatro
+regras, cada uma com nome.
+
+[source,bash,role="execute"]
+----
+oc new-project ctx-lab --skip-config-write
+oc apply -f passos/contextos/01-laboratorio.yaml
+oc rollout status deploy/app -n ctx-lab --timeout=180s
+oc wait --for=condition=Programmed gateway/lab -n ctx-lab --timeout=120s
+oc wait --for=condition=Ready pod/cliente -n ctx-lab --timeout=180s
+sleep 5
+bash scripts/contextos.sh matriz
+----
+
+[source,text]
+----
+    host + caminho                             sem      free     gold
+    api1.ctx.lab/catalogo/listall              200      200      200
+    api1.ctx.lab/catalogo/listbestsellers      200      200      200
+    api1.ctx.lab/catalogo/admin                200      200      200
+    api1.ctx.lab/catalogo/search               200      200      200
+    api2.ctx.lab/catalogo/listall              200      200      200
+----
+
+**O que isso diz:** tudo aberto. Não há teto neste Gateway, e nenhuma rota
+declarou regra.
+
+=== Passo 2 -- a rota inteira passa a exigir chave
+
+Uma `AuthPolicy` cujo alvo é a `HTTPRoute` `api1`.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/contextos/02-a-rota-exige-chave.yaml
+oc wait --for=condition=Enforced authpolicy/api1-chave -n ctx-lab --timeout=120s
+sleep 5
+bash scripts/contextos.sh matriz
+----
+
+[source,text]
+----
+    host + caminho                             sem      free     gold
+    api1.ctx.lab/catalogo/listall              401      200      200
+    api1.ctx.lab/catalogo/listbestsellers      401      200      200
+    api1.ctx.lab/catalogo/admin                401      200      200
+    api1.ctx.lab/catalogo/search               401      200      200
+    api2.ctx.lab/catalogo/listall              200      200      200
+----
+
+**O que isso diz:** os quatro caminhos da `api1` pedem chave, e qualquer chave
+serve. A `api2`, que é outra rota no mesmo Gateway com o **mesmo caminho**,
+continua aberta: a policy gruda na rota, não no caminho.
+
+[NOTE]
+====
+**Se a matriz vier toda em `503`, espere meio minuto e repita o último
+comando.** É o Gateway carregando o filtro do Connectivity Link pela primeira
+vez. Medido neste ambiente: em uma de quatro execuções, todas as rotas do
+Gateway -- inclusive a `api2`, que nenhuma policy toca -- responderam `503` por
+mais de vinte segundos depois da primeira policy, com o status já em
+`Enforced=True`. Nas outras três não houve janela nenhuma.
+====
+
+=== Passo 3 -- um caminho volta a ser público
+
+O mesmo tipo de policy, com uma linha a mais: `sectionName: publico`.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/contextos/03-um-caminho-publico.yaml
+oc wait --for=condition=Enforced authpolicy/api1-publico -n ctx-lab --timeout=120s
+sleep 5
+bash scripts/contextos.sh matriz
+----
+
+[source,text]
+----
+    host + caminho                             sem      free     gold
+    api1.ctx.lab/catalogo/listall              200      200      200
+    api1.ctx.lab/catalogo/listbestsellers      401      200      200
+    api1.ctx.lab/catalogo/admin                401      200      200
+    api1.ctx.lab/catalogo/search               401      200      200
+    api2.ctx.lab/catalogo/listall              200      200      200
+----
+
+**O que isso diz:** só a primeira linha mudou. A policy da **regra** venceu a
+da **rota**, e só naquele caminho.
+
+=== Passo 4 -- o caminho administrativo, só para o plano gold
+
+Outra policy de regra, agora com autorização.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/contextos/04-admin-so-para-gold.yaml
+oc wait --for=condition=Enforced authpolicy/api1-admin -n ctx-lab --timeout=120s
+sleep 5
+bash scripts/contextos.sh matriz
+----
+
+[source,text]
+----
+    host + caminho                             sem      free     gold
+    api1.ctx.lab/catalogo/listall              200      200      200
+    api1.ctx.lab/catalogo/listbestsellers      401      200      200
+    api1.ctx.lab/catalogo/admin                401      403      200
+    api1.ctx.lab/catalogo/search               401      200      200
+    api2.ctx.lab/catalogo/listall              200      200      200
+----
+
+**O que isso diz:** na linha do `admin`, `401` e `403` são respostas diferentes
+de propósito. `401`: não sei quem você é. `403`: sei, e você não pode.
+
+Abra o arquivo e repare que a autenticação é declarada **de novo**: a policy
+de regra **substitui** a da rota naquele trecho, não soma a ela. Esquecer isso
+deixaria o caminho administrativo sem autenticação nenhuma.
+
+=== Passo 5 -- o limite também desce ao caminho
+
+Dois limites: um largo na rota (30 a cada 10 s) e um apertado na regra
+`premium` (5 a cada 10 s). Cada rajada são oito chamadas com a chave gold.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/contextos/05-limites.yaml
+oc wait --for=condition=Enforced ratelimitpolicy/api1-premium -n ctx-lab --timeout=120s
+sleep 11
+bash scripts/contextos.sh rajada /catalogo/listbestsellers
+sleep 11
+bash scripts/contextos.sh rajada /catalogo/search
+----
+
+[source,text]
+----
+    /catalogo/listbestsellers    200 200 200 200 200 429 429 429
+    /catalogo/search             200 200 200 200 200 200 200 200
+----
+
+**O que isso diz:** a mesma chave, a mesma rota, e o caminho caro corta na
+sexta chamada enquanto a busca passa inteira.
+
+As seções abaixo explicam o que você acabou de montar, peça por peça.
+endif::[]
 
 == A peça que faltava: a regra tem nome
 
@@ -156,6 +317,18 @@ mais específicas. Quem opera descobre isso num `oc get`, sem abrir o Envoy.
 | `/listall` público, `/listbestsellers` com limite próprio
 |===
 
+ifdef::foco_rhcl[]
+== Limpando
+
+Leia antes o status das cinco policies, e então apague o projeto:
+
+[source,bash,role="execute"]
+----
+bash scripts/contextos.sh status
+oc delete project ctx-lab
+----
+
+endif::[]
 == Dois hostnames no mesmo Gateway
 
 `api1.ctx.lab` e `api2.ctx.lab` publicam **o mesmo caminho**, no mesmo Gateway,
