@@ -138,8 +138,10 @@ com o plano vindo de um atributo do token, é o desenho recomendado acima e
 
 **Recomendado: de três a cinco planos, reaproveitados em todas as APIs.** O
 parceiro entra num plano por um **rótulo na credencial**; mudar o plano dele é
-mudar um rótulo, e nenhuma policy é tocada. É o que a parte
-xref:m1-02-planos.adoc[{p-planos}] faz.
+mexer na credencial, e nenhuma policy é tocada. É o que a parte
+xref:m1-02-planos.adoc[{p-planos}] faz -- e ela mede um detalhe que muda a
+operação: com chave de API, trocar só o rótulo **não** muda o limite; é preciso
+recriar a chave.
 
 Uma distinção que evita promessa errada: **medir por parceiro não é limitar por
 parceiro.** Neste material o contador de limite é por plano, e o parceiro é uma

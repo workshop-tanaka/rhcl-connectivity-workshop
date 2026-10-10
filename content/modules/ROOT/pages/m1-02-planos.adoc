@@ -25,6 +25,7 @@ resultados.
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh ato2
@@ -40,6 +41,109 @@ Depois, o que muda entre as três linhas é **um label** no Secret da chave:
 ----
 oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
 ----
+endif::[]
+ifdef::foco_rhcl[]
+=== Passo 1 -- a mesma API, três chaves
+
+Uma ferramenta pequena manda uma rajada de 14 chamadas com a chave de cada
+plano. Leva cerca de 40 segundos: ela espera a janela de 10 s fechar entre uma
+rajada e a outra.
+
+[source,bash,role="execute"]
+----
+bash scripts/traffic.sh tiers
+----
+
+[source,text]
+----
+free           (3/10s)      200 200 200 429 429 429 429 429 429 429 429 429 429 429   -> 3 ok, 11 limitadas
+gold           (30/10s)     200 200 200 200 200 200 200 200 200 200 200 200 200 200   -> 14 ok, 0 limitadas
+silver         (10/10s)     200 200 200 200 200 200 200 200 200 200 429 429 429 429   -> 10 ok, 4 limitadas
+----
+
+**O que isso diz:** mesma rota, mesma aplicação, mesmo caminho. Três chaves,
+três resultados.
+
+=== Passo 2 -- de onde vem a diferença
+
+[source,bash,role="execute"]
+----
+oc get secrets -n kuadrant-system -l app=partner -L kuadrant.io/plan-id
+----
+
+A última coluna é o plano de cada chave. **O que separa os três resultados é
+um rótulo** no Secret da chave, `kuadrant.io/plan-id`, e a `PlanPolicy` que o
+lê.
+
+=== Passo 3 -- mude um parceiro de plano
+
+O parceiro `acme` está no plano free. Troque o rótulo da chave dele para gold e
+mande a mesma rajada:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc label secret apikey-free-acme -n kuadrant-system kuadrant.io/plan-id=gold --overwrite
+sleep 11
+CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo
+----
+
+[source,text]
+----
+secret/apikey-free-acme labeled
+200 200 200 429 429 429 429 429 429 429 429 429 429 429
+----
+
+[WARNING]
+====
+**O rótulo mudou, e o limite não.** O Secret já diz `gold`, e a chave continua
+sendo tratada como free. Medido neste ambiente: dois minutos depois ainda era
+assim. Quem confere a identidade guarda a chave como a leu da primeira vez, e
+uma mudança só de rótulo não a faz ler de novo.
+
+Vale guardar, porque tem dois sentidos: um parceiro promovido que continua
+limitado, e -- pior -- um parceiro **rebaixado que continua com o plano
+antigo**.
+====
+
+O que faz o plano novo valer é a chave ser lida de novo. O comando recria o
+mesmo Secret, com o rótulo que você acabou de pôr:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc get secret apikey-free-acme -n kuadrant-system -o yaml | oc replace --force -f -
+sleep 5
+CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo
+----
+
+[source,text]
+----
+secret "apikey-free-acme" deleted
+secret/apikey-free-acme replaced
+200 200 200 200 200 200 200 200 200 200 200 200 200 200
+----
+
+**O que isso diz:** as 14 passaram. O parceiro mudou de plano sem tocar na
+policy, na rota ou na aplicação -- mas mudar o rótulo não bastou: foi preciso
+recriar a chave.
+
+Devolva o `acme` ao plano dele, do mesmo jeito:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc label secret apikey-free-acme -n kuadrant-system kuadrant.io/plan-id=free --overwrite
+oc get secret apikey-free-acme -n kuadrant-system -o yaml | oc replace --force -f -
+sleep 11
+CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo
+----
+
+[source,text]
+----
+200 200 200 429 429 429 429 429 429 429 429 429 429 429
+----
+endif::[]
 
 == Console: quem são os parceiros
 
@@ -180,8 +284,9 @@ dedicado -- um bloco a mais no YAML, e o label da chave dele apontando para lá.
 
 Você acabou de ver três contratos comerciais diferentes saírem de **um label**
 num Secret. Criar um tier novo é acrescentar um bloco de trinta linhas; mover
-um cliente de plano é editar esse label. Nenhum dos dois passa por build,
-deploy ou mudança de código.
+um cliente de plano é trocar esse label **e recriar a chave** -- só o label,
+nesta versão, não muda o limite (medido: dois minutos depois o plano antigo
+ainda valia). Nenhum dos dois passa por build, deploy ou mudança de código.
 
 == Para ir além
 

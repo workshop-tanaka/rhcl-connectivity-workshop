@@ -16,6 +16,7 @@ Até aqui foi código de status. Agora é a pergunta que a área comercial faz.
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh ato4
@@ -24,6 +25,43 @@ bash scripts/demo.sh ato4
 O que tem de aparecer: as séries quebradas por `plan` e a cota diária
 restante de cada plano. Depois, a mesma consulta direto no Thanos:
 `sum by (plan) (authorized_calls)`.
+endif::[]
+ifdef::foco_rhcl[]
+Uma ferramenta pequena lê os contadores que a plataforma mantém. O `grep`
+deixa só as séries da **sua** API:
+
+[source,bash,role="execute"]
+----
+bash scripts/traffic.sh metrics | grep 'vhost="api-travels\.'
+----
+
+[source,text]
+----
+  authorized_calls{plan="gold",vhost="api-travels...",...} 101
+  authorized_calls{plan="silver",vhost="api-travels...",...} 22
+  authorized_calls{plan="free",vhost="api-travels...",...} 84
+  limited_calls{plan="silver",vhost="api-travels...",...} 8
+  limited_calls{plan="free",vhost="api-travels...",...} 247
+----
+
+Os números são os do seu ambiente e vão ser outros; o que importa é a forma.
+
+**O que isso diz:** cada série traz o rótulo `plan`. `authorized_calls` são as
+chamadas servidas, `limited_calls` as que levaram `429`. Sem esse rótulo a
+métrica responderia "quantos `429` houve"; com ele responde "o plano free está
+saturando", que é outra conversa -- e é a que a área comercial quer ter.
+
+O rótulo não vem do contador: vem da `TelemetryPolicy`, que você lê na seção
+de configuração, mais abaixo.
+
+[NOTE]
+====
+Sem o `grep`, a ferramenta mostra as séries de **todas** as APIs que a
+plataforma atende. É a mesma observação da
+xref:leitura-multitenancy.adoc[leitura de multi-tenancy]: as métricas de
+consumo nascem na plataforma, não no namespace de cada time.
+====
+endif::[]
 
 == Navegador
 
