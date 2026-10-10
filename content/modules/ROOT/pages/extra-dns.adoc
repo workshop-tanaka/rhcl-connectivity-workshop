@@ -2,7 +2,12 @@ include::partial$numeros.adoc[]
 = {p-dns}O nome da API também é policy
 :navtitle: O nome também é policy (DNS)
 
+ifndef::foco_rhcl[]
 **Opcional · ~7 min · cria e remove um namespace próprio**
+endif::[]
+ifdef::foco_rhcl[]
+**~8 min · cria e remove um projeto próprio**
+endif::[]
 
 **Para quem:** Engenheiro de Plataforma e Arquitetura -- quem opera a borda, e quem vai desenhar mais de um cluster.
 
@@ -30,6 +35,7 @@ Com o provedor `coredns`, o exercício inteiro cabe num namespace.
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/dns-nome.sh
@@ -38,6 +44,47 @@ bash scripts/dns-nome.sh
 Leva cerca de dois minutos, e remove tudo no fim. O script sobe uma zona de
 mentira (`lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório,
 um Gateway próprio, e o cliente é um pod.
+endif::[]
+ifdef::foco_rhcl[]
+A parte acontece num **projeto só dela**, `dns-lab`, com uma zona de mentira
+(`lab.rhcl.internal`) servida por um CoreDNS do próprio laboratório. Os três
+arquivos estão em `passos/dns/`.
+
+Monte o laboratório. O arquivo sobe o CoreDNS da zona, uma aplicação, um pod
+cliente e o Gateway; os três comandos seguintes esperam cada peça ficar pronta.
+
+[source,bash,role="execute"]
+----
+oc new-project dns-lab --skip-config-write
+oc apply -f passos/dns/01-laboratorio.yaml
+oc rollout status deploy/coredns -n dns-lab --timeout=180s
+oc wait --for=condition=Programmed gateway/lab -n dns-lab --timeout=120s
+oc wait --for=condition=Ready pod/cliente -n dns-lab --timeout=180s
+----
+
+[source,text]
+----
+deployment "coredns" successfully rolled out
+gateway.gateway.networking.k8s.io/lab condition met
+pod/cliente condition met
+----
+
+Abra o arquivo e repare no que **não** está nele: nenhum registro de DNS. O
+Gateway declara que responde por `api.lab.rhcl.internal`, e ninguém criou esse
+nome.
+
+.Se você é administrador do cluster, e não participante de uma turma
+[%collapsible]
+====
+O CoreDNS do laboratório precisa ler os registros no cluster inteiro. Numa
+turma essa permissão já vem pronta; fora dela, aplique antes:
+
+[source,bash]
+----
+oc apply -f passos/dns/00-permissao-de-cluster.yaml
+----
+====
+endif::[]
 
 [IMPORTANT]
 ====
@@ -48,6 +95,17 @@ nomes do workshop seguem intocados.
 
 == 1. O Gateway está pronto, e ninguém o encontra
 
+ifdef::foco_rhcl[]
+Pergunte o nome ao CoreDNS do laboratório. O terminal não tem `dig`, e a zona
+só existe dentro do cluster: a consulta sai do pod cliente, por uma ferramenta
+pequena.
+
+[source,bash,role="execute"]
+----
+bash scripts/dns-nome.sh resolve
+----
+
+endif::[]
 [source,text]
 ----
 2. O nome ainda nao existe
@@ -60,6 +118,22 @@ com outro chamado e outro prazo.
 
 == 2. Uma policy, e os registros aparecem
 
+ifdef::foco_rhcl[]
+Aplique a policy, espere ela entrar em vigor, e leia o que apareceu. O `sleep`
+dá ao operador os segundos que ele leva para criar os registros.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/dns/02-dnspolicy.yaml
+oc wait --for=condition=Enforced dnspolicy/lab -n dns-lab --timeout=90s
+sleep 10
+oc get dnspolicy lab -n dns-lab -o jsonpath='{range .status.conditions[*]}{.type}={.status} {.message}{"\n"}{end}'
+bash scripts/dns-nome.sh registros
+----
+
+O arquivo traz a policy abaixo e o `Secret` do provedor:
+
+endif::[]
 [source,yaml]
 ----
 apiVersion: kuadrant.io/v1
@@ -92,6 +166,15 @@ editado à mão, nem recarga de servidor.
 
 == 3. O nome resolve, e responde
 
+ifdef::foco_rhcl[]
+A mesma pergunta de antes, agora com resposta:
+
+[source,bash,role="execute"]
+----
+bash scripts/dns-nome.sh resolve
+----
+
+endif::[]
 [source,text]
 ----
 CNAME -> lab-istio.dns-lab.svc.cluster.local
@@ -128,6 +211,19 @@ spec:
     weight: 120
 ----
 
+ifdef::foco_rhcl[]
+O terceiro arquivo é a mesma policy com esses três campos. Aplique, espere, e
+leia os registros e a resolução de novo:
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/dns/03-geografia-e-peso.yaml
+sleep 20
+bash scripts/dns-nome.sh registros
+bash scripts/dns-nome.sh resolve
+----
+
+endif::[]
 a estrutura muda inteira:
 
 [source,text]
@@ -153,6 +249,20 @@ os dois só escrevem seus registros.
 É a mesma API, com os mesmos três campos, tanto aqui quanto num cenário real
 com Route53 ou Azure DNS. Muda o `Secret` do provedor.
 
+ifdef::foco_rhcl[]
+== Limpando
+
+[source,bash,role="execute"]
+----
+bash scripts/dns-nome.sh limpa
+----
+
+A limpeza é um script, e não um `oc delete project`, por um motivo medido: os
+registros precisam ser finalizados **antes** de o projeto sumir, senão ele fica
+preso em `Terminating`. O script apaga a policy, espera os registros saírem, e
+só então remove o projeto.
+
+endif::[]
 == A parte honesta
 
 [cols="1,3",options="header"]

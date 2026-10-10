@@ -24,10 +24,17 @@ já tem as duas no ar, no **mesmo Gateway**.
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/identidade.sh
 ----
+endif::[]
+ifdef::foco_rhcl[]
+São três passos. Os dois primeiros usam uma ferramenta pequena, por um motivo
+só: a senha do usuário de teste e o token **não podem aparecer na tela**, e um
+`curl` escrito na página os mostraria. O terceiro é leitura direta.
+endif::[]
 
 include::partial$diagrama.adoc[]
 
@@ -51,6 +58,16 @@ flowchart TB
 
 === Uma credencial que diz quem você é
 
+ifdef::foco_rhcl[]
+**Passo 1.** Peça um token ao provedor de identidade, como o usuário de teste
+do seu ambiente, e leia o que ele diz:
+
+[source,bash,role="execute"]
+----
+bash scripts/identidade.sh token
+----
+
+endif::[]
 [source,text]
 ----
 ✓ token obtido (1477 caracteres, prefixo eyJhbGciOiJS...)
@@ -71,6 +88,15 @@ expira em minutos, e a chave vale até alguém revogá-la.
 
 === O mesmo Gateway, dois comportamentos
 
+ifdef::foco_rhcl[]
+**Passo 2.** Chame as duas APIs, cada uma sem credencial e com a dela:
+
+[source,bash,role="execute"]
+----
+bash scripts/identidade.sh compara
+----
+
+endif::[]
 [source,text]
 ----
   o echo-api, governado por OIDCPolicy:
@@ -122,6 +148,7 @@ a moeda que este produto aceita, então ela sequer é avaliada.
 
 Esta é a parte que separa uma plataforma de API de um gateway configurável.
 
+ifndef::foco_rhcl[]
 [source,text]
 ----
   voce declarou UMA policy:
@@ -135,6 +162,39 @@ Esta é a parte que separa uma plataforma de API de um gateway configurável.
     2 trechos de Rego (OPA), gerados -- nenhum digitado por voce
     regras de authorization: deny, location
 ----
+endif::[]
+ifdef::foco_rhcl[]
+**Passo 3.** Liste a policy que foi declarada, e as que existem por causa dela:
+
+[source,bash,role="execute"]
+----
+oc get oidcpolicy -n echo-api
+oc get authpolicy -n echo-api -o custom-columns=POLICY:.metadata.name,DONO:.metadata.ownerReferences[0].name
+----
+
+[source,text]
+----
+NAME            AGE
+echo-api-oidc   ...
+POLICY                   DONO
+echo-api-oidc            echo-api-oidc
+echo-api-oidc-callback   echo-api-oidc
+----
+
+**O que isso diz:** alguém declarou **uma** `OIDCPolicy`, e o operador
+materializou **duas** `AuthPolicy`, com dono. Dentro da segunda há regras que
+ninguém digitou:
+
+[source,bash,role="execute"]
+----
+oc get authpolicy echo-api-oidc-callback -n echo-api -o jsonpath='{.spec.overrides.rules.authorization}' | python3 -c 'import sys,json; print(", ".join(json.load(sys.stdin).keys()))'
+----
+
+[source,text]
+----
+deny, location
+----
+endif::[]
 
 A segunda AuthPolicy é o **callback**: o endereço onde o navegador aterrissa
 depois do login. Ele precisa de regra própria -- sem ela, seria uma porta sem
