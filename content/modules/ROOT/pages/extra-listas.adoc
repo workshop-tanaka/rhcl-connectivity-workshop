@@ -2,7 +2,12 @@ include::partial$numeros.adoc[]
 = {p-listas}Listas de permissão e bloqueio
 :navtitle: Listas de permissão e bloqueio
 
+ifndef::foco_rhcl[]
 **Opcional · ~9 min · cria e remove um namespace próprio**
+endif::[]
+ifdef::foco_rhcl[]
+**~10 min · cria e remove um projeto próprio**
+endif::[]
 
 **Para quem:** Segurança e Arquitetura -- e quem já recebeu o pedido "libera só a faixa de IP do parceiro".
 
@@ -25,6 +30,7 @@ endereço chega até o Gateway?**
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/listas.sh
@@ -32,8 +38,34 @@ bash scripts/listas.sh
 
 Alguns minutos, num namespace próprio. O laboratório publica o **mesmo**
 Gateway de duas formas e compara o que sobrevive do cliente em cada uma.
+endif::[]
+ifdef::foco_rhcl[]
+A parte acontece num **projeto só dela**, `listas-lab`, em sete passos. Aqui
+cada passo é um comando curto do mesmo script, e não um arquivo: as policies
+desta parte levam valores que **só existem no seu ambiente** -- o endereço com
+que você chega à borda, o IP de um pod, os endereços dos nós -- e o passo os lê
+do cluster na hora. Cada passo mostra na tela o YAML que aplica, já com esses
+valores.
+
+Comece montando o laboratório: o **mesmo** Gateway publicado de duas formas.
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh sobe
+----
+endif::[]
 
 == 1. Que endereço sobrevive
+
+ifdef::foco_rhcl[]
+Pergunte à aplicação que endereço chegou até ela, pelos três caminhos:
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh enderecos
+----
+
+endif::[]
 
 [source,text]
 ----
@@ -66,6 +98,16 @@ mundo que está no mesmo nó.
 
 == 2. A lista existe, e vale por contexto
 
+ifdef::foco_rhcl[]
+Aplique uma lista por endereço a **um** caminho só, e chame os dois caminhos:
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh lista-ip
+----
+
+endif::[]
+
 [source,yaml]
 ----
 spec:
@@ -93,6 +135,16 @@ Funciona. E é aqui que a conversa costuma parar -- cedo demais.
 
 == 3. Lista por cabeçalho é forjável
 
+ifdef::foco_rhcl[]
+Agora de dentro do cluster, direto no Gateway, escrevendo o cabeçalho à mão:
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh forja
+----
+
+endif::[]
+
 [source,text]
 ----
 /restrito de dentro, FORJANDO XFF   200
@@ -113,6 +165,16 @@ xref:extra-parceiro-certificado.adoc[Parceiro com certificado]: cabeçalho só
 vale quando alguém confiável o escreve.
 
 == 4. O endereço da conexão não se forja
+
+ifdef::foco_rhcl[]
+Troque a lista: em vez do cabeçalho, quem abriu a conexão.
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh conexao
+----
+
+endif::[]
 
 A `AuthPolicy` também enxerga **quem abriu a conexão** com o Gateway. Não é um
 cabeçalho, então o cliente não tem onde escrever:
@@ -145,6 +207,16 @@ e todos os clientes de fora são o mesmo. E o IP de um pod muda quando ele
 reinicia, então a lista envelhece junto.
 
 == 5. O que fecha a forja da lista por cabeçalho é rede, não policy
+
+ifdef::foco_rhcl[]
+O passo volta à lista por cabeçalho e fecha o caminho direto com uma regra de rede:
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh rede
+----
+
+endif::[]
 
 O script volta à lista por `X-Forwarded-For` da seção 2, que é a que serve para
 quem vem de fora, e fecha o caminho que a tornava forjável.
@@ -193,6 +265,16 @@ sub-rede de cada nó, que o cluster publica na anotação
 
 == 6. A lista que não depende da rede
 
+ifdef::foco_rhcl[]
+Por fim, uma lista de bloqueio por credencial. As duas chaves são sorteadas na hora e ficam só no `Secret`:
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh identidade
+----
+
+endif::[]
+
 [source,text]
 ----
 sem chave                      401
@@ -215,6 +297,15 @@ O mesmo predicado serve para bloquear por plano, por anotação da chave, por
 `CN` de certificado ou por *claim* de token. E ela atravessa NAT, CDN e troca
 de operadora sem mudar de resposta.
 
+ifdef::foco_rhcl[]
+== Limpando
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh limpa
+----
+
+endif::[]
 == E se eu precisar mesmo do IP do cliente?
 
 [cols="1,3",options="header"]

@@ -122,6 +122,7 @@ endif::[]
 
 == Terminal
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/demo.sh negado
@@ -136,8 +137,33 @@ Para rever uma sozinha:
 ----
 bash scripts/negado.sh 3
 ----
+endif::[]
+ifdef::foco_rhcl[]
+São seis estações, **uma por comando**. Antes de rodar cada uma, leia o
+título da seção e aposte na causa. Depois leia a saída perguntando não "o que
+aconteceu?", mas **"o que isto já me permite parar de investigar?"**.
+
+=== A estação que parece a pior: sem resposta nenhuma
+
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 1
+----
+
+Não há código HTTP: o `curl` sai com `exit=6`, que é "não consegui traduzir o
+nome". A chamada nunca saiu da máquina de quem chamou. **Descarte tudo do lado
+do servidor** -- Gateway, policies, aplicação -- e olhe o nome.
+endif::[]
 
 === A estação que mais engana: o `503`
+
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 2
+----
+
+endif::[]
 
 Um `503` normalmente significa "a aplicação está fora do ar". Na estação 2
 ele significa outra coisa: **esse endereço nunca foi publicado**.
@@ -150,6 +176,14 @@ encontra ninguém, e responde `503`. A chamada nem chegou perto da API.
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503[O que o 503 significa no padrão HTTP^]
 
 === A estação mais útil: dois `401` de causas opostas
+
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 3
+----
+
+endif::[]
 
 [cols="1,1",options="header"]
 |===
@@ -197,6 +231,17 @@ existem para quem ainda não se identificou.
 
 === A estação muda: o `429`
 
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 4
+----
+
+A estação consome um pouco da cota do plano gratuito. Para repetir a parte dos
+planos hoje, `bash scripts/demo.sh reset` devolve as cotas.
+
+endif::[]
+
 Quando a cota do plano estoura, a resposta é `429` -- e **só isso**. Sem
 `retry-after`, sem `x-ratelimit-*`. O cliente não descobre qual é o limite,
 quanto já usou, nem quando pode tentar de novo.
@@ -211,6 +256,17 @@ plano dela foi identificado. A recusa é sobre **quanto**, não sobre **quem**.
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429[O que o 429 significa no padrão HTTP^]
 
 === A estação invisível de fora: um serviço recusando outro
+
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 5
+----
+
+Nesta sessão não há Service Mesh, e a saída diz isso: os dois serviços são
+atendidos. O texto abaixo descreve a estação como ela é **com** o Service Mesh.
+
+endif::[]
 
 As estações 1 a 4 acontecem **antes** de a chamada entrar. A 5 acontece
 depois: a chamada externa responde `200`, e mesmo assim parte da tela fica
@@ -228,6 +284,14 @@ a existir para o serviço do outro lado.
 https://istio.io/latest/docs/concepts/security/[Como a identidade entre serviços funciona^]
 
 === A estação que custa mais tempo: a regra que não valia
+
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+bash scripts/negado.sh 6
+----
+
+endif::[]
 
 Esta não tem sintoma na resposta. O comportamento simplesmente **contradiz a
 configuração que você está lendo**.
