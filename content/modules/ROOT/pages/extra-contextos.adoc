@@ -6,7 +6,7 @@ ifndef::foco_rhcl[]
 **Opcional · ~14 min · cria e remove namespaces próprios**
 endif::[]
 ifdef::foco_rhcl[]
-**~15 min · cria e remove um projeto próprio**
+**~25 min · dois laboratórios · cria e remove projetos próprios**
 endif::[]
 
 **Para quem:** Arquitetura e Engenheiro de Plataforma -- quem publica uma API com dez caminhos e precisa tratá-los de formas diferentes.
@@ -351,6 +351,7 @@ rota mais antiga.
 Até aqui foi uma API com vários contextos. A outra metade da pergunta é o
 contrário: **várias APIs, de equipes diferentes, sob o mesmo hostname.**
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 bash scripts/prefixos.sh
@@ -420,6 +421,204 @@ concreto a favor do caminho pavimentado da parte
 xref:m5-01-colheita.adoc[{p-colheita}]: lá, a rota e a policy dela nascem no mesmo
 commit -- e não há janela.
 
+endif::[]
+ifdef::foco_rhcl[]
+Outro laboratório, em **três projetos**, e a divisão entre eles é a lição:
+`pfx-gw` é da plataforma e guarda o Gateway; `pfx-equipe-a` e `pfx-equipe-b`
+são das equipes, cada uma com a própria aplicação. São cinco passos, e cada um
+lê a mesma **tabela**: sete chamadas ao hostname `api.pfx.lab`, com o código
+da resposta e, quando há resposta, qual aplicação atendeu e qual caminho ela
+recebeu.
+
+=== Passo 1 -- a plataforma monta a porta, e ela nasce fechada
+
+O arquivo cria o Gateway `borda`, o teto que nega tudo (`borda-deny-all`), as
+duas aplicações e duas chaves. Nenhuma rota ainda.
+
+[source,bash,role="execute"]
+----
+oc new-project pfx-gw --skip-config-write
+oc new-project pfx-equipe-a --skip-config-write
+oc new-project pfx-equipe-b --skip-config-write
+oc apply -f passos/prefixos/01-laboratorio.yaml
+oc rollout status deploy/app -n pfx-equipe-a --timeout=180s
+oc rollout status deploy/app -n pfx-equipe-b --timeout=180s
+oc wait --for=condition=Programmed gateway/borda -n pfx-gw --timeout=120s
+oc wait --for=condition=Ready pod/cliente -n pfx-gw --timeout=180s
+bash scripts/prefixos.sh tabela
+oc get authpolicy borda-deny-all -n pfx-gw -o jsonpath='{.status.conditions[?(@.type=="Enforced")].message}{"\n"}'
+----
+
+[source,text]
+----
+    caminho                    codigo quem atendeu
+    /api1/listall (sem chave)  404
+    /api1/listall (free)       404
+    /api2/listall (sem chave)  404
+    /api/getinfo (sem chave)   404
+    /api/getinfo (free)        404
+    /api/getinfo (gold)        404
+    /outro (sem rota)          404
+AuthPolicy is not in the path to any existing routes
+----
+
+**O que isso diz:** tudo `404`, e não `403`. O teto existe, mas uma policy só
+age **sobre uma rota**: sem rota que case, não há o que negar. A última linha é
+o próprio teto dizendo isso no status -- é a estação 2 da parte
+xref:m3-03-negado.adoc[{p-negado}] aparecendo aqui.
+
+=== Passo 2 -- a equipe A publica a API dela
+
+Uma `HTTPRoute` para o prefixo `/api1` e uma `AuthPolicy` que exige chave, as
+duas **no namespace da equipe**. No Gateway, ninguém toca.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/prefixos/02-equipe-a.yaml
+oc wait --for=condition=Enforced authpolicy/api1-chave -n pfx-equipe-a --timeout=120s
+sleep 5
+bash scripts/prefixos.sh tabela
+----
+
+[source,text]
+----
+    caminho                    codigo quem atendeu
+    /api1/listall (sem chave)  401
+    /api1/listall (free)       200    backend=api1  recebeu=/listall
+    /api2/listall (sem chave)  404
+    /api/getinfo (sem chave)   404
+    /api/getinfo (free)        404
+    /api/getinfo (gold)        404
+    /outro (sem rota)          404
+----
+
+**O que isso diz:** só as duas primeiras linhas mudaram. E repare no
+`recebeu=/listall`: a aplicação recebeu o caminho **sem o prefixo**. Quem o
+tira é o filtro `URLRewrite` da rota, com `ReplacePrefixMatch`. A aplicação não
+sabe que está atrás de um prefixo.
+
+.O que deixa a equipe publicar sem pedir nada?
+[%collapsible]
+====
+O listener do Gateway declara `allowedRoutes: {namespaces: {from: All}}`, e a
+rota aponta para ele com `parentRefs: [{name: borda, namespace: pfx-gw}]`. É a
+delegação da parte xref:m1-04-papeis.adoc[{p-papeis}], agora entre namespaces.
+
+Neste laboratório os três projetos são seus. Num cluster real, cada equipe
+teria permissão só no próprio namespace -- e é isso que impede a equipe A de
+editar a policy da equipe B.
+====
+
+=== Passo 3 -- a equipe B publica a dela, e decide outra coisa
+
+Mesmo hostname, prefixo `/api2`, e a policy da equipe B diz que a API dela é
+**aberta**.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/prefixos/03-equipe-b.yaml
+oc wait --for=condition=Enforced authpolicy/api2-anonima -n pfx-equipe-b --timeout=120s
+sleep 5
+bash scripts/prefixos.sh tabela
+----
+
+[source,text]
+----
+    caminho                    codigo quem atendeu
+    /api1/listall (sem chave)  401
+    /api1/listall (free)       200    backend=api1  recebeu=/listall
+    /api2/listall (sem chave)  200    backend=api2  recebeu=/listall
+    /api/getinfo (sem chave)   404
+    /api/getinfo (free)        404
+    /api/getinfo (gold)        404
+    /outro (sem rota)          404
+----
+
+**O que isso diz:** um hostname, duas equipes, duas decisões. `/api1` exige
+chave, `/api2` não, e nenhuma das duas mexeu no que é da outra. A abertura da
+`/api2` está **escrita**: sem a policy `api2-anonima`, a rota herdaria o teto e
+responderia `403`.
+
+=== Passo 4 -- um endpoint solto, com contrato próprio
+
+A equipe B publica **um caminho só**, `/api/getinfo`, fora do prefixo dela: um
+`matches` do tipo `Exact`, o caminho inteiro reescrito (`ReplaceFullPath`) e
+uma policy que só deixa passar o plano gold. O segundo comando pergunta ao
+Gateway qual policy governa cada caminho.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/prefixos/04-endpoint-solto.yaml
+oc wait --for=condition=Enforced authpolicy/getinfo-gold -n pfx-equipe-b --timeout=120s
+sleep 5
+bash scripts/prefixos.sh tabela
+bash scripts/prefixos.sh quem-governa
+----
+
+[source,text]
+----
+    caminho                    codigo quem atendeu
+    /api1/listall (sem chave)  401
+    /api1/listall (free)       200    backend=api1  recebeu=/listall
+    /api2/listall (sem chave)  200    backend=api2  recebeu=/listall
+    /api/getinfo (sem chave)   401
+    /api/getinfo (free)        403
+    /api/getinfo (gold)        200    backend=api2  recebeu=/getinfo
+    /outro (sem rota)          404
+      request.url_path == '/api/getinfo'           <- pfx-equipe-b/getinfo-gold
+      request.url_path.startsWith('/api1')         <- pfx-equipe-a/api1-chave
+      request.url_path.startsWith('/api2')         <- pfx-equipe-b/api2-anonima
+----
+
+**O que isso diz:** um endpoint pode ter contrato próprio sem que a API dele
+mude de endereço -- `401`, `403` e `200` no mesmo caminho, conforme quem chama.
+E as três últimas linhas saem da configuração que o Connectivity Link escreve
+no Envoy: não é documentação, é o que está valendo. Respondem "qual policy pega
+este caminho?" sem depender de quem leu o quê.
+
+=== Passo 5 -- a rota nova herda o teto, mas não na hora
+
+A equipe B publica mais uma rota, `/api3`, e **esquece a policy**. O comando
+chama a rota a cada cinco segundos até o teto do Gateway assumir.
+
+[source,bash,role="execute"]
+----
+oc apply -f passos/prefixos/05-rota-sem-policy.yaml
+bash scripts/prefixos.sh acompanha /api3/qualquer
+bash scripts/prefixos.sh quem-governa
+----
+
+[source,text]
+----
+httproute.gateway.networking.k8s.io/api3 created
+        1s  200
+        7s  403
+    ✓ o teto do Gateway assumiu a rota em ~7s
+      request.url_path == '/api/getinfo'           <- pfx-equipe-b/getinfo-gold
+      request.url_path.startsWith('/api1')         <- pfx-equipe-a/api1-chave
+      request.url_path.startsWith('/api2')         <- pfx-equipe-b/api2-anonima
+      request.url_path.startsWith('/api3')         <- pfx-gw/borda-deny-all
+----
+
+**O que isso diz:** a rota esquecida acaba negada, e a última linha mostra quem
+a nega: o teto da plataforma. Mas houve uma chamada com `200` antes. Os seus
+tempos vão ser outros -- já medi `~1s`, `~7s`, `~13s` e mais de um minuto,
+quando o operador estava reconciliando outras mudanças. **A janela existe e o
+tamanho varia.**
+
+Enquanto ela dura, a rota responde sem policy nenhuma. É o argumento mais
+concreto a favor do caminho pavimentado da parte
+xref:m5-01-colheita.adoc[{p-colheita}]: lá, a rota e a policy dela nascem no mesmo
+commit -- e não há janela.
+
+=== Limpando o segundo laboratório
+
+[source,bash,role="execute"]
+----
+oc delete project pfx-gw pfx-equipe-a pfx-equipe-b
+----
+
+endif::[]
 == A outra estratégia: uma policy com predicados
 
 O mesmo efeito cabe numa policy só, com CEL:
