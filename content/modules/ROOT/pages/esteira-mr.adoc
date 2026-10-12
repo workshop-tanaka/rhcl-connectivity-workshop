@@ -1,0 +1,145 @@
+include::partial$numeros.adoc[]
+= {p-mr}Mudança por merge request
+:navtitle: {p-mr}Mudança por merge request
+
+**Para quem:** Desenvolvedor e Engenheiro de Plataforma -- quem muda um limite e quem aprova. · **15 min, parte deles esperando**
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:esteira-fonte.adoc[{p-fonte}], que mostra o que a esteira
+aplica.
+====
+
+O pedido é comercial: **o plano free passa de 3 para 6 chamadas a cada 10
+segundos.** Você vai atendê-lo sem rodar `oc apply`.
+
+== Passo 1 -- como está hoje
+
+Uma rajada de 14 chamadas com uma chave do plano free.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+----
+
+[source,text]
+----
+200 200 200 429 429 429 429 429 429 429 429 429 429 429
+----
+
+**O que isso diz:** três passam, o resto é cortado. É o limite que está no Git.
+
+== Passo 2 -- a mudança, num branch
+
+O comando cria um branch, troca o número no arquivo da pasta `esteira/` e
+grava a mudança com uma mensagem que diz o porquê.
+
+[source,bash,role="execute"]
+----
+git checkout -q main && git pull -q
+git checkout -q -b plano-free-6
+sed -i '/tier: free/,/window/ s/limit: 3/limit: 6/' esteira/planos.yaml
+git diff -U0 | grep '^[-+] '
+git commit -q -am 'plano free: de 3 para 6 chamadas a cada 10s' && git log --oneline -1
+----
+
+[source,text]
+----
+-          - limit: 3
++          - limit: 6
+... plano free: de 3 para 6 chamadas a cada 10s
+----
+
+**O que isso diz:** a mudança inteira é uma linha. Ela ainda está só no seu
+terminal: nada mudou no repositório nem no cluster.
+
+== Passo 3 -- tente o atalho
+
+Empurre a mudança direto para o `main`, sem pedir a ninguém.
+
+[source,bash,role="execute"]
+----
+git push origin plano-free-6:main 2>&1 | grep -E 'remote: GitLab|rejected'
+----
+
+[source,text]
+----
+remote: GitLab: You are not allowed to push code to protected branches on this project.
+ ! [remote rejected] plano-free-6 -> main (pre-receive hook declined)
+----
+
+**O que isso diz:** o `main` é o que a esteira aplica, e ninguém escreve nele
+direto. Não é um combinado: é o repositório recusando. O único caminho até o
+cluster passa por um merge request.
+
+== Passo 4 -- abra o merge request
+
+[source,bash,role="execute"]
+----
+git push -o merge_request.create -o merge_request.title='plano free: de 3 para 6' origin plano-free-6 2>&1 | grep -E 'merge_requests|new branch'
+----
+
+[source,text]
+----
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
+ * [new branch]      plano-free-6 -> plano-free-6
+----
+
+Abra o endereço que o comando mostrou. Na aba **Changes** está a linha que
+mudou; é isso que quem aprova lê. Quando estiver de acordo, clique em
+**Merge**.
+
+.Sem navegador à mão?
+[%collapsible]
+====
+O mesmo aceite, pelo terminal. O comando acrescenta um commit vazio ao branch e
+pede que o merge request seja aceito:
+
+[source,bash,role="execute"]
+----
+git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge_when_pipeline_succeeds origin plano-free-6 2>&1 | grep -E 'merge_requests|plano-free-6'
+----
+====
+
+**O que isso diz:** a mudança agora tem autor, texto, data e alguém que a
+aceitou. Num projeto real, quem abre e quem aceita são pessoas diferentes;
+aqui você faz os dois papéis.
+
+== Passo 5 -- espere a esteira, e meça
+
+O primeiro comando espera o commit do merge chegar ao cluster e diz quanto
+levou. Depois, a mesma rajada do passo 1.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+git checkout -q main && git pull -q
+bash scripts/esteira.sh espera
+sleep 11
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+----
+
+[source,text]
+----
+    esperando o commit bbcc416b chegar ao cluster .............................
+    aplicado em 281s  (cluster x Git: Synced)
+200 200 200 200 200 200 429 429 429 429 429 429 429 429
+----
+
+**O que isso diz:** seis passam. Ninguém rodou `oc apply`: o limite mudou
+porque um merge request foi aceito.
+
+[IMPORTANT]
+====
+**A espera pode levar alguns minutos, e isso é deste ambiente.** O Argo CD
+consulta o repositório de tempos em tempos. Medido aqui: 157, 281, 319 e 354
+segundos entre o merge e a mudança no cluster. Num projeto real o repositório
+**avisa** o Argo CD a cada push (um webhook), e a mesma mudança chega em
+segundos -- medido aqui com a atualização pedida na hora: 9 segundos. Se o seu
+ambiente tiver o aviso ligado, a linha "aplicado em" mostra isso.
+====
+
+== O que isso prova
+
+**A mudança tem dono, revisão e data -- e o cluster não aceita outra
+entrada.** O limite de um plano deixou de ser um comando que alguém rodou e
+virou uma linha num histórico.

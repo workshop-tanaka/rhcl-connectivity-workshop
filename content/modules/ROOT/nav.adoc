@@ -34,8 +34,11 @@ ifdef::foco_rhcl[]
 * xref:extra-contextos.adoc[4.3 Uma API, vários contextos]
 * xref:extra-listas.adoc[4.4 Listas de permissão e bloqueio]
 
-.Fase 5 — Da mão para a esteira (em preparação)
-* xref:fase-esteira.adoc[A proposta da fase]
+.Fase 5 — Da mão para a esteira
+* xref:fase-esteira.adoc[O que muda nesta fase]
+* xref:esteira-fonte.adoc[5.1 O repositório é a fonte]
+* xref:esteira-mr.adoc[5.2 Mudança por merge request]
+* xref:esteira-desvio.adoc[5.3 Desvio e reversão]
 
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[Introdução]

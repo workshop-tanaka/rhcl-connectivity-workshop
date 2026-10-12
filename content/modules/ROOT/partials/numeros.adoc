@@ -26,6 +26,9 @@ ifndef::foco_rhcl[]
 :p-dns:
 :p-contextos:
 :p-listas:
+:p-fonte:
+:p-mr:
+:p-desvio:
 :m1: Módulo 1
 :m2: Módulo 2
 :m3: Módulo 3
@@ -57,6 +60,9 @@ ifdef::foco_rhcl[]
 :p-dns: 3.2{sp}
 :p-contextos: 4.3{sp}
 :p-listas: 4.4{sp}
+:p-fonte: 5.1{sp}
+:p-mr: 5.2{sp}
+:p-desvio: 5.3{sp}
 // Na sessao de Connectivity Link nao ha modulos, ha fases. Onde a pagina dizia
 // 'Modulo N', sai o nome do trecho correspondente -- todos no masculino, para
 // a frase em volta continuar concordando.

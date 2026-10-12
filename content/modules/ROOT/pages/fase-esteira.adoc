@@ -1,14 +1,8 @@
 include::partial$numeros.adoc[]
-= Fase 5 — Da mão para a esteira (em preparação)
-:navtitle: A proposta da fase
+= Fase 5 — Da mão para a esteira
+:navtitle: O que muda nesta fase
 
 **Para quem:** Engenheiro de Plataforma e Desenvolvedor -- e quem responde por mudança em produção.
-
-[NOTE]
-====
-Esta fase está em preparação. A página diz o que ela vai cobrir e por que vem
-neste ponto do percurso; ainda não há comando para rodar.
-====
 
 == Por que neste ponto
 
@@ -22,35 +16,82 @@ que estava valendo ontem, e como voltar atrás.
 A configuração da borda são arquivos. Esta fase trata os arquivos como o que
 são: código, com dono, revisão e histórico.
 
-== O que você vai conseguir fazer
+== O que muda no seu ambiente
+
+O seu repositório ({repo_no_ambiente}[abrir^]) ganhou uma pasta, `esteira/`.
+**O que está nela, no branch `main`, o Argo CD do cluster aplica.** O resto do
+repositório continua como antes: quem aplica é você.
+
+[cols="2,3",options="header"]
+|===
+| antes | nesta fase
+
+| você edita o arquivo e roda `oc apply`
+| você edita o arquivo num branch e abre um merge request
+
+| a mudança vale quando o comando volta
+| a mudança vale quando o merge é aceito e a esteira a aplica
+
+| quem mudou está no histórico do seu terminal
+| quem mudou, quando e por quê estão no repositório
+
+| voltar atrás é lembrar o valor antigo
+| voltar atrás é um revert
+|===
+
+== As partes
 
 [cols="1,3,3",options="header"]
 |===
 | parte | o que você faz | o que isso prova
 
-| O repositório é a fonte
-| lê o seu repositório e compara o que está no Git com o que está no cluster
+| xref:esteira-fonte.adoc[{p-fonte}O repositório é a fonte]
+| lê o que a esteira aplica, de onde, e se o cluster bate com o Git
 | a configuração da borda cabe em arquivos com dono e histórico
 
-| Mudança por merge request
-| muda o limite de um plano num branch, abre o merge request e aprova; a
+| xref:esteira-mr.adoc[{p-mr}Mudança por merge request]
+| muda o limite de um plano num branch, abre o merge request e aceita; a
   mudança chega ao cluster sem ninguém rodar `oc apply`
 | a mudança tem autor, revisão e data
 
-| A esteira confere antes
-| abre um merge request com uma rota sem `AuthPolicy` e vê a conferência recusar
-| a regra da plataforma vira portão, não lembrete
-
-| Desvio e reversão
-| edita uma policy direto no cluster, vê o desvio acusado, e desfaz a mudança
+| xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão]
+| edita a policy direto no cluster, vê o desvio acusado, e desfaz a mudança
   anterior com um revert
 | o Git manda, e voltar atrás é um commit
 |===
 
-== O que já existe no seu ambiente
+[NOTE]
+====
+**Em preparação:** a conferência antes do merge -- abrir um merge request com
+uma rota sem `AuthPolicy` e ver a esteira recusar. Hoje a recusa acontece
+**depois** do merge, na hora de aplicar; a parte {p-desvio}mostra onde ela
+aparece.
+====
 
-O seu repositório, com os arquivos do roteiro já nos nomes do seu ambiente:
-{repo_no_ambiente}[abrir^]. É dele que esta fase vai partir.
+== A cerca da esteira
+
+A esteira age no cluster com mais poder do que você. O que a segura é um
+projeto do Argo CD, um por participante:
+
+[cols="2,3",options="header"]
+|===
+| a esteira só | medido neste ambiente
+
+| lê o **seu** repositório
+| a credencial dela é só de leitura e só vale no seu projeto
+
+| aplica no namespace da **sua** aplicação
+| um manifesto apontando para o namespace de outro participante foi recusado:
+  `namespace ... is not permitted in project`
+
+| aplica quatro tipos: `PlanPolicy`, `AuthPolicy`, `RateLimitPolicy`, `HTTPRoute`
+| um `ConfigMap` na pasta foi recusado: `resource :ConfigMap is not permitted
+  in project`
+
+| respeita as regras de admissão do cluster
+| uma rota apontando para o Gateway de outro participante foi recusada pela
+  mesma regra que recusaria você
+|===
 
 == Onde isso continua
 

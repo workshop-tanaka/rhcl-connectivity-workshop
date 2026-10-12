@@ -1,0 +1,91 @@
+include::partial$numeros.adoc[]
+= {p-fonte}O repositório é a fonte
+:navtitle: {p-fonte}O repositório é a fonte
+
+**Para quem:** Engenheiro de Plataforma e Desenvolvedor. · **5 min**
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-02-planos.adoc[{p-planos}], que mostra os três planos
+funcionando. É a `PlanPolicy` dela que a esteira passa a aplicar.
+====
+
+Nesta parte você não muda nada. Só lê: o que a esteira aplica, de onde, e se o
+que está no cluster é o que está no Git.
+
+== Passo 1 -- o que a esteira está aplicando
+
+[source,bash,role="execute"]
+----
+bash scripts/esteira.sh estado
+----
+
+[source,text]
+----
+    repositorio            https://.../workshop/participantes/.../ambiente.git
+    pasta                  esteira  (branch main)
+    ultimo commit no Git   a7cd25fb
+    commit aplicado        a7cd25fb
+    cluster x Git          Synced
+      PlanPolicy/travels-plans  Synced
+----
+
+**O que isso diz:** o Argo CD lê **uma pasta** do **seu** repositório, num
+branch. As duas linhas de commit são iguais e a seguinte diz `Synced`: o que
+está no cluster é o que está no Git. Os seus identificadores de commit são
+outros.
+
+== Passo 2 -- o que há na pasta
+
+[source,bash,role="execute"]
+----
+grep -v '^#' esteira/kustomization.yaml
+git log --oneline -3 -- esteira
+----
+
+[source,text]
+----
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - planos.yaml
+... esteira: o que o Argo CD aplica
+----
+
+**O que isso diz:** a pasta tem um arquivo de policy, `planos.yaml`, e a lista
+que diz ao Argo CD o que aplicar. É a mesma `PlanPolicy` da parte
+xref:m1-02-planos.adoc[{p-planos}], que até aqui você aplicava à mão. A
+segunda saída é o histórico da pasta: cada linha é uma mudança, com autor e
+data.
+
+== Passo 3 -- o que a esteira já aplicou
+
+[source,bash,role="execute"]
+----
+bash scripts/esteira.sh historico
+----
+
+[source,text]
+----
+    2026-10-12T14:34:20Z  ce599dfd
+----
+
+**O que isso diz:** cada linha é uma vez em que a esteira levou um commit ao
+cluster. "O que estava valendo ontem?" deixa de ser memória de alguém: é uma
+linha desta lista, e o commit dela diz quem mudou e por quê.
+
+.O que você pode fazer com a esteira, e o que não pode
+[%collapsible]
+====
+Você **lê** a sua esteira, e só a sua. Não a edita: quem edita a esteira troca
+a cerca que a segura (ver xref:fase-esteira.adoc[a cerca da esteira]).
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc auth can-i get applications.argoproj.io/esteira-{user} -n openshift-gitops
+oc auth can-i patch applications.argoproj.io/esteira-{user} -n openshift-gitops
+oc auth can-i list applications.argoproj.io -n openshift-gitops
+----
+
+`yes`, `no`, `no`.
+====

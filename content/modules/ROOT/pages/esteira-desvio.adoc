@@ -1,0 +1,134 @@
+include::partial$numeros.adoc[]
+= {p-desvio}Desvio e reversão
+:navtitle: {p-desvio}Desvio e reversão
+
+**Para quem:** Engenheiro de Plataforma e quem responde por mudança em produção. · **12 min, parte deles esperando**
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:esteira-mr.adoc[{p-mr}]. Esta desfaz a mudança que você
+fez lá.
+====
+
+Duas perguntas de produção: **e se alguém mexer direto no cluster?** e **como
+eu volto atrás?**
+
+== Passo 1 -- mexa direto no cluster
+
+É madrugada, um parceiro reclama, e alguém "só ajusta" o limite à mão: 9 no
+lugar de 6.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":9}]'
+sleep 11
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+bash scripts/esteira.sh estado
+----
+
+[source,text]
+----
+planpolicy.extensions.kuadrant.io/travels-plans patched
+200 200 200 200 200 200 200 200 200 429 429 429 429 429
+    repositorio            https://.../workshop/participantes/.../ambiente.git
+    pasta                  esteira  (branch main)
+    ultimo commit no Git   bbcc416b
+    commit aplicado        bbcc416b
+    cluster x Git          OutOfSync
+      PlanPolicy/travels-plans  OutOfSync
+----
+
+**O que isso diz:** nove passam -- a mudança à mão **vale**. E a esteira a
+acusa: `OutOfSync`, com o nome do objeto que desviou. Medido aqui: o desvio
+aparece em cerca de um segundo.
+
+[IMPORTANT]
+====
+**A esteira acusa o desvio e não o desfaz.** Neste workshop a correção
+automática está desligada de propósito, para a diferença ficar visível. Com ela
+ligada, a edição à mão seria desfeita em segundos -- e é assim que muito
+ambiente de produção roda. As duas escolhas são legítimas; o que não é
+aceitável é o desvio **não aparecer**.
+====
+
+== Passo 2 -- volte atrás, pelo Git
+
+O pedido comercial foi cancelado: o plano free volta a 3. Você não precisa
+lembrar o valor antigo, nem saber o que foi editado à mão: **desfaz o merge**.
+
+[source,bash,role="execute"]
+----
+git checkout -q main && git pull -q
+git checkout -q -b volta-o-plano
+git revert --no-edit -m 1 "$(git log --merges -1 --format=%H)" | head -1
+git push -o merge_request.create -o merge_request.title='volta o plano free' origin volta-o-plano 2>&1 | grep -E 'merge_requests|new branch'
+----
+
+[source,text]
+----
+[volta-o-plano ...] Revert "Merge branch 'plano-free-6' into 'main'"
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/2
+ * [new branch]      volta-o-plano -> volta-o-plano
+----
+
+Abra o endereço, confira que a linha volta a `limit: 3` e clique em **Merge**.
+
+.Sem navegador à mão?
+[%collapsible]
+====
+[source,bash,role="execute"]
+----
+git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge_when_pipeline_succeeds origin volta-o-plano 2>&1 | grep -E 'merge_requests|volta-o-plano'
+----
+====
+
+== Passo 3 -- espere a esteira, e meça
+
+[source,bash,role="execute",subs="attributes+"]
+----
+git checkout -q main && git pull -q
+bash scripts/esteira.sh espera
+bash scripts/esteira.sh estado
+sleep 11
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+----
+
+[source,text]
+----
+    esperando o commit a7cd25fb chegar ao cluster ........................
+    aplicado em 157s  (cluster x Git: Synced)
+    repositorio            https://.../workshop/participantes/.../ambiente.git
+    pasta                  esteira  (branch main)
+    ultimo commit no Git   a7cd25fb
+    commit aplicado        a7cd25fb
+    cluster x Git          Synced
+      PlanPolicy/travels-plans  Synced
+200 200 200 429 429 429 429 429 429 429 429 429 429 429
+----
+
+**O que isso diz:** três passam, e o estado voltou a `Synced`. O revert levou
+embora as **duas** coisas: a mudança do merge request e a edição à mão. Quando
+a esteira aplica, vale o que está no Git.
+
+== E quando o commit está errado?
+
+A esteira não aceita tudo o que chega ao `main`. O que ela recusa aparece no
+mesmo lugar em que você acabou de ler `aplicado`:
+
+[source,text]
+----
+    RECUSADO depois de 20s:
+      one or more synchronization tasks are not valid: resource :ConfigMap is
+      not permitted in project turma-...
+----
+
+Medido neste ambiente com três commits que tentavam sair do próprio espaço --
+ver xref:fase-esteira.adoc[a cerca da esteira]. A recusa acontece **depois** do
+merge: o commit errado já está no `main`, e o conserto é outro merge request.
+Recusar **antes** do merge é o que uma conferência automática faz, e é a parte
+desta fase que ainda está em preparação.
+
+== O que isso prova
+
+**O Git manda, e voltar atrás é um commit.** O desvio aparece em vez de se
+esconder, e desfazer uma mudança não depende de alguém lembrar como era.
