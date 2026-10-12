@@ -2,7 +2,7 @@ include::partial$numeros.adoc[]
 = gRPC: a mesma policy, outro protocolo
 :navtitle: gRPC
 
-**Opcional · ~8 min · não muda estado**
+**Opcional · ~9 min · aplica e remove uma camada no seu ambiente**
 
 **Para quem:** Desenvolvedor de serviços internos, e Arquitetura.
 
@@ -17,13 +17,33 @@ gRPC -- e a resposta honesta tem **duas metades que não são iguais**.
 
 == Terminal
 
+O serviço gRPC deste Extra não vem no ar: é uma camada à parte, em
+`base/grpc/`, que você aplica agora. São três arquivos -- o serviço, a
+`GRPCRoute` presa ao mesmo Gateway, e as duas policies. O laço troca o
+marcador do domínio pelo domínio do cluster antes de aplicar.
+
+[source,bash,role="execute"]
+----
+D=$(oc get ingresses.config/cluster -o jsonpath='{.spec.domain}')
+for f in base/grpc/*.yaml; do sed "s|__DOMAIN__|$D|g" $f | oc apply -f -; done
+oc rollout status deploy/bookings-grpc-v1 -n travel-agency --timeout=120s
+----
+
+[source,text]
+----
+grpcroute.gateway.networking.k8s.io/bookings-grpc created
+deployment "bookings-grpc-v1" successfully rolled out
+----
+
+Com a camada no ar, a prova:
+
 [source,bash,role="execute"]
 ----
 bash scripts/grpc.sh
 ----
 
 O comando roda três movimentos: a autenticação, a comparação entre as duas
-policies, e o limite.
+policies, e o limite. Leva cerca de dois minutos.
 
 [NOTE]
 ====
@@ -86,6 +106,13 @@ No mesmo cluster e no mesmo minuto, o limite de HTTP corta no quarto request.
 Isto foi **medido**, não suposto: em 2026-08-28 e remedido em 2026-09-20 sobre
 o RHCL 1.4.3, que é a versão corrente. O resultado se repetiu.
 ====
+
+== Limpando
+
+[source,bash,role="execute"]
+----
+oc delete -f base/grpc/ --ignore-not-found
+----
 
 == O que isso prova
 
