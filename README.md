@@ -32,9 +32,9 @@ Item **Field Sourced Content - OpenShift Base**, com:
 
 | parâmetro | valor |
 | --- | --- |
-| `host_ocp4_installer_version` | `4.21` (validado); 4.22 deve funcionar, não foi medido |
-| `cluster_size` | `multinode`, 3 workers |
-| `create_multi_user` | `false` — o desenho é single-tenant (um Gateway, um `kuadrant-system`) |
+| `host_ocp4_installer_version` | `4.22` (medido até a 4.22.18, em 2026-10-16) |
+| `cluster_size` | `multinode`, 3 workers; turma grande pede mais (ver `docs/IMPLANTACAO.md` na demo) |
+| `create_multi_user` | `false` para um cluster por participante; o número de participantes (até 30) para uma turma num cluster só |
 | `existing_gitops` | `false` — o CI instala o GitOps; o Job não |
 | repositório | `https://github.com/workshop-tanaka/rhcl-connectivity-workshop.git`, **a tag da onda** (não `main`), path `.` |
 
