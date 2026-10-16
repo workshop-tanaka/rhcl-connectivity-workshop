@@ -54,19 +54,16 @@ repositório continua como antes: quem aplica é você.
   mudança chega ao cluster sem ninguém rodar `oc apply`
 | a mudança tem autor, revisão e data
 
+| xref:esteira-confere.adoc[{p-confere}A esteira confere antes]
+| abre um merge request com uma rota sem `AuthPolicy` e vê a conferência
+  recusar; com a policy, o merge passa
+| a regra da plataforma vira portão, não lembrete
+
 | xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão]
 | edita a policy direto no cluster, vê o desvio acusado, e desfaz a mudança
   anterior com um revert
 | o Git manda, e voltar atrás é um commit
 |===
-
-[NOTE]
-====
-**Em preparação:** a conferência antes do merge -- abrir um merge request com
-uma rota sem `AuthPolicy` e ver a esteira recusar. Hoje a recusa acontece
-**depois** do merge, na hora de aplicar; a parte {p-desvio}mostra onde ela
-aparece.
-====
 
 == A cerca da esteira
 
@@ -92,6 +89,10 @@ projeto do Argo CD, um por participante:
 | uma rota apontando para o Gateway de outro participante foi recusada pela
   mesma regra que recusaria você
 |===
+
+E quem confere o merge request antes do merge também não é seu: o job da
+conferência vem de um projeto que você lê e não escreve, e o seu projeto não
+aceita merge sem ele verde.
 
 == Onde isso continua
 

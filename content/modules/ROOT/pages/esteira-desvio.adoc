@@ -112,8 +112,11 @@ a esteira aplica, vale o que está no Git.
 
 == E quando o commit está errado?
 
-A esteira não aceita tudo o que chega ao `main`. O que ela recusa aparece no
-mesmo lugar em que você acabou de ler `aplicado`:
+Um commit que tenta sair do seu espaço é recusado **duas vezes**: antes do
+merge, pela conferência da parte xref:esteira-confere.adoc[{p-confere}], e, se
+passasse por ela, na hora de aplicar -- pelo projeto do Argo CD e pelas regras
+de admissão do cluster (ver xref:fase-esteira.adoc[a cerca da esteira]). A
+recusa da hora de aplicar aparece no mesmo lugar em que você leu `aplicado`:
 
 [source,text]
 ----
@@ -121,12 +124,6 @@ mesmo lugar em que você acabou de ler `aplicado`:
       one or more synchronization tasks are not valid: resource :ConfigMap is
       not permitted in project turma-...
 ----
-
-Medido neste ambiente com três commits que tentavam sair do próprio espaço --
-ver xref:fase-esteira.adoc[a cerca da esteira]. A recusa acontece **depois** do
-merge: o commit errado já está no `main`, e o conserto é outro merge request.
-Recusar **antes** do merge é o que uma conferência automática faz, e é a parte
-desta fase que ainda está em preparação.
 
 == O que isso prova
 

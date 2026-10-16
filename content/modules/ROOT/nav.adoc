@@ -38,7 +38,8 @@ ifdef::foco_rhcl[]
 * xref:fase-esteira.adoc[O que muda nesta fase]
 * xref:esteira-fonte.adoc[5.1 O repositório é a fonte]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
-* xref:esteira-desvio.adoc[5.3 Desvio e reversão]
+* xref:esteira-confere.adoc[5.3 A esteira confere antes]
+* xref:esteira-desvio.adoc[5.4 Desvio e reversão]
 
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[Introdução]

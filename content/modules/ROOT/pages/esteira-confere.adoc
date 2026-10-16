@@ -1,0 +1,195 @@
+include::partial$numeros.adoc[]
+= {p-confere}A esteira confere antes
+:navtitle: {p-confere}A esteira confere antes
+
+**Para quem:** Engenheiro de Plataforma -- quem escreve a regra -- e Desenvolvedor -- quem a encontra no caminho. · **15 min, parte deles esperando**
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:esteira-mr.adoc[{p-mr}], que mostra o caminho de um
+merge request até o cluster.
+====
+
+A plataforma tem uma regra desde a parte
+xref:m1-06-exposta.adoc[{p-exposta}]: **rota nova nasce com policy própria.**
+Até aqui ela era um conselho -- uma rota sem `AuthPolicy` fica aberta até o
+teto do Gateway alcançá-la, e isso já foi medido neste workshop. Nesta parte a
+regra vira **portão**: o merge request que a fere não entra no `main`.
+
+Quem confere é um job de CI, que roda num runner do próprio cluster a cada
+merge request. A regra e o job moram no projeto `roteiro`, que você lê e não
+escreve: quem abre o merge request não escolhe a regra que o confere.
+
+== Passo 1 -- uma rota nova, sem policy
+
+A equipe precisa publicar `/relatorios` na API de viagens. O comando cria a
+rota na pasta da esteira e roda a mesma conferência do CI, no seu terminal.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+git checkout -q main && git pull -q
+git checkout -q -b rota-relatorios
+cat > esteira/relatorios.yaml <<'EOF'
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata: {name: relatorios}
+spec:
+  parentRefs: [{name: prod-web, namespace: ingress-gateway}]
+  hostnames: ["{api_host}"]
+  rules: [{matches: [{path: {type: PathPrefix, value: /relatorios}}], backendRefs: [{name: travels, port: 8000}]}]
+EOF
+echo '  - relatorios.yaml' >> esteira/kustomization.yaml
+bash scripts/esteira.sh confere
+----
+
+[source,text]
+----
+    ok  PlanPolicy/travels-plans                 tipo aceito pela esteira
+    ok  PlanPolicy/travels-plans                 no namespace travel-agency-...
+    ok  HTTPRoute/relatorios                     tipo aceito pela esteira
+    ok  HTTPRoute/relatorios                     no namespace travel-agency-...
+    NAO HTTPRoute/relatorios                     tem AuthPolicy propria na pasta
+    ok  HTTPRoute/relatorios                     presa a um Gateway deste ambiente
+
+    RECUSADO: 1 regra(s) nao atendida(s) -- corrija antes do merge request
+----
+
+**O que isso diz:** das quatro regras, só a terceira falhou. As outras três o
+cluster também recusaria; esta, não -- uma rota sem policy é aceita pelo
+cluster e fica aberta. É por isso que ela precisa de um portão antes.
+
+== Passo 2 -- abra o merge request mesmo assim
+
+Suponha que você não rodou a conferência, ou ignorou o resultado. O comando
+abre o merge request e pede que ele seja aceito assim que a conferência
+passar.
+
+[source,bash,role="execute"]
+----
+git add esteira && git commit -q -m 'relatorios: rota nova'
+git push -o merge_request.create -o merge_request.title='rota de relatorios' -o merge_request.merge_when_pipeline_succeeds origin rota-relatorios 2>&1 | grep -E 'merge_requests|new branch'
+----
+
+[source,text]
+----
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
+ * [new branch]      rota-relatorios -> rota-relatorios
+----
+
+Abra o endereço e espere meio minuto. O pipeline aparece **vermelho**, o
+botão de merge fica bloqueado, e o log do job (clique no pipeline e depois em
+`confere`) mostra as mesmas linhas do passo 1.
+
+**O que isso diz:** o pedido de merge automático não adiantou. O projeto só
+aceita merge com a conferência verde, e quem pode mudar isso não é você.
+
+== Passo 3 -- conserte no mesmo merge request
+
+A rota passa a nascer com chave: uma `AuthPolicy` cujo alvo é ela.
+
+[source,bash,role="execute"]
+----
+cat > esteira/relatorios-chave.yaml <<'EOF'
+apiVersion: kuadrant.io/v1
+kind: AuthPolicy
+metadata: {name: relatorios-chave}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: relatorios}
+  rules:
+    authentication:
+      chave:
+        apiKey: {allNamespaces: true, selector: {matchLabels: {app: partner}}}
+        credentials: {queryString: {name: APIKEY}}
+EOF
+echo '  - relatorios-chave.yaml' >> esteira/kustomization.yaml
+bash scripts/esteira.sh confere | tail -1
+git add esteira && git commit -q -m 'relatorios: a rota nasce com chave'
+git push -o merge_request.merge_when_pipeline_succeeds origin rota-relatorios 2>&1 | grep -E 'merge_requests'
+----
+
+[source,text]
+----
+    CONFERIDO: pode abrir o merge request
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
+----
+
+Volte à página do merge request. Em meio minuto o pipeline novo fica
+**verde** e o merge acontece sozinho.
+
+**O que isso diz:** o pedido de merge automático vale **por push**: o do passo
+2 foi cancelado quando a conferência falhou, e este o pede de novo. Pelo
+navegador, é o mesmo que clicar em **Merge** depois do pipeline verde.
+
+== Passo 4 -- espere a esteira, e chame a rota
+
+[source,bash,role="execute",subs="attributes+"]
+----
+git checkout -q main && git pull -q
+bash scripts/esteira.sh espera
+bash scripts/esteira.sh estado | tail -3
+curl -s -o /dev/null -w 'sem chave: %{http_code}\n' "https://{api_host}/relatorios"
+curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://{api_host}/relatorios?APIKEY={api_key_gold}"
+----
+
+[source,text]
+----
+    esperando o commit e16d0acc chegar ao cluster ............................
+    aplicado em 202s  (cluster x Git: Synced)
+      PlanPolicy/travels-plans  Synced
+      HTTPRoute/relatorios  Synced
+      AuthPolicy/relatorios-chave  Synced
+sem chave: 401
+com chave: 404
+----
+
+**O que isso diz:** a rota e a policy chegaram ao cluster **no mesmo commit**
+-- não houve um instante em que `/relatorios` respondesse sem chave. O `404`
+com chave é da aplicação, que não tem esse caminho: a borda deixou passar,
+que era o trabalho dela.
+
+== Passo 5 -- tire a rota, pelo mesmo caminho
+
+[source,bash,role="execute"]
+----
+git checkout -q -b tira-relatorios
+git revert --no-edit -m 1 "$(git log --merges -1 --format=%H)" | head -1
+git push -o merge_request.create -o merge_request.title='tira a rota de relatorios' -o merge_request.merge_when_pipeline_succeeds origin tira-relatorios 2>&1 | grep -E 'merge_requests'
+git checkout -q main
+sleep 60 && git pull -q
+bash scripts/esteira.sh espera
+bash scripts/esteira.sh estado | tail -2
+----
+
+[source,text]
+----
+[tira-relatorios ...] Revert "Merge branch 'rota-relatorios' into 'main'"
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/2
+    esperando o commit 1a6f3894 chegar ao cluster .................
+    aplicado em 123s  (cluster x Git: Synced)
+    cluster x Git          Synced
+      PlanPolicy/travels-plans  Synced
+----
+
+**O que isso diz:** a rota e a policy saíram do cluster porque saíram do Git.
+A esteira apaga o que deixou de estar na pasta -- e só o que ela mesma
+aplicou.
+
+== O que isso prova
+
+**A regra da plataforma vira portão, não lembrete.** Rota sem policy não chega
+ao `main`, e por isso não chega ao cluster. Quem escreve a regra é a
+plataforma, uma vez, num lugar que as equipes leem e não mudam; quem a
+encontra no caminho é cada merge request.
+
+.Como isso foi montado
+[%collapsible]
+====
+* um **runner** do GitLab no cluster, que busca os jobs no GitLab -- não
+  depende de o GitLab alcançar o cluster;
+* o arquivo de CI do seu projeto aponta para `ci/esteira.yml` no projeto
+  `roteiro`;
+* o seu projeto só aceita merge com o pipeline verde, e um pipeline pulado não
+  libera o merge;
+* você é Developer no seu projeto: abre merge request e aceita, mas não muda
+  essas configurações.
+====
