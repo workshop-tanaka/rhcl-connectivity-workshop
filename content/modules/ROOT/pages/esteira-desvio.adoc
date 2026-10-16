@@ -7,7 +7,7 @@ include::partial$numeros.adoc[]
 [NOTE.antes]
 ====
 **Antes:** a parte xref:esteira-mr.adoc[{p-mr}]. Esta desfaz a mudança que você
-fez lá.
+fez lá (a xref:esteira-confere.adoc[{p-confere}] pode vir antes ou depois).
 ====
 
 Duas perguntas de produção: **e se alguém mexer direto no cluster?** e **como
@@ -54,13 +54,14 @@ aceitável é o desvio **não aparecer**.
 == Passo 2 -- volte atrás, pelo Git
 
 O pedido comercial foi cancelado: o plano free volta a 3. Você não precisa
-lembrar o valor antigo, nem saber o que foi editado à mão: **desfaz o merge**.
+lembrar o valor antigo, nem saber o que foi editado à mão: **desfaz o merge**
+da parte xref:esteira-mr.adoc[{p-mr}] -- o comando o acha pelo nome do branch.
 
 [source,bash,role="execute"]
 ----
 git checkout -q main && git pull -q
 git checkout -q -b volta-o-plano
-git revert --no-edit -m 1 "$(git log --merges -1 --format=%H)" | head -1
+git revert --no-edit -m 1 "$(git log --merges -1 --format=%H --grep=plano-free-6)" | head -1
 git push -o merge_request.create -o merge_request.title='volta o plano free' origin volta-o-plano 2>&1 | grep -E 'merge_requests|new branch'
 ----
 
