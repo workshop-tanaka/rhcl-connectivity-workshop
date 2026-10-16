@@ -86,8 +86,9 @@ remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
 ----
 
 Abra o endereço que o comando mostrou. Na aba **Changes** está a linha que
-mudou; é isso que quem aprova lê. Quando estiver de acordo, clique em
-**Merge**.
+mudou; é isso que quem aprova lê. Em meio minuto aparece a conferência do
+OpenShift Pipelines (parte xref:esteira-confere.adoc[{p-confere}]) em verde;
+então clique em **Merge**.
 
 .Sem navegador à mão?
 [%collapsible]
@@ -130,12 +131,10 @@ porque um merge request foi aceito.
 
 [IMPORTANT]
 ====
-**A espera pode levar alguns minutos, e isso é deste ambiente.** O Argo CD
-consulta o repositório de tempos em tempos. Medido aqui: 157, 281, 319 e 354
-segundos entre o merge e a mudança no cluster. Num projeto real o repositório
-**avisa** o Argo CD a cada push (um webhook), e a mesma mudança chega em
-segundos -- medido aqui com a atualização pedida na hora: 9 segundos. Se o seu
-ambiente tiver o aviso ligado, a linha "aplicado em" mostra isso.
+**A espera varia.** O GitLab avisa o Argo CD a cada push, e a mudança costuma
+chegar em segundos; medi de 1 segundo a quase 4 minutos neste ambiente. Sem
+esse aviso, o Argo CD só consulta o repositório de tempos em tempos -- medido:
+157 a 354 segundos. O comando espera em vez de prometer um tempo.
 ====
 
 == O que isso prova

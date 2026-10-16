@@ -90,9 +90,9 @@ projeto do Argo CD, um por participante:
   mesma regra que recusaria você
 |===
 
-E quem confere o merge request antes do merge também não é seu: o job da
-conferência vem de um projeto que você lê e não escreve, e o seu projeto não
-aceita merge sem ele verde.
+E quem confere o merge request antes do merge também não é seu: o
+OpenShift Pipelines roda um pipeline que vem do `main`, com uma regra da
+plataforma, e o seu projeto não aceita merge sem ele verde.
 
 == Onde isso continua
 
