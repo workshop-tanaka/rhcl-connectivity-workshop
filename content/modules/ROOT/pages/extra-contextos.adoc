@@ -101,12 +101,15 @@ continua aberta: a policy gruda na rota, não no caminho.
 
 [NOTE]
 ====
-**Se a matriz vier toda em `503`, espere meio minuto e repita o último
-comando.** É o Gateway carregando o filtro do Connectivity Link pela primeira
-vez. Medido neste ambiente: em uma de quatro execuções, todas as rotas do
-Gateway -- inclusive a `api2`, que nenhuma policy toca -- responderam `503` por
-mais de vinte segundos depois da primeira policy, com o status já em
-`Enforced=True`. Nas outras três não houve janela nenhuma.
+**A matriz pode demorar e começar com uma linha a mais:** `(o Gateway voltou a
+responder depois de 13s)`. Medido neste ambiente, seis vezes em seis: uns cinco
+segundos depois da **primeira** policy num Gateway novo, o Envoy dele baixa o
+módulo Wasm do Connectivity Link e reinicia -- o próprio log avisa "Wasm remote
+code fetch is unstable and may cause a crash". Por uns trinta segundos, **toda**
+rota desse Gateway recusa conexão, inclusive a `api2`, que nenhuma policy toca.
+A ferramenta espera o Gateway voltar antes de medir, e diz quanto esperou. Num
+Gateway de produção, isso é o motivo para a primeira policy nascer junto com o
+Gateway, e não depois, com tráfego passando.
 ====
 
 === Passo 3 -- um caminho volta a ser público
@@ -489,6 +492,7 @@ bash scripts/prefixos.sh tabela
 
 [source,text]
 ----
+    (o Gateway voltou a responder depois de 12s)
     caminho                    codigo quem atendeu
     /api1/listall (sem chave)  401
     /api1/listall (free)       200    backend=api1  recebeu=/listall
@@ -499,6 +503,9 @@ bash scripts/prefixos.sh tabela
     /api2/getinfo (sem chave)  404
     /outro (sem rota)          404
 ----
+
+A primeira linha pode não aparecer, ou trazer outro tempo: é o Gateway
+reiniciando com a primeira policy, como na matriz do primeiro laboratório.
 
 **O que isso diz:** só as duas primeiras linhas mudaram. E repare no
 `recebeu=/listall`: a aplicação recebeu o caminho **sem o prefixo**. Quem o
