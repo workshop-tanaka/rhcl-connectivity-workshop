@@ -202,7 +202,7 @@ parceiro descobre o limite pelo contrato, não pela resposta.
 
 == Evidência
 
-Painel **A.2 · Servidas/Limitadas por plano** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
+Painéis **Planos · Servidas por plano** e **Planos · Limitadas por plano** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 Os três planos como barras. Se você rodou pelo Postman, aparece uma quarta
 série `sistema-teste`, isolada dos parceiros da história.
 

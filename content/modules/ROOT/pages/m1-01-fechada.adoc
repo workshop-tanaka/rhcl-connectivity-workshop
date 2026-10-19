@@ -139,7 +139,7 @@ Você, no navegador, não tem chave nenhuma.
 
 == Evidência
 
-Painel **A.1 · 401 na borda: quem foi o destino?** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
+Painel **API fechada · 401 na borda: quem foi o destino?** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 
 include::partial$entrar-grafana.adoc[]
 

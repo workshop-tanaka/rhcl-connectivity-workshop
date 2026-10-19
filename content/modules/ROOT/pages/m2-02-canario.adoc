@@ -13,7 +13,7 @@ movimento). Tecnicamente roda sozinho, desde que o `discounts` esteja em
 
 == Terminal
 
-Abra **antes** o painel *A.7 · Peso efetivo do canário* em
+Abra **antes** o painel *Canário · Peso efetivo da v2* em
 {grafana_url}/d/rhcl-evidencia[Evidência das partes^]. Deixe-o visível ao lado do
 terminal: é a única tela do workshop que se move sozinha, acompanhando os
 cinco passos.

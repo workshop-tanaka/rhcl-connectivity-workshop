@@ -46,7 +46,7 @@ include::partial$entrar-kiali.adoc[]
 
 == Evidência
 
-Painel **A.7 · Divisão v1/v2** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
+Painel **Canário · Divisão entre v1 e v2 no discounts** em {grafana_url}/d/rhcl-evidencia[Evidência das partes^].
 
 include::partial$entrar-grafana.adoc[]
 
