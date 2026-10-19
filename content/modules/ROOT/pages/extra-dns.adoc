@@ -108,9 +108,12 @@ bash scripts/dns-nome.sh resolve
 endif::[]
 [source,text]
 ----
-2. O nome ainda nao existe
-   NXDOMAIN -- o nome nao existe nesta zona
+pergunta: api  (zona dns-lab.rhcl.internal, ao CoreDNS do laboratorio)
+NXDOMAIN -- ninguem criou o nome "api" nesta zona
 ----
+
+O terminal escreve a zona uma vez e os nomes curtos: `api` é
+`api.dns-lab.rhcl.internal`.
 
 O `Gateway` está `Programmed`, a `HTTPRoute` está anexada, o serviço responde.
 Falta o nome -- e **isso é trabalho de outra equipe**, na maioria das empresas,
@@ -150,15 +153,24 @@ O `Secret` do provedor tem duas linhas: o tipo `kuadrant.io/coredns` e a zona.
 Accepted=True   DNSPolicy has been accepted
 Enforced=True   DNSPolicy has been successfully enforced
 
-DNSRecord authoritative-record-...  provedor=coredns   Ready=True
-  api.dns-lab.rhcl.internal   CNAME -> lab-istio.dns-lab.svc.cluster.local
+DNSRecord lab-http  Ready=True
+  derivado pela DNSPolicy lab do listener "http" do Gateway
+DNSRecord authoritative-record-...  Ready=True
+  o que o CoreDNS serve (tem o label kuadrant.io/coredns-zone-name)
+
+zona dns-lab.rhcl.internal
+api
+└─ CNAME lab-istio (svc)               o Gateway deste cluster
 ----
 
 Você não escreveu registro nenhum. **O operador leu o listener do Gateway** e
-derivou o nome, o tipo e o destino -- o mesmo padrão da parte
+derivou o nome, o tipo e o destino. São dois `DNSRecord`, e cada linha diz o
+papel do seu: o `lab-http` é o que a policy derivou do listener `http` -- o
+dono dele é a `DNSPolicy` --, e o `authoritative-record` é o que o servidor da
+zona publica. A árvore embaixo é o conteúdo: -- o mesmo padrão da parte
 xref:m1-08-certificado.adoc[{p-certificado}] com a `TLSPolicy`, e da
 xref:m1-07-identidade.adoc[{p-identidade}] com a `OIDCPolicy`: intenção declarada, objeto
-derivado, com dono.
+derivado, com dono. O dono vai importar na parte 5.
 
 E repare em **como o CoreDNS descobre o registro**: pelo label
 `kuadrant.io/coredns-zone-name` que o operador carimbou. Não há arquivo de zona
@@ -177,10 +189,15 @@ bash scripts/dns-nome.sh resolve
 endif::[]
 [source,text]
 ----
-CNAME -> lab-istio.dns-lab.svc.cluster.local
-A     -> 172.231.211.233
-HTTP no endereco que o DNS deu     200
+pergunta: api  (zona dns-lab.rhcl.internal, ao CoreDNS do laboratorio)
+api        CNAME  lab-istio (svc)       o nome publico -> o Gateway
+lab-istio  A      172.231.211.233       o endereco do Gateway
+✓ HTTP em 172.231.211.233: 200 -- quem respondeu foi o Gateway lab
 ----
+
+Cada linha é um salto da resposta: o nome aponta para o `Service` do Gateway, e
+o `Service` tem um endereço. A última linha prova que o endereço é o certo -- a
+chamada HTTP foi feita **nele**, com o nome da API.
 
 O cliente é um pod com um resolvedor de trinta linhas em Python -- o terminal
 do workshop não tem `dig`, e a zona só existe dentro do cluster.
@@ -228,13 +245,24 @@ a estrutura muda inteira:
 
 [source,text]
 ----
-api.dns-lab.rhcl.internal              CNAME -> klb.api.dns-lab.rhcl.internal
-klb.api.dns-lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=GEO-NA
-klb.api.dns-lab.rhcl.internal          CNAME -> geo-na.klb.api...    geo-code=*
-geo-na.klb.api.dns-lab.rhcl.internal   CNAME -> lab-istio...         weight=120
+zona dns-lab.rhcl.internal
+api
+└─ CNAME klb.api                       ponto de decisao, por regiao
+   ├─ geo GEO-NA -> geo-na.klb.api     o ramo da regiao
+   │  └─ peso 120 -> lab-istio (svc)   o Gateway deste cluster
+   └─ geo *      -> geo-na.klb.api     defaultGeo: as outras, mesmo ramo
+
+pergunta: api  (zona dns-lab.rhcl.internal, ao CoreDNS do laboratorio)
+api             CNAME  klb.api               o nome publico
+klb.api         CNAME  geo-na.klb.api        decisao: o ramo da sua regiao
+geo-na.klb.api  CNAME  lab-istio (svc)       o destino (com peso)
+lab-istio       A      172.231.211.233       o endereco do Gateway
+✓ HTTP em 172.231.211.233: 200 -- quem respondeu foi o Gateway lab
 ----
 
-Leia de cima para baixo:
+A árvore é o que foi publicado; a pergunta é o caminho que **uma** consulta
+percorreu nela -- um salto a mais em cada nível. Leia a árvore de cima para
+baixo:
 
 * o nome público vira um **CNAME para um ponto de decisão**, o `klb.`;
 * do `klb.` sai **um ramo por geografia** -- e um ramo `*`, que é o
@@ -249,6 +277,34 @@ os dois só escrevem seus registros.
 É a mesma API, com os mesmos três campos, tanto aqui quanto num cenário real
 com Route53 ou Azure DNS. Muda o `Secret` do provedor.
 
+== 5. O nome tem dono
+
+ifdef::foco_rhcl[]
+Apague a policy -- só ela, o Gateway e o CoreDNS ficam -- e pergunte o nome de
+novo:
+
+[source,bash,role="execute"]
+----
+oc delete dnspolicy lab -n dns-lab
+oc wait --for=delete dnsrecords.kuadrant.io --all -n dns-lab --timeout=90s
+bash scripts/dns-nome.sh registros
+bash scripts/dns-nome.sh resolve
+----
+
+endif::[]
+[source,text]
+----
+(nenhum DNSRecord: sem DNSPolicy, ninguem cria o nome)
+pergunta: api  (zona dns-lab.rhcl.internal, ao CoreDNS do laboratorio)
+NXDOMAIN -- ninguem criou o nome "api" nesta zona
+----
+
+Ninguém apagou registro à mão. A policy saiu, os dois `DNSRecord` saíram com
+ela -- o dono deles era a policy -- e o nome deixou de existir em segundos
+(medido: cerca de 3 s). É o outro lado da parte 2: quem publica o nome é a
+declaração, e quem o retira também. Não sobra registro órfão apontando para um
+Gateway que já não atende.
+
 ifdef::foco_rhcl[]
 == Limpando
 
@@ -259,8 +315,8 @@ bash scripts/dns-nome.sh limpa
 
 A limpeza é um script, e não um `oc delete project`, por um motivo medido: os
 registros precisam ser finalizados **antes** de o projeto sumir, senão ele fica
-preso em `Terminating`. O script apaga a policy, espera os registros saírem, e
-só então remove o projeto.
+preso em `Terminating`. O script apaga a policy (se ainda houver), espera os
+registros saírem, e só então remove o projeto.
 
 endif::[]
 == A parte honesta
