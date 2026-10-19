@@ -52,6 +52,7 @@ Todo bloco clicável diz de quem é, no título logo acima dele:
 ----
 Perfil Infra -- aba Terminal Infra
 Perfil Dev -- aba Terminal Dev
+Consumidor da API -- qualquer aba
 ----
 
 **Abra a aba indicada antes de clicar.** O botão do bloco manda o comando
@@ -65,6 +66,11 @@ terminal confere:
   pergunta `Executar mesmo assim como Infra? [s/N]`. `Enter` responde não.
   Responda `s` só se quiser ver, de propósito, o que a outra identidade
   consegue fazer -- o resultado pode não ser o que a página mostra.
+
+O terceiro título é o de quem **consome** a API: o bloco é só uma chamada
+HTTP com a chave de um plano, sem identidade nenhuma do cluster. Ele roda em
+qualquer aba e não pergunta nada -- do lado de fora, nenhum dos dois perfis
+existe.
 
 Experimente com os dois blocos abaixo. Clique no primeiro com a aba `Terminal
 Infra` aberta; troque para a `Terminal Dev` e clique no segundo:

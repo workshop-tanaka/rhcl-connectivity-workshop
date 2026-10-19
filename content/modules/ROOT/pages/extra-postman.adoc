@@ -82,7 +82,7 @@ os endereços e as chaves.
 por uma autoridade pública, e o Postman o aceita como aceitaria o de qualquer
 site. Para conferir antes de importar:
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -s -o /dev/null -w 'verificacao: %{ssl_verify_result} (0 = confiavel)\n' https://{api_host}/travels
 ----

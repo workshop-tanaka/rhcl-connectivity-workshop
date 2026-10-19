@@ -39,7 +39,7 @@ ifdef::foco_rhcl[]
 O comando pede só os cabeçalhos da resposta, que é onde a borda explica o que
 decidiu.
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -s -o /dev/null -D - https://{api_host}/travels | grep -iE '^HTTP|www-authenticate|x-ext-auth-reason'
 ----
@@ -57,7 +57,7 @@ conferir nada: não havia o que conferir.
 
 == Passo 2 -- agora com uma chave que não existe
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -s -o /dev/null -D - "https://{api_host}/travels?APIKEY=nao-existe" | grep -iE '^HTTP|www-authenticate|x-ext-auth-reason'
 ----
@@ -78,7 +78,7 @@ esqueceu a chave de quem tem a chave errada.
 A chave abaixo é a sua chave de teste do plano gold, a mesma da página
 xref:acessos.adoc[Seus acessos].
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -s -o /dev/null -w '%{http_code}\n' "https://{api_host}/travels?APIKEY={api_key_gold}"
 ----
@@ -96,7 +96,7 @@ o `401` e o `200` é a credencial. Nenhuma linha do `travels` trata disso.
 No mesmo ambiente há uma segunda API, a `echo-api`. Mande a ela a chave que
 acabou de funcionar:
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -s -o /dev/null -w '%{http_code}\n' "https://echo-travels.{cluster_domain}/?APIKEY={api_key_gold}"
 ----

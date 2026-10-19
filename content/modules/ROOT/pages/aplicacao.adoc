@@ -237,7 +237,7 @@ endif::[]
 oc get deploy,svc -n travel-agency
 ----
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 200; echo
 ----

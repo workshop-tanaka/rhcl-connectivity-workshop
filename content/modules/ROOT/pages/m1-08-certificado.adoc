@@ -248,7 +248,7 @@ ResolvedRefs=False InvalidCertificateRef
 aponta para um Secret que não existe, e o status diz exatamente isso:
 `InvalidCertificateRef`. Do lado do cliente, a conexão nem começa:
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -sk -o /dev/null https://tls-lab.{cluster_domain}/ ; echo "exit=$?"
 ----
@@ -293,7 +293,7 @@ comando: ele leva alguns segundos para ler o Secret novo.
 
 === Passo 3 -- o que o cliente vê
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 curl -sk -o /dev/null -w 'com -k: %{http_code}\n' https://tls-lab.{cluster_domain}/
 curl -s -o /dev/null https://tls-lab.{cluster_domain}/ ; echo "sem -k: exit=$?"
