@@ -57,8 +57,9 @@ Consumidor da API -- qualquer aba
 
 **Abra a aba indicada antes de clicar.** O botão do bloco manda o comando
 para a aba que estiver aberta, seja qual for. Por isso todo bloco começa com
-uma linha que diz de quem ele é -- `perfil infra` ou `perfil dev` -- e o
-terminal confere:
+uma linha que diz de quem ele é -- `perfil infra && {` ou `perfil dev && {`
+--, e o resto vem entre chaves: o terminal confere a aba antes de rodar
+qualquer linha do bloco.
 
 * **na aba certa**, ela responde `perfil Dev -- aba Terminal Dev` (ou Infra) e
   o bloco segue;
