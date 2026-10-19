@@ -244,7 +244,7 @@ A recusa é o resultado desta parte. Leia a mensagem inteira: ela traz o
 revisão de código, nem um combinado que alguém pode furar com pressa: é o
 apiserver recusando.
 
-O mesmo comando, na aba `Terminal` (perfil Infra), passaria.
+O mesmo comando, na aba `Terminal Infra`, passaria.
 ====
 
 ==== E o que ele pode
@@ -283,7 +283,7 @@ que o status mostrou na parte xref:m1-03-precedencia.adoc[{p-precedencia}].
 Precedência sem privilégio: o desenvolvedor governa o que é dele e não alcança
 o que não é, e quem recusa é o cluster.
 
-**Volte para a aba `Terminal`** para o resto da página.
+**Volte para a aba `Terminal Infra`** para o resto da página.
 
 endif::[]
 endif::[]

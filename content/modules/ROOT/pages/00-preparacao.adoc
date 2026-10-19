@@ -33,7 +33,7 @@ mesmo diretório:
 |===
 | aba | perfil | o que pode
 
-| `Terminal`
+| `Terminal Infra`
 | **Infra** -- Engenheiro de Plataforma
 | o Gateway e as policies dele (o teto), certificados, DNS, os projetos de
   laboratório, as chaves de API e a leitura da plataforma -- e também a
@@ -50,7 +50,7 @@ Todo bloco clicável diz de quem é, no título logo acima dele:
 
 [source,text]
 ----
-Perfil Infra -- aba Terminal
+Perfil Infra -- aba Terminal Infra
 Perfil Dev -- aba Terminal Dev
 ----
 
@@ -163,7 +163,7 @@ Como ler o resultado:
   repita a checagem
 
 | o comando não responde
-| a sessão do terminal caiu; abra a aba `Terminal` de novo e repita
+| a sessão do terminal caiu; abra a aba do terminal de novo e repita
 |===
 
 .Uma checagem mais curta, para o meio do workshop
