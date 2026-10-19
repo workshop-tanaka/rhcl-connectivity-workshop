@@ -18,7 +18,7 @@ eu volto atrás?**
 É madrugada, um parceiro reclama, e alguém "só ajusta" o limite à mão: 9 no
 lugar de 6.
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":9}]'
 sleep 11
@@ -57,7 +57,7 @@ O pedido comercial foi cancelado: o plano free volta a 3. Você não precisa
 lembrar o valor antigo, nem saber o que foi editado à mão: **desfaz o merge**
 da parte xref:esteira-mr.adoc[{p-mr}] -- o comando o acha pelo nome do branch.
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git checkout -q main && git pull -q
 git checkout -q -b volta-o-plano
@@ -77,7 +77,7 @@ Abra o endereço, confira que a linha volta a `limit: 3` e clique em **Merge**.
 .Sem navegador à mão?
 [%collapsible]
 ====
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge_when_pipeline_succeeds origin volta-o-plano 2>&1 | grep -E 'merge_requests|volta-o-plano'
 ----
@@ -85,7 +85,7 @@ git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge
 
 == Passo 3 -- espere a esteira, e meça
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git checkout -q main && git pull -q
 bash scripts/esteira.sh espera

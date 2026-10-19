@@ -12,10 +12,70 @@ tem tudo o que as partes executam.
 ls scripts/
 ----
 
+ifndef::perfis[]
 O terminal **já abre dentro do repositório** -- e as duas abas, `Terminal` e
 `Terminal 2`, abrem no mesmo lugar. Tudo daqui em diante roda daí. Os scripts descobrem
 hostname, chaves e rotas do cluster na hora -- não há nada para configurar e
 nada para baixar.
+endif::[]
+ifdef::perfis[]
+O terminal **já abre dentro do repositório**. Os scripts descobrem hostname,
+chaves e rotas do cluster na hora -- não há nada para configurar e nada para
+baixar.
+
+=== Dois terminais, dois perfis
+
+Você trabalha com **duas identidades**, como numa empresa em que a borda e a
+aplicação têm donos diferentes. Cada uma tem a sua aba, e as duas abrem no
+mesmo diretório:
+
+[cols="1,2,3",options="header"]
+|===
+| aba | perfil | o que pode
+
+| `Terminal`
+| **Infra** -- Engenheiro de Plataforma
+| o Gateway e as policies dele (o teto), certificados, DNS, os projetos de
+  laboratório, as chaves de API e a leitura da plataforma -- e também a
+  aplicação
+
+| `Terminal Dev`
+| **Dev** -- desenvolvedor da aplicação
+| as rotas e as policies **da aplicação** (`HTTPRoute`, `AuthPolicy` e
+  `PlanPolicy` dela) e a esteira; **lê** o Gateway e não o muda; não lê chave
+  de API
+|===
+
+Todo bloco clicável diz de quem é, no título logo acima dele:
+
+[source,text]
+----
+Perfil Infra -- aba Terminal
+Perfil Dev -- aba Terminal Dev
+----
+
+**Abra a aba indicada antes de clicar.** Se o comando cair no outro terminal,
+copie-o pelo botão do bloco e cole na aba certa. Na dúvida, o terminal diz
+quem você é:
+
+[source,bash,role="execute"]
+----
+oc whoami
+----
+
+Num terminal, `system:serviceaccount:showroom-...:showroom` é o Infra. No
+outro, `system:serviceaccount:travel-agency-...:dev` é o Dev.
+
+Quando uma página pede ao perfil errado uma ação que não é dele, de
+propósito, o erro vem anunciado assim:
+
+[WARNING]
+.Erro esperado -- o perfil Dev não tem essa permissão
+====
+A recusa é o resultado. Leia a mensagem: ela diz **quem** tentou e **o que**
+foi negado.
+====
+endif::[]
 
 NOTE: O caminho é absoluto de propósito: neste terminal `~` aponta para
 `/data`, que não é gravável; `/home/lab-user` é o volume persistente.

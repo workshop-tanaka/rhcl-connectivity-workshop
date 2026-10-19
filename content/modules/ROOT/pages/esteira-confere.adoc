@@ -27,7 +27,7 @@ abre o merge request não escolhe o pipeline nem a regra que o conferem.
 A equipe precisa publicar `/relatorios` na API de viagens. O comando cria a
 rota na pasta da esteira e roda a mesma conferência do CI, no seu terminal.
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git checkout -q main && git pull -q
 git checkout -q -b rota-relatorios
@@ -56,6 +56,12 @@ bash scripts/esteira.sh confere
     RECUSADO: 1 regra(s) nao atendida(s) -- corrija antes do merge request
 ----
 
+[WARNING]
+.Recusa esperada -- a conferência barra a rota sem policy
+====
+`RECUSADO` é o resultado deste passo: a rota não tem `AuthPolicy` própria.
+====
+
 **O que isso diz:** das quatro regras, só a terceira falhou. As outras três o
 cluster também recusaria; esta, não -- uma rota sem policy é aceita pelo
 cluster e fica aberta. É por isso que ela precisa de um portão antes.
@@ -66,7 +72,7 @@ Suponha que você não rodou a conferência, ou ignorou o resultado. O comando
 abre o merge request, pede que ele seja aceito assim que a conferência passar,
 e meio minuto depois lê o que o OpenShift Pipelines decidiu.
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git add esteira && git commit -q -m 'relatorios: rota nova'
 git push -o merge_request.create -o merge_request.title='rota de relatorios' -o merge_request.merge_when_pipeline_succeeds origin rota-relatorios 2>&1 | grep -E 'merge_requests|new branch'
@@ -89,6 +95,14 @@ Abra o endereço do merge request. O status **Pipelines as Code CI /
 confere** está vermelho e o merge, bloqueado. O mesmo `PipelineRun` aparece no
 console do OpenShift, em *Pipelines*, no projeto `esteira-ci-{user}`.
 
+[WARNING]
+.Recusa esperada -- o merge request não entra sem a conferência verde
+====
+O status vermelho e o merge bloqueado são o resultado. O pedido de merge
+automático não muda isso, e quem poderia mudar a regra do projeto não é o
+perfil Dev.
+====
+
 **O que isso diz:** o pedido de merge automático não adiantou. O projeto só
 aceita merge com a conferência verde, e quem pode mudar isso não é você.
 
@@ -96,7 +110,7 @@ aceita merge com a conferência verde, e quem pode mudar isso não é você.
 
 A rota passa a nascer com chave: uma `AuthPolicy` cujo alvo é ela.
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 cat > esteira/relatorios-chave.yaml <<'EOF'
 apiVersion: kuadrant.io/v1
@@ -131,7 +145,7 @@ navegador, é o mesmo que clicar em **Merge** depois da conferência verde.
 
 == Passo 4 -- espere a esteira, e chame a rota
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git checkout -q main && git pull -q
 bash scripts/esteira.sh espera
@@ -161,7 +175,7 @@ que era o trabalho dela.
 
 == Passo 5 -- tire a rota, pelo mesmo caminho
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git checkout -q -b tira-relatorios
 git revert --no-edit -m 1 "$(git log --merges -1 --format=%H)" | head -1

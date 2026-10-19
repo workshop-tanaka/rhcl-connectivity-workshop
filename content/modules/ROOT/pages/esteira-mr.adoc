@@ -13,11 +13,15 @@ aplica.
 O pedido é comercial: **o plano free passa de 3 para 6 chamadas a cada 10
 segundos.** Você vai atendê-lo sem rodar `oc apply`.
 
+ifdef::perfis[]
+Esta fase é do **perfil Dev**: os comandos rodam na aba `Terminal Dev`.
+endif::[]
+
 == Passo 1 -- como está hoje
 
 Uma rajada de 14 chamadas com uma chave do plano free.
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
 ----
@@ -34,7 +38,7 @@ for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_hos
 O comando cria um branch, troca o número no arquivo da pasta `esteira/` e
 grava a mudança com uma mensagem que diz o porquê.
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git checkout -q main && git pull -q
 git checkout -q -b plano-free-6
@@ -57,7 +61,7 @@ terminal: nada mudou no repositório nem no cluster.
 
 Empurre a mudança direto para o `main`, sem pedir a ninguém.
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git push origin plano-free-6:main 2>&1 | grep -E 'remote: GitLab|rejected'
 ----
@@ -68,13 +72,18 @@ remote: GitLab: You are not allowed to push code to protected branches on this p
  ! [remote rejected] plano-free-6 -> main (pre-receive hook declined)
 ----
 
-**O que isso diz:** o `main` é o que a esteira aplica, e ninguém escreve nele
-direto. Não é um combinado: é o repositório recusando. O único caminho até o
-cluster passa por um merge request.
+[WARNING]
+.Erro esperado -- o perfil Dev não escreve direto no `main`
+====
+A recusa é o resultado. O `main` é o que a esteira aplica, e ninguém escreve
+nele direto: o repositório recusa (`not allowed to push code to protected
+branches`). Não é um combinado de equipe. O único caminho até o cluster passa
+por um merge request.
+====
 
 == Passo 4 -- abra o merge request
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git push -o merge_request.create -o merge_request.title='plano free: de 3 para 6' origin plano-free-6 2>&1 | grep -E 'merge_requests|new branch'
 ----
@@ -96,7 +105,7 @@ então clique em **Merge**.
 O mesmo aceite, pelo terminal. O comando acrescenta um commit vazio ao branch e
 pede que o merge request seja aceito:
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge_when_pipeline_succeeds origin plano-free-6 2>&1 | grep -E 'merge_requests|plano-free-6'
 ----
@@ -111,7 +120,7 @@ aqui você faz os dois papéis.
 O primeiro comando espera o commit do merge chegar ao cluster e diz quanto
 levou. Depois, a mesma rajada do passo 1.
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git checkout -q main && git pull -q
 bash scripts/esteira.sh espera

@@ -15,7 +15,7 @@ que está no cluster é o que está no Git.
 
 == Passo 1 -- o que a esteira está aplicando
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 bash scripts/esteira.sh estado
 ----
@@ -37,7 +37,7 @@ outros.
 
 == Passo 2 -- o que há na pasta
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 grep -v '^#' esteira/kustomization.yaml
 git log --oneline -3 -- esteira
@@ -60,7 +60,7 @@ data.
 
 == Passo 3 -- o que a esteira já aplicou
 
-[source,bash,role="execute"]
+[source,bash,role="execute perfil-dev"]
 ----
 bash scripts/esteira.sh historico
 ----
@@ -80,7 +80,7 @@ linha desta lista, e o commit dela diz quem mudou e por quê.
 Você **lê** a sua esteira, e só a sua. Não a edita: quem edita a esteira troca
 a cerca que a segura (ver xref:fase-esteira.adoc[a cerca da esteira]).
 
-[source,bash,role="execute",subs="attributes+"]
+[source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 oc auth can-i get applications.argoproj.io/esteira-{user} -n openshift-gitops
 oc auth can-i patch applications.argoproj.io/esteira-{user} -n openshift-gitops

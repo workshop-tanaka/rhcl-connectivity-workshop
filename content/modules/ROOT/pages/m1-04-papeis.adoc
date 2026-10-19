@@ -148,6 +148,7 @@ planpolicy.extensions.kuadrant.io/travels-plans patched
 
 endif::[]
 ifdef::foco_rhcl[]
+ifndef::perfis[]
 === Camada 2: você age como o desenvolvedor
 
 Perguntar não é o mesmo que tentar. Os próximos comandos são executados **com
@@ -210,6 +211,81 @@ que o status mostrou na parte xref:m1-03-precedencia.adoc[{p-precedencia}].
 Precedência sem privilégio: o desenvolvedor governa o que é dele e não alcança
 o que não é, e quem recusa é o cluster.
 
+endif::[]
+ifdef::perfis[]
+=== Camada 2: você age como o desenvolvedor
+
+Perguntar não é o mesmo que tentar. Agora **troque de aba**: os próximos
+comandos rodam no `Terminal Dev`, com a identidade do desenvolvedor do seu
+ambiente -- uma conta diferente da sua, e não um disfarce.
+
+==== Tente mexer no teto da plataforma
+
+O comando tenta pôr uma anotação na `prod-web-deny-all`, a policy que nega
+tudo no Gateway.
+
+[source,bash,role="execute perfil-dev"]
+----
+oc patch authpolicy prod-web-deny-all -n ingress-gateway --type=merge -p '{"metadata":{"annotations":{"teste":"1"}}}'
+----
+
+[source,text]
+----
+Error from server (Forbidden): authpolicies.kuadrant.io "prod-web-deny-all" is forbidden:
+User "system:serviceaccount:travel-agency-...:dev" cannot get resource "authpolicies" in API group "kuadrant.io" in the namespace "ingress-gateway-..."
+----
+
+[WARNING]
+.Erro esperado -- o perfil Dev não pode mexer no Gateway
+====
+A recusa é o resultado desta parte. Leia a mensagem inteira: ela traz o
+**nome de quem tentou** (`...:dev`), o **recurso** (`authpolicies`) e o
+**lugar** (o namespace do Gateway). Isso não é convenção de equipe, nem
+revisão de código, nem um combinado que alguém pode furar com pressa: é o
+apiserver recusando.
+
+O mesmo comando, na aba `Terminal` (perfil Infra), passaria.
+====
+
+==== E o que ele pode
+
+Primeiro, **ver** o Gateway a que a rota dele se prende:
+
+[source,bash,role="execute perfil-dev"]
+----
+oc get gateway prod-web -n ingress-gateway
+----
+
+[source,text]
+----
+NAME       CLASS   ADDRESS                                            PROGRAMMED   AGE
+prod-web   istio   prod-web-istio.ingress-gateway.svc.cluster.local   True         ...
+----
+
+Depois, **mudar** a policy comercial da rota dele. O comando põe uma anotação
+na `PlanPolicy`, e o seguinte a tira:
+
+[source,bash,role="execute perfil-dev"]
+----
+oc annotate planpolicy travels-plans -n travel-agency rhcl.demo/tocado-por=dev --overwrite
+oc annotate planpolicy travels-plans -n travel-agency rhcl.demo/tocado-por-
+----
+
+[source,text]
+----
+planpolicy.extensions.kuadrant.io/travels-plans annotated
+planpolicy.extensions.kuadrant.io/travels-plans annotated
+----
+
+**O que isso diz:** ele vê o Gateway e não o muda; muda a policy da rota dele
+sem pedir a ninguém. E essa policy **prevalece** sobre a do Gateway -- foi o
+que o status mostrou na parte xref:m1-03-precedencia.adoc[{p-precedencia}].
+Precedência sem privilégio: o desenvolvedor governa o que é dele e não alcança
+o que não é, e quem recusa é o cluster.
+
+**Volte para a aba `Terminal`** para o resto da página.
+
+endif::[]
 endif::[]
 == Evidência
 
