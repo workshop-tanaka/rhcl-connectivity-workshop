@@ -54,17 +54,35 @@ Perfil Infra -- aba Terminal Infra
 Perfil Dev -- aba Terminal Dev
 ----
 
-**Abra a aba indicada antes de clicar.** Se o comando cair no outro terminal,
-copie-o pelo botão do bloco e cole na aba certa. Na dúvida, o terminal diz
-quem você é:
+**Abra a aba indicada antes de clicar.** O botão do bloco manda o comando
+para a aba que estiver aberta, seja qual for. Por isso todo bloco começa com
+uma linha que diz de quem ele é -- `perfil infra` ou `perfil dev` -- e o
+terminal confere:
+
+* **na aba certa**, ela responde `perfil Dev -- aba Terminal Dev` (ou Infra) e
+  o bloco segue;
+* **na aba errada**, nada roda: o terminal avisa em qual aba você está e
+  pergunta `Executar mesmo assim como Infra? [s/N]`. `Enter` responde não.
+  Responda `s` só se quiser ver, de propósito, o que a outra identidade
+  consegue fazer -- o resultado pode não ser o que a página mostra.
+
+Experimente com os dois blocos abaixo. Clique no primeiro com a aba `Terminal
+Infra` aberta; troque para a `Terminal Dev` e clique no segundo:
 
 [source,bash,role="execute"]
 ----
 oc whoami
 ----
 
-Num terminal, `system:serviceaccount:showroom-...:showroom` é o Infra. No
-outro, `system:serviceaccount:travel-agency-...:dev` é o Dev.
+[source,bash,role="execute perfil-dev"]
+----
+oc whoami
+----
+
+Na aba `Terminal Infra`, `system:serviceaccount:showroom-...:showroom` é o
+Infra. Na `Terminal Dev`, `system:serviceaccount:travel-agency-...:dev` é o
+Dev. Agora clique no segundo bloco com a aba `Terminal Infra` aberta: é a
+pergunta acima que aparece.
 
 Quando uma página pede ao perfil errado uma ação que não é dele, de
 propósito, o erro vem anunciado assim:

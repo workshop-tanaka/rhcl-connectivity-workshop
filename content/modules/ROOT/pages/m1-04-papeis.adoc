@@ -226,7 +226,7 @@ tudo no Gateway.
 
 [source,bash,role="execute perfil-dev"]
 ----
-oc patch authpolicy prod-web-deny-all -n ingress-gateway --type=merge -p '{"metadata":{"annotations":{"teste":"1"}}}'
+oc patch authpolicy prod-web-deny-all -n ingress-gateway --type=merge -p '{"metadata":{"annotations":{"teste":"1"}}}' && oc annotate authpolicy prod-web-deny-all -n ingress-gateway teste-
 ----
 
 [source,text]
@@ -244,7 +244,12 @@ A recusa é o resultado desta parte. Leia a mensagem inteira: ela traz o
 revisão de código, nem um combinado que alguém pode furar com pressa: é o
 apiserver recusando.
 
-O mesmo comando, na aba `Terminal Infra`, passaria.
+O mesmo comando, na aba `Terminal Infra`, passaria. Se você clicar nele
+com essa aba aberta, o terminal avisa que o bloco é do Dev e pergunta se roda
+mesmo assim: responda `s` para ver o Infra conseguir. A segunda metade da
+linha (`&& oc annotate ... teste-`) tira a anotação logo em seguida, e o
+Gateway fica como estava. Como Dev, a primeira metade é recusada e a segunda
+nem roda.
 ====
 
 ==== E o que ele pode
