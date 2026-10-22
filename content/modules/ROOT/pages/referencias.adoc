@@ -67,6 +67,10 @@ workshop vem daqui:
 
 | https://backstage.io/docs/features/software-templates/[Backstage Software Templates^]
 | o mecanismo por trás do template que a parte {p-colheita} usa
+
+| https://kiali.io/docs/tutorials/travels/[Kiali -- tutorial Travels^]
+| a aplicação de exemplo: os sete serviços da `travel-agency` e as imagens
+  `quay.io/kiali/demo_travels_*`
 |===
 
 == Especificação HTTP

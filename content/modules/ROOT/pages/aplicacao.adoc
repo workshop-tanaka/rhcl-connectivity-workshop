@@ -15,6 +15,13 @@ existir qualquer policy.
 Tudo que o workshop faz acontece *ao redor* dela. É isso que permite dizer,
 ao fim, que a plataforma fez o trabalho -- e não a aplicação.
 
+A aplicação não foi escrita para este workshop: é o demo **Travels** do
+projeto Kiali (https://kiali.io/docs/tutorials/travels/[tutorial do Kiali^]),
+com as imagens publicadas por ele (`quay.io/kiali/demo_travels_*`). Daquele
+demo entra só a parte `travel-agency`, sem os portais e sem o namespace de
+controle. Quem a consome aqui são parceiros com chave e plano, e o
+`discounts` ganhou uma segunda versão, com a mesma imagem, para o canário.
+
 === Os sete serviços
 
 [cols="1,2,1",options="header"]
