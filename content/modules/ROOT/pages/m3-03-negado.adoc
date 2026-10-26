@@ -248,13 +248,15 @@ vazia -- porque, lá dentro, um serviço tentou chamar outro e foi recusado.
 
 ifndef::foco_rhcl[]
 Quem recusa não é a aplicação nem o Gateway: é o **sidecar** do serviço de
-destino, aplicando
+destino, aplicando uma `AuthorizationPolicy` sobre a identidade mTLS de quem
+chamou.
 endif::[]
 ifdef::foco_rhcl[]
 Quem recusa não é a aplicação nem o Gateway: é o **proxy do Service Mesh** ao
-lado do serviço de destino, aplicando
-endif::[] uma `AuthorizationPolicy` sobre a identidade mTLS de quem
-chamou. A frase `RBAC: access denied` no corpo é a assinatura dessa recusa.
+lado do serviço de destino, aplicando uma `AuthorizationPolicy` sobre a
+identidade mTLS de quem chamou.
+endif::[]
+A frase `RBAC: access denied` no corpo é a assinatura dessa recusa.
 
 A parte mostra duas chamadas ao mesmo destino, de origens diferentes: uma
 recebe `403`, a outra `404`. E aqui **o `404` é boa notícia** -- só quem foi
