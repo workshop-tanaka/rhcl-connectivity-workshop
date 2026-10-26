@@ -42,6 +42,7 @@ asciidoc:
     senha_console: ''
     # o login Plataforma (so leitura, um para a turma): so existe no modo de
     # turma, e o guia so fala dele com o atributo preenchido
+    argocd_url: ''
     usuario_console_plataforma: ''
     senha_console_plataforma: ''
     usuario_persona: plat-eng

@@ -35,6 +35,14 @@ branch. As duas linhas de commit são iguais e a seguinte diz `Synced`: o que
 está no cluster é o que está no Git. Os seus identificadores de commit são
 outros.
 
+ifeval::["{argocd_url}" != ""]
+*Opcional:* a mesma resposta, na tela do Argo CD --
+{argocd_url}/applications/openshift-gitops/esteira-{user}[a sua Application `esteira-{user}`^]
+(abre em aba nova). Entre com *Log in via OpenShift* e o seu login da console,
+Infra ou Dev; a tela mostra só a sua esteira, e só para ler: sincronizar
+continua sendo pelo Git.
+endif::[]
+
 == Passo 2 -- o que há na pasta
 
 [source,bash,role="execute perfil-dev"]

@@ -188,6 +188,9 @@
         - { name: portal-blue, ns: parceiros }
         - { name: portal-green, ns: parceiros }
         - { name: portal-red, ns: parceiros }
+        # O Argo CD: a esteira (Fase 5) aponta para a Application de cada
+        # participante. Ausente, o atributo nasce vazio e o link sai do guia.
+        - { name: openshift-gitops-server, ns: openshift-gitops }
       register: r_telas
 
     # Loops em vez de zip/map: a chave do label tem ponto ('kuadrant.io/plan-id')
@@ -282,6 +285,7 @@
           api_key_silver: "{{ _keys.silver | default('') }}"
           api_key_gold: "{{ _keys.gold | default('') }}"
           grafana_url: "https://{{ _telas['grafana-route'] }}"
+          argocd_url: "{{ ('https://' ~ _telas['openshift-gitops-server']) if _telas['openshift-gitops-server'] else '' }}"
           kiali_url: "https://{{ _telas['kiali'] }}"
           tempo_url: "https://{{ _telas['tempo-tempo-jaegerui'] }}/{{ tempo_tenant | default('dev') }}"
           traces_url: >-
