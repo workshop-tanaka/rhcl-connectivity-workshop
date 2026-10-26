@@ -40,6 +40,43 @@ repositório continua como antes: quem aplica é você.
 | voltar atrás é um revert
 |===
 
+== O caminho de uma mudança
+
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  subgraph S1["1. propor -- GitLab, perfil Dev"]
+    direction LR
+    DEV["edita esteira/<br/>num branch"] --> MR["abre o<br/><b>merge request</b>"]
+  end
+  subgraph S2["2. conferir -- OpenShift Pipelines, esteira-ci"]
+    direction LR
+    PR["<b>PipelineRun confere</b><br/>lido do main, nunca do branch"] --> R1{"só mudou<br/>esteira/?"} -->|"sim"| R2{"só os 4 tipos, e toda<br/>rota com AuthPolicy?"}
+    R1 -->|"não"| X["<b>merge bloqueado</b><br/>conserte no mesmo MR"]
+    R2 -->|"não"| X
+  end
+  subgraph S3["3. aprovar -- GitLab, perfil Infra"]
+    direction LR
+    INFRA["aceita o merge<br/><i>quem propõe não aprova</i>"] --> MAIN["<b>main</b><br/>pasta esteira/"]
+  end
+  subgraph S4["4. aplicar -- Argo CD, projeto só seu"]
+    direction LR
+    APP["<b>Application</b><br/>seu repositório, seu namespace,<br/>só 4 tipos"] -->|"aplica"| POL["PlanPolicy, AuthPolicy<br/>RateLimitPolicy, HTTPRoute"] --> GW["<b>Gateway</b><br/>o limite vale"]
+    MAO["edição à mão<br/>oc patch"] -.->|"vale, e aparece<br/>como OutOfSync"| POL
+  end
+  S1 -->|"webhook"| S2
+  S2 -->|"verde: status no merge request"| S3
+  S3 -->|"webhook de push"| S4
+....
+
+Duas coisas o desenho não deixa fazer: **aprovar a própria mudança** (quem
+propõe é o Dev, quem aceita é o Infra) e **mudar a regra que confere** (o
+pipeline vem do `main`, e um merge request que mexe fora de `esteira/` é
+recusado pela própria conferência). A edição à mão continua possível -- e
+aparece.
+
 == As partes
 
 [cols="1,3,3",options="header"]
