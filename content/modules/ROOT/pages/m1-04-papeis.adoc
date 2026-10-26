@@ -300,10 +300,31 @@ xref:acessos.adoc[Seus acessos]. Depois abra o Gateway:
 {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io~v1~Gateway/prod-web[o Gateway `prod-web`^]
 
 Os detalhes e as policies dele aparecem, mas o editor de YAML abre **só para
-leitura** -- a console já sabe que esta identidade não muda o Gateway. Em
-*Projects* aparecem só os dois projetos dele, e a *Policy Topology* responde
-*Access Denied*. É a mesma regra do terminal, aplicada à tela: uma pessoa, dois
-papéis, e o cluster decide o que cada um vê.
+leitura** -- a console já sabe que esta identidade não muda o Gateway. Mais
+quatro telas, cada uma com o mesmo recado:
+
+[cols="2,3",options="header"]
+|===
+| tela | o que o perfil Dev vê
+
+| {openshift_console_url}/k8s/cluster/project.openshift.io~v1~Project[Projects^]
+| só os dois projetos dele: a aplicação e o Gateway
+
+| {openshift_console_url}/kuadrant/policies/ns/ingress-gateway[Policies do Gateway^]
+| as policies do Gateway, com status -- e o botão **Create Policy cinza**: ver
+  ele pode, criar não
+
+| {openshift_console_url}/kuadrant/policies/ns/travel-agency[Policies da aplicação^]
+| as da rota dele, e ali o **Create Policy é azul**: este é o lugar dele
+
+| {openshift_console_url}/kuadrant/policy-topology/ns/travel-agency[Policy Topology^]
+| *Access Denied*, e a console diz o que falta: ler o `ConfigMap topology` de
+  `kuadrant-system`, o mapa da plataforma inteira
+|===
+
+É a mesma regra do terminal, aplicada à tela: uma pessoa, dois papéis, e o
+cluster decide o que cada um vê -- e a tela explica a recusa em vez de
+esconder o botão sem dizer por quê.
 
 Para voltar ao perfil Infra, saia e entre de novo com `{usuario_console}`.
 endif::[]

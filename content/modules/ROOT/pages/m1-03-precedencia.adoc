@@ -115,6 +115,16 @@ grafo faz a pergunta, o status do terminal responde.
 
 include::partial$entrar-ocp.adoc[]
 
+O status, a console também mostra -- em duas telas:
+
+* {openshift_console_url}/kuadrant/policies/ns/ingress-gateway[Connectivity Link → Policies, no projeto do Gateway^]:
+  o `prod-web-deny-all` aparece como **Overridden (Not Enforced)** -- a policy
+  da rota venceu na rota dela -- e o limite do Gateway, como **Enforced**. É a
+  precedência desta parte numa linha de tabela.
+* {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io~v1~Gateway/prod-web[o Gateway `prod-web`^],
+  em *Conditions*: `AuthPolicyAffected` e `RateLimitPolicyAffected`, cada uma
+  com o nome da policy. O Gateway diz quem o afeta.
+
 ifdef::perfis[]
 [IMPORTANT]
 .Esta tela é do cluster, não sua

@@ -145,6 +145,17 @@ for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_hos
 ----
 endif::[]
 
+== Console: o plano que virou limite
+
+{openshift_console_url}/kuadrant/policies/ns/travel-agency[Connectivity Link → Policies, no projeto da aplicação^]
+mostra três linhas: a `AuthPolicy`, o `PlanPolicy travels-plans` -- e uma
+`RateLimitPolicy` com **o mesmo nome**, que ninguém escreveu. É o que o
+`PlanPolicy` gerou: você declarou planos, a plataforma derivou os limites. Abra
+a `RateLimitPolicy` no YAML: um limite por plano (`free`, `silver`, `gold`,
+`unclassified`), cada um com as taxas do plano e a condição
+`auth.kuadrant.plan == "free"` (e assim por diante), e o dono dela, em
+`ownerReferences`, é o `PlanPolicy`.
+
 == Console: quem são os parceiros
 
 {openshift_console_url}/kuadrant/apiproducts/ns/travel-agency[API Products no console^] -- Connectivity Link → API
