@@ -15,7 +15,7 @@ troca de mãos várias vezes.
   a seção _A solução de conectividade_, no topo do menu
 | antes de tudo
 | todos
-| dizer o que a aplicação é, com o que se entra em cada tela, e de que tipo de
+| dizer o que a aplicação é, com qual credencial se entra em cada tela, e de que tipo de
   ingresso este projeto parte
 | ~20 min
 
@@ -44,14 +44,16 @@ troca de mãos várias vezes.
 | as semanas seguintes
 | produto e aplicação
 | servir planos comerciais no mesmo endereço, transformar o consumo em número,
-  e descer a regra até um caminho ou uma lista
-| ~34 min
+  publicar a segunda versão ao lado da primeira, e descer a regra até um
+  caminho ou uma lista
+| ~50 min
 
 | xref:fase-esteira.adoc[**5 -- Da mão para a esteira**]
 | quando a segunda API chega
 | plataforma e aplicação
-| tratar a configuração da borda como código, com revisão e histórico
-| em preparação
+| tratar a configuração da borda como código, com revisão e histórico: o
+  Dev propõe, o Infra aprova, a esteira confere e o Argo CD aplica
+| ~50 min, parte esperando a esteira
 
 | xref:m3-00-intro.adoc[**6 -- Operação**]
 | do dia 2 em diante
@@ -81,9 +83,9 @@ produtos entrariam.
 
 == Três trilhas, por tempo disponível
 
-As fases 1 a 4 e a 6 levam cerca de **2 h 15**; com a preparação e as leituras
-da fase 7, perto de **3 h**. Ninguém precisa fazer tudo de uma vez -- três
-recortes fecham sozinhos:
+Da fase 0 à 4 e mais a 6, cerca de **2 h 50**; com a fase 5 e as leituras da
+fase 7, perto de **4 h 15**. As somas saem do tempo que cada página declara no
+topo. Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 [cols="1,1,3",options="header"]
 |===
@@ -96,14 +98,14 @@ recortes fecham sozinhos:
   publica uma API e a vê virar produto
 
 | **completa**
-| ~2 h 15
-| as fases 1 a 4 e a 6, na ordem. É a trilha que o
+| ~2 h 50
+| as fases 0 a 4 e a 6, na ordem. É a trilha que o
   xref:99-encerramento.adoc[Encerramento] pressupõe
 
 | **aprofundada**
-| ~3 h, mais os Extras
-| a completa, as leituras da fase 7 e os xref:extras.adoc[Extras] que
-  interessarem ao seu dia
+| ~4 h 15, mais os Extras
+| a completa, a fase 5 (a esteira), as leituras da fase 7 e os
+  xref:extras.adoc[Extras] que interessarem ao seu dia
 |===
 
 Se o tempo acabar no meio, pare no fim de uma parte: cada uma fecha o próprio

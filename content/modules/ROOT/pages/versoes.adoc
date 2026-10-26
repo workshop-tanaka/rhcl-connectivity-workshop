@@ -76,7 +76,7 @@ nasce aberta por esquecimento.
 
 O segundo arquivo dá à rota nova o que a `/travels` já tem: a `AuthPolicy` da
 chave e o `PlanPolicy` dos planos, copiados e apontados para `travels-versoes`.
-Policy gruda na rota, não na aplicação -- a rota nova precisa das dela.
+A policy é presa à rota, não à aplicação -- a rota nova precisa das dela.
 
 [source,bash,role="execute perfil-dev"]
 ----
@@ -223,7 +223,7 @@ migrou.
 == 6. A v1 desligada -- e religada
 
 Chegou a data. O sexto arquivo aponta para a regra `v1` e **nega tudo**, com o
-código que diz "isto existiu e não existe mais": `410 Gone`.
+código que diz "o caminho existiu e não existe mais": `410 Gone`.
 
 [source,yaml]
 ----
@@ -297,3 +297,14 @@ apagando o objeto.
 | quem ainda depende | a métrica que já existia, por destino
 | a v1 saiu | `AuthPolicy` com `sectionName: v1` e `code: 410`
 |===
+
+[NOTE]
+.Onde o Connectivity Link termina, e o Service Mesh começaria
+====
+Esta parte decidiu **quem vê qual versão**: é contrato com o consumidor, e
+mora na borda -- no Connectivity Link. Outra pergunta, parecida e diferente, é
+**quais pods servem uma versão**: mandar 10% do tráfego para pods novos, um
+canário por percentual. Essa é do Service Mesh. A métrica também se divide
+assim: a do Gateway separa por destino (`travels` ou `travels-v2`), a do
+Service Mesh separa por pod.
+====

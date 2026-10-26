@@ -90,7 +90,13 @@ OSSM)^].
 
 Ele separa por produto, com a regra de atribuição escrita nos painéis: o
 Connectivity Link é o que roda em `kuadrant-system`; o Service Mesh é o
-control plane, o CNI (um pod por nó), os pods de `Gateway` e os sidecars.
+control plane, o CNI (um pod por nó), os pods de `Gateway` e
+ifndef::foco_rhcl[]
+os sidecars.
+endif::[]
+ifdef::foco_rhcl[]
+os proxies do Service Mesh ao lado de cada serviço.
+endif::[]
 Também traz o que a subscrição conta -- requisições por dia e número de
 `Gateway`.
 

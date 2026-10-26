@@ -24,7 +24,9 @@ endif::[]
 a **um contexto**, e não à API inteira.
 ====
 
-O pedido chega sempre igual: *"libera só a faixa de IP do parceiro."* A
+Listas de permissão e de bloqueio -- o que se chamava _white list_ e _black
+list_ -- são o pedido mais antigo da borda. Ele chega sempre igual: *"libera
+só a faixa de IP do parceiro."* A
 resposta curta é que dá. A resposta útil começa com outra pergunta: **qual
 endereço chega até o Gateway?**
 
@@ -88,9 +90,10 @@ cada um.
   pod que chamou.
 
 De um notebook, pela internet, a linha `edge` muda de valor e não de natureza:
-medido neste tipo de ambiente, o primeiro endereço foi `100.64.0.6`, uma faixa
-de NAT de operadora. O IP público real de quem chamou, conferido no mesmo
-instante, não apareceu em lugar nenhum.
+medido neste tipo de ambiente, o primeiro endereço estava na faixa
+`100.64.0.0/10` (RFC 6598), a de NAT de operadora. O IP público real de quem
+chamou, conferido no mesmo instante, não apareceu em lugar nenhum. Os valores
+que você vê variam de turma para turma e de nó para nó; a natureza deles não.
 
 **Primeira conclusão:** neste tipo de borda, "liberar a faixa do parceiro"
 libera *todo mundo que chega pelo mesmo NAT* -- ou, daqui do terminal, todo

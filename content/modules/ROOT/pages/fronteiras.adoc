@@ -4,7 +4,10 @@ include::partial$numeros.adoc[]
 
 Uma aplicação distribuída tem três fronteiras, e cada uma é governada por um
 produto diferente. Este workshop tem uma sessão para cada produto e uma que
-percorre os três; em qualquer delas, esta página é o mapa.
+percorre os três*; em qualquer delas, esta página é o mapa.
+
+[.small]#* Em preparação, como a sessão de Service Mesh -- ver
+xref:sessoes.adoc[As sessões deste workshop].#
 
 Confundir as três é a origem de boa parte das dúvidas que aparecem depois:
 pedir ao produto de uma fronteira o que é de outra. Vale ler antes de começar,
@@ -85,7 +88,7 @@ ifdef::foco_rhcl[]
 xref:m3-00-intro.adoc[fase 6]
 endif::[]
 
-=== Service Mesh: quem fala com quem, lá dentro
+=== Service Mesh: quem fala com quem, entre os serviços
 
 Identidade por serviço (mTLS), autorização entre eles, divisão de tráfego entre
 versões, e a instrumentação que produz traces sem tocar no código.

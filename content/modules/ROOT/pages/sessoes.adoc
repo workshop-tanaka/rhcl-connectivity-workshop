@@ -39,6 +39,10 @@ não existe neste ambiente; o que há aqui é a proposta dele e as leituras que 
 situam.
 ====
 endif::[]
+NOTE: **A sessão completa e a de Service Mesh estão em preparação.** O
+conteúdo delas existe neste guia e é revisado aos poucos; a que está pronta
+para turma é a de Connectivity Link.
+
 ifndef::foco_rhcl,foco_ossm,foco_rhsi[]
 [IMPORTANT]
 ====

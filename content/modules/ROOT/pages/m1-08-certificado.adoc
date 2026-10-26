@@ -101,6 +101,27 @@ flowchart LR
 Sem a `TLSPolicy`, o `Secret` continua lá -- e ninguém renova. É o achado da
 leitura acima, desenhado.
 
+Três nomes que costumam se confundir, e não são a mesma coisa:
+
+[cols="1,3",options="header"]
+|===
+| nome | o que é
+
+| cert-manager
+| **o motor**: emite, renova e grava o certificado no `Secret`
+
+| Let's Encrypt
+| **uma** autoridade certificadora pública, com que o motor conversa pelo
+  protocolo ACME. É um `Issuer` possível, não o único
+
+| CA interna
+| **outro** `Issuer`: a autoridade da própria empresa, que só os clientes dela
+  reconhecem
+|===
+
+A `TLSPolicy` não escolhe nenhum dos três: ela só **aponta o `Issuer`**
+(`issuerRef`). Trocar de autoridade é trocar essa linha.
+
 ifndef::foco_rhcl[]
 == A prova: uma TLSPolicy de ponta a ponta
 
