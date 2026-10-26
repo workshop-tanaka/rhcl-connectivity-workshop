@@ -121,7 +121,7 @@ O status, a console também mostra -- em duas telas:
   o `prod-web-deny-all` aparece como **Overridden (Not Enforced)** -- a policy
   da rota venceu na rota dela -- e o limite do Gateway, como **Enforced**. É a
   precedência desta parte numa linha de tabela.
-* {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io~v1~Gateway/prod-web[o Gateway `prod-web`^],
+* {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/prod-web[o Gateway `prod-web`^],
   em *Conditions*: `AuthPolicyAffected` e `RateLimitPolicyAffected`, cada uma
   com o nome da policy. O Gateway diz quem o afeta.
 
