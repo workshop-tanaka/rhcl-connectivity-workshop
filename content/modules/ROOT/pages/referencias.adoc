@@ -27,8 +27,40 @@ ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
 | a base de tudo
 |===
 
-Os links apontam para a **página do produto**, não para uma versão. Para saber
-em qual versão você trabalhou, rode no terminal:
+Os links apontam para a **página do produto**, não para uma versão. Os guias
+da versão usada aqui, o Connectivity Link 1.4, que as páginas citam:
+
+[cols="1,2",options="header"]
+|===
+| guia | para quê
+
+| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/install_connectivity_link/index[Install Connectivity Link (1.4)^]
+| a instalação, o provedor de Gateway padrão e o armazenamento dos contadores
+  em Redis (seção _Configure Redis storage for rate limiting_)
+
+| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/observability/index[Observability (1.4)^]
+| as métricas, os painéis e o rastreio que a fase de operação usa
+
+| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/troubleshoot/index[Troubleshoot (1.4)^]
+| o diagnóstico de policy que não vale, a parte {p-negado} por outro ângulo
+
+| https://access.redhat.com/articles/7092611[Supported Configurations for Red Hat Connectivity Link^]
+| as combinações suportadas de OpenShift, Service Mesh e cert-manager
+
+| https://docs.redhat.com/en/documentation/openshift_container_platform/4.22/html/ingress_and_load_balancing/configuring-gateway-api[Gateway API no OpenShift (Ingress Operator)^]
+| o Gateway API nativo da plataforma, que esta sessão usa como provedor
+
+| https://access.redhat.com/product-life-cycles?product=Red%20Hat%20OpenShift%20Service%20Mesh[Ciclo de vida do OpenShift Service Mesh^]
+| até quando cada versão do Service Mesh tem suporte
+
+| https://docs.redhat.com/en/documentation/red_hat_openshift_pipelines/1.24/html/pipelines_as_code/index[Pipelines as Code (OpenShift Pipelines 1.24)^]
+| a conferência da Fase 5, disparada pelo merge request
+
+| https://argo-cd.readthedocs.io/en/stable/user-guide/application-specification/[Application do Argo CD^]
+| o objeto que aplica a pasta `esteira` do seu repositório
+|===
+
+Para saber em qual versão você trabalhou, rode no terminal:
 
 [source,bash,role="execute"]
 ----
@@ -67,6 +99,13 @@ workshop vem daqui:
 
 | https://backstage.io/docs/features/software-templates/[Backstage Software Templates^]
 | o mecanismo por trás do template que a parte {p-colheita} usa
+
+| https://gateway-api.sigs.k8s.io/geps/gep-713/[GEP-713, policy attachment^]
+| o desenho das policies que miram um `Gateway` ou uma rota, com `defaults` e
+  `overrides`
+
+| https://www.rfc-editor.org/rfc/rfc6598[RFC 6598^]
+| a faixa `100.64.0.0/10`, de NAT de operadora, que a parte {p-listas} encontra
 
 | https://kiali.io/docs/tutorials/travels/[Kiali -- tutorial Travels^]
 | a aplicação de exemplo: os sete serviços da `travel-agency` e as imagens
