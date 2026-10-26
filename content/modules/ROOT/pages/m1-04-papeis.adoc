@@ -350,7 +350,7 @@ Gateways --, e uma parte do que ele produz não mora no projeto de ninguém:
 
 | o `Limitador` e os `AuthConfig` gerados
 | o operator escreve em `kuadrant-system` o que derivou das policies de
-  **todos** -- um contador por plano de cada participante, um `AuthConfig` por
+  **todos** -- um limite por plano de cada participante, um `AuthConfig` por
   regra de cada rota
 
 | a tela de alertas do cluster
@@ -375,7 +375,11 @@ acesso em produção:
   objetos de Gateway API, de Connectivity Link e de Istio do cluster, e só
   `kuadrant-system` por dentro. Ficam de fora `Secret`, log de pod (a chave de
   API ainda viaja na URL), `exec`, `ConfigMap` (fora o `topology`) e qualquer
-  verbo de escrita.
+  verbo de escrita. Ficam de fora também a `AuthPolicy` e o `AuthConfig`
+  gerado dela: hoje nenhuma carrega segredo, mas o formato admite valor
+  escrito à mão -- um cabeçalho fixo, uma credencial --, e quem escreve a
+  sua é você. Com a senha deste login no guia de todos, o que um escrevesse
+  ali os outros leriam. Na topologia o `AuthConfig` aparece só pelo nome.
 
 O login é `{usuario_console_plataforma}`, **o mesmo para a turma inteira** --
 a visão é a mesma para todos, e a senha está em todos os guias. Isso só é
@@ -390,16 +394,12 @@ Saia (*Log out*), entre como `{usuario_console_plataforma}` e abra:
 | tela | o que mostra
 
 | {openshift_console_url}/kuadrant/policy-topology/all-namespaces[Policy Topology^]
-| o mapa inteiro: os Gateways, as rotas e as policies da turma, e os
+| o mapa inteiro: os Gateways, as rotas e as policies da turma, e os nós
   `AuthConfig` que ninguém escreveu à mão
 
 | {openshift_console_url}/k8s/ns/kuadrant-system/limitador.kuadrant.io{tilde}v1alpha1{tilde}Limitador/limitador/yaml[O Limitador^]
 | em `spec.limits`, um limite por plano de **cada** participante -- o que a
   sua `PlanPolicy` virou, ao lado do que a dos colegas virou
-
-| {openshift_console_url}/k8s/ns/kuadrant-system/authorino.kuadrant.io{tilde}v1beta3{tilde}AuthConfig[Os AuthConfig^]
-| um por regra de cada rota, gerados pelo operator: é o que o Authorino
-  executa
 
 | {openshift_console_url}/k8s/ns/kuadrant-system/operators.coreos.com{tilde}v1alpha1{tilde}ClusterServiceVersion[Installed Operators^]
 | o Connectivity Link instalado uma vez, para todos
