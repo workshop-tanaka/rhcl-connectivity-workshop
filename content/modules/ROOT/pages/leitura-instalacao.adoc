@@ -85,8 +85,8 @@ Aqui são duas instalações pelo OperatorHub:
 
 | Red Hat Connectivity Link
 | `kuadrant-system`, com `OperatorGroup` próprio
-| o operator do Kuadrant e, junto com ele, os do Authorino, do Limitador e
-  de DNS
+| o operator do Connectivity Link (no cluster, `kuadrant-operator`) e, junto
+  com ele, o Authorino Operator, o Limitador Operator e o DNS Operator
 |===
 endif::[]
 ifdef::foco_rhcl[]
@@ -110,8 +110,8 @@ Aqui é uma instalação só pelo OperatorHub:
 
 | Red Hat Connectivity Link
 | `kuadrant-system`, com `OperatorGroup` próprio
-| o operator do Kuadrant e, junto com ele, os do Authorino, do Limitador e
-  de DNS
+| o operator do Connectivity Link (no cluster, `kuadrant-operator`) e, junto
+  com ele, o Authorino Operator, o Limitador Operator e o DNS Operator
 |===
 
 O provedor de Gateway não é um operator a mais: vem com o próprio OpenShift,
@@ -146,16 +146,16 @@ oc get csv -n kuadrant-system | grep -E 'rhcl|authorino|limitador|dns-operator'
 |===
 | componente | papel
 
-| Kuadrant operator
+| o operator do Connectivity Link (`rhcl-operator` no CSV, `kuadrant-operator` nos pods)
 | lê as policies que você declara e as traduz em configuração do Gateway
 
-| Authorino
+| Authorino Operator, e o Authorino
 | decide **quem entra**: valida a chave ou o token de cada requisição
 
-| Limitador
+| Limitador Operator, e o Limitador
 | decide **quanto passa**: conta as requisições contra o limite do plano
 
-| DNS operator
+| DNS Operator
 | publica nomes em provedores de DNS, quando há `DNSPolicy`
 |===
 
@@ -219,7 +219,8 @@ ifdef::foco_rhcl[]
 | `mtls.enable: false`
 | o Gateway fala com o Authorino e o Limitador **sem** mTLS. Ligar esse campo
   pede o Service Mesh, que é quem dá identidade aos dois lados; sem ele, o
-  canal fica protegido só pelas regras de rede do cluster
+  canal fica protegido apenas pelas regras de rede do cluster, sem identidade
+  nos dois lados
 endif::[]
 
 | `components.developerPortal.enabled: true`

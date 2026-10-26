@@ -14,6 +14,7 @@ include::partial$diagrama.adoc[]
 
 == As três gerações, todas no ar aqui
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 oc get ingress -A
@@ -22,6 +23,18 @@ oc get route -n ingress-gateway
 oc get gateway -A
 oc get gatewayclass
 ----
+endif::[]
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+oc get route -n ingress-gateway
+oc get gateway -n ingress-gateway
+oc get gatewayclass
+----
+
+O `Ingress` não aparece no seu terminal: os dois deste cluster são do GitLab,
+num projeto que não é seu. A tabela conta o que eles são.
+endif::[]
 
 [cols="1,2",options="header"]
 |===
@@ -40,9 +53,16 @@ oc get gatewayclass
 | **Route** é o objeto do OpenShift, anterior ao `Ingress`. Aqui ela não
   publica uma aplicação: publica o **Gateway**
 
+ifndef::foco_rhcl[]
 | três `Gateway` de classe `istio`
 | **Gateway API** é a geração seguinte. A classe diz quem materializa o
   gateway -- aqui, o Service Mesh
+endif::[]
+ifdef::foco_rhcl[]
+| dois `Gateway` de classe `istio`, `prod-web` e `echo-web`
+| **Gateway API** é a geração seguinte. A classe diz quem materializa o
+  gateway -- aqui, o Gateway API do OpenShift
+endif::[]
 |===
 
 == O caminho real de uma chamada, neste cluster
@@ -114,8 +134,14 @@ Gateway, não de quem o publica.
 
 == Um gateway, ou vários?
 
+ifndef::foco_rhcl[]
 O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
 e um Service de Envoy próprios. Neste cluster há três, e eles não são iguais:
+endif::[]
+ifdef::foco_rhcl[]
+O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
+e um Service de Envoy próprios. No seu ambiente há dois, no mesmo projeto:
+endif::[]
 
 [cols="2,2,2",options="header"]
 |===
@@ -129,11 +155,14 @@ e um Service de Envoy próprios. Neste cluster há três, e eles não são iguai
 | `ingress-gateway`
 | **sim** -- é a borda da API com OIDC da parte {p-identidade}
 
+ifndef::foco_rhcl[]
 | `bookinfo-gateway`
 | `bookinfo`
 | **não** -- Service Mesh puro, como o upstream do Istio o escreveu
+endif::[]
 |===
 
+ifndef::foco_rhcl[]
 [source,bash,role="execute"]
 ----
 oc get gatewayclass
@@ -144,12 +173,30 @@ oc get envoyfilter -A | grep kuadrant
 Os três são da mesma `GatewayClass istio`. Mas os `EnvoyFilter` que o
 Connectivity Link gera existem **só** no namespace dos dois primeiros -- e é
 neles que mora o wasm que chama o Authorino e o Limitador:
+endif::[]
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+oc get gateway -n ingress-gateway
+oc get envoyfilter -n ingress-gateway
+----
+
+Os dois são da mesma `GatewayClass istio`, e cada um tem os seus
+`EnvoyFilter` gerados pelo Connectivity Link: é neles que mora o wasm que
+chama o Authorino e o Limitador.
+endif::[]
 
 [source,bash,role="execute"]
 ----
 oc exec -n ingress-gateway deploy/prod-web-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
 ----
 
+ifdef::foco_rhcl[]
+A resposta é `1`: o filtro está no listener. **Um gateway vira "do
+Connectivity Link" ao receber uma policy**, e não por ser de outro tipo -- um
+Gateway da mesma classe que nunca recebeu policy responderia `0`.
+endif::[]
+ifndef::foco_rhcl[]
 A resposta é `1`: o filtro está no listener. Num Gateway da mesma classe que
 nunca recebeu policy -- o `bookinfo-gateway` das amostras do Istio, onde o
 ambiente as tem -- a mesma pergunta responde `0`:
@@ -162,13 +209,20 @@ oc exec -n bookinfo deploy/bookinfo-gateway-istio -c istio-proxy --   pilot-agen
 Este segundo comando é para ler, não para rodar: as amostras ficam fora do seu
 ambiente. **Um gateway vira "do Connectivity Link" ao receber uma policy**, e
 não por ser de outro tipo.
+endif::[]
 
 Três consequências práticas:
 
 * **O teto não atravessa gateways.** O `prod-web-deny-all` da parte
   xref:m1-06-exposta.adoc[{p-exposta}] vale para as rotas anexadas ao `prod-web`, e
-  para mais nenhuma. Foi por isso que as amostras do Istio subiram com gateway
+  para mais nenhuma.
+ifndef::foco_rhcl[]
+  Foi por isso que as amostras do Istio subiram com gateway
   próprio: uma rota delas pendurada no `prod-web` nasceria negada.
+endif::[]
+ifdef::foco_rhcl[]
+  O `echo-web` tem o deny-all dele, escrito à parte.
+endif::[]
 * **Cada gateway custa um pod de Envoy**, e um jeito de ser publicado -- aqui,
   uma `Route` por hostname.
 * **As policies de plataforma se repetem por gateway:** `deny-all`, TLS, DNS e
@@ -242,11 +296,21 @@ leste-oeste é do Service Mesh.**
 
 === Preciso do Service Mesh instalado para ter o Gateway do Connectivity Link?
 
+ifndef::foco_rhcl[]
 **Neste cluster, sim. No produto, não.** O Connectivity Link **não implementa
 Gateway API**: ele não traz `GatewayClass` nenhuma, e precisa de um provedor
 que a implemente. Aqui o provedor é o Service Mesh -- a classe em uso tem como
 controlador `istio.io/gateway-controller`. Quem materializa o pod do gateway é
 o Service Mesh; o Connectivity Link **anexa políticas** a ele.
+endif::[]
+ifdef::foco_rhcl[]
+**Neste cluster, não. No produto, também não.** O Connectivity Link **não
+implementa Gateway API**: ele não traz `GatewayClass` nenhuma, e precisa de um
+provedor que a implemente. Aqui o provedor é o Gateway API do próprio
+OpenShift -- a classe em uso tem como controlador
+`openshift.io/gateway-controller/v1`. Quem materializa o pod do gateway é a
+plataforma; o Connectivity Link **anexa políticas** a ele.
+endif::[]
 
 Dá para ver isso no nome dos próprios controladores do operador, no log:
 
@@ -260,11 +324,19 @@ E o veículo das policies é um objeto do Istio, o `EnvoyFilter`. Sem um
 provedor de Gateway API no cluster, as policies do Connectivity Link ficam
 sem onde se anexar.
 
+ifndef::foco_rhcl[]
 NOTE: O contrário não é verdade: o Service Mesh roda sozinho, sem o
 Connectivity Link -- o `bookinfo-gateway` acima é a prova. E a combinação
 suportada de versões dos dois produtos sai da
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
 do Connectivity Link^], não daqui.
+endif::[]
+ifdef::foco_rhcl[]
+NOTE: O contrário também vale: o Service Mesh roda sozinho, sem o
+Connectivity Link. E a combinação suportada de versões dos produtos sai da
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
+do Connectivity Link^], não daqui.
+endif::[]
 
 === E o Gateway nativo do OpenShift, o `openshift-default`?
 
