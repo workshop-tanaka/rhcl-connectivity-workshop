@@ -49,6 +49,27 @@ existem em DNS nenhum: as chamadas partem de um pod do laboratório.
 **Um** Gateway, **dois** hostnames, e uma `HTTPRoute` (`api1`) com quatro
 regras, cada uma com nome.
 
+O trecho que importa do arquivo, `passos/contextos/01-laboratorio.yaml` -- as
+regras nomeadas da rota `api1`:
+
+[source,yaml]
+----
+kind: HTTPRoute
+metadata: {name: api1, namespace: ctx-lab}
+spec:
+  parentRefs: [{name: lab}]
+  hostnames: ["api1.ctx.lab"]
+  rules:
+    - name: publico
+      matches: [{path: {type: PathPrefix, value: /catalogo/listall}}]
+    - name: premium
+      matches: [{path: {type: PathPrefix, value: /catalogo/listbestsellers}}]
+    - name: admin
+      matches: [{path: {type: PathPrefix, value: /catalogo/admin}}]
+    - name: busca
+      matches: [{path: {type: PathPrefix, value: /catalogo/search}}]
+----
+
 [source,bash,role="execute"]
 ----
 oc new-project ctx-lab --skip-config-write
@@ -77,6 +98,19 @@ declarou regra.
 
 Uma `AuthPolicy` cujo alvo é a `HTTPRoute` `api1`.
 
+[source,yaml]
+----
+kind: AuthPolicy
+metadata: {name: api1-chave, namespace: ctx-lab}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api1}
+  rules:
+    authentication:
+      chave:
+        apiKey: {allNamespaces: true, selector: {matchLabels: {app: ctx-lab}}}
+        credentials: {queryString: {name: APIKEY}}
+----
+
 [source,bash,role="execute"]
 ----
 oc apply -f passos/contextos/02-a-rota-exige-chave.yaml
@@ -97,7 +131,7 @@ bash scripts/contextos.sh matriz
 
 **O que isso diz:** os quatro caminhos da `api1` pedem chave, e qualquer chave
 serve. A `api2`, que é outra rota no mesmo Gateway com o **mesmo caminho**,
-continua aberta: a policy gruda na rota, não no caminho.
+continua aberta: a policy é presa à rota, não ao caminho.
 
 [NOTE]
 ====
@@ -115,6 +149,17 @@ Gateway, e não depois, com tráfego passando.
 === Passo 3 -- um caminho volta a ser público
 
 O mesmo tipo de policy, com uma linha a mais: `sectionName: publico`.
+
+[source,yaml]
+----
+kind: AuthPolicy
+metadata: {name: api1-publico, namespace: ctx-lab}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api1, sectionName: publico}
+  rules:
+    authentication:
+      anonimo: {anonymous: {}}
+----
 
 [source,bash,role="execute"]
 ----
@@ -140,6 +185,24 @@ da **rota**, e só naquele caminho.
 === Passo 4 -- o caminho administrativo, só para o plano gold
 
 Outra policy de regra, agora com autorização.
+
+[source,yaml]
+----
+kind: AuthPolicy
+metadata: {name: api1-admin, namespace: ctx-lab}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api1, sectionName: admin}
+  rules:
+    authentication:
+      chave:
+        apiKey: {allNamespaces: true, selector: {matchLabels: {app: ctx-lab}}}
+        credentials: {queryString: {name: APIKEY}}
+    authorization:
+      so-gold:
+        patternMatching:
+          patterns:
+            - predicate: 'auth.identity.metadata.labels["kuadrant.io/plan-id"] == "gold"'
+----
 
 [source,bash,role="execute"]
 ----
@@ -170,6 +233,23 @@ deixaria o caminho administrativo sem autenticação nenhuma.
 
 Dois limites: um largo na rota (30 a cada 10 s) e um apertado na regra
 `premium` (5 a cada 10 s). Cada rajada são oito chamadas com a chave gold.
+
+[source,yaml]
+----
+kind: RateLimitPolicy
+metadata: {name: api1-limite, namespace: ctx-lab}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api1}
+  limits:
+    rota: {rates: [{limit: 30, window: 10s}]}
+---
+kind: RateLimitPolicy
+metadata: {name: api1-premium, namespace: ctx-lab}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api1, sectionName: premium}
+  limits:
+    premium: {rates: [{limit: 5, window: 10s}]}
+----
 
 [source,bash,role="execute"]
 ----
@@ -339,7 +419,7 @@ para o mesmo backend -- com políticas diferentes. Como isso funciona:
 
 * o **listener** aceita `*.ctx.lab`, então um hostname novo **não exige
   listener novo** -- nem mexer no Gateway, que é do Engenheiro de Plataforma;
-* cada hostname é uma `HTTPRoute` própria, e a policy gruda **na rota**, não no
+* cada hostname é uma `HTTPRoute` própria, e a policy é presa **à rota**, não ao
   caminho. Times diferentes podem ser donos de cada uma (parte
   xref:m1-04-papeis.adoc[{p-papeis}]);
 * o Envoy casa primeiro pelo `Host`, depois pelo caminho -- não há ambiguidade
@@ -444,6 +524,31 @@ recebeu.
 O arquivo cria o Gateway `borda`, o teto que nega tudo (`borda-deny-all`), as
 duas aplicações e duas chaves. Nenhuma rota ainda.
 
+O trecho que importa de `passos/prefixos/01-laboratorio.yaml` -- o Gateway da
+plataforma e o teto dele:
+
+[source,yaml]
+----
+kind: Gateway
+metadata: {name: borda, namespace: pfx-gw}
+spec:
+  gatewayClassName: istio
+  listeners:
+    - name: http
+      hostname: "api.pfx.lab"
+      port: 80
+      protocol: HTTP
+      allowedRoutes: {namespaces: {from: All}}
+---
+kind: AuthPolicy
+metadata: {name: borda-deny-all, namespace: pfx-gw}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: Gateway, name: borda}
+  rules:
+    authorization:
+      deny: {opa: {rego: "allow = false"}}
+----
+
 [source,bash,role="execute"]
 ----
 oc new-project pfx-gw --skip-config-write
@@ -481,6 +586,29 @@ xref:m3-03-negado.adoc[{p-negado}] aparecendo aqui.
 
 Uma `HTTPRoute` para o prefixo `/api1` e uma `AuthPolicy` que exige chave, as
 duas **no namespace da equipe**. No Gateway, ninguém toca.
+
+[source,yaml]
+----
+kind: HTTPRoute
+metadata: {name: api1, namespace: pfx-equipe-a}
+spec:
+  parentRefs: [{name: borda, namespace: pfx-gw}]
+  hostnames: ["api.pfx.lab"]
+  rules:
+    - name: tudo
+      matches: [{path: {type: PathPrefix, value: /api1}}]
+      filters: [{type: URLRewrite, urlRewrite: {path: {type: ReplacePrefixMatch, replacePrefixMatch: /}}}]
+---
+kind: AuthPolicy
+metadata: {name: api1-chave, namespace: pfx-equipe-a}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api1}
+  rules:
+    authentication:
+      chave:
+        apiKey: {allNamespaces: true, selector: {matchLabels: {app: pfx-gw}}}
+        credentials: {queryString: {name: APIKEY}}
+----
 
 [source,bash,role="execute"]
 ----
@@ -529,6 +657,25 @@ editar a policy da equipe B.
 Mesmo hostname, prefixo `/api2`, e a policy da equipe B diz que a API dela é
 **aberta**.
 
+[source,yaml]
+----
+kind: HTTPRoute
+metadata: {name: api2, namespace: pfx-equipe-b}
+spec:
+  parentRefs: [{name: borda, namespace: pfx-gw}]
+  rules:
+    - name: tudo
+      matches: [{path: {type: PathPrefix, value: /api2}}]
+---
+kind: AuthPolicy
+metadata: {name: api2-anonima, namespace: pfx-equipe-b}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: api2}
+  rules:
+    authentication:
+      anonimo: {anonymous: {}}
+----
+
 [source,bash,role="execute"]
 ----
 oc apply -f passos/prefixos/03-equipe-b.yaml
@@ -561,6 +708,28 @@ A equipe B publica **um caminho só**, `/api/getinfo`, fora do prefixo dela: um
 `matches` do tipo `Exact`, o caminho inteiro reescrito (`ReplaceFullPath`) e
 uma policy que só deixa passar o plano gold. O segundo comando pergunta ao
 Gateway qual policy governa cada caminho.
+
+[source,yaml]
+----
+kind: HTTPRoute
+metadata: {name: getinfo, namespace: pfx-equipe-b}
+spec:
+  rules:
+    - name: getinfo
+      matches: [{path: {type: Exact, value: /api/getinfo}}]
+      filters: [{type: URLRewrite, urlRewrite: {path: {type: ReplaceFullPath, replaceFullPath: /getinfo}}}]
+---
+kind: AuthPolicy
+metadata: {name: getinfo-gold, namespace: pfx-equipe-b}
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: HTTPRoute, name: getinfo}
+  rules:
+    authorization:
+      so-gold:
+        patternMatching:
+          patterns:
+            - predicate: 'auth.identity.metadata.labels["kuadrant.io/plan-id"] == "gold"'
+----
 
 [source,bash,role="execute"]
 ----
@@ -604,7 +773,23 @@ este caminho?" sem depender de quem leu o quê.
 === Passo 5 -- a rota nova herda o teto, mas não na hora
 
 A equipe B publica mais uma rota, `/api3`, e **esquece a policy**. O comando
-chama a rota a cada cinco segundos até o teto do Gateway assumir.
+chama a rota a cada segundo, por até três minutos, até o teto do Gateway
+assumir, e imprime uma linha a cada mudança de código.
+
+[source,yaml]
+----
+kind: HTTPRoute
+metadata: {name: api3, namespace: pfx-equipe-b}
+spec:
+  parentRefs: [{name: borda, namespace: pfx-gw}]
+  hostnames: ["api.pfx.lab"]
+  rules:
+    - name: tudo
+      matches: [{path: {type: PathPrefix, value: /api3}}]
+      backendRefs: [{name: app, port: 8080}]
+----
+
+E nenhuma `AuthPolicy`: é esse o esquecimento.
 
 [source,bash,role="execute"]
 ----
@@ -630,6 +815,11 @@ a nega: o teto da plataforma. Mas houve uma chamada com `200` antes. Os seus
 tempos vão ser outros -- já medi `~1s`, `~7s`, `~13s` e mais de um minuto,
 quando o operador estava reconciliando outras mudanças. **A janela existe e o
 tamanho varia.**
+
+A janela também **pode não aparecer** na sua execução: se o teto chegar antes
+da primeira chamada, a primeira resposta já é `403`, e o script diz *"nao houve
+janela nesta execucao"*. Não é o teto que ficou mais rápido para sempre -- é
+esta corrida que ele ganhou.
 
 Enquanto ela dura, a rota responde sem policy nenhuma. É o argumento mais
 concreto a favor do caminho pavimentado da parte
