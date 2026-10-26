@@ -72,16 +72,15 @@ remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/2
  * [new branch]      volta-o-plano -> volta-o-plano
 ----
 
-Abra o endereço, confira que a linha volta a `limit: 3` e clique em **Merge**.
+[IMPORTANT]
+.Perfil Infra -- no GitLab, como `{usuario_console}`
+====
+Quem aceita é o **perfil Infra**. No navegador você já está no GitLab como
+`{usuario_console}` (o login do console), que é *Maintainer* do projeto. Abra
+o endereço do merge request: na aba **Changes** está a linha voltando a `limit: 3`; espere a conferência
+**Pipelines as Code CI / confere** ficar verde e clique em **Merge**.
+====
 
-.Sem navegador à mão?
-[%collapsible]
-====
-[source,bash,role="execute perfil-dev"]
-----
-git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge_when_pipeline_succeeds origin volta-o-plano 2>&1 | grep -E 'merge_requests|volta-o-plano'
-----
-====
 
 == Passo 3 -- espere a esteira, e meça
 

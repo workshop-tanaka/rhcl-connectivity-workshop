@@ -27,10 +27,11 @@ repositório continua como antes: quem aplica é você.
 | antes | nesta fase
 
 | você edita o arquivo e roda `oc apply`
-| você edita o arquivo num branch e abre um merge request
+| o perfil Dev edita o arquivo num branch e abre um merge request
 
 | a mudança vale quando o comando volta
-| a mudança vale quando o merge é aceito e a esteira a aplica
+| a mudança vale quando a conferência passa, o perfil **Infra** aceita o
+  merge e a esteira a aplica
 
 | quem mudou está no histórico do seu terminal
 | quem mudou, quando e por quê estão no repositório
@@ -50,9 +51,9 @@ repositório continua como antes: quem aplica é você.
 | a configuração da borda cabe em arquivos com dono e histórico
 
 | xref:esteira-mr.adoc[{p-mr}Mudança por merge request]
-| muda o limite de um plano num branch, abre o merge request e aceita; a
-  mudança chega ao cluster sem ninguém rodar `oc apply`
-| a mudança tem autor, revisão e data
+| o Dev muda o limite de um plano num branch e abre o merge request; o Infra
+  aceita. A mudança chega ao cluster sem ninguém rodar `oc apply`
+| a mudança tem autor, aprovador, revisão e data -- e quem propõe não aprova
 
 | xref:esteira-confere.adoc[{p-confere}A esteira confere antes]
 | abre um merge request com uma rota sem `AuthPolicy` e vê a conferência

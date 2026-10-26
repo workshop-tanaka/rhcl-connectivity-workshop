@@ -94,26 +94,33 @@ remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
  * [new branch]      plano-free-6 -> plano-free-6
 ----
 
-Abra o endereço que o comando mostrou. Na aba **Changes** está a linha que
-mudou; é isso que quem aprova lê. Em meio minuto aparece a conferência do
-OpenShift Pipelines (parte xref:esteira-confere.adoc[{p-confere}]) em verde;
-então clique em **Merge**.
+O merge request foi aberto por `{usuario_console_dev}`: o terminal Dev empurra
+com a identidade Dev, que no projeto é *Developer*. E o `main` só aceita merge
+de *Maintainer*.
 
-.Sem navegador à mão?
-[%collapsible]
+[WARNING]
+.Recusa esperada -- o Dev não aceita o próprio merge request
 ====
-O mesmo aceite, pelo terminal. O comando acrescenta um commit vazio ao branch e
-pede que o merge request seja aceito:
-
-[source,bash,role="execute perfil-dev"]
-----
-git commit -q --allow-empty -m 'pede o merge' && git push -o merge_request.merge_when_pipeline_succeeds origin plano-free-6 2>&1 | grep -E 'merge_requests|plano-free-6'
-----
+Quem propõe não aprova. Entrando no GitLab como `{usuario_console_dev}`, o
+merge request aparece com a conferência, mas **sem o botão Merge**; e um
+pedido de merge automático feito pelo Dev é ignorado, sem erro -- o merge
+request fica aberto esperando quem pode aceitá-lo. Não é um combinado: é a
+regra do branch.
 ====
 
-**O que isso diz:** a mudança agora tem autor, texto, data e alguém que a
-aceitou. Num projeto real, quem abre e quem aceita são pessoas diferentes;
-aqui você faz os dois papéis.
+[IMPORTANT]
+.Perfil Infra -- no GitLab, como `{usuario_console}`
+====
+Quem aceita é o **perfil Infra**. No navegador você já está no GitLab como
+`{usuario_console}` (o login do console), que é *Maintainer* do projeto. Abra
+o endereço do merge request: na aba **Changes** está a linha que mudou -- é isso que quem aprova lê; espere a conferência
+**Pipelines as Code CI / confere** ficar verde e clique em **Merge**.
+====
+
+**O que isso diz:** a mudança agora tem autor, texto, data, uma conferência
+automática e **outra pessoa** que a aceitou. É a separação de funções que
+qualquer auditoria pede: o Dev propõe, a máquina confere, o Infra aprova, o
+Argo CD aplica.
 
 == Passo 5 -- espere a esteira, e meça
 
