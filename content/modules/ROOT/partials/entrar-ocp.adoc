@@ -10,10 +10,20 @@
 // console vem de FORA do cluster (a pagina do pedido no RHDP), entao o
 // atributo nasce vazio e esta linha vira um ponteiro honesto.
 ifeval::["{senha_console}" != ""]
+ifeval::["{usuario_console_dev}" == ""]
 [NOTE.credencial]
 ====
 **Para entrar:** usuário `{usuario_console}` · senha `{senha_console}`
 ====
+endif::[]
+ifeval::["{usuario_console_dev}" != ""]
+[NOTE.credencial]
+====
+**Para entrar:** perfil Infra -- usuário `{usuario_console}` · senha `{senha_console}` +
+perfil Dev -- usuário `{usuario_console_dev}` · senha `{senha_console_dev}` +
+Para trocar de perfil: **Log out** e entre com o outro.
+====
+endif::[]
 endif::[]
 ifeval::["{senha_console}" == ""]
 [NOTE.credencial]

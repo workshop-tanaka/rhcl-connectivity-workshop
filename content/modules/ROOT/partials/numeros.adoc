@@ -26,6 +26,7 @@ ifndef::foco_rhcl[]
 :p-dns:
 :p-contextos:
 :p-listas:
+:p-versoes:
 :p-fonte:
 :p-mr:
 :p-confere:
@@ -59,8 +60,9 @@ ifdef::foco_rhcl[]
 :p-auditoria: 6.4
 :p-colheita: 7.1
 :p-dns: 3.2{sp}
-:p-contextos: 4.3{sp}
-:p-listas: 4.4{sp}
+:p-versoes: 4.3{sp}
+:p-contextos: 4.4{sp}
+:p-listas: 4.5{sp}
 :p-fonte: 5.1{sp}
 :p-mr: 5.2{sp}
 :p-confere: 5.3{sp}

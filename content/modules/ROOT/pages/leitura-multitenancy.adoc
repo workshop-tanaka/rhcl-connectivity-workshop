@@ -136,7 +136,9 @@ Disso saem quatro consequências que vale conhecer antes de desenhar:
 
 * **Disponibilidade é comum.** Se o Authorino cair, cai para todos os times.
 * **A visão é uma só.** A tela de topologia de policies desenha o cluster
-  inteiro; não há uma por time.
+  inteiro; não há uma por time. Ela lê um único objeto, mantido pelo operator,
+  e o acesso a ele é tudo ou nada -- o filtro por namespace teria de vir do
+  próprio plugin da console. Nesta turma você a vê com os Gateways dos colegas.
 * **As chaves de API moram, por padrão, num namespace comum.** O Authorino as
   procura no namespace dele, salvo com `allNamespaces: true` na policy.
 * **As métricas de consumo nascem na plataforma**, não no namespace de cada

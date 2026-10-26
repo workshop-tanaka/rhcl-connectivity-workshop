@@ -31,8 +31,9 @@ ifdef::foco_rhcl[]
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
-* xref:extra-contextos.adoc[4.3 Uma API, vários contextos]
-* xref:extra-listas.adoc[4.4 Listas de permissão e bloqueio]
+* xref:versoes.adoc[4.3 Uma API, duas versões]
+* xref:extra-contextos.adoc[4.4 Uma API, vários contextos]
+* xref:extra-listas.adoc[4.5 Listas de permissão e bloqueio]
 
 .Fase 5 — Da mão para a esteira
 * xref:fase-esteira.adoc[O que muda nesta fase]

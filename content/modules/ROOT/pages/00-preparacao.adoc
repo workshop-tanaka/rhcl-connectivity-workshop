@@ -46,6 +46,14 @@ mesmo diretório:
   de API
 |===
 
+ifeval::["{usuario_console_dev}" != ""]
+Na **console do OpenShift** os dois perfis também são dois logins:
+`{usuario_console}` é o Infra e `{usuario_console_dev}` é o Dev, com as mesmas
+permissões das abas. As senhas estão em xref:acessos.adoc[Seus acessos]. Para
+trocar de perfil, **saia** (*Log out*, no canto superior direito) e entre com o
+outro: a sessão é uma por navegador.
+endif::[]
+
 Todo bloco clicável diz de quem é, no título logo acima dele:
 
 [source,text]
@@ -264,8 +272,14 @@ endif::[]
 ifndef::foco_rhcl[]
 | Kiali | {kiali_url}[Traffic Graph^] -- o grafo de tráfego (partes {p-rastreavel} e {p-leste})
 endif::[]
-| Console | {openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o fork da parte {p-precedencia}
+| Console | {openshift_console_url}/kuadrant/policy-topology/ns/travel-agency[Policy Topology^] -- o fork da parte {p-precedencia}
 |===
+
+ifdef::perfis[]
+NOTE: A **Policy Topology** é a visão do cluster inteiro -- você vai ver os
+Gateways dos colegas também. A parte {p-precedencia} explica por quê, e mostra
+como recortar a sua parte.
+endif::[]
 
 include::partial$entrar-grafana.adoc[]
 

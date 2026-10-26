@@ -147,7 +147,7 @@ endif::[]
 
 == Console: quem são os parceiros
 
-{openshift_console_url}/kuadrant/apiproducts[API Products no console^] -- Connectivity Link → API
+{openshift_console_url}/kuadrant/apiproducts/ns/travel-agency[API Products no console^] -- Connectivity Link → API
 Products e API Keys: os parceiros com plano e solicitante.
 
 include::partial$entrar-ocp.adoc[]

@@ -109,11 +109,60 @@ endif::[]
 
 == Navegador
 
-{openshift_console_url}/kuadrant/policy-topology[Policy Topology^] -- o listener bifurca para
+{openshift_console_url}/kuadrant/policy-topology/ns/travel-agency[Policy Topology^] -- o listener bifurca para
 as rotas e as policies chegam tracejadas. **Não procure o vencedor aqui**: o
 grafo faz a pergunta, o status do terminal responde.
 
 include::partial$entrar-ocp.adoc[]
+
+ifdef::perfis[]
+[IMPORTANT]
+.Esta tela é do cluster, não sua
+====
+A Policy Topology desenha o que o operator do Connectivity Link gerencia -- e
+há **um operator por cluster**. Por isso você vê os Gateways e as rotas dos
+colegas, e também objetos que ninguém criou à mão, como os `AuthConfig` que o
+operator gera a partir de cada `AuthPolicy`. É a tela de quem **opera a
+plataforma**. O endereço com o seu projeto não filtra o desenho: o objeto que
+ela lê é um só, e o acesso a ele é tudo ou nada. Por isso o perfil Dev nem a
+abre.
+
+Duas perguntas para fazer ao desenho:
+
+* **Qual é a sua parte?** O Gateway `prod-web` e a rota da API do seu ambiente
+  -- os nomes terminam com o seu usuário. É o nome e o namespace que dizem de
+  quem é cada objeto, não o lugar no desenho.
+* **O que é o `AuthConfig` que você não criou?** É o que o operator derivou da
+  sua `AuthPolicy`, e o que o Authorino executa. Você declarou a intenção; a
+  plataforma gerou o resto.
+====
+
+A sua parte do mesmo desenho, recortada no terminal:
+
+[source,bash,role="execute"]
+----
+bash scripts/topologia.sh
+----
+
+[source,text]
+----
+  Gateway prod-web  (ingress-gateway-...)
+    <- AuthPolicy prod-web-deny-all
+    <- RateLimitPolicy ingress-gateway-rlp-lowlimits
+    Listener api
+      HTTPRoute travel-agency-...  (travel-agency-...)
+        <- AuthPolicy travel-agency-authpolicy
+        <- RateLimitPolicy travels-plans
+        regra rule-1 -> AuthConfig 8e96622fa0d0... (gerado)
+    gerado pelo operator no Gateway:
+      EnvoyFilter kuadrant-auth-prod-web
+      ...
+----
+
+É a bifurcação desta parte, em texto: as duas policies do Gateway em cima, as
+da rota embaixo. O script lê o **mesmo** objeto que a console desenha e
+mostra só os seus namespaces.
+endif::[]
 
 == Evidência
 

@@ -1,0 +1,299 @@
+include::partial$numeros.adoc[]
+= {p-versoes}Uma API, duas versões
+:navtitle: {p-versoes}Uma API, duas versões
+
+**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~15 min** · **depois das partes {p-planos} e {p-negocio}**
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-02-planos.adoc[{p-planos}], que dá um plano a cada
+chave, e a xref:m1-05-negocio.adoc[{p-negocio}], que mostra o consumo por
+parceiro. Aqui as duas viram ferramenta de uma decisão que toda API um dia
+enfrenta: **lançar a v2 e aposentar a v1**.
+====
+
+Uma API não tem versão: tem **duas**, por um tempo. A v2 nasce, alguns
+parceiros a experimentam, todos são avisados, quem ficou para trás é
+encontrado -- e um dia a v1 deixa de responder. Cada um desses momentos
+costuma ser código, e-mail e planilha.
+
+Nesta parte, nenhum deles toca a aplicação. A imagem da `travels` é a mesma
+nas duas versões: **a versão é uma decisão da borda**. São seis passos, cada um
+um arquivo em `passos/versoes/`, e quase todos são do perfil Dev -- é ele quem
+publica a API.
+
+== 1. A v2 nasce ao lado, e nasce fechada
+
+O primeiro arquivo cria um `Service` `travels-v2` para as mesmas pods da
+`travels` e uma rota nova, `travels-versoes`, no mesmo hostname da API, com
+duas regras **com nome**:
+
+[source,yaml]
+----
+  rules:
+    - name: v1                          # /v1/travels -> /travels, no Service travels
+      matches: [{path: {type: PathPrefix, value: /v1}}]
+      filters: [{type: URLRewrite, ...}]
+    - name: v2                          # /v2/travels -> /travels, no Service travels-v2
+      matches: [{path: {type: PathPrefix, value: /v2}}]
+      filters:
+        - {type: URLRewrite, ...}
+        - {type: ResponseHeaderModifier, ... x-api-version: "2"}
+----
+
+A aplicação não sabe que tem versão: o `URLRewrite` tira o prefixo antes de
+entregar. E é **pelo nome da regra** que uma policy vai alcançar uma versão só,
+nos passos 3 e 6. A parte xref:extra-contextos.adoc[{p-contextos}] aprofunda esse
+mecanismo; aqui basta saber que a regra tem nome.
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/01-v2-ao-lado.yaml
+sleep 8
+for p in /travels /v1/travels /v2/travels; do
+  printf '%-12s %s\n' $p "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}$p?APIKEY={api_key_gold}")"
+done
+----
+
+[source,text]
+----
+/travels     200
+/v1/travels  403
+/v2/travels  403
+----
+
+[WARNING]
+.Erro esperado -- a rota nova nasce negada
+====
+Mesmo com a chave gold, as duas versões respondem `403` com a mensagem do
+Gateway: *"Access denied by default by the gateway operator"*. É o deny-all da
+parte xref:m1-01-fechada.adoc[{p-fechada}] fazendo o trabalho dele: **rota sem
+`AuthPolicy` própria não é publicada para ninguém**. Uma versão nova não
+nasce aberta por esquecimento.
+====
+
+== 2. A chave e os planos
+
+O segundo arquivo dá à rota nova o que a `/travels` já tem: a `AuthPolicy` da
+chave e o `PlanPolicy` dos planos, copiados e apontados para `travels-versoes`.
+Policy gruda na rota, não na aplicação -- a rota nova precisa das dela.
+
+[source,bash,role="execute perfil-dev"]
+----
+oc apply -f passos/versoes/02-chave-e-planos.yaml
+oc wait --for=condition=Enforced authpolicy/versoes-chave planpolicy/versoes-planos -n travel-agency --timeout=90s
+sleep 11
+----
+
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
+----
+for v in v1 v2; do printf "free na $v: "; for i in $(seq 8); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/$v/travels?APIKEY={api_key_free}"; done; echo; sleep 11; done
+curl -s -D - -o /dev/null "https://{api_host}/v2/travels?APIKEY={api_key_gold}" | grep -i x-api-version
+----
+
+[source,text]
+----
+free na v1: 200 200 200 429 429 429 429 429
+free na v2: 200 200 200 429 429 429 429 429
+x-api-version: 2
+----
+
+O plano vale nas duas versões, e só a v2 carrega o cabeçalho.
+
+[NOTE]
+====
+**Por que o plano vem junto.** Medido: só com a `AuthPolicy`, sem o
+`PlanPolicy`, a chave gold passou 14 de 14 na rota nova -- **a versão nova
+nasce sem limite** se ninguém lembrar do plano. O deny-all garante que ela não
+nasce aberta; o contrato comercial é preciso declarar.
+====
+
+== 3. A v2 em acesso antecipado
+
+Antes de abrir a v2 para todos, ela fica só para os planos pagos. A policy do
+terceiro arquivo aponta para a **regra** `v2`, e não para a rota:
+
+[source,yaml]
+----
+  targetRef: {kind: HTTPRoute, name: travels-versoes, sectionName: v2}
+  ...
+    authorization:
+      acesso-antecipado:
+        patternMatching:
+          patterns:
+            - predicate: 'auth.identity.metadata.labels["kuadrant.io/plan-id"] in ["gold", "silver"]'
+----
+
+[source,bash,role="execute perfil-dev"]
+----
+oc apply -f passos/versoes/03-v2-acesso-antecipado.yaml
+oc wait --for=condition=Enforced authpolicy/v2-acesso-antecipado -n travel-agency --timeout=90s
+sleep 11
+----
+
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
+----
+for k in gold:{api_key_gold} silver:{api_key_silver} free:{api_key_free}; do
+  printf '%-7s v1=%s v2=%s\n' ${k%%:*} "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v1/travels?APIKEY=${k#*:}")" "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v2/travels?APIKEY=${k#*:}")"
+done
+curl -s "https://{api_host}/v2/travels?APIKEY={api_key_free}"; echo
+----
+
+[source,text]
+----
+gold    v1=200 v2=200
+silver  v1=200 v2=200
+free    v1=200 v2=403
+{"error": "Forbidden", "message": "a v2 esta em acesso antecipado: so os planos gold e silver. Use /v1."}
+----
+
+[WARNING]
+.Recusa esperada -- o free ainda não entra na v2
+====
+O `403` é o resultado. A mensagem diz por quê e para onde ir: o parceiro não
+precisa abrir chamado para descobrir. Na regra `v2`, esta policy vale **no
+lugar** da policy da rota inteira -- por isso ela repete a chave, e quem chega
+sem chave continua recebendo `401`.
+====
+
+== 4. A v1 avisa que vai sair
+
+O quarto arquivo é a mesma rota, com três cabeçalhos a mais na regra `v1`.
+Eles são padrão da web, e um cliente bem escrito os registra:
+
+[cols="1,3"]
+|===
+| `Deprecation` | desde quando a versão está descontinuada (RFC 9745)
+| `Sunset` | quando ela deixa de responder (RFC 8594)
+| `Link` | para onde ir: `rel="successor-version"`
+|===
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/04-aviso-na-v1.yaml
+sleep 8
+curl -s -D - -o /dev/null "https://{api_host}/v1/travels?APIKEY={api_key_free}" | grep -i -E '^HTTP|^deprecation|^sunset|^link'
+----
+
+[source,text]
+----
+HTTP/2 200
+deprecation: @1767225600
+link: </v2/travels>; rel="successor-version"
+sunset: Wed, 30 Jun 2027 23:59:59 GMT
+----
+
+O aviso viaja **com cada resposta**. Ninguém depende de ler e-mail ou nota de
+versão para saber que a v1 tem data para acabar.
+
+== 5. Quem ainda depende da v1?
+
+Desligar uma versão é uma decisão que precisa de um número. A v1 vai para o
+Service `travels` e a v2 para o `travels-v2`, e a métrica do Gateway separa as
+duas -- por destino e por parceiro, pelo cabeçalho `x-partner` que a
+`AuthPolicy` injeta.
+
+Este passo é do perfil **Infra**: ele faz três parceiros chamarem as versões
+(acme só na v1, globex na v2, initech nas duas), e para isso lê as chaves --
+coisa que o Dev não faz.
+
+[source,bash,role="execute"]
+----
+bash scripts/uso-por-versao.sh trafego
+sleep 60
+bash scripts/uso-por-versao.sh
+----
+
+[source,text]
+----
+  respostas 2xx por parceiro nos ultimos 5m
+
+  parceiro                   v1     v2
+  free-acme                   6      0   ainda depende da v1
+  gold-globex                 0      6   ja esta na v2
+  silver-initech              6      6   migrando
+----
+
+**O que isso diz:** a acme é a conversa a ter antes da data do `Sunset`. A
+consulta é do seu terminal, e só enxerga os seus parceiros. Se aparecerem
+outros nomes na v1, são as chamadas a `/travels` das partes anteriores: a rota
+de sempre também vai ao Service `travels`, e quem ainda chama `/travels` não
+migrou.
+
+== 6. A v1 desligada -- e religada
+
+Chegou a data. O sexto arquivo aponta para a regra `v1` e **nega tudo**, com o
+código que diz "isto existiu e não existe mais": `410 Gone`.
+
+[source,yaml]
+----
+  targetRef: {kind: HTTPRoute, name: travels-versoes, sectionName: v1}
+  rules:
+    authorization:
+      desligada:
+        opa: {rego: allow = false}
+    response:
+      unauthorized:
+        code: 410
+        body:
+          value: '{"error": "Gone", "message": "a v1 foi desligada em 30/06/2027. Use /v2."}'
+----
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/06-desliga-a-v1.yaml
+oc wait --for=condition=Enforced authpolicy/v1-desligada -n travel-agency --timeout=90s
+sleep 11
+printf 'v1 sem chave %s | v1 gold %s | v2 gold %s | /travels gold %s\n' \
+  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v1/travels")" \
+  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v1/travels?APIKEY={api_key_gold}")" \
+  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v2/travels?APIKEY={api_key_gold}")" \
+  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/travels?APIKEY={api_key_gold}")"
+curl -s "https://{api_host}/v1/travels?APIKEY={api_key_gold}"; echo
+----
+
+[source,text]
+----
+v1 sem chave 410 | v1 gold 410 | v2 gold 200 | /travels gold 200
+{"error": "Gone", "message": "a v1 foi desligada em 30/06/2027. Use /v2."}
+----
+
+A policy não autentica ninguém: o desligamento vale para quem tem chave e para
+quem não tem. E desfazer é apagar a policy -- **a v1 volta em cerca de um
+segundo**, sem deploy nem rollback de código:
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc delete -f passos/versoes/06-desliga-a-v1.yaml
+sleep 2
+curl -s -o /dev/null -w 'v1 gold: %{http_code}\n' "https://{api_host}/v1/travels?APIKEY={api_key_gold}"
+----
+
+== Limpando
+
+[source,bash,role="execute perfil-dev"]
+----
+oc delete -f passos/versoes/ --ignore-not-found
+----
+
+A rota, as policies e o `Service` da v2 saem; a `/travels` de sempre fica como
+estava.
+
+== O que isso prova
+
+O ciclo de vida inteiro de uma versão -- nascer, ser experimentada, avisar,
+ser medida, ser desligada -- foram **seis objetos declarados**, nenhum na
+aplicação. Cada decisão tem dono e status, aparece no `oc get` e se desfaz
+apagando o objeto.
+
+[cols="1,2",options="header"]
+|===
+| decisão | objeto
+
+| a v2 existe | `HTTPRoute` com a regra `v2`
+| quem pode usá-la | `AuthPolicy` com `sectionName: v2`
+| quanto pode | `PlanPolicy` da rota
+| a v1 vai sair | três cabeçalhos na regra `v1`
+| quem ainda depende | a métrica que já existia, por destino
+| a v1 saiu | `AuthPolicy` com `sectionName: v1` e `code: 410`
+|===
