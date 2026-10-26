@@ -319,7 +319,8 @@ quatro telas, cada uma com o mesmo recado:
 
 | {openshift_console_url}/kuadrant/policy-topology/ns/travel-agency[Policy Topology^]
 | *Access Denied*, e a console diz o que falta: ler o `ConfigMap topology` de
-  `kuadrant-system`, o mapa da plataforma inteira
+  `kuadrant-system`, o mapa da plataforma inteira -- o mesmo que o seu perfil
+  Infra recebe, como você verá logo abaixo
 |===
 
 É a mesma regra do terminal, aplicada à tela: uma pessoa, dois papéis, e o
@@ -327,6 +328,89 @@ cluster decide o que cada um vê -- e a tela explica a recusa em vez de
 esconder o botão sem dizer por quê.
 
 Para voltar ao perfil Infra, saia e entre de novo com `{usuario_console}`.
+endif::[]
+
+ifeval::["{usuario_console_plataforma}" != ""]
+==== O terceiro login: a plataforma, só leitura
+
+Os dois perfis recortam o cluster por **projeto**: cada um vê os projetos
+dele, e o Infra vê mais que o Dev. Mas o Connectivity Link tem **um plano de
+controle por cluster** -- um operator, um Authorino, um Limitador para todos os
+Gateways --, e uma parte do que ele produz não mora no projeto de ninguém:
+
+[cols="2,3",options="header"]
+|===
+| o quê | por que não cabe no seu projeto
+
+| a Policy Topology
+| ela desenha um único objeto, o `ConfigMap topology` de `kuadrant-system`. O
+  RBAC concede um objeto inteiro ou nada: não existe "ler só as linhas do
+  user5". O filtro por namespace teria de vir do próprio plugin da console, e
+  ele não o tem
+
+| o `Limitador` e os `AuthConfig` gerados
+| o operator escreve em `kuadrant-system` o que derivou das policies de
+  **todos** -- um contador por plano de cada participante, um `AuthConfig` por
+  regra de cada rota
+
+| a tela de alertas do cluster
+| *Observe → Alerting* da administração mostra os alertas de todos os projetos
+  e os da plataforma; a sua regra você já vê no seu projeto (parte {p-alerta})
+|===
+
+Três saídas foram consideradas, e a escolha diz algo sobre como desenhar
+acesso em produção:
+
+* **Dar isso ao seu perfil Infra.** Era o que esta turma fazia. Funciona, mas
+  mistura "os meus projetos" com "o cluster de todos" -- o perfil deixa de
+  dizer, sozinho, o que a pessoa governa.
+* **O papel `cluster-reader` do OpenShift.** Ele não lê `Secret`, e parece
+  bastar. Não basta: lê a spec de todo `Deployment`, `Pod` e `ConfigMap` do
+  cluster, e credencial também mora ali. Neste cluster, medido antes de
+  decidir, havia segredo escrito em variável de ambiente do registro de
+  imagens e do Pipelines, e em `ConfigMap` do GitLab. "Só leitura" não é o
+  mesmo que "sem segredo".
+* **Um papel fechado, num login à parte.** É o escolhido:
+  `rhcl-plataforma-leitura` lista o que se lê, um tipo de objeto por vez -- os
+  objetos de Gateway API, de Connectivity Link e de Istio do cluster, e só
+  `kuadrant-system` por dentro. Ficam de fora `Secret`, log de pod (a chave de
+  API ainda viaja na URL), `exec`, `ConfigMap` (fora o `topology`) e qualquer
+  verbo de escrita.
+
+O login é `{usuario_console_plataforma}`, **o mesmo para a turma inteira** --
+a visão é a mesma para todos, e a senha está em todos os guias. Isso só é
+aceitável porque ele não escreve nada e não lê segredo. Em produção, no lugar
+de um login compartilhado, o papel iria para o **grupo** do time de
+plataforma no provedor de identidade.
+
+Saia (*Log out*), entre como `{usuario_console_plataforma}` e abra:
+
+[cols="2,3",options="header"]
+|===
+| tela | o que mostra
+
+| {openshift_console_url}/kuadrant/policy-topology/all-namespaces[Policy Topology^]
+| o mapa inteiro: os Gateways, as rotas e as policies da turma, e os
+  `AuthConfig` que ninguém escreveu à mão
+
+| {openshift_console_url}/k8s/ns/kuadrant-system/limitador.kuadrant.io{tilde}v1alpha1{tilde}Limitador/limitador/yaml[O Limitador^]
+| em `spec.limits`, um limite por plano de **cada** participante -- o que a
+  sua `PlanPolicy` virou, ao lado do que a dos colegas virou
+
+| {openshift_console_url}/k8s/ns/kuadrant-system/authorino.kuadrant.io{tilde}v1beta3{tilde}AuthConfig[Os AuthConfig^]
+| um por regra de cada rota, gerados pelo operator: é o que o Authorino
+  executa
+
+| {openshift_console_url}/k8s/ns/kuadrant-system/operators.coreos.com{tilde}v1alpha1{tilde}ClusterServiceVersion[Installed Operators^]
+| o Connectivity Link instalado uma vez, para todos
+
+| {openshift_console_url}/k8s/ns/kuadrant-system/secrets[Secrets^]
+| *Restricted access* -- nem a plataforma, por esta tela, lê as chaves
+|===
+
+Tente editar qualquer um deles: o editor de YAML abre só para leitura.
+
+Depois volte ao seu login, `{usuario_console}`.
 endif::[]
 
 endif::[]

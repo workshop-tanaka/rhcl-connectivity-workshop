@@ -21,6 +21,9 @@ ifeval::["{usuario_console_dev}" != ""]
 ====
 **Para entrar:** perfil Infra -- usuário `{usuario_console}` · senha `{senha_console}` +
 perfil Dev -- usuário `{usuario_console_dev}` · senha `{senha_console_dev}` +
+ifeval::["{usuario_console_plataforma}" != ""]
+Plataforma, só leitura e o mesmo para a turma -- usuário `{usuario_console_plataforma}` · senha `{senha_console_plataforma}` +
+endif::[]
 Para trocar de perfil: **Log out** e entre com o outro.
 ====
 endif::[]

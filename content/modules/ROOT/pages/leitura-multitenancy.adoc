@@ -138,7 +138,12 @@ Disso saem quatro consequências que vale conhecer antes de desenhar:
 * **A visão é uma só.** A tela de topologia de policies desenha o cluster
   inteiro; não há uma por time. Ela lê um único objeto, mantido pelo operator,
   e o acesso a ele é tudo ou nada -- o filtro por namespace teria de vir do
-  próprio plugin da console. Nesta turma você a vê com os Gateways dos colegas.
+  próprio plugin da console.
+ifeval::["{usuario_console_plataforma}" != ""]
+  Nesta turma ela abre com um login à parte, de quem opera a plataforma, só
+  leitura -- a parte xref:m1-04-papeis.adoc[{p-papeis}] mostra por que não com
+  o seu, e por que não com o `cluster-reader`.
+endif::[]
 * **As chaves de API moram, por padrão, num namespace comum.** O Authorino as
   procura no namespace dele, salvo com `allNamespaces: true` na policy.
 * **As métricas de consumo nascem na plataforma**, não no namespace de cada

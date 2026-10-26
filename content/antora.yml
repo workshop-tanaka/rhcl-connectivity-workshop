@@ -40,6 +40,10 @@ asciidoc:
     # para a pagina do pedido no RHDP, que e de onde ela vem de verdade.
     usuario_console: ''
     senha_console: ''
+    # o login Plataforma (so leitura, um para a turma): so existe no modo de
+    # turma, e o guia so fala dele com o atributo preenchido
+    usuario_console_plataforma: ''
+    senha_console_plataforma: ''
     usuario_persona: plat-eng
     senha_persona: ''
     keycloak_admin_user: ''

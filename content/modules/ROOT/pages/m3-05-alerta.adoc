@@ -195,6 +195,14 @@ plataforma (`monitoring/rhcl-protecao` e `kuadrant-system/rhcl-limitador`) são
 do instrutor -- `bash scripts/alerta.sh status` mostra as três, inclusive as
 que não são suas. É a mesma divisão da Policy Topology: o projeto é seu, a
 plataforma é de quem a opera.
+ifeval::["{usuario_console_plataforma}" != ""]
+
+Para ver essa tela, entre como **`{usuario_console_plataforma}`** (só leitura,
+a parte {p-papeis} explica esse login) e abra
+{openshift_console_url}/monitoring/alertrules[Observe → Alerting → Alerting rules^]:
+as regras da plataforma e as de todos os participantes, a sua entre elas.
+Ver, ela vê; silenciar ou editar, não.
+endif::[]
 ====
 endif::[]
 

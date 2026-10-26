@@ -54,6 +54,14 @@ trocar de perfil, **saia** (*Log out*, no canto superior direito) e entre com o
 outro: a sessão é uma por navegador.
 endif::[]
 
+ifeval::["{usuario_console_plataforma}" != ""]
+Há ainda um terceiro login, que não é um perfil seu: `{usuario_console_plataforma}`,
+**só leitura** e o mesmo para a turma inteira. É a visão de quem opera o
+Connectivity Link do cluster, e existe porque algumas telas não têm como ser
+recortadas por participante -- a parte {p-papeis} explica qual é o limite e
+por que ele é assim. O guia avisa quando uma tela pede esse login.
+endif::[]
+
 Todo bloco clicável diz de quem é, no título logo acima dele:
 
 [source,text]
@@ -276,9 +284,17 @@ endif::[]
 |===
 
 ifdef::perfis[]
+ifeval::["{usuario_console_plataforma}" != ""]
+NOTE: A **Policy Topology** é a visão do cluster inteiro e abre com o login
+`{usuario_console_plataforma}` (só leitura). Com o seu login ela responde
+*Access Denied* -- de propósito: a parte {p-precedencia} mostra o porquê e
+como recortar a sua parte no terminal.
+endif::[]
+ifeval::["{usuario_console_plataforma}" == ""]
 NOTE: A **Policy Topology** é a visão do cluster inteiro -- você vai ver os
 Gateways dos colegas também. A parte {p-precedencia} explica por quê, e mostra
 como recortar a sua parte.
+endif::[]
 endif::[]
 
 include::partial$entrar-grafana.adoc[]

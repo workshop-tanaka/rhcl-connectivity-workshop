@@ -113,6 +113,13 @@ endif::[]
 as rotas e as policies chegam tracejadas. **Não procure o vencedor aqui**: o
 grafo faz a pergunta, o status do terminal responde.
 
+ifeval::["{usuario_console_plataforma}" != ""]
+Esta tela abre com o login **`{usuario_console_plataforma}`** (só leitura, o
+mesmo para a turma): saia (*Log out*) e entre com ele. Com o seu login ela
+responde *Access Denied* -- o quadro logo abaixo diz por quê. As duas telas de
+status a seguir são do seu projeto: volte ao seu login para elas.
+endif::[]
+
 include::partial$entrar-ocp.adoc[]
 
 O status, a console também mostra -- em duas telas:
@@ -134,8 +141,15 @@ há **um operator por cluster**. Por isso você vê os Gateways e as rotas dos
 colegas, e também objetos que ninguém criou à mão, como os `AuthConfig` que o
 operator gera a partir de cada `AuthPolicy`. É a tela de quem **opera a
 plataforma**. O endereço com o seu projeto não filtra o desenho: o objeto que
-ela lê é um só, e o acesso a ele é tudo ou nada. Por isso o perfil Dev nem a
-abre.
+ela lê é um só, e o acesso a ele é tudo ou nada.
+ifeval::["{usuario_console_plataforma}" != ""]
+Por isso ela não abre com nenhum dos seus dois perfis, e sim com o login de
+quem opera a plataforma: dar o mapa ao seu perfil Infra misturaria "os meus
+projetos" com "o cluster de todos".
+endif::[]
+ifeval::["{usuario_console_plataforma}" == ""]
+Por isso o perfil Dev nem a abre.
+endif::[]
 
 Duas perguntas para fazer ao desenho:
 
