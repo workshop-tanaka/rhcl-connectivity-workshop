@@ -171,9 +171,32 @@ por você.
 
 == No console
 
+ifndef::perfis[]
 {openshift_console_url}/monitoring/alertrules[Observe → Alerting → Alerting rules^]
 -- as regras aparecem ali junto com as do cluster, e o alerta aceso aparece em
 *Alerts*.
+endif::[]
+ifdef::perfis[]
+{openshift_console_url}/dev-monitoring/ns/ingress-gateway/alerts[Observe → Alerts, no projeto do Gateway^]
+-- como `{usuario_console}` (perfil Infra). Na aba **Alerting rules** está a
+**sua** regra, `rhcl-parceiros` -- no projeto do Gateway, porque é lá que o
+`401` e o `429` acontecem: eles não chegam à aplicação --, com os dois alertas dela
+(`ParceiroBatendoNoLimite` e `ParceiroSendoRecusado`) -- se a lista vier
+vazia, clique em **Clear all filters**: a tela abre filtrando por estado, e as
+duas estão `inactive` enquanto a condição não acontece. Em **Alerts**, o que
+estiver aceso.
+
+[NOTE]
+====
+**A tela do cluster inteiro não é sua.** *Observe → Alerting* da
+administração responde *"You don't have access to this section due to cluster
+policy"*: ela mostra os alertas de todos e da plataforma. As duas regras da
+plataforma (`monitoring/rhcl-protecao` e `kuadrant-system/rhcl-limitador`) são
+do instrutor -- `bash scripts/alerta.sh status` mostra as três, inclusive as
+que não são suas. É a mesma divisão da Policy Topology: o projeto é seu, a
+plataforma é de quem a opera.
+====
+endif::[]
 
 include::partial$entrar-ocp.adoc[]
 
