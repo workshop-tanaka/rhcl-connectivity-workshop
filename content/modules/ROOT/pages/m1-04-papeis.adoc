@@ -401,8 +401,9 @@ Saia (*Log out*), entre como `{usuario_console_plataforma}` e abra:
 | em `spec.limits`, um limite por plano de **cada** participante -- o que a
   sua `PlanPolicy` virou, ao lado do que a dos colegas virou
 
-| {openshift_console_url}/k8s/ns/kuadrant-system/operators.coreos.com{tilde}v1alpha1{tilde}ClusterServiceVersion[Installed Operators^]
-| o Connectivity Link instalado uma vez, para todos
+| {openshift_console_url}/k8s/ns/kuadrant-system/kuadrant.io{tilde}v1beta1{tilde}Kuadrant/kuadrant[O Kuadrant^]
+| o recurso que liga o Connectivity Link: **um** por cluster, atendendo a
+  todos os Gateways. Em *Conditions*, o estado do plano de controle inteiro
 
 | {openshift_console_url}/k8s/ns/kuadrant-system/secrets[Secrets^]
 | *Restricted access* -- nem a plataforma, por esta tela, lê as chaves
