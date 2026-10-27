@@ -9,10 +9,10 @@ ifdef::foco_rhcl[]
 endif::[]
 
 ifndef::foco_rhcl[]
-**Leitura · ~10 min · não muda estado**
+**Leitura · ~20 min · não muda estado**
 endif::[]
 ifdef::foco_rhcl[]
-**Leitura, com comandos que só leem · ~10 min · não muda estado**
+**Leitura, com comandos que só leem · ~20 min · não muda estado**
 
 **Momento do projeto:** dia 0 · **Quem faz:** o time de plataforma
 endif::[]
@@ -25,7 +25,7 @@ comandos que só leem.
 Vale lê-la antes da xref:m1-06-exposta.adoc[parte {p-exposta}], em que você publica
 uma API do zero: lá fica claro o que é seu e o que a plataforma já entregava.
 
-== O caminho inteiro, em cinco passos
+== O caminho inteiro, em sete passos
 
 include::partial$diagrama.adoc[]
 
@@ -40,11 +40,18 @@ ifdef::foco_rhcl[]
 endif::[]
   B --> C["3. CR Kuadrant<br/>liga a plataforma"]
   C --> D["4. Gateway<br/>TLS e publicacao"]
-  D --> E["5. policies<br/>sobre o Gateway e as rotas"]
+  D --> E["5. HTTPRoute<br/>a primeira API"]
+  E --> F["6. RateLimitPolicy<br/>o teto do Gateway"]
+  F --> G["7. policies<br/>em camadas, por rota"]
 ....
 
 Nenhum passo instala nada **dentro** da aplicação. A travel-agency não sabe que
 o Connectivity Link existe.
+
+Cada passo abaixo mostra o YAML **como está neste cluster**, o que cada campo
+faz, e o comando que confere o objeto de verdade. Os valores que mudam de
+ambiente para ambiente (o domínio, o nome do seu namespace) já vêm com os
+seus.
 
 == 1. O Connectivity Link e um provedor de Gateway
 
@@ -119,10 +126,25 @@ e o passo 2 mostra como ele é ligado.
 
 endif::[]
 
-A instalação do Connectivity Link é uma `Subscription`:
+A instalação do Connectivity Link são três objetos: o namespace, o
+`OperatorGroup` e a `Subscription`. É o mesmo que o OperatorHub da console faz
+quando você clica em *Install*; aqui está o que ele cria.
 
 [source,yaml]
 ----
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kuadrant-system
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: kuadrant-system
+  namespace: kuadrant-system
+spec:
+  upgradeStrategy: Default
+---
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -136,28 +158,69 @@ spec:
   installPlanApproval: Automatic
 ----
 
-.Mais detalhes: o que cada campo da Subscription faz
+.Mais detalhes: o que cada campo faz
 [%collapsible]
 ====
 [source,yaml]
 ----
+kind: OperatorGroup
 spec:
-  name: rhcl-operator                     # <1>
-  source: redhat-operators                # <2>
+  upgradeStrategy: Default                # <1>
+  # (sem targetNamespaces)                # <2>
+---
+kind: Subscription
+spec:
+  name: rhcl-operator                     # <3>
+  source: redhat-operators                # <4>
   sourceNamespace: openshift-marketplace
-  channel: stable                         # <3>
-  installPlanApproval: Automatic          # <4>
+  channel: stable                         # <5>
+  installPlanApproval: Automatic          # <6>
 ----
 
-<1> **Qual pacote.** É o nome do operator no catálogo -- e um pacote só:
+<1> **Como o OLM atualiza.** `Default` só avança quando a versão instalada
+    está saudável; `TechPreviewUnsafeFailForward` segue mesmo com falha. Em
+    produção, `Default`.
+<2> **Para quais namespaces o operator olha.** Um `OperatorGroup` sem
+    `targetNamespaces` instala o operator em modo *all namespaces*: ele lê
+    policies em qualquer projeto do cluster. É o que esta plataforma precisa,
+    porque a sua `AuthPolicy` mora em `travel-agency`, não em
+    `kuadrant-system`. Um `OperatorGroup` restrito a um namespace deixaria a
+    sua policy sem ninguém para aplicá-la.
+<3> **Qual pacote.** É o nome do operator no catálogo -- e um pacote só:
     os outros três vêm como dependência dele.
-<2> **De qual catálogo.** O da Red Hat, publicado no OperatorHub do cluster.
-<3> **Qual trilha de versões.** O canal decide que versões a instalação
+<4> **De qual catálogo.** O da Red Hat, publicado no OperatorHub do cluster.
+<5> **Qual trilha de versões.** O canal decide que versões a instalação
     recebe; é o que determina, por exemplo, que esta instalação esteja na
     1.4.
-<4> **Quem aprova a atualização.** `Automatic` aplica as versões novas do
+<6> **Quem aprova a atualização.** `Automatic` aplica as versões novas do
     canal assim que chegam; `Manual` espera alguém aprovar o `InstallPlan`.
-    O esquema tem ainda `startingCSV`, para fixar a versão inicial.
+====
+
+.Outro caso de uso: e se eu quiser fixar a versão?
+[%collapsible]
+====
+Com `Automatic`, o cluster passa para a 1.5 no dia em que o canal a servir,
+sem janela de mudança. Um ambiente produtivo costuma fazer o contrário: fixar
+de onde parte e aprovar cada salto.
+
+[source,yaml]
+----
+spec:
+  channel: stable
+  installPlanApproval: Manual             # <1>
+  startingCSV: rhcl-operator.v1.4.3       # <2>
+----
+
+<1> Cada versão nova vira um `InstallPlan` esperando aprovação, e a
+    atualização passa a ser uma mudança agendada, com quem a aprovou.
+<2> A versão pela qual a instalação começa. Sem este campo, começa pela
+    mais recente do canal.
+
+Os `InstallPlan` são do time de plataforma -- quem opera o cluster os lista
+com `oc get installplan -n kuadrant-system` e aprova pela console, em
+*Operators › Installed Operators*. O que você consegue ver daqui é o
+resultado: a versão instalada de cada operator, que o comando do `csv` logo
+abaixo mostra e a xref:ambiente-conferir.adoc[conferência do ambiente] repete.
 ====
 
 Um pedido, quatro operators. Veja o que ela trouxe:
@@ -222,36 +285,117 @@ Sem essa classe, um `Gateway` declarado fica sem ninguém para atendê-lo.
 == 3. Um objeto liga a plataforma
 
 Com os operators de pé, nada acontece ainda. O que sobe o Authorino e o
-Limitador é um único objeto, o CR `Kuadrant`:
+Limitador é um único objeto, o CR `Kuadrant`. O mínimo que funciona é
+`spec: {}`; este ambiente toma quatro decisões nele:
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: kuadrant-system
+spec:
+  mtls:
+ifndef::foco_rhcl[]
+    enable: true
+endif::[]
+ifdef::foco_rhcl[]
+    enable: false
+endif::[]
+  components:
+    developerPortal:
+      enabled: true
+  observability:
+    tracing:
+      defaultEndpoint: rpc://otel-collector.tracing-system.svc.cluster.local:4317
+      insecure: true
+    dataPlane:
+      httpHeaderIdentifier: x-request-id
+      defaultLevels:
+        - debug: "true"
+----
+
+.Mais detalhes: o que cada campo faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  mtls:
+    enable: ...                                  # <1>
+  components:
+    developerPortal:
+      enabled: true                              # <2>
+  observability:
+    tracing:
+      defaultEndpoint: rpc://otel-collector...   # <3>
+      insecure: true                             # <4>
+    dataPlane:
+      httpHeaderIdentifier: x-request-id         # <5>
+      defaultLevels:
+        - debug: "true"                          # <6>
+----
+
+ifndef::foco_rhcl[]
+<1> **O canal entre o Gateway e o Connectivity Link.** `true` põe o
+    Authorino e o Limitador no Service Mesh, e o Gateway passa a falar com os
+    dois por mTLS. A xref:m2-04-canal.adoc[parte {p-canal}] mede esse salto.
+endif::[]
+ifdef::foco_rhcl[]
+<1> **O canal entre o Gateway e o Connectivity Link.** `false`: o Gateway
+    fala com o Authorino e o Limitador sem mTLS. Ligar o campo pede o Service
+    Mesh, que é quem dá identidade aos dois lados; sem ele, o canal fica
+    protegido só pelas regras de rede do cluster.
+endif::[]
+<2> **O portal do desenvolvedor.** Liga os tipos `APIProduct` e `APIKey` e
+    as telas de produtos de API na console. Desligado, as policies continuam
+    valendo; some a tela de pedir chave.
+<3> **Para onde vão os traces.** O endereço de um coletor OpenTelemetry, por
+    gRPC. O Gateway, o Authorino e o Limitador passam a mandar um span por
+    decisão; a parte xref:m3-03-negado.adoc[{p-negado}] é onde você os lê.
+<4> **Sem TLS até o coletor.** O coletor está no mesmo cluster, num namespace
+    da plataforma. Fora do cluster, ou com um coletor compartilhado, este
+    campo sai e entra um certificado.
+<5> **Qual header amarra os spans.** O valor de `x-request-id` vira o
+    identificador que liga o span do Gateway ao do Authorino e ao do
+    Limitador numa mesma requisição.
+<6> **Quanto o data plane conta.** Com `debug`, o módulo do Connectivity Link
+    dentro do Gateway abre o próprio span e aparece como raiz do trace. É o
+    nível deste laboratório, para a leitura ser completa; custa latência
+    (medido aqui: o p99 de 24 para 88 ms a 400 requisições por segundo), e em
+    produção fica no nível padrão.
+====
+
+.Outro caso de uso: e se eu não precisar de nada disso?
+[%collapsible]
+====
+O objeto mínimo é este, e sobe a mesma plataforma -- Authorino, Limitador e o
+operator prontos para as policies:
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: kuadrant-system
+spec: {}
+----
+
+Cada campo acima é uma decisão que pode vir depois, com uma exceção: o
+`mtls.enable` se liga **na criação** do ambiente. Ligá-lo com tráfego
+passando reinicia o Authorino e o Limitador (uma medição registrou cerca de
+8 segundos de `500` para todas as APIs; nenhuma requisição sem chave passou).
+====
+
+Quem instalou esperou o objeto ficar pronto antes de seguir -- e o comando
+que espera também só lê:
 
 [source,bash,role="execute"]
 ----
-oc get kuadrant kuadrant -n kuadrant-system -o jsonpath='{.spec}{"\n"}'
+oc wait kuadrant/kuadrant -n kuadrant-system --for=condition=Ready=true --timeout=60s
 ----
-
-Neste ambiente ele traz duas decisões:
-
-[cols="1,3",options="header"]
-|===
-| campo | o que faz
-
-ifndef::foco_rhcl[]
-| `mtls.enable: true`
-| põe o Authorino e o Limitador no Service Mesh, e o Gateway passa a falar
-  com os dois por mTLS. A xref:m2-04-canal.adoc[parte {p-canal}] mede esse salto
-endif::[]
-ifdef::foco_rhcl[]
-| `mtls.enable: false`
-| o Gateway fala com o Authorino e o Limitador **sem** mTLS. Ligar esse campo
-  pede o Service Mesh, que é quem dá identidade aos dois lados; sem ele, o
-  canal fica protegido apenas pelas regras de rede do cluster, sem identidade
-  nos dois lados
-endif::[]
-
-| `components.developerPortal.enabled: true`
-| liga o portal do desenvolvedor: os tipos `APIProduct` e `APIKey` e as telas
-  de produtos de API na console
-|===
 
 E os componentes que esse objeto fez nascer:
 
@@ -260,15 +404,6 @@ E os componentes que esse objeto fez nascer:
 oc get pods -n kuadrant-system
 ----
 
-ifndef::foco_rhcl[]
-[NOTE]
-====
-O `mtls.enable` é ligado **na criação** do ambiente, e não depois. Ligá-lo com
-tráfego passando reinicia o Authorino e o Limitador; uma medição registrou
-cerca de 8 segundos de `500` para todas as APIs. A falha foi fechada -- nenhuma
-requisição sem chave passou -- mas é uma janela que não precisa existir.
-====
-endif::[]
 ifdef::foco_rhcl[]
 [NOTE]
 ====
@@ -282,7 +417,138 @@ endif::[]
 
 == 4. O Gateway, o certificado e a publicação
 
-O `Gateway` é um objeto do Gateway API, da classe `istio`:
+O `Gateway` é um objeto do Gateway API, da classe `istio`. É o que o
+Connectivity Link governa, e é dele que a sua API vai pendurar a rota:
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: prod-web
+  namespace: ingress-gateway
+spec:
+  gatewayClassName: istio
+  infrastructure:
+    parametersRef:
+      group: ""
+      kind: ConfigMap
+      name: gateway-uma-replica
+  listeners:
+    - name: api
+      hostname: '*.{cluster_domain}'
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: api-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+----
+
+.Mais detalhes: o que cada campo faz
+[%collapsible]
+====
+[source,yaml,subs="attributes+"]
+----
+spec:
+  gatewayClassName: istio                 # <1>
+  infrastructure:
+    parametersRef:
+      kind: ConfigMap
+      name: gateway-uma-replica           # <2>
+  listeners:
+    - name: api                           # <3>
+      hostname: '*.{cluster_domain}'      # <4>
+      port: 443
+      protocol: HTTPS                     # <5>
+      tls:
+        mode: Terminate                   # <6>
+        certificateRefs:
+          - kind: Secret
+            name: api-tls                 # <7>
+      allowedRoutes:
+        namespaces:
+          from: All                       # <8>
+----
+
+<1> **Quem atende este Gateway.** A classe do passo 2. Sem uma classe aceita,
+    o objeto existe e nenhum pod nasce.
+<2> **Como o provedor dimensiona o Gateway.** Um `ConfigMap` com o que o
+    Istio deve mudar no Deployment e no autoscaler: aqui, **uma réplica
+    fixa**. É atalho de laboratório (ver
+    xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório]): a classe
+    sem este campo sobe o Gateway com autoscaler de 2 a 10 réplicas, e a
+    leitura de xref:leitura-parceiros.adoc[{p-parceiros}] diz por que isso
+    importa.
+<3> **O nome do listener.** É o que uma policy ou uma rota usam para mirar
+    **um** listener do Gateway, e não o Gateway inteiro (`sectionName`).
+<4> **Que nomes este listener aceita.** Um curinga: toda rota cujo hostname
+    caiba nele pode se anexar. Uma rota com hostname de fora do curinga é
+    recusada pelo Gateway, com o motivo no status dela.
+<5> **Porta e protocolo.** HTTPS na 443. Um Gateway pode ter vários
+    listeners -- um HTTP na 80 para redirecionar, um por domínio, um por
+    certificado.
+<6> **Onde o TLS termina.** `Terminate`: o Gateway abre a conexão, e é por
+    isso que ele consegue ler a chave de API e aplicar policies. O outro modo,
+    `Passthrough`, entrega os bytes cifrados ao serviço, e aí não há o que
+    governar na borda.
+<7> **Com que certificado.** Um `Secret` do tipo `kubernetes.io/tls` no
+    mesmo namespace. Aqui é o curinga que o cluster já tem; a parte
+    xref:m1-08-certificado.adoc[{p-certificado}] troca isto por um certificado
+    com dono, emitido por `TLSPolicy`.
+<8> **De quais namespaces aceitar rotas.** `All`: qualquer projeto pode
+    pendurar uma rota neste Gateway -- e é por isso que o Gateway nasce com
+    uma `AuthPolicy` que nega tudo (parte {p-fechada}). `Same` aceitaria só
+    rotas do próprio namespace; `Selector`, as dos namespaces com um rótulo.
+====
+
+.Outro caso de uso: e se o Gateway fosse só HTTP, para um nome exato?
+[%collapsible]
+====
+A forma mínima de um Gateway, como aparece nos guias de instalação: um
+listener HTTP, um hostname exato, sem certificado.
+
+[source,yaml]
+----
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: api-gateway
+  namespace: kuadrant-system
+spec:
+  gatewayClassName: openshift-default
+  listeners:
+    - name: http
+      hostname: "api.example.com"
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+----
+
+Três diferenças para o Gateway deste ambiente, e o que cada uma custa:
+
+* **`openshift-default`** é a classe que o próprio OpenShift oferece; neste
+  cluster as duas classes têm o mesmo controller, e o workshop usa a `istio`
+  para ficar igual ao que o Service Mesh daria. Com a `openshift-default`, o
+  resto desta página vale sem mudança.
+* **HTTP sem TLS** serve para um laboratório interno; a chave de API passa
+  em claro pela rede. Qualquer API com credencial pede o listener HTTPS.
+* **Um hostname exato** aceita uma rota só por nome. Cada API nova pede um
+  listener novo, ou o curinga.
+
+O namespace também é escolha: um Gateway em `kuadrant-system` fica junto
+da plataforma; em `ingress-gateway`, como aqui, fica com quem opera a borda,
+e as policies de Gateway ficam separadas das de aplicação por projeto.
+====
+
+Para ver o objeto como está, com o status:
 
 [source,bash,role="execute"]
 ----
@@ -310,10 +576,209 @@ oc get route -n ingress-gateway
 A xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API]
 explica por que os três convivem.
 
-== 5. As policies, em camadas
+== 5. A primeira API: uma HTTPRoute
 
-Só agora entram as policies -- e são elas que você exercita no workshop. Elas
-foram aplicadas em camadas, na ordem em que as partes as apresentam:
+Um Gateway sem rota não leva a lugar nenhum. A `HTTPRoute` é o objeto que
+liga um hostname e um caminho a um `Service`, e é dela que as policies de
+aplicação vão pendurar. Esta é a da travel-agency, a API que você vai
+governar:
+
+[source,yaml,subs="attributes+"]
+----
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: travel-agency
+  namespace: travel-agency
+  labels:
+    app: travels
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+      name: prod-web
+      namespace: ingress-gateway
+  hostnames:
+    - {api_host}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: travels
+          port: 8000
+----
+
+.Mais detalhes: o que cada campo faz
+[%collapsible]
+====
+[source,yaml,subs="attributes+"]
+----
+spec:
+  parentRefs:
+    - kind: Gateway
+      name: prod-web
+      namespace: ingress-gateway          # <1>
+  hostnames:
+    - {api_host}                          # <2>
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /                      # <3>
+      backendRefs:
+        - name: travels
+          port: 8000                      # <4>
+----
+
+<1> **De qual Gateway a rota pende.** O Gateway está em outro namespace, e é
+    o `allowedRoutes: from: All` dele que permite isto. A rota pode listar
+    mais de um pai; e pode mirar um listener só, com `sectionName: api`.
+<2> **Qual nome ela atende.** Tem de caber no curinga do listener; um rótulo
+    só (`api-travels`), pelo motivo da terceira lição no fim desta página. A
+    mesma rota pode atender vários nomes.
+<3> **Que caminhos.** Tudo. É a regra mais simples; a parte
+    xref:versoes.adoc[{p-versoes}] quebra isto em `/v1`, `/v2` e um endereço
+    sem versão, cada um com o próprio destino.
+<4> **Para onde vai.** O `Service` no mesmo namespace da rota, pela porta do
+    Service (não a do pod). O Gateway resolve os endpoints; a aplicação não
+    muda nada para ser publicada.
+====
+
+.Outro caso de uso: e se houver duas versões atrás da mesma rota?
+[%collapsible]
+====
+Dois `backendRefs` na mesma regra, com peso, dividem o tráfego sem mexer na
+aplicação nem no cliente:
+
+[source,yaml]
+----
+rules:
+  - matches:
+      - path: {type: PathPrefix, value: /}
+    backendRefs:
+      - name: travels
+        port: 8000
+        weight: 80
+      - name: travels-v2
+        port: 8000
+        weight: 20
+----
+
+É assim que a parte xref:versoes.adoc[{p-versoes}] promove a v2: o peso vai de
+`80/20` a `0/100`, e o Grafana mostra o rollout. Medido aqui: `80/20`
+declarado deu `76/24` em 200 chamadas; é distribuição, não cota.
+====
+
+Confira a sua, e o status que o Gateway lhe deu:
+
+[source,bash,role="execute"]
+----
+oc get httproute -n travel-agency
+oc get httproute travel-agency -n travel-agency -o jsonpath='{range .status.parents[*].conditions[*]}{.type}={.status} {end}{"\n"}'
+----
+
+`Accepted=True` diz que o Gateway aceitou a rota; `ResolvedRefs=True`, que
+o `Service` existe. Os dois juntos são a rota no ar.
+
+== 6. Uma policy no Gateway: o teto
+
+A primeira policy do Connectivity Link neste ambiente não é a da sua API: é
+uma `RateLimitPolicy` sobre o Gateway, que vale para **toda** rota pendurada
+nele. É o teto que protege a plataforma que a turma divide:
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1
+kind: RateLimitPolicy
+metadata:
+  name: ingress-gateway-rlp-lowlimits
+  namespace: ingress-gateway
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: prod-web
+  limits:
+    default-limits:
+      rates:
+        - limit: 50
+          window: 10s
+----
+
+.Mais detalhes: o que cada campo faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef:
+    kind: Gateway
+    name: prod-web                        # <1>
+  limits:
+    default-limits:                       # <2>
+      rates:
+        - limit: 50
+          window: 10s                     # <3>
+----
+
+<1> **Sobre o quê.** Um `Gateway`: a policy vale para todas as rotas dele,
+    as de hoje e as que vierem. Mirando uma `HTTPRoute`, valeria só para
+    ela; a parte xref:m1-03-precedencia.adoc[{p-precedencia}] mostra o que
+    acontece quando as duas existem.
+<2> **O nome do limite.** Livre; identifica o limite dentro da policy. Uma
+    policy pode ter vários, cada um com a própria condição (`when`) e o
+    próprio contador (`counters`). Na métrica do Limitador o que aparece é a
+    policy (`limitador_namespace`) e as variáveis do contador, como o `plan`
+    da parte {p-negocio}.
+<3> **Quanto, em quanto tempo.** 50 requisições por janela de 10 segundos,
+    contadas para o Gateway inteiro -- sem `counters`, não há separação por
+    chave ou por rota. É o teto de 5 requisições por segundo que o
+    dimensionamento desta plataforma assume por participante.
+====
+
+.Outro caso de uso: e se o teto do Gateway tivesse de ganhar das rotas?
+[%collapsible]
+====
+`limits` direto no `spec` é o mesmo que `defaults.limits`: a policy da rota,
+quando existe, **substitui** a do Gateway. O `PlanPolicy` da sua API (parte
+{p-planos}) é quem manda na travel-agency, e este teto fica para as rotas sem
+policy própria.
+
+Para um limite de plataforma que nenhuma rota consiga afrouxar, a palavra é
+`overrides`:
+
+[source,yaml]
+----
+spec:
+  targetRef: {group: gateway.networking.k8s.io, kind: Gateway, name: prod-web}
+  overrides:
+    limits:
+      global-limit:
+        rates:
+          - limit: 1000
+            window: 1m
+----
+
+Com `overrides`, a policy da rota é ignorada e o status dela diz isso
+(`Overridden`). É a mesma mecânica que a parte
+xref:m1-03-precedencia.adoc[{p-precedencia}] mostra com a `AuthPolicy`.
+====
+
+Veja a policy e o status dela -- `Enforced=True` é o operator dizendo que
+programou o Gateway:
+
+[source,bash,role="execute"]
+----
+oc get ratelimitpolicy -n ingress-gateway
+----
+
+== 7. As policies, em camadas
+
+Só agora entram as policies da sua API -- e são elas que você exercita no
+workshop. Elas foram aplicadas em camadas, na ordem em que as partes as
+apresentam:
 
 [cols="1,2,2",options="header"]
 |===
