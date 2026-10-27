@@ -47,6 +47,54 @@ entregar. E é **pelo nome da regra** que uma policy vai alcançar uma versão s
 nos passos 3 e 6. A parte xref:extra-contextos.adoc[{p-contextos}] aprofunda esse
 mecanismo; aqui basta saber que a regra tem nome.
 
+.Mais detalhes: o que cada campo novo da HTTPRoute faz
+[%collapsible]
+====
+A rota tem a mesma forma da parte xref:m1-06-exposta.adoc[{p-exposta}]
+(`parentRefs`, `hostnames`, `backendRefs`). O que é novo:
+
+[source,yaml]
+----
+kind: Service
+metadata: {name: travels-v2, labels: {app: travels, versao: v2}}
+spec:
+  selector: {app: travels}                                  # <1>
+---
+kind: HTTPRoute
+spec:
+  rules:
+    - name: v1                                              # <2>
+      matches: [{path: {type: PathPrefix, value: /v1}}]     # <3>
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path: {type: ReplacePrefixMatch, replacePrefixMatch: /}   # <4>
+      backendRefs: [{name: travels, port: 8000}]
+    - name: v2
+      matches: [{path: {type: PathPrefix, value: /v2}}]
+      filters:
+        - {type: URLRewrite, ...}
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            set: [{name: x-api-version, value: "2"}]        # <5>
+      backendRefs: [{name: travels-v2, port: 8000}]
+----
+
+<1> **Um segundo `Service` para as mesmas pods.** O seletor é o mesmo da
+    `travels`; o que muda é o nome -- e é por nome de destino que a métrica
+    do Gateway separa as versões no passo 5.
+<2> **A regra tem nome.** É o `name` que uma policy aponta com
+    `sectionName`, nos passos 3 e 6.
+<3> **O que casa.** `PathPrefix` casa por elemento de caminho: `/v1` e
+    `/v1/travels`, mas não `/v10`.
+<4> **A reescrita.** `ReplacePrefixMatch` troca só o trecho que casou: com
+    prefixo `/v1` e substituto `/`, `/v1/travels` vira `/travels` antes de
+    chegar à aplicação. Só funciona com `PathPrefix`; a outra opção do campo
+    é `ReplaceFullPath`.
+<5> **Um cabeçalho na resposta.** `set` escreve o valor (substituindo se já
+    houver); o esquema tem também `add` e `remove`.
+====
+
 [source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 oc apply -f passos/versoes/01-v2-ao-lado.yaml
@@ -158,6 +206,44 @@ lugar** da policy da rota inteira -- por isso ela repete a chave, e quem chega
 sem chave continua recebendo `401`.
 ====
 
+.Mais detalhes: o que cada campo da AuthPolicy da regra faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef:
+    kind: HTTPRoute
+    name: travels-versoes
+    sectionName: v2                                            # <1>
+  rules:
+    authentication:
+      chave: {apiKey: ..., credentials: ...}                   # <2>
+    authorization:
+      acesso-antecipado:
+        patternMatching:
+          patterns:
+            - predicate: 'auth.identity.metadata.labels["kuadrant.io/plan-id"] in ["gold", "silver"]'   # <3>
+    response:
+      unauthorized:
+        headers: {content-type: {value: application/json}}
+        body: {value: '{"error": "Forbidden", "message": "..."}'}   # <4>
+----
+
+<1> **Uma regra, não a rota.** Para uma `HTTPRoute`, `sectionName` é o nome
+    de uma regra; se não existir uma regra com esse nome, a policy não se
+    prende e o status diz.
+<2> **A autenticação repetida.** Na regra, esta policy vale **no lugar** da
+    policy da rota -- não por cima dela. Sem este bloco, a regra `v2` ficaria
+    sem autenticação nenhuma.
+<3> **A regra de autorização.** Uma expressão sobre a identidade que a
+    autenticação resolveu: o rótulo de plano do `Secret`. Quem não casa recebe
+    a recusa de <4>. `patternMatching` é uma das formas do esquema; o passo 6
+    usa outra, `opa`.
+<4> **A recusa com explicação.** Corpo e cabeçalhos da resposta de
+    autorização negada; o código, quando não se diz, é `403`.
+====
+
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** as policies da aplicação, agora com a da regra `v2` --
 Connectivity Link → Policies, no projeto {openshift_console_url}/kuadrant/policies/ns/travel-agency[`travel-agency`^]
@@ -205,6 +291,31 @@ sunset: Wed, 30 Jun 2027 23:59:59 GMT
 
 O aviso viaja **com cada resposta**. Ninguém depende de ler e-mail ou nota de
 versão para saber que a v1 tem data para acabar.
+
+.Mais detalhes: o que cada campo novo da regra v1 faz
+[%collapsible]
+====
+[source,yaml]
+----
+    - name: v1
+      filters:
+        - {type: URLRewrite, ...}
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            set:
+              - {name: Deprecation, value: "@1767225600"}                 # <1>
+              - {name: Sunset, value: "Wed, 30 Jun 2027 23:59:59 GMT"}    # <2>
+              - {name: Link, value: '</v2/travels>; rel="successor-version"'}   # <3>
+----
+
+<1> **Desde quando está descontinuada.** O formato é o da RFC 9745: `@` e os
+    segundos desde 1970.
+<2> **Quando deixa de responder**, em data HTTP (RFC 8594).
+<3> **Para onde ir**, com a relação que diz "versão sucessora".
+
+É o mesmo filtro do cabeçalho `x-api-version` do passo 1, com três entradas
+em `set`. Os valores são texto: a rota não calcula datas, só as devolve.
+====
 
 == 5. Quem ainda depende da v1?
 
@@ -298,6 +409,34 @@ oc delete -f passos/versoes/06-desliga-a-v1.yaml
 sleep 2
 curl -s -o /dev/null -w 'v1 gold: %{http_code}\n' "https://{api_host}/v1/travels?APIKEY={api_key_gold}"
 ----
+
+.Mais detalhes: o que cada campo da policy de desligamento faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef: {kind: HTTPRoute, name: travels-versoes, sectionName: v1}   # <1>
+  rules:
+    authorization:
+      desligada:
+        opa: {rego: allow = false}                                       # <2>
+    response:
+      unauthorized:
+        code: 410                                                        # <3>
+        headers: {content-type: {value: application/json}}
+        body: {value: '{"error": "Gone", ...}'}
+----
+
+<1> **Só a regra `v1`.** A `v2` e a `/travels` de sempre não são tocadas --
+    o bloco acima mostrou as duas com `200`.
+<2> **Nega tudo.** Uma regra em Rego cujo `allow` é sempre falso. Como não há
+    bloco `authentication`, não se pergunta quem é: com chave ou sem chave, a
+    resposta é a mesma.
+<3> **O código da recusa.** Sem este campo seria `403`; `410 Gone` é o que
+    diz "existiu e não existe mais". Corpo e cabeçalhos completam a mensagem,
+    como no passo 3.
+====
 
 == 7. Um endereço sem versão
 
@@ -419,6 +558,36 @@ inteira. E o redirect leva a chave junto, no `Location` -- mais um motivo para
 ela sair da URL (ver xref:ambiente-atalhos.adoc[O que aqui é atalho de
 laboratório]).
 
+.Mais detalhes: o que cada campo do redirect faz
+[%collapsible]
+====
+A regra `atual` dos arquivos 7 e 8 é uma reescrita como a do passo 1, só
+que para `/`; o arquivo 9 a troca por um redirect:
+
+[source,yaml]
+----
+    - name: atual
+      matches: [{path: {type: PathPrefix, value: /atual}}]
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            statusCode: 302                                           # <1>
+            path: {type: ReplacePrefixMatch, replacePrefixMatch: /v2}   # <2>
+----
+
+<1> **Temporário ou permanente.** O esquema aceita `301` e `302`. `301` diz
+    ao cliente que pode guardar o endereço novo; `302`, que pergunte de novo
+    da próxima vez -- por isso é o que serve para uma migração que ainda pode
+    voltar.
+<2> **O que vai no `Location`.** A mesma troca de prefixo da reescrita:
+    `/atual/travels` vira `/v2/travels`. Quando `hostname`, `scheme` e `port`
+    não são ditos, saem da própria requisição -- foi assim que o `Location`
+    medido acima veio com o hostname da API.
+
+Uma regra de redirect não tem `backendRefs`: ninguém atende a chamada, o
+Gateway só responde.
+====
+
 == 8. Uma versão só para um parceiro
 
 Às vezes a v2 não é para um plano, é para **um** parceiro: o que pediu a
@@ -495,6 +664,42 @@ não pode: a liberação é de **uma chave**. Para liberar a própria `/v2` a um
 parceiro só, o caminho é o mesmo -- trocar, na policy do passo 3, o predicado
 de plano pelo nome da chave.
 
+.Mais detalhes: o que cada campo novo faz
+[%collapsible]
+====
+[source,yaml]
+----
+    - name: atual-v2
+      matches:
+        - path: {type: PathPrefix, value: /atual}
+          headers: [{name: x-api-version, value: "2"}]   # <1>
+      backendRefs: [{name: travels-v2, port: 8000}]
+    - name: atual
+      matches: [{path: {type: PathPrefix, value: /atual}}]   # <2>
+      backendRefs: [{name: travels, port: 8000}]
+---
+kind: AuthPolicy
+spec:
+  targetRef: {kind: HTTPRoute, name: travels-versoes, sectionName: atual-v2}
+  rules:
+    authorization:
+      so-um-parceiro:
+        patternMatching:
+          patterns:
+            - predicate: 'auth.identity.metadata.name == "apikey-teste-gold"'   # <3>
+----
+
+<1> **Caminho e cabeçalho, os dois.** O nome do cabeçalho não distingue
+    maiúsculas; o valor, sem `type`, é comparado exato (a outra opção é
+    `RegularExpression`).
+<2> **A mesma `/atual`, sem cabeçalho.** Duas regras casam a chamada com
+    cabeçalho; vence a mais específica -- a que tem a condição a mais. Foi o
+    que o bloco do arquivo 10 mostrou: com o cabeçalho, a v2.
+<3> **A chave, não o plano.** O nome do `Secret` da chave, como a
+    autenticação o resolveu. Numa turma o nome carrega o seu sufixo, e o
+    arquivo já vem com ele.
+====
+
 .Para ir além: a borda escolhe a versão pela identidade
 [%collapsible]
 ====
@@ -550,6 +755,32 @@ sleep 11; printf '100:    '; conta
 ----
 100:        20 v2
 ----
+
+.Mais detalhes: o que cada campo dos destinos com peso faz
+[%collapsible]
+====
+[source,yaml]
+----
+    - name: atual
+      backendRefs:
+        - name: travels
+          port: 8000
+          weight: 0                                              # <1>
+          filters: [{type: ResponseHeaderModifier, ... "1"}]     # <2>
+        - name: travels-v2
+          port: 8000
+          weight: 100
+          filters: [{type: ResponseHeaderModifier, ... "2"}]
+----
+
+<1> **A proporção, não a porcentagem.** Cada destino recebe
+    `peso / soma dos pesos`: 50 e 50 é metade; 0 e 100 é tudo num só; 1 e 3
+    daria um quarto. Sem o campo, o peso é 1. Peso `0` deixa o destino
+    declarado e sem tráfego -- é o que torna a volta uma troca de dois
+    números.
+<2> **Um filtro por destino.** É o que marca cada resposta com a versão que
+    a atendeu; o filtro da regra, acima dele, vale para todos os destinos.
+====
 
 ifeval::["{grafana_url}" != ""]
 **No Grafana:** o rollout visto pelo Gateway -- painéis **Versões · Respostas

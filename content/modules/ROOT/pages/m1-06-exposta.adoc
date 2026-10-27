@@ -71,6 +71,42 @@ oc rollout status deploy/echo -n echo-exposta --timeout=120s
 deployment "echo" successfully rolled out
 ----
 
+.Mais detalhes: o que há no arquivo da aplicação -- e o que não há
+[%collapsible]
+====
+Três objetos comuns do Kubernetes, sem nada do Connectivity Link:
+
+[source,yaml]
+----
+kind: ConfigMap
+data:
+  index.html: '{"servico":"echo-exposta", ...}'   # <1>
+---
+kind: Deployment
+spec:
+  template:
+    spec:
+      containers:
+        - image: registry.access.redhat.com/ubi9/httpd-24:latest  # <2>
+          ports: [{name: http, containerPort: 8080}]
+---
+kind: Service
+spec:
+  selector: {app: echo}
+  ports: [{name: http, port: 8000, targetPort: 8080}]      # <3>
+----
+
+<1> **A resposta da API.** Um arquivo estático servido por um `httpd`: a
+    "aplicação" é só o suficiente para responder `200`.
+<2> **Uma imagem de prateleira**, sem código seu. É de propósito: nada do que
+    vem nos passos seguintes vai exigir mudar esta imagem.
+<3> **A porta que a rota vai apontar.** O `Service` expõe `8000` e entrega em
+    `8080` no contêiner; a `HTTPRoute` do passo 3 fala em `port: 8000`.
+
+Repare no que não existe: nenhuma anotação de ingresso, nenhum segredo,
+nenhuma referência a chave, plano ou certificado.
+====
+
 == Passo 2 -- a `Route` que você já sabe usar
 
 O caminho que quase todo serviço segue: publica uma `Route`, e está no ar.
@@ -95,6 +131,31 @@ hostname, TLS e destino num objeto só. Não há onde a plataforma pendurar uma
 regra, nem um segundo dono para a porta -- é a diferença que a
 xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] descreve.
 
+.Mais detalhes: o que cada campo da Route faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  to: {kind: Service, name: echo}   # <1>
+  port: {targetPort: http}          # <2>
+  tls: {termination: edge}          # <3>
+----
+
+<1> **O destino.** Um `Service` do mesmo namespace; a `Route` não sabe de
+    Gateway nenhum.
+<2> **Qual porta do Service**, pelo nome (`http`, a de `8000` do passo 1).
+<3> **Onde o TLS termina.** `edge`: o router do OpenShift abre o TLS e fala
+    HTTP com o pod. As outras opções do campo são `passthrough` (o router não
+    abre nada; é o que o passo 4 usa) e `reencrypt` (abre e cifra de novo até
+    o pod).
+
+Não há `host`: o router inventa um
+(`echo-solto-echo-exposta.<domínio>`), e é esse que o `curl` acima leu do
+objeto. Tudo o que a `Route` decide cabe nessas três linhas -- e é por isso
+que não há onde a plataforma pendurar uma regra.
+====
+
 == Passo 3 -- a mesma API, pela porta da plataforma
 
 Agora uma `HTTPRoute`, presa ao Gateway `prod-web`. Abra o arquivo e repare no
@@ -107,6 +168,36 @@ oc apply -f passos/exposta/03-httproute.yaml
 
 A rota existe, mas o hostname novo ainda não chega até o Gateway. Falta quem
 cuida da plataforma publicá-lo.
+
+.Mais detalhes: o que cada campo da HTTPRoute faz
+[%collapsible]
+====
+[source,yaml,subs="attributes+"]
+----
+spec:
+  parentRefs:
+    - {name: prod-web, namespace: ingress-gateway}   # <1>
+  hostnames:
+    - echo-exposta.{cluster_domain}                  # <2>
+  rules:
+    - backendRefs:
+        - {name: echo, port: 8000}                   # <3>
+----
+
+<1> **A quem a rota se prende.** O Gateway mora em outro namespace, o da
+    plataforma; a rota mora no da aplicação. Quem decide se uma rota de fora
+    pode se prender é o listener do Gateway (`allowedRoutes`), que a parte
+    xref:m1-04-papeis.adoc[{p-papeis}] leu.
+<2> **O nome pelo qual a rota responde.** Precisa caber no hostname do
+    listener (aqui, um curinga `*.{cluster_domain}`); fora dele, a rota não
+    se prende.
+<3> **Para onde vai.** O `Service` do passo 1 e a porta que ele expõe. Uma
+    regra sem `matches` casa qualquer caminho.
+
+O que não está aqui: nenhum filtro, nenhuma regra de acesso. A rota só diz
+*de onde* e *para onde*; quem entra e quanto pode são policies, nos passos 5
+e 6 -- e é por isso que elas podem ter outro dono.
+====
 
 == Passo 4 -- a plataforma publica o hostname
 
@@ -145,6 +236,40 @@ alcançar uma rota recém-criada: medido neste ambiente, a primeira chamada logo
 depois do `apply` passou, e a seguinte, três segundos depois, já foi negada.
 Vale guardar: uma rota nova fica **aberta por alguns segundos**, e quem publica
 algo sensível espera o `403` antes de divulgar o endereço.
+====
+
+.Mais detalhes: o que cada campo da Route de publicação faz
+[%collapsible]
+====
+[source,yaml,subs="attributes+"]
+----
+metadata:
+  name: echo-exposta-gateway
+  namespace: ingress-gateway                   # <1>
+spec:
+  host: echo-exposta.{cluster_domain}          # <2>
+  to: {kind: Service, name: prod-web-istio}    # <3>
+  port: {targetPort: 443}
+  tls: {termination: passthrough}              # <4>
+----
+
+<1> **O namespace do Gateway**, não o da aplicação: por isso é um arquivo de
+    outro dono.
+<2> **O mesmo hostname da `HTTPRoute`.** O router só encaminha o que tem
+    `Route`; sem esta linha o nome existe no Gateway e responde `503` de
+    fora -- o que o `sleep` espera é o router aprender este `host`.
+<3> **O destino é o Gateway**, pelo `Service` que o provedor criou para ele
+    (`<gateway>-istio`), e não a aplicação. A aplicação continua atrás do
+    Gateway.
+<4> **`passthrough`**: o router não abre o TLS. Quem termina a conexão é o
+    Gateway, com o certificado dele -- o que a parte
+    xref:m1-08-certificado.adoc[{p-certificado}] examinou. É o que permite
+    o Gateway ver o `APIKEY` da requisição e aplicar as policies.
+
+Num cluster com balanceador próprio para o Gateway, este passo não existe: o
+hostname aponta direto para ele. Aqui ele existe porque o Gateway recebe o
+tráfego pelo router do OpenShift (ver
+xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório]).
 ====
 
 == Passo 5 -- uma chave, e a policy que a aceita nesta rota
@@ -188,6 +313,81 @@ prevalece. A parte xref:m1-03-precedencia.adoc[{p-precedencia}] mostrou isso
 numa policy que outra pessoa escreveu; aqui o `overridden` tem o nome da que
 **você** acabou de criar.
 
+.Mais detalhes: o que cada campo do Secret e da AuthPolicy faz
+[%collapsible]
+====
+A `AuthPolicy` é a mesma forma da parte xref:m1-01-fechada.adoc[{p-fechada}]
+(o "Mais detalhes" de lá explica `targetRef`, `selector` e `credentials`). O
+que é novo aqui é a **chave**, e uma decisão na policy:
+
+[source,yaml]
+----
+kind: Secret
+metadata:
+  name: apikey-echo-exposta
+  labels:
+    authorino.kuadrant.io/managed-by: authorino   # <1>
+    app: echo-exposta                             # <2>
+    kuadrant.io/plan-id: experimental             # <3>
+  annotations:
+    secret.kuadrant.io/user-id: "quem-testou"     # <4>
+stringData:
+  api_key: ...                                    # <5>
+---
+kind: AuthPolicy
+spec:
+  targetRef: {kind: HTTPRoute, name: echo-exposta}
+  rules:
+    authentication:
+      api-key-authn:
+        apiKey:
+          allNamespaces: true                     # <6>
+          selector: {matchLabels: {app: echo-exposta}}
+        credentials: {queryString: {name: APIKEY}}
+----
+
+<1> **O rótulo que faz do `Secret` uma credencial.** É por ele que o Authorino
+    sabe que deve observar este objeto.
+<2> **O rótulo que o `selector` da policy procura.** É o contrato entre a
+    chave e a rota: um `Secret` com este rótulo vale para esta API, e só.
+<3> **O plano**, que o passo 6 vai ler. A chave carrega o plano; a policy do
+    plano só decide o que cada plano pode.
+<4> **Um nome legível para a chave.** A policy pode levá-lo às métricas, como
+    o `x-partner` da parte xref:m1-05-negocio.adoc[{p-negocio}] faz.
+<5> **A credencial em si.** `stringData` aceita o valor em texto; o cluster o
+    guarda em base64. É o que o `oc get secret ... | base64 -d` do bloco
+    acima leu.
+<6> **`allNamespaces: true`**, porque a chave mora no namespace da API, e não
+    no do Authorino. O preço: um `Secret` com o rótulo <2>, em qualquer
+    namespace, valeria como chave. Quem fecha isso é a plataforma -- numa
+    turma, uma regra de admissão impede que o rótulo de um participante sirva
+    a outro; num projeto, o RBAC sobre quem cria `Secret`.
+====
+
+.Outro caso de uso: e se a chave vier no cabeçalho?
+[%collapsible]
+====
+A query string é o atalho deste laboratório (ver
+xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório]). O campo
+`credentials` aceita outros lugares -- muda o bloco, não a policy:
+
+[source,yaml]
+----
+credentials:
+  authorizationHeader: {prefix: APIKEY}   # Authorization: APIKEY <chave>
+----
+
+[source,yaml]
+----
+credentials:
+  customHeader: {name: X-API-Key}         # X-API-Key: <chave>
+----
+
+O esquema também aceita `cookie`. O resto -- o `Secret`, o `selector`, o
+plano -- não muda. Não medido neste ambiente; a troca do guia inteiro para o
+cabeçalho está prevista.
+====
+
 == Passo 6 -- quem entra está resolvido; falta quanto pode
 
 Uma `PlanPolicy` com um plano `experimental`, de 3 chamadas a cada 10 segundos.
@@ -213,6 +413,41 @@ escreveu, preso à sua rota.
 
 Se vierem seis `200`, espere dez segundos e repita o laço: a janela é de 10 s
 e o limite pode levar alguns segundos a mais para chegar ao Gateway.
+
+.Mais detalhes: o que cada campo da PlanPolicy faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef: {kind: HTTPRoute, name: echo-exposta}   # <1>
+  plans:
+    - tier: experimental                              # <2>
+      predicate: '... == "experimental"'              # <3>
+      limits:
+        daily: 500                                    # <4>
+        custom:
+          - limit: 3
+            window: 10s                               # <5>
+----
+
+<1> **A sua rota**, como na `AuthPolicy`. O plano vale para o que entra por
+    ela.
+<2> **O nome do plano.** É o `tier`, e é ele que aparece como `plan` nas
+    métricas da parte xref:m1-05-negocio.adoc[{p-negocio}].
+<3> **Quem está neste plano.** Uma expressão sobre a identidade que a
+    `AuthPolicy` resolveu -- aqui, o rótulo `kuadrant.io/plan-id` do
+    `Secret` (ou a anotação equivalente, que o portal do desenvolvedor usa).
+    A identidade cai no **primeiro** plano da lista que casa.
+<4> **A cota do período.** O esquema aceita `daily`, `weekly`, `monthly` e
+    `yearly`.
+<5> **A rajada.** `custom` são limites por janela curta, na mesma forma de
+    uma `RateLimitPolicy`: aqui, 3 a cada 10 s -- o `429` na quarta chamada.
+
+A `PlanPolicy` é uma forma de escrever: por baixo, o operador gera uma
+`RateLimitPolicy` com o mesmo nome, que é a que aparece sobrepondo o limite
+do Gateway na parte xref:m1-03-precedencia.adoc[{p-precedencia}].
+====
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** as duas policies que você criou, numa tela só --

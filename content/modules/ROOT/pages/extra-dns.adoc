@@ -175,6 +175,37 @@ E repare em **como o CoreDNS descobre o registro**: pelo label
 `kuadrant.io/coredns-zone-name` que o operador carimbou. Não há arquivo de zona
 editado à mão, nem recarga de servidor.
 
+.Mais detalhes: o que cada campo da DNSPolicy e do Secret do provedor faz
+[%collapsible]
+====
+[source,yaml]
+----
+kind: Secret
+metadata: {name: coredns-provider}
+type: kuadrant.io/coredns                                  # <1>
+stringData: {ZONES: "dns-lab.rhcl.internal"}              # <2>
+---
+kind: DNSPolicy
+spec:
+  targetRef: {kind: Gateway, name: lab}                   # <3>
+  providerRefs: [{name: coredns-provider}]                # <4>
+----
+
+<1> **Qual provedor**, pelo tipo do `Secret`. Aqui o CoreDNS do laboratório;
+    para publicar na internet, o tipo e as credenciais são os do provedor
+    escolhido -- a seção "A parte honesta" diz quais.
+<2> **A zona de que o provedor é dono.** O hostname do listener precisa cair
+    nela; é dentro dela que os registros vão nascer.
+<3> **O Gateway inteiro.** A policy lê o hostname de cada listener e o
+    endereço que o Gateway publicou no `status`, e cria um `DNSRecord` por
+    listener -- o `lab-http`.
+<4> **Uma referência ao provedor.** É uma lista, mas o esquema aceita um só.
+
+O esquema tem ainda `healthCheck` (uma sonda que o provedor roda em cada
+registro), `excludeAddresses` (endereços do Gateway que não devem virar
+registro) e `delegate`; nenhum foi medido neste ambiente.
+====
+
 == 3. O nome resolve, e responde
 
 ifdef::foco_rhcl[]
@@ -275,6 +306,32 @@ os dois só escrevem seus registros.
 É a mesma API, com os mesmos três campos, tanto aqui quanto num cenário real
 com Route53 ou Azure DNS. Muda o `Secret` do provedor.
 
+.Mais detalhes: o que cada campo de loadBalancing faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  loadBalancing:
+    defaultGeo: true     # <1>
+    geo: GEO-NA          # <2>
+    weight: 120          # <3>
+----
+
+<1> **Este é o ramo padrão.** Quem resolve o nome de uma região sem ramo
+    próprio cai aqui -- o `geo *` da árvore. Só um dos clusters precisa dizer
+    `true`.
+<2> **A região deste cluster.** Os valores aceitos são os do provedor: com um
+    provedor público, os códigos de região dele; com o CoreDNS do
+    laboratório, um rótulo qualquer.
+<3> **O peso deste destino dentro da região.** O máximo também é do provedor.
+    Com um destino só, como aqui, o peso não muda a resposta; com dois
+    clusters na mesma região, ele divide.
+
+Os três campos são obrigatórios quando `loadBalancing` existe: não há
+geografia sem peso, nem peso sem região.
+====
+
 == 5. O nome tem dono
 
 ifdef::foco_rhcl[]
@@ -329,7 +386,7 @@ endif::[]
   credencial e zona hospedada
 
 | a imagem do CoreDNS
-| vem do upstream do Kuadrant. Num ambiente de cliente, vale espelhá-la para o
+| vem do projeto upstream do Connectivity Link (Kuadrant), não do catálogo da Red Hat. Num ambiente de cliente, vale espelhá-la para o
   registro da casa e fixá-la por digest
 
 | o endereço publicado

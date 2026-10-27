@@ -130,6 +130,56 @@ O arquivo libera a saída do Gateway para todo o cluster, menos o
 não aparece em arquivo nenhum: ele vive dentro do filtro do Gateway, e não há
 campo para exibir. Foi por isso que a parte mede em vez de ler.
 
+.Mais detalhes: o que cada campo da NetworkPolicy faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  podSelector:
+    matchLabels: {gateway.networking.k8s.io/gateway-name: prod-web}   # <1>
+  policyTypes: [Egress]                                               # <2>
+  egress:
+    - to:
+        - namespaceSelector:
+            matchExpressions:
+              - {key: kubernetes.io/metadata.name, operator: NotIn, values: [kuadrant-system]}   # <3>
+        - namespaceSelector: {matchLabels: {kubernetes.io/metadata.name: kuadrant-system}}
+          podSelector: {matchLabels: {authorino-resource: authorino}}                            # <4>
+----
+
+<1> **Só as pods do seu Gateway**, pelo rótulo que o provedor põe nelas. O
+    Gateway dos outros participantes não tem este rótulo neste namespace.
+<2> **Só a saída.** O que entra no Gateway continua como estava; a policy
+    passa a listar o que ele pode alcançar.
+<3> **Qualquer namespace, menos o da plataforma.** Inclui o DNS do cluster e
+    a sua aplicação -- por isso a chamada que passou pelo Authorino ainda
+    chegou à API.
+<4> **E, dentro da plataforma, só o Authorino.** `namespaceSelector` e
+    `podSelector` juntos selecionam as pods que casam os dois. O Limitador
+    não está em nenhuma das duas entradas, e é isso que o deixa fora de
+    alcance. O segundo arquivo troca este seletor pelo do Limitador.
+
+A policy não derruba nada: o Limitador continua respondendo a quem o
+alcança. O que a parte mede é o que o filtro do Gateway faz quando a chamada
+dele não volta.
+====
+
+.Outro caso de uso: e se o limite tivesse de falhar fechado?
+[%collapsible]
+====
+Não há campo para isso. O esquema das policies desta versão
+(`oc explain --recursive ratelimitpolicy`, `authpolicy`, `kuadrant`) não tem
+nenhum campo de modo de falha: o comportamento medido acima -- limite falha
+aberto, autenticação falha fechada -- é o do filtro do Gateway, e não uma
+escolha por policy.
+
+O que fica nas suas mãos é a **disponibilidade** do Limitador: réplicas com
+contador compartilhado, recursos e um alerta que avise quando ele sair do ar
+-- a parte xref:m3-05-alerta.adoc[{p-alerta}] e
+xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório].
+====
+
 == O que isso prova
 
 Um gateway que falha **fechado** no rate limit transforma um incidente de

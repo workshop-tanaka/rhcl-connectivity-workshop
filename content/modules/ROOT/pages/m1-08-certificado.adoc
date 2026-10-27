@@ -293,6 +293,59 @@ exit=35
 
 O `exit=35` é o `curl` dizendo que o handshake TLS não completou.
 
+.Mais detalhes: o que cada campo do Gateway faz
+[%collapsible]
+====
+O arquivo traz quatro objetos: o emissor, um `ConfigMap` de parâmetros, o
+`Gateway` e a `Route` que o publica.
+
+[source,yaml,subs="attributes+"]
+----
+kind: Issuer
+metadata: {name: lab-selfsigned}
+spec: {selfSigned: {}}                                   # <1>
+---
+kind: Gateway
+spec:
+  gatewayClassName: istio                                 # <2>
+  infrastructure:
+    parametersRef: {kind: ConfigMap, name: gateway-uma-replica}   # <3>
+  listeners:
+    - name: https
+      hostname: tls-lab.{cluster_domain}                  # <4>
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate                                   # <5>
+        certificateRefs: [{name: tls-lab-cert, kind: Secret}]
+---
+kind: Route
+spec:
+  host: tls-lab.{cluster_domain}
+  to: {kind: Service, name: lab-istio}                    # <6>
+  tls: {termination: passthrough}
+----
+
+<1> **De onde vem o certificado.** Um emissor autoassinado, do laboratório:
+    a seção "Por que não emitimos um certificado público" diz por quê. É esta
+    linha que a `TLSPolicy` do passo 2 vai apontar.
+<2> **A classe do Gateway**: a do provedor nativo do OpenShift, a mesma do
+    `prod-web` (ver xref:leitura-instalacao.adoc[como a plataforma foi
+    instalada]).
+<3> **Parâmetros do provedor**: um `ConfigMap` que fixa uma réplica e desliga
+    o escalonador. Atalho de laboratório, documentado em
+    xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório].
+<4> **O nome que o listener atende.** É daqui que a `TLSPolicy` lê os nomes do
+    certificado: você não os repete em lugar nenhum.
+<5> **TLS terminado no Gateway**, com o certificado lido de um `Secret` -- que
+    ninguém criou. É o `InvalidCertificateRef` do status. A outra opção do
+    campo é `Passthrough`, em que o Gateway não abre o TLS e ignora os
+    `certificateRefs`.
+<6> **A publicação pelo router**, como no passo 4 da parte
+    xref:m1-06-exposta.adoc[{p-exposta}]: `passthrough` até o `Service` que o
+    provedor criou para o Gateway (`<gateway>-istio`).
+====
+
 === Passo 2 -- uma policy, e o que ela cria sozinha
 
 O segundo arquivo é a `TLSPolicy`: ela mira o Gateway e nomeia o emissor.
@@ -346,6 +399,34 @@ endif::[]
 
 Se o Gateway ainda aparecer como `Programmed=False`, repita só o último
 comando: ele leva alguns segundos para ler o Secret novo.
+
+.Mais detalhes: o que cada campo da TLSPolicy faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef: {kind: Gateway, name: lab}                                     # <1>
+  issuerRef: {group: cert-manager.io, kind: Issuer, name: lab-selfsigned}   # <2>
+  duration: 1h                                                               # <3>
+  renewBefore: 55m                                                           # <4>
+----
+
+<1> **O Gateway inteiro.** A policy lê cada listener com TLS -- o hostname e
+    o `Secret` que ele espera -- e cria um `Certificate` por listener, com o
+    nome `<gateway>-<listener>`: o `lab-https` que o terminal listou.
+<2> **O emissor.** `Issuer` é do namespace; `ClusterIssuer`, do cluster
+    inteiro. Trocar de autoridade -- ACME, CA interna -- é trocar esta
+    referência; o "Mais detalhes" das três peças, acima, compara as opções.
+<3> **A validade pedida.** Uma hora, para a renovação acontecer dentro do
+    exercício; sem o campo, o padrão é 90 dias, e o mínimo aceito é 1 h.
+<4> **Quanto antes de vencer renovar.** 55 min antes de uma validade de 1 h:
+    o cert-manager renova cinco minutos depois de emitir. Sem o campo, renova
+    a dois terços da validade.
+
+O esquema tem ainda `commonName`, `usages`, `privateKey` e
+`revisionHistoryLimit`, que este exercício não usa.
+====
 
 === Passo 3 -- o que o cliente vê
 
