@@ -203,9 +203,11 @@ endif::[]
 == Se algo não responder
 
 Uma parte que devolve número estranho, um painel vazio, um comando que não
-acha o arquivo: o que fazer está em xref:se-algo-nao-responder.adoc[Se algo
-não responder], com o veredito do ambiente inteiro. Não é preciso rodá-lo
-antes de começar.
+acha o arquivo: a área **Ambiente**, no fim do menu, tem o veredito do
+ambiente (xref:ambiente-conferir.adoc[Conferir o ambiente]), o conserto
+(xref:se-algo-nao-responder.adoc[Se algo não responder]) e o caminho de volta
+(xref:ambiente-recomecar.adoc[Recomeçar uma parte]). Não é preciso rodar nada
+dela antes de começar.
 
 ifndef::foco_rhcl[]
 Pronto. Siga para o xref:m1-01-fechada.adoc[Módulo 1].

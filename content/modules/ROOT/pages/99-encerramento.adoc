@@ -116,23 +116,9 @@ inclui dizer onde ela ainda não chega.
 
 == O que ficou para trás
 
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh pos --auto
-----
-
-Leva pouco mais de um minuto.
-
-ifndef::foco_rhcl[]
-Procura o que os exercícios deixaram para trás (mTLS em PERMISSIVE, fault
-injection, canário fora de 90/10, cota baixa), ajusta, e revalida. Rode-o
-endif::[]
-ifdef::foco_rhcl[]
-Procura o que os exercícios deixaram para trás (cota baixa, um componente
-que não voltou), ajusta, e revalida. Rode-o
-endif::[]
-quando quiser recomeçar do zero. Para repetir as partes no mesmo dia,
-`bash scripts/demo.sh reset` devolve as cotas diárias.
+Para conferir o que os exercícios deixaram no seu ambiente e devolver tudo ao
+ponto de partida, use xref:ambiente-recomecar.adoc[Recomeçar uma parte], na
+área **Ambiente** do menu.
 
 == As quatro perguntas que este workshop existe para responder
 

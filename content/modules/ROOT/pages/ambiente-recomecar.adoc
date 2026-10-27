@@ -1,0 +1,131 @@
+include::partial$numeros.adoc[]
+= Recomeçar uma parte
+:navtitle: Recomeçar uma parte
+
+Cada parte que muda estado termina devolvendo o que mudou. Quando uma parte foi
+interrompida no meio, ou você quer refazê-la do zero, o caminho de volta está
+aqui -- um bloco por parte, todos no terminal Infra, e todos seguros de rodar
+de novo: o que não existe é ignorado.
+
+Antes de desfazer, vale o veredito de
+xref:ambiente-conferir.adoc[Conferir o ambiente]: se o problema for do
+ambiente, desfazer a parte não resolve.
+
+== Zerar as cotas
+
+As rajadas gastam a cota diária dos planos, e uma janela de 10 segundos que
+ficou pela metade muda a contagem da rajada seguinte. Para começar uma parte
+com as cotas cheias:
+
+[source,bash,role="execute"]
+----
+bash scripts/traffic.sh reset
+----
+
+Ele recria o `PlanPolicy` do seu ambiente com o mesmo conteúdo, e com ele os
+contadores. Os outros participantes não são afetados.
+
+== Desfazer uma parte
+
+=== xref:m1-08-certificado.adoc[]
+
+[source,bash,role="execute"]
+----
+oc delete project tls-lab --ignore-not-found
+----
+
+=== xref:m1-06-exposta.adoc[]
+
+[source,bash,role="execute"]
+----
+oc delete -f passos/exposta/ --ignore-not-found
+----
+
+=== xref:extra-dns.adoc[]
+
+[source,bash,role="execute"]
+----
+bash scripts/dns-nome.sh limpa
+----
+
+=== xref:versoes.adoc[]
+
+[source,bash,role="execute"]
+----
+oc delete -f passos/versoes/ --ignore-not-found
+----
+
+=== xref:extra-contextos.adoc[]
+
+Os dois laboratórios da página:
+
+[source,bash,role="execute"]
+----
+oc delete project ctx-lab pfx-gw pfx-equipe-a pfx-equipe-b --ignore-not-found
+----
+
+=== xref:extra-listas.adoc[]
+
+[source,bash,role="execute"]
+----
+bash scripts/listas.sh limpa
+----
+
+=== xref:m3-04-degrada.adoc[]
+
+[source,bash,role="execute"]
+----
+oc delete -f passos/degrada/ --ignore-not-found
+----
+
+=== xref:m3-05-alerta.adoc[]
+
+[source,bash,role="execute"]
+----
+bash scripts/alerta.sh remove
+----
+
+=== xref:extra-grpc.adoc[]
+
+[source,bash,role="execute"]
+----
+oc delete -f base/grpc/ --ignore-not-found
+----
+
+== Tudo de uma vez: o que ficou para trás
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh pos --auto
+----
+
+Leva pouco mais de um minuto.
+
+ifndef::foco_rhcl[]
+Procura o que os exercícios deixaram para trás (mTLS em PERMISSIVE, fault
+injection, canário fora de 90/10, cota baixa), ajusta, e revalida. Rode-o
+endif::[]
+ifdef::foco_rhcl[]
+Procura o que os exercícios deixaram para trás (cota baixa, um componente
+que não voltou), ajusta, e revalida. Rode-o
+endif::[]
+quando quiser recomeçar do zero. Para só repetir as partes no mesmo dia, basta
+o reset das cotas, acima.
+
+== A esteira
+
+A fase 5 não tem o que apagar: o caminho de volta dela é o próprio revert, por
+merge request, na parte xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão].
+Para refazer a fase inteira, os comandos já recriam os branches a partir do
+`main` de agora -- ver xref:fase-esteira.adoc[a abertura da fase].
+
+Se uma edição feita à mão deixou a esteira `OutOfSync` e você quer só voltar ao
+que está no Git, sem merge request:
+
+[source,bash,role="execute"]
+----
+bash scripts/esteira.sh estado | tail -4
+----
+
+mostra o que divergiu; a parte {p-desvio} explica por que a volta é um commit,
+e não um comando.

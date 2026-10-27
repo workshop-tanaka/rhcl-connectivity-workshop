@@ -60,12 +60,8 @@ da versão usada aqui, o Connectivity Link 1.4, que as páginas citam:
 | o objeto que aplica a pasta `esteira` do seu repositório
 |===
 
-Para saber em qual versão você trabalhou, rode no terminal:
-
-[source,bash,role="execute"]
-----
-bash scripts/versoes.sh
-----
+Para saber em qual versão você trabalhou: xref:ambiente-conferir.adoc[Conferir
+o ambiente], seção das versões.
 
 == Os padrões e projetos por trás
 
@@ -195,9 +191,5 @@ bash scripts/negado.sh tabela
 A tabela de diagnóstico: do sintoma para o lugar onde a chamada morreu, e o
 que cada um já permite descartar.
 
-[source,bash,role="execute"]
-----
-bash scripts/versoes.sh --md
-----
-
-As versões em markdown, prontas para colar num chamado.
+As versões em markdown, prontas para colar num chamado, estão em
+xref:ambiente-conferir.adoc[Conferir o ambiente].

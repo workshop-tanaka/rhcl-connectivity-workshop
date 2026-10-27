@@ -95,22 +95,9 @@ remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
  * [new branch]      plano-free-6 -> plano-free-6
 ----
 
-.Se o merge request aparecer como *Draft*, ou a saída não trouxer o endereço
-[%collapsible]
-====
-O GitLab abre como rascunho (*Draft:* no título) o merge request cujo branch
-não traz **nenhum commit** além do `main` -- medido neste ambiente: os quatro
-merge requests vazios de uma rodada saíram *Draft*, e nenhum dos que tinham
-commit. Acontece quando o commit do passo 2 não foi para o branch. Confira:
-
-[source,bash,role="execute perfil-dev"]
-----
-git log --oneline origin/main..plano-free-6
-----
-
-Sem nenhuma linha, rode o passo 2 de novo e depois este passo: o `-f` do push
-substitui o branch antigo, e o mesmo merge request passa a mostrar a mudança.
-====
+Se o merge request aparecer como *Draft*, ou a saída não trouxer o endereço:
+xref:se-algo-nao-responder.adoc[Se algo não responder] diz por quê e como
+consertar.
 
 O merge request foi aberto por `{usuario_console_dev}`: o terminal Dev empurra
 com a identidade Dev, que no projeto é *Developer*. E o `main` só aceita merge

@@ -193,42 +193,9 @@ endif::[]
 
 == As versões deste ambiente
 
-"Em que versão você testou isso?" é a primeira pergunta de quem vai reproduzir
-o workshop, e a segunda de quem abre um chamado. A resposta sai do cluster, não
-de uma tabela.
-
 **Versão deste material: `{demo_ref}`** -- a mesma tag nos dois repositórios
-do workshop, o do guia e o dos scripts. Os produtos:
-
-[source,bash,role="execute"]
-----
-bash scripts/versoes.sh
-----
-
-Para colar num chamado ou num relatório, em markdown:
-
-[source,bash,role="execute"]
-----
-bash scripts/versoes.sh --md
-----
-
-[NOTE]
-====
-A versão do **operador** não é a do que está servindo. O operador do
-Connectivity Link diz `1.4.3`, mas quem decide cada requisição são o Authorino,
-o Limitador e o _shim_ no proxy -- por isso a tabela separa as duas colunas.
-Quando a imagem é fixada por digest, a tabela mostra os 12 primeiros
-caracteres dele: não é uma versão para ler, é uma marca para comparar dois
-ambientes.
-====
-
-ifeval::["{usuario_console_plataforma}" != ""]
-Na console, a peça que liga a plataforma inteira é o recurso
-{openshift_console_url}/k8s/ns/kuadrant-system/kuadrant.io{tilde}v1beta1{tilde}Kuadrant/kuadrant[`Kuadrant`^]:
-um por cluster, com o estado em *Conditions*. Ele abre com o login
-`{usuario_console_plataforma}` (só leitura), e não com o seu -- a parte
-xref:m1-04-papeis.adoc[{p-papeis}] explica por quê.
-endif::[]
+do workshop, o do guia e o dos scripts. A versão de cada produto, lida do
+cluster, está em xref:ambiente-conferir.adoc[Conferir o ambiente].
 
 == O terminal
 
@@ -272,6 +239,7 @@ já está no lugar certo quando o terminal abre.
 
 == Se alguma coisa não responder
 
-O veredito do ambiente, o caminho de volta ao diretório do workshop e o que
-fazer com um painel vazio estão em xref:se-algo-nao-responder.adoc[Se algo não
-responder].
+Conferir, consertar e recomeçar ficam numa área à parte, no fim do menu:
+xref:ambiente-conferir.adoc[Conferir o ambiente],
+xref:se-algo-nao-responder.adoc[Se algo não responder] e
+xref:ambiente-recomecar.adoc[Recomeçar uma parte].

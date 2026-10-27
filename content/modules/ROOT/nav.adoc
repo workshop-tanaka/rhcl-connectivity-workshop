@@ -9,7 +9,6 @@ ifdef::foco_rhcl[]
 endif::[]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
-* xref:se-algo-nao-responder.adoc[Se algo não responder]
 
 // A SESSAO DE CONNECTIVITY LINK TEM MENU PROPRIO, na ordem de um projeto real:
 // a plataforma, a borda, a primeira API, o produto, a esteira, a operacao. Os
@@ -152,6 +151,11 @@ ifndef::foco_rhsi[]
 * xref:leitura-instalacao.adoc[Leitura: instalação e configuração]
 endif::[]
 endif::[]
+
+.Ambiente — conferir, consertar, recomeçar
+* xref:ambiente-conferir.adoc[Conferir o ambiente]
+* xref:se-algo-nao-responder.adoc[Se algo não responder]
+* xref:ambiente-recomecar.adoc[Recomeçar uma parte]
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]
