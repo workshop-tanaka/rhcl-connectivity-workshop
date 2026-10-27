@@ -44,9 +44,6 @@ da versão usada aqui, o Connectivity Link 1.4, que as páginas citam:
 | https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/troubleshoot/index[Troubleshoot (1.4)^]
 | o diagnóstico de policy que não vale, a parte {p-negado} por outro ângulo
 
-| https://access.redhat.com/articles/7092611[Supported Configurations for Red Hat Connectivity Link^]
-| as combinações suportadas de OpenShift, Service Mesh e cert-manager
-
 | https://docs.redhat.com/en/documentation/openshift_container_platform/4.22/html/ingress_and_load_balancing/configuring-gateway-api[Gateway API no OpenShift (Ingress Operator)^]
 | o Gateway API nativo da plataforma, que esta sessão usa como provedor
 
