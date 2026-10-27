@@ -2,7 +2,7 @@ include::partial$numeros.adoc[]
 = {p-versoes}Uma API, duas versões
 :navtitle: {p-versoes}Uma API, duas versões
 
-**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~25 min** · **depois das partes {p-planos} e {p-negocio}**
+**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~30 min** · **depois das partes {p-planos} e {p-negocio}**
 
 [NOTE.antes]
 ====
@@ -18,7 +18,7 @@ encontrado -- e um dia a v1 deixa de responder. Cada um desses momentos
 costuma ser código, e-mail e planilha.
 
 Nesta parte, nenhum deles toca a aplicação. A imagem da `travels` é a mesma
-nas duas versões: **a versão é uma decisão da borda**. São oito passos -- dez
+nas duas versões: **a versão é uma decisão da borda**. São nove passos -- doze
 arquivos em `passos/versoes/` e um script de medição --, e quase todos são do
 perfil Dev -- é ele quem
 publica a API.
@@ -236,6 +236,13 @@ bash scripts/uso-por-versao.sh
   gold-globex                 0      6   ja esta na v2
   silver-initech              6      6   migrando
 ----
+
+ifeval::["{grafana_url}" != ""]
+**No Grafana:** a mesma divisão, sem quebrar por parceiro -- painel
+**Versões · Respostas por versão na borda** em
+{grafana_url}/d/rhcl-evidencia[Evidência das partes^]. A quebra por parceiro
+é a do terminal.
+endif::[]
 
 **O que isso diz:** a acme é a conversa a ter antes da data do `Sunset`. A
 consulta é do seu terminal, e só enxerga os seus parceiros. Se aparecerem
@@ -506,6 +513,73 @@ forjado recebe `403`.
 escolha da versão deixa de estar à vista no pedido.
 ====
 
+== 9. A v2 vira a permanente
+
+A v2 foi validada e vai ficar. Promovê-la é mudar **para onde a regra
+aponta** -- e dá para fazer isso aos poucos: a regra aponta para as duas
+versões, com **peso**, e o Gateway divide as chamadas. Em produção o primeiro
+degrau costuma ser pequeno (10%); aqui ele é de 50%, para a divisão aparecer
+em vinte chamadas.
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+conta() { for i in $(seq 20); do curl -s -D - -o /dev/null "https://{api_host}/atual/travels?APIKEY={api_key_gold}" | awk 'tolower($1)=="x-api-version:"{print "v"$2}' | tr -d '\r'; done | sort | uniq -c | tr '\n' ' '; echo; }
+oc apply -f passos/versoes/12-promove-50-50.yaml
+sleep 11; printf '50/50:  '; conta
+----
+
+[source,text]
+----
+50/50:        8 v1      12 v2
+----
+
+A divisão é por chamada, e o número de cada lado varia de uma rodada para a
+outra -- em vinte chamadas, algo perto de dez e dez. Cada destino da regra
+marca a resposta com a versão que atendeu.
+
+Com a v2 respondendo bem, o último degrau põe todo o tráfego nela. A v1
+continua declarada, com peso zero: voltar atrás é trocar dois números.
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/13-promove-100.yaml
+sleep 11; printf '100:    '; conta
+----
+
+[source,text]
+----
+100:        20 v2
+----
+
+ifeval::["{grafana_url}" != ""]
+**No Grafana:** o rollout visto pelo Gateway -- painéis **Versões · Respostas
+por versão na borda** e **Versões · Peso efetivo da v2 na borda** em
+{grafana_url}/d/rhcl-evidencia[Evidência das partes^].
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link e entre com o seu login da console; o painel já abre filtrado
+  no seu ambiente.
+. A linha *Versões* conta as respostas que o Gateway mandou a cada Service:
+  `travels` é a v1, `travels-v2` é a v2. Durante o 50/50 as duas barras
+  crescem juntas; depois do 100, só a da v2.
+. O medidor *Peso efetivo da v2* é a fração real que foi à v2 nos últimos
+  cinco minutos. Ele fica abaixo do peso declarado se você também chamar a
+  `/travels` de sempre, que vai à v1.
+. Os painéis contam a janela de cinco minutos: rode os dois blocos acima e
+  dê um minuto ao Prometheus.
+====
+endif::[]
+
+**Em produção, na `/travels`.** O rollout acima é o mesmo que se faz na regra
+da própria `/travels` (a nota do passo 7 diz por que aqui ele acontece em
+`/atual`): 10%, depois 50%, depois 100%, cada degrau um merge request na
+esteira da fase 5, e a volta é o revert. Entre um degrau e outro, a pergunta
+é a do passo 5 -- o erro e o uso **por versão** -- e quem avisa se a v2
+começar a falhar é o alerta da parte {p-alerta}. Com a v2 em 100%, a v1
+recebe o aviso do passo 4 e, na data, o `410` do passo 6.
+
 == Limpando
 
 [source,bash,role="execute perfil-dev"]
@@ -519,7 +593,7 @@ estava.
 == O que isso prova
 
 O ciclo de vida inteiro de uma versão -- nascer, ser experimentada, avisar,
-ser medida, ser desligada, virar a vigente, ser de um parceiro só -- foram **oito objetos declarados**, nenhum na
+ser medida, ser desligada, virar a vigente, ser de um parceiro só, virar a permanente -- foram **nove objetos declarados**, nenhum na
 aplicação. Cada decisão tem dono e status, aparece no `oc get` e se desfaz
 apagando o objeto.
 
@@ -535,15 +609,17 @@ apagando o objeto.
 | a v1 saiu | `AuthPolicy` com `sectionName: v1` e `code: 410`
 | o endereço sem versão aponta para a vigente | a regra `atual`, com reescrita ou redirect
 | uma versão para um parceiro só | uma regra por cabeçalho e `AuthPolicy` com `sectionName` e predicado na chave
+| a v2 vira a permanente | os pesos dos destinos da regra, de 50/50 a 0/100
 |===
 
 [NOTE]
 .Onde o Connectivity Link termina, e o Service Mesh começaria
 ====
-Esta parte decidiu **quem vê qual versão**: é contrato com o consumidor, e
-mora na borda -- no Connectivity Link. Outra pergunta, parecida e diferente, é
-**quais pods servem uma versão**: mandar 10% do tráfego para pods novos, um
-canário por percentual. Essa é do Service Mesh. A métrica também se divide
-assim: a do Gateway separa por destino (`travels` ou `travels-v2`), a do
-Service Mesh separa por pod.
+Esta parte decidiu **quem vê qual versão** e **quanto do tráfego que entra**
+vai a cada uma -- inclusive por percentual, no passo 9: é contrato com o
+consumidor, e mora na borda, no Gateway e nas policies do Connectivity Link.
+O Service Mesh faz a mesma divisão **lá dentro**, entre os serviços que se
+chamam uns aos outros (o tráfego leste-oeste), onde a borda não passa. A
+métrica também se divide assim: a do Gateway separa por destino (`travels` ou
+`travels-v2`), a do Service Mesh separa por serviço e por pod.
 ====
