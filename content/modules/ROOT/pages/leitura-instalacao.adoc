@@ -117,16 +117,6 @@ Aqui é uma instalação só pelo OperatorHub:
 O provedor de Gateway não é um operator a mais: vem com o próprio OpenShift,
 e o passo 2 mostra como ele é ligado.
 
-[NOTE]
-.Duas fontes oficiais, e elas ainda não dizem o mesmo
-====
-O https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/install_connectivity_link/index[guia de instalação do 1.4^]
-diz que o controlador de Gateway padrão do Connectivity Link é o Cluster
-Ingress Operator do OpenShift -- o desenho deste ambiente. O
-https://access.redhat.com/articles/7092611[artigo de configurações suportadas^]
-ainda lista como provedor só o OpenShift Service Mesh 3.4. Antes de levar
-este desenho para produção, confira os dois na versão que você vai usar.
-====
 endif::[]
 
 A instalação do Connectivity Link é uma `Subscription`:
