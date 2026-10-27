@@ -19,7 +19,7 @@ Hat (Consultoria). Para quem já concluiu a implantação, o Suporte Técnico da
 Red Hat é o canal para dúvidas e incidentes do produto em operação.
 
 **Versões e alternativas.** O material foi construído e medido com as versões
-deste ambiente -- `{demo_ref}`, sobre o Red Hat Connectivity Link e o
+deste ambiente -- edição {edicao} (build `{demo_ref}`), sobre o Red Hat Connectivity Link e o
 OpenShift que xref:ambiente-conferir.adoc[Conferir o ambiente] mostra. Outra
 versão pode mudar nomes de campo, telas, comandos e comportamentos, e há outras
 formas de implementar o mesmo resultado, que podem coexistir com as escolhas

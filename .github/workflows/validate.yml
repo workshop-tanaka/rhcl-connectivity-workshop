@@ -98,8 +98,12 @@ jobs:
 
           onda = distintas.pop()
           # Os dois titulos do guia (barra do topo e cabecalho do menu) carregam
-          # a tag da onda -- e o que o participante ve sem abrir pagina nenhuma.
-          # Quem corta a onda troca os dois junto com as refs (docs/IMPLANTACAO).
+          # a EDICAO (atributo 'edicao' do antora.yml) -- a versao que a
+          # audiencia ve. A onda (workshop-v*) e o build e fica no demo_ref.
+          # Quem corta uma edicao troca o atributo e os dois titulos juntos.
+          edicao = ler('content/antora.yml', 'edicao')
+          if not edicao:
+              print('\nFALHA: content/antora.yml sem o atributo edicao'); sys.exit(1)
           titulos = {
               'site.yml site.title':    ler('site.yml', 'title'),
               'content/antora.yml title': ler('content/antora.yml', 'title'),
@@ -107,10 +111,10 @@ jobs:
           for k, v in titulos.items():
               linha = next((l.strip() for l in open(k.split()[0]) if re.match(r'\s*title:', l)), '')
               print('  %-42s %s' % (k, linha))
-              if not linha.endswith(onda):
-                  print('\nFALHA: %s nao termina com %s' % (k, onda))
-                  print('O titulo e a versao visivel do guia; sem a tag nele, o participante nao sabe qual material esta usando.')
+              if not linha.endswith(edicao):
+                  print('\nFALHA: %s nao termina com a edicao %s' % (k, edicao))
+                  print('O titulo e a versao visivel do guia; sem a edicao nele, o participante nao sabe qual material esta usando.')
                   sys.exit(1)
 
-          print('\nOK: a onda inteira em %s' % onda)
+          print('\nOK: a onda inteira em %s, edicao %s' % (onda, edicao))
           PY

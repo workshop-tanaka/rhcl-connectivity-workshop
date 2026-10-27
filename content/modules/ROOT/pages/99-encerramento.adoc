@@ -140,6 +140,27 @@ ifdef::foco_rhcl[]
 endif::[]
 |===
 
+== Leve o seu trabalho
+
+Este ambiente é efêmero: ao ser devolvido, levam-se junto o seu repositório,
+os merge requests e as chaves. O que você fez pode sair antes disso.
+
+ifeval::["{repo_no_ambiente}" != ""]
+Abra {repo_no_ambiente}[o seu repositório^] e, no botão **Code**, baixe o
+projeto (zip ou tar.gz) -- é a pasta `esteira/` com o histórico que a fase 5
+construiu, mais os arquivos que você aplicou à mão. Os merge requests ficam
+só no GitLab: se quiser guardar a conversa de um, salve a página dele.
+endif::[]
+ifeval::["{repo_no_ambiente}" == ""]
+Este ambiente não tem o repositório por participante; o que você aplicou está
+em `/home/lab-user/rhcl-connectivity-demo`, no terminal, e sai dali com um
+`git bundle` ou um `tar`.
+endif::[]
+
+As chaves de API **não** vão: são credenciais deste ambiente, e morrem com
+ele. Num ambiente recriado a partir da mesma edição, o ponto de partida é o
+mesmo -- e o seu repositório baixado se importa no GitLab novo.
+
 == Para levar
 
 O ambiente fica de pé até o fim da sua reserva: repita as partes quantas vezes

@@ -1,5 +1,5 @@
 name: modules
-title: Connectivity Link
+title: Connectivity Link · 1.0
 version: ~
 nav:
   - modules/ROOT/nav.adoc
@@ -53,3 +53,8 @@ asciidoc:
     gitlab_root_senha: ''
     demo_repo_url: https://github.com/workshop-tanaka/rhcl-connectivity-demo.git
     demo_ref: workshop-v0.1
+    # A EDICAO: a versao que a audiencia ve (titulo do guia, Conferir o
+    # ambiente). Muda so no corte de uma edicao (tags v*), nao a cada onda;
+    # a onda (workshop-v*) e o build, e fica em demo_ref. O CI confere que os
+    # dois titulos terminam com ela.
+    edicao: "1.0"

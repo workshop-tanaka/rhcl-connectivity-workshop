@@ -81,7 +81,7 @@ um número estranho no meio do caminho.
 o workshop, e a segunda de quem abre um chamado. A resposta sai do cluster, não
 de uma tabela.
 
-**Versão deste material: `{demo_ref}`** -- a mesma tag nos dois repositórios
+**Edição {edicao} · build `{demo_ref}`** -- a edição é o que se pede e se cita; o build é a tag, a mesma nos dois repositórios
 do workshop, o do guia e o dos scripts. Os produtos:
 
 [source,bash,role="execute"]
