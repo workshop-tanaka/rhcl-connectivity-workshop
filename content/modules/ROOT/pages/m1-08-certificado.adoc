@@ -323,7 +323,7 @@ o listener do Gateway e pediu o que ele precisa. O dono do certificado é a
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** o certificado que a policy criou --
-{openshift_console_url}/k8s/ns/tls-lab/cert-manager.io{tilde}v1{tilde}Certificate/lab-https[o `Certificate` `lab-https`^]
+o `Certificate` {openshift_console_url}/k8s/ns/tls-lab/cert-manager.io{tilde}v1{tilde}Certificate/lab-https[`lab-https`^]
 (abre em aba nova), com o dono e a data de renovação que o terminal listou.
 
 .Navegando, passo a passo
@@ -337,7 +337,7 @@ endif::[]
   -- o `dono=TLSPolicy` do terminal --, `spec.secretName` é `tls-lab-cert`, e
   `status.renewalTime` é a renovação.
 . O Gateway do exercício:
-  {openshift_console_url}/k8s/ns/tls-lab/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/lab[o Gateway `lab`^];
+  o Gateway {openshift_console_url}/k8s/ns/tls-lab/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/lab[`lab`^];
   na aba *YAML*, em `status.listeners`, as mesmas condições do último comando.
 . Sem o link: no menu da console, a busca de recursos (*Home → Search*, ou a
   lista do projeto `tls-lab`) pelo tipo `Certificate`.

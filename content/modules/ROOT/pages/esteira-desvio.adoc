@@ -44,7 +44,7 @@ aparece em cerca de um segundo.
 
 ifeval::["{argocd_url}" != ""]
 **Na console web:** o mesmo desvio, no Argo CD --
-{argocd_url}/applications/openshift-gitops/esteira-{user}[a sua Application `esteira-{user}`^]
+a sua Application {argocd_url}/applications/openshift-gitops/esteira-{user}[`esteira-{user}`^]
 (abre em aba nova): a Application e a `PlanPolicy travels-plans` aparecem
 `OutOfSync`.
 

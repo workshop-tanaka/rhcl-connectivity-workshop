@@ -94,7 +94,7 @@ confere-...     25 seconds ago   8s         Failed
 Abra o endereço do merge request. O status **Pipelines as Code CI /
 confere** está vermelho e o merge, bloqueado. O mesmo `PipelineRun` aparece no
 console do OpenShift -- *opcional*,
-{openshift_console_url}/k8s/ns/esteira-ci-{user}/tekton.dev{tilde}v1{tilde}PipelineRun[os PipelineRuns de `esteira-ci-{user}`^]
+os PipelineRuns de {openshift_console_url}/k8s/ns/esteira-ci-{user}/tekton.dev{tilde}v1{tilde}PipelineRun[`esteira-ci-{user}`^]
 (abre em aba nova), com o login Infra ou Dev: os dois leem, nenhum muda.
 
 [WARNING]

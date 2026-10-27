@@ -161,9 +161,9 @@ cluster.
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** as mesmas duas policies, na console do OpenShift --
-{openshift_console_url}/k8s/ns/travel-agency/kuadrant.io{tilde}v1{tilde}AuthPolicy/travel-agency-authpolicy/yaml[a `travel-agency-authpolicy`^]
+a {openshift_console_url}/k8s/ns/travel-agency/kuadrant.io{tilde}v1{tilde}AuthPolicy/travel-agency-authpolicy/yaml[`travel-agency-authpolicy`^]
 e
-{openshift_console_url}/k8s/ns/ingress-gateway/kuadrant.io{tilde}v1{tilde}AuthPolicy/prod-web-deny-all/yaml[a `prod-web-deny-all`^]
+a {openshift_console_url}/k8s/ns/ingress-gateway/kuadrant.io{tilde}v1{tilde}AuthPolicy/prod-web-deny-all/yaml[`prod-web-deny-all`^]
 (abrem em aba nova), com o mesmo YAML que o terminal mostrou.
 
 .Navegando, passo a passo

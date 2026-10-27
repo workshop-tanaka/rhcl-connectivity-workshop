@@ -216,7 +216,7 @@ e o limite pode levar alguns segundos a mais para chegar ao Gateway.
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** as duas policies que você criou, numa tela só --
-{openshift_console_url}/kuadrant/policies/ns/echo-exposta[Connectivity Link → Policies, no projeto `echo-exposta`^]
+Connectivity Link → Policies, no projeto {openshift_console_url}/kuadrant/policies/ns/echo-exposta[`echo-exposta`^]
 (abre em aba nova): a `AuthPolicy` e a `PlanPolicy`, cada uma com o estado que
 o `oc wait` esperou.
 

@@ -160,7 +160,7 @@ sem chave continua recebendo `401`.
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** as policies da aplicação, agora com a da regra `v2` --
-{openshift_console_url}/kuadrant/policies/ns/travel-agency[Connectivity Link → Policies, no projeto `travel-agency`^]
+Connectivity Link → Policies, no projeto {openshift_console_url}/kuadrant/policies/ns/travel-agency[`travel-agency`^]
 (abre em aba nova).
 
 .Navegando, passo a passo

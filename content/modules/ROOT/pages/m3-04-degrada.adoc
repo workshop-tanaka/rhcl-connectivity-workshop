@@ -60,7 +60,7 @@ isso é o Authorino, e ele está ao alcance.
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** o corte que você aplicou --
-{openshift_console_url}/k8s/ns/ingress-gateway/networking.k8s.io{tilde}v1{tilde}NetworkPolicy/simula-limitador-fora[a `NetworkPolicy` `simula-limitador-fora`^]
+a `NetworkPolicy` {openshift_console_url}/k8s/ns/ingress-gateway/networking.k8s.io{tilde}v1{tilde}NetworkPolicy/simula-limitador-fora[`simula-limitador-fora`^]
 (abre em aba nova), no projeto do seu Gateway.
 
 .Navegando, passo a passo

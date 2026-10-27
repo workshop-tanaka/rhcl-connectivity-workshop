@@ -256,7 +256,7 @@ O perfil Dev tem também o seu login na console: `{usuario_console_dev}`.
 Saia (**Log out**, no canto superior direito) e entre com ele -- a senha está em
 xref:acessos.adoc[Seus acessos]. Depois abra o Gateway:
 
-{openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/prod-web[o Gateway `prod-web`^]
+o Gateway {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/prod-web[`prod-web`^]
 
 Os detalhes e as policies dele aparecem, mas o editor de YAML abre **só para
 leitura** -- a console já sabe que esta identidade não muda o Gateway. Mais

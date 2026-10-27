@@ -37,7 +37,7 @@ outros.
 
 ifeval::["{argocd_url}" != ""]
 **Na console web:** a mesma resposta, na tela do Argo CD --
-{argocd_url}/applications/openshift-gitops/esteira-{user}[a sua Application `esteira-{user}`^]
+a sua Application {argocd_url}/applications/openshift-gitops/esteira-{user}[`esteira-{user}`^]
 (abre em aba nova). A tela mostra só a sua esteira, e só para ler:
 sincronizar continua sendo pelo Git.
 
@@ -47,10 +47,14 @@ sincronizar continua sendo pelo Git.
 . Abra o link acima e clique em *Log in via OpenShift*.
 . Entre com o seu login da console, Infra ou Dev (os dois estão em
   xref:acessos.adoc[Seus acessos]).
-. A Application `esteira-{user}` abre com dois selos no alto: *Sync status*
-  (`Synced` é o mesmo "cluster x Git" do terminal) e *Last Sync*, com o
-  commit que foi aplicado -- o mesmo identificador da linha
-  `commit aplicado`.
+. A Application `esteira-{user}` abre com três quadros no alto. *Sync
+  status* diz `Synced to main (...)`: o identificador entre parênteses é o
+  mesmo da linha `commit aplicado` do terminal, e `Synced` é o mesmo
+  "cluster x Git".
+. *Last Sync* diz quando o Argo CD aplicou alguma coisa pela última vez, e o
+  commit pode ser **outro**, mais antigo: um commit que não muda nada dentro
+  de `esteira/` (como o da conferência, que mexe em `.tekton/`) passa a ser o
+  que está valendo sem que haja o que aplicar.
 . A árvore mostra o que a pasta declara: a `PlanPolicy travels-plans`, e
   depois da fase, o que você acrescentar.
 . Sem passar por ela: no menu da esquerda, *Applications* lista as
@@ -83,7 +87,7 @@ data.
 
 ifeval::["{repo_no_ambiente}" != ""]
 **Na console web:** o mesmo histórico, no GitLab --
-{repo_no_ambiente}/-/commits/main/esteira[os commits da pasta `esteira`^]
+os commits da pasta {repo_no_ambiente}/-/commits/main/esteira[`esteira`^]
 (abre em aba nova), cada um com autor, data e o diff de cada arquivo.
 
 .Navegando, passo a passo

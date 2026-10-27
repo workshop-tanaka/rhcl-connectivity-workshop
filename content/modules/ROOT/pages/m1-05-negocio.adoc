@@ -127,7 +127,7 @@ oc get telemetrypolicy prod-web-telemetry -n ingress-gateway -o yaml
 
 ifeval::["{openshift_console_url}" != ""]
 **Na console web:** o mesmo objeto --
-{openshift_console_url}/k8s/ns/ingress-gateway/extensions.kuadrant.io{tilde}v1alpha1{tilde}TelemetryPolicy/prod-web-telemetry/yaml[a `TelemetryPolicy` `prod-web-telemetry`^]
+a `TelemetryPolicy` {openshift_console_url}/k8s/ns/ingress-gateway/extensions.kuadrant.io{tilde}v1alpha1{tilde}TelemetryPolicy/prod-web-telemetry/yaml[`prod-web-telemetry`^]
 (abre em aba nova), com a mesma linha `plan: auth.kuadrant.plan`. Os dois
 perfis a leem.
 endif::[]

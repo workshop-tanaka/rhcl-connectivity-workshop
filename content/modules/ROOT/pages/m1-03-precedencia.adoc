@@ -123,7 +123,7 @@ O status, a console também mostra -- em duas telas:
   da rota venceu na rota dela -- e o limite do Gateway, como **Enforced**,
   porque vale em parte das rotas (o `partially` do Passo 2). É a precedência
   desta parte numa linha de tabela.
-* {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/prod-web[o Gateway `prod-web`^],
+* o Gateway {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/prod-web[`prod-web`^],
   em *Conditions*: `AuthPolicyAffected` e `RateLimitPolicyAffected`, cada uma
   com o nome da policy. O Gateway diz quem o afeta.
 
