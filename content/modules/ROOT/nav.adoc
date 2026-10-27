@@ -4,6 +4,9 @@
 * xref:fronteiras.adoc[As três fronteiras]
 * xref:historia.adoc[A história por trás deste workshop]
 * xref:aplicacao.adoc[A aplicação e as APIs]
+ifdef::foco_rhcl[]
+* xref:leitura-ingresso.adoc[De onde o projeto parte: Route, Ingress e Gateway API]
+endif::[]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
 * xref:se-algo-nao-responder.adoc[Se algo não responder]
@@ -12,8 +15,6 @@
 // a plataforma, a borda, a primeira API, o produto, a esteira, a operacao. Os
 // numeros das partes vem de partials/numeros.adoc -- mudar a ordem aqui e la.
 ifdef::foco_rhcl[]
-* xref:leitura-ingresso.adoc[Leitura: Route, Ingress e Gateway API]
-
 .Fase 1 — A plataforma no ar
 * xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]

@@ -211,7 +211,7 @@ ifndef::foco_rhcl[]
 Pronto. Siga para o xref:m1-01-fechada.adoc[Módulo 1].
 endif::[]
 ifdef::foco_rhcl[]
-Pronto. Siga para a xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e
-Gateway API], que diz de onde este projeto parte, ou direto para a
-xref:leitura-instalacao.adoc[Fase 1].
+Pronto. Siga para a xref:leitura-instalacao.adoc[Fase 1]. Se pulou a
+xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API], que diz
+de onde este projeto parte, ela leva dez minutos e vale antes da Fase 3.
 endif::[]
