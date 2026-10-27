@@ -7,6 +7,11 @@ interrompida no meio, ou você quer refazê-la do zero, o caminho de volta está
 aqui -- um bloco por parte, todos no terminal Infra, e todos seguros de rodar
 de novo: o que não existe é ignorado.
 
+Os laboratórios que sobem projeto próprio são apagados só se existirem: para
+um projeto que não existe, o OpenShift responde `Forbidden` em vez de "não
+encontrado" -- ele não diz a quem não pode ver se o nome existe --, e o bloco
+pergunta antes para não mostrar um erro que não é erro.
+
 Antes de desfazer, vale o veredito de
 xref:ambiente-conferir.adoc[Conferir o ambiente]: se o problema for do
 ambiente, desfazer a parte não resolve.
@@ -31,7 +36,7 @@ contadores. Os outros participantes não são afetados.
 
 [source,bash,role="execute"]
 ----
-oc delete project tls-lab --ignore-not-found
+if oc get project tls-lab -o name >/dev/null 2>&1; then oc delete project tls-lab; else echo "(tls-lab: nada a apagar)"; fi
 ----
 
 === xref:m1-06-exposta.adoc[]
@@ -61,7 +66,9 @@ Os dois laboratórios da página:
 
 [source,bash,role="execute"]
 ----
-oc delete project ctx-lab pfx-gw pfx-equipe-a pfx-equipe-b --ignore-not-found
+for p in ctx-lab pfx-gw pfx-equipe-a pfx-equipe-b; do
+  if oc get project $p -o name >/dev/null 2>&1; then oc delete project $p; else echo "($p: nada a apagar)"; fi
+done
 ----
 
 === xref:extra-listas.adoc[]
