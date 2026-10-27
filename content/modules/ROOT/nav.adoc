@@ -1,3 +1,6 @@
+// Com uma trilha ligada, o menu e SO a trilha (mais a Fase 8, se ligada):
+// o bloco comum e as secoes finais ficam fora.
+ifndef::trilha_degustacao,trilha_basico,trilha_intermediario,trilha_avancado,trilha_infra,trilha_desenvolvedor,trilha_operacoes[]
 .A solução de conectividade
 * xref:index.adoc[Sobre este workshop]
 * xref:sessoes.adoc[As sessões deste workshop]
@@ -11,6 +14,7 @@ endif::[]
 * xref:00-preparacao.adoc[Preparação]
 ifdef::trilhas[]
 * xref:trilhas.adoc[Escolha a sua trilha]
+endif::[]
 endif::[]
 
 // TRILHAS (validacao): com um atributo trilha_<nome> ligado por participante
@@ -375,6 +379,7 @@ ifndef::foco_rhsi[]
 endif::[]
 endif::[]
 
+ifndef::trilha_degustacao,trilha_basico,trilha_intermediario,trilha_avancado,trilha_infra,trilha_desenvolvedor,trilha_operacoes[]
 .Ambiente — conferir, consertar, recomeçar
 * xref:ambiente-conferir.adoc[Conferir o ambiente]
 * xref:se-algo-nao-responder.adoc[Se algo não responder]
@@ -384,3 +389,4 @@ endif::[]
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]
 * xref:referencias.adoc[Materiais de referência]
+endif::[]
