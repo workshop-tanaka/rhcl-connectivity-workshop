@@ -16,6 +16,7 @@ endif::[]
 ifdef::foco_rhcl[]
 .Fase 1 — A plataforma no ar
 * xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
+* xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway]
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
 
 .Fase 2 — A borda
@@ -151,6 +152,7 @@ endif::[]
 * xref:papel-rhdh.adoc[Leitura: o papel do Developer Hub]
 ifndef::foco_rhsi[]
 * xref:leitura-instalacao.adoc[Leitura: instalação e configuração]
+* xref:arquitetura.adoc[Leitura: a arquitetura]
 endif::[]
 endif::[]
 

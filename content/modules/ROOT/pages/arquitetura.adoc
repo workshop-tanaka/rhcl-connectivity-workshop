@@ -1,0 +1,368 @@
+include::partial$numeros.adoc[]
+ifndef::foco_rhcl[]
+= Leitura: a arquitetura do Connectivity Link
+:navtitle: Leitura: a arquitetura
+endif::[]
+ifdef::foco_rhcl[]
+= Fase 1 — A arquitetura: dois planos e um Gateway
+:navtitle: A arquitetura: dois planos e um Gateway
+endif::[]
+
+**Leitura, com comandos que só leem · ~12 min · não muda estado**
+
+**Momento do projeto:** dia 0 · **Quem lê:** Arquitetura e o time de plataforma
+
+A página anterior mostrou **o que** foi instalado, na ordem. Esta mostra **como
+as peças se encaixam**: quem lê a policy que você escreve, no que ela vira, e
+por onde a requisição passa antes de chegar à aplicação. Cada desenho tem, logo
+abaixo, o comando que mostra a peça de verdade neste cluster.
+
+Os desenhos seguem a visão de arquitetura do projeto upstream (Kuadrant), redesenhados
+para o que existe aqui: o provedor de Gateway, as versões e os nomes deste
+ambiente. A xref:referencias.adoc[página de referências] aponta a fonte.
+
+== 1. A visão de dez mil metros
+
+O Connectivity Link é feito de **dois planos**. O plano de controle expõe as
+policies como tipos do Kubernetes e as traduz; o plano de dados fica no caminho
+de cada requisição e as faz valer. Entre os dois, o `Gateway`, que o
+Connectivity Link **configura** mas não cria.
+
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart TB
+  subgraph CP["Plano de controle (kuadrant-system)"]
+    direction LR
+    POL["Policies que você escreve<br/>AuthPolicy · RateLimitPolicy · PlanPolicy<br/>TLSPolicy · DNSPolicy · TelemetryPolicy"]
+    CTRL["Controladores<br/>(o operator do Connectivity Link<br/>e os de Authorino, Limitador e DNS)"]
+    POL -->|"leem e reconciliam"| CTRL
+  end
+  subgraph DP["Plano de dados"]
+    direction LR
+    ENF["Objetos de enforcement<br/>AuthConfig · limites do Limitador<br/>Certificate · DNSRecord · EnvoyFilter"]
+    EXEC["Quem faz valer<br/>Authorino · Limitador<br/>módulo wasm no Gateway"]
+    ENF -->|"configuram"| EXEC
+  end
+  GW(["Gateway<br/>prod-web"])
+  CTRL -->|"criam"| ENF
+  CTRL -->|"configuram"| GW
+  EXEC -->|"decidem a cada requisição"| GW
+  EXEC -.->|"integrações"| EXT["cert-manager · provedor de DNS<br/>provedor de identidade"]
+....
+
+A frase que resume o desenho: **você escreve uma policy; o operator a traduz
+em objetos que o Authorino, o Limitador e o Gateway entendem; a requisição
+paga o preço dessa tradução a cada chamada, não a cada mudança.**
+
+Veja os dois planos de pé: o de controle são os operators; o de dados, o
+Authorino e o Limitador, no mesmo namespace, e o Gateway, em outro.
+
+[source,bash,role="execute"]
+----
+oc get pods -n kuadrant-system
+oc get pods -n ingress-gateway
+----
+
+== 2. O plano de controle
+
+Quem instala quem, e quem lê o quê. O operator do Connectivity Link é o
+controlador de policies: lê o CR `Kuadrant` (a página anterior) e as policies,
+dispara a instalação dos outros três operators e cria, para cada policy, o
+objeto que o plano de dados vai consumir.
+
+[mermaid]
+....
+flowchart TB
+  K["CR Kuadrant"]
+  OP["Operator do Connectivity Link<br/>(kuadrant-operator)"]
+  K -->|"reconcilia"| OP
+  OP -->|"instala"| LO["Limitador Operator"]
+  OP -->|"instala"| AO["Authorino Operator"]
+  OP -->|"instala"| DO["DNS Operator"]
+  LO -->|"sobe"| L["Limitador"]
+  AO -->|"sobe"| A["Authorino"]
+  subgraph P["Policies"]
+    AP["AuthPolicy"]
+    RP["RateLimitPolicy<br/>PlanPolicy"]
+    TP["TLSPolicy"]
+    DNP["DNSPolicy"]
+  end
+  AP -->|"vira"| AC["AuthConfig<br/>(lido pelo Authorino)"]
+  RP -->|"vira"| LIM["limites no CR Limitador<br/>(montados no pod)"]
+  TP -->|"vira"| CERT["Certificate<br/>(emitido pelo cert-manager)"]
+  DNP -->|"vira"| DR["DNSRecord<br/>(aplicado pelo DNS Operator)"]
+  OP --- P
+....
+
+[cols="1,2,2",options="header"]
+|===
+| componente | responsabilidade | onde você vê
+
+| operator do Connectivity Link
+| expõe `AuthPolicy`, `RateLimitPolicy`, `PlanPolicy`, `TLSPolicy`,
+  `DNSPolicy` e `TelemetryPolicy`; reconcilia cada uma; configura o Gateway
+| `oc get pods -n kuadrant-system` (`kuadrant-operator-controller-manager`)
+
+| Limitador Operator
+| sobe o Limitador a partir do CR `Limitador` e monta os limites nele
+| `oc get limitador -n kuadrant-system`
+
+| Authorino Operator
+| sobe o Authorino a partir do CR `Authorino`
+| `oc get authorino -n kuadrant-system`
+
+| DNS Operator
+| aplica `DNSRecord` num provedor de DNS, quando há `DNSPolicy`
+| `oc get pods -n kuadrant-system` (`dns-operator-controller-manager`)
+
+| cert-manager
+| não é do Connectivity Link: emite o `Certificate` que a `TLSPolicy` pede
+| `oc get certificate -n ingress-gateway`
+|===
+
+O que dá para ver daqui: a `RateLimitPolicy` do Gateway e o `PlanPolicy` da
+sua API viraram **limites dentro do CR `Limitador`**, vários por policy (um
+por plano e por janela), rotulados pela policy de origem. Conte-os por policy,
+e ache a sua (medido aqui: sete limites para a policy da travel-agency):
+
+[source,bash,role="execute"]
+----
+oc get limitador limitador -n kuadrant-system -o jsonpath='{range .spec.limits[*]}{.namespace}{"\n"}{end}' | sort | uniq -c
+----
+
+**O que isso diz:** o Limitador da plataforma carrega os limites de **todas**
+as policies do cluster, inclusive as dos outros participantes, cada um
+rotulado pela policy que o criou. É esse arquivo que cresce com a turma, e é
+por isso que a leitura xref:leitura-multitenancy.adoc[sobre multi-tenancy]
+fala em contadores por policy, não por Gateway.
+
+Os `AuthConfig` que as `AuthPolicy` viraram ficam no namespace da plataforma
+e só o time de plataforma os lê. O que você vê é o efeito: o `401` da parte
+{p-fechada} e o `200` com a sua chave.
+
+== 3. O plano de dados: o caminho de uma requisição
+
+O Gateway é um Envoy. O Connectivity Link põe dentro dele um **módulo wasm**
+que, a cada requisição, pergunta ao Authorino quem é o chamador e ao
+Limitador se ele ainda pode passar -- duas chamadas gRPC -- e só então
+entrega à aplicação.
+
+[mermaid]
+....
+sequenceDiagram
+  autonumber
+  participant C as cliente
+  participant R as Route (passthrough)
+  participant E as Gateway prod-web<br/>(Envoy + módulo wasm)
+  participant A as Authorino
+  participant L as Limitador
+  participant S as travels
+  C->>R: HTTPS, Authorization: APIKEY …
+  R->>E: bytes cifrados (o TLS termina aqui)
+  E->>A: gRPC: quem é? (AuthConfig da rota)
+  A-->>E: identidade + plano, ou 401
+  E->>L: gRPC: ainda pode? (limite do plano)
+  L-->>E: pode, ou 429
+  E->>S: a requisição, com x-partner
+  S-->>C: 200
+....
+
+Cada passo do desenho é uma parte deste workshop: o `401` é a parte
+{p-fechada}; o `429`, a parte {p-planos}; o header `x-partner`, a parte
+{p-negocio}; e o tempo gasto em cada seta, a parte {p-negado}, no trace.
+
+O que o operator pôs no Gateway para isso acontecer são `EnvoyFilter`: um
+carrega o módulo wasm, um liga a autenticação, um o rate limit e um o tracing.
+
+[source,bash,role="execute"]
+----
+oc get envoyfilter -n ingress-gateway
+----
+
+ifdef::foco_rhcl[]
+[NOTE]
+====
+No desenho do projeto upstream o módulo chega ao Gateway por um `WasmPlugin`.
+Neste ambiente, com o provedor de Gateway do próprio OpenShift, o operator o
+entrega por `EnvoyFilter` -- é o que o comando acima mostra, e não há
+`WasmPlugin` nenhum no cluster. O efeito é o mesmo; muda o objeto.
+====
+endif::[]
+
+.Mais detalhes: o que cada peça do plano de dados faz
+[%collapsible]
+====
+[cols="1,3",options="header"]
+|===
+| peça | o que faz, e com que API
+
+| módulo wasm (`wasm-shim`)
+| roda dentro do Envoy, pelo Proxy-WASM; é quem chama o Authorino e o
+  Limitador. Quando ele cai, o Gateway responde com o `failureMode` de cada
+  policy: a parte {p-degrada} mede os dois casos.
+
+| Authorino
+| implementa a API de autorização externa do Envoy (`ext_authz`); lê os
+  `AuthConfig`; devolve identidade, plano e os headers que a policy manda
+  injetar
+
+| Limitador
+| implementa a API de rate limit do Envoy; conta contra os limites montados
+  no pod; aqui os contadores ficam **em memória**, uma réplica -- com mais de
+  uma réplica o contador se divide, e é o Redis que o une (leitura
+  {p-multitenancy} e o dimensionamento)
+
+| Gateway (`prod-web`)
+| o Envoy que o provedor do OpenShift mantém; termina o TLS com o
+  `Secret` `api-tls`; publicado por uma `Route` em modo passthrough
+|===
+====
+
+.Outro caso de uso: e se o provedor fosse o Service Mesh?
+[%collapsible]
+====
+O plano de dados muda de dono, não de forma. Com o OpenShift Service Mesh
+como provedor, o Istio é configurado por um CR `Istio` e um `IstioCNI`, o
+módulo chega ao Gateway por um `WasmPlugin`, e `mtls.enable: true` no CR
+`Kuadrant` põe o Authorino e o Limitador no Service Mesh: as duas setas gRPC
+do desenho passam a ser cifradas e autenticadas nas duas pontas. A
+xref:papel-ossm.adoc[leitura sobre o papel do Service Mesh] diz o que mais
+muda.
+====
+
+== 4. Como este cluster está montado
+
+O desenho do projeto upstream mostra um cluster genérico. Este é o seu:
+
+[mermaid]
+....
+flowchart LR
+  subgraph OI["openshift-ingress"]
+    RT["Route passthrough<br/>api-travels…"]
+  end
+  subgraph IG["ingress-gateway"]
+    GW["Gateway prod-web<br/>(Envoy + wasm)"]
+    EF["EnvoyFilter ×4<br/>Secret api-tls"]
+  end
+  subgraph KS["kuadrant-system"]
+    OP["operators"]
+    AU["Authorino"]
+    LI["Limitador"]
+  end
+  subgraph TA["travel-agency"]
+    HR["HTTPRoute"]
+    PL["AuthPolicy · PlanPolicy"]
+    APP["travels"]
+  end
+  RT --> GW
+  GW -->|"gRPC"| AU
+  GW -->|"gRPC"| LI
+  GW --> APP
+  OP -.->|"traduz"| PL
+  OP -.->|"configura"| EF
+  HR -.->|"pende de"| GW
+....
+
+Três escolhas deste ambiente que o desenho genérico não mostra, e o que cada
+uma custa:
+
+* **o provedor de Gateway é o do OpenShift**, sem Service Mesh: menos
+  componentes, e o salto entre o Gateway e o Connectivity Link fica sem mTLS
+  (a parte {p-degrada} corta esse salto de propósito);
+* **uma réplica de cada** Gateway, Authorino e Limitador, fixada pela
+  instalação: é atalho de laboratório (ver
+  xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório]); em
+  produção, a quantidade sai de uma medição de carga;
+* **sem provedor de DNS**: a `DNSPolicy` da parte {p-dns} usa uma zona de
+  laboratório dentro do cluster; com Route 53, Azure DNS ou Cloud DNS, o DNS
+  Operator publicaria o nome lá.
+
+ifdef::foco_rhcl[]
+Num ambiente de turma, cada participante tem o próprio `ingress-gateway` e o
+próprio `travel-agency`, com sufixo; o `kuadrant-system` é um só para todos.
+É o que a leitura xref:leitura-multitenancy.adoc[sobre multi-tenancy] chama
+de "o que é compartilhado, e não se separa".
+endif::[]
+
+== 5. Observabilidade
+
+Cada peça do plano de dados conta o que fez; o que muda é quem coleta.
+
+[mermaid]
+....
+flowchart LR
+  subgraph DP["plano de dados"]
+    GW["Gateway"]
+    AU["Authorino"]
+    LI["Limitador"]
+  end
+  subgraph MON["monitoring (OpenShift)"]
+    PR["Prometheus<br/>(workloads do usuário)"]
+    GR["Grafana"]
+  end
+  subgraph TR["tracing-system"]
+    OT["OTel Collector"]
+    TE["Tempo"]
+  end
+  GW & AU & LI -->|"métricas"| PR --> GR
+  GW & AU & LI -->|"spans"| OT --> TE
+  TE -.->|"traces"| GR
+....
+
+* **Métricas**: o monitoramento de workloads do usuário do OpenShift raspa o
+  Gateway, o Authorino e o Limitador; o Grafana lê dele. É a parte
+  {p-negocio}.
+* **Traces**: o CR `Kuadrant` aponta para um coletor OpenTelemetry (a página
+  anterior), que envia ao Tempo. É a parte {p-negado}.
+* **Logs**: ficam no `oc logs` de cada componente; este ambiente não tem
+  agregador de logs. O desenho upstream põe um Loki alimentado por coletores;
+  é a peça que falta aqui.
+
+[source,bash,role="execute"]
+----
+oc get pods -n tracing-system
+----
+
+== 6. E com mais de um cluster
+
+Não há um "Connectivity Link multi-cluster": cada cluster tem a própria
+instalação, e os clusters não se conhecem. O que os une são três coisas
+compartilhadas:
+
+[mermaid]
+....
+flowchart TB
+  subgraph C1["cluster A"]
+    G1["Gateway + Connectivity Link"]
+  end
+  subgraph C2["cluster B"]
+    G2["Gateway + Connectivity Link"]
+  end
+  DNS["zona de DNS compartilhada<br/>(um nome, registros dos dois)"]
+  RED["contadores compartilhados<br/>(Redis)"]
+  G1 --> DNS
+  G2 --> DNS
+  G1 --> RED
+  G2 --> RED
+  CLI["cliente"] -->|"api.exemplo"| DNS
+....
+
+* **a zona de DNS**: o DNS Operator de cada cluster escreve na mesma zona, e
+  a posse de cada registro fica em registros TXT no próprio provedor;
+* **o nome**: os dois servem o mesmo hostname, e a `DNSPolicy` decide o peso
+  e a geografia;
+* **os contadores**: cada Limitador liga no mesmo Redis, e o limite passa a
+  valer para a soma dos clusters.
+
+Nada disto é exercitado aqui: este ambiente é um cluster só. A leitura
+xref:leitura-multitenancy.adoc[sobre multi-tenancy] diz quando um segundo
+cluster é a resposta certa.
+
+== Em uma frase
+
+Duas camadas de objetos: **as policies, que são suas, e os objetos de
+enforcement, que são do operator**. Quando algo não bate, a parte
+{p-negado} ensina a olhar as duas: a policy diz o que você pediu; o objeto de
+enforcement e o trace dizem o que o Gateway fez.

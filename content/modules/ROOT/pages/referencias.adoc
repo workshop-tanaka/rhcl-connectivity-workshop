@@ -84,6 +84,11 @@ workshop vem daqui:
   comportamento podem diferir, e para o Connectivity Link vale a documentação
   da Red Hat
 
+| https://docs.kuadrant.io/1.4.x/architecture/docs/design/architectural-overview-v1/[Kuadrant: visão de arquitetura (1.4.x)^]
+| os desenhos que a Fase 1 (xref:arquitetura.adoc[A arquitetura]) redesenha
+  para este ambiente: planos de controle e de dados, layout de um cluster,
+  multi-cluster e observabilidade
+
 | https://istio.io/latest/docs/[Istio^]
 | `PeerAuthentication`, `AuthorizationPolicy`, `VirtualService`,
   `DestinationRule`
