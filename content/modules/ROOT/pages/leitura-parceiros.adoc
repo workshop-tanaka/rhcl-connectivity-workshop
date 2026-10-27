@@ -1,6 +1,6 @@
 include::partial$numeros.adoc[]
-= Leitura: muitos parceiros, muitas APIs
-:navtitle: Leitura: muitos parceiros, muitas APIs
+= {p-parceiros}Leitura: muitos parceiros, muitas APIs
+:navtitle: {p-parceiros}Leitura: muitos parceiros, muitas APIs
 
 **Leitura · ~9 min · não muda estado**
 
@@ -8,9 +8,9 @@ ifdef::foco_rhcl[]
 [TIP]
 ====
 **Fase 7 -- Escala, e o que vem depois.** É o trimestre seguinte, e a conversa
-é de arquitetura: mais parceiros, mais APIs, mais times na mesma plataforma, a
-configuração nascendo de um formulário, e as duas fronteiras que esta sessão
-não pratica. Só leitura, cerca de 35 minutos.
+é de arquitetura: mais parceiros, mais APIs, mais times na mesma plataforma, as
+duas fronteiras que esta sessão não pratica, e onde entra o WAF. Só leitura,
+cerca de 30 minutos.
 ====
 endif::[]
 
@@ -75,14 +75,13 @@ A resposta que escala é em **camadas**, e ela já está no produto:
 | quais planos existem e o que cada um compra
 |===
 
-Duas propriedades sustentam isso sem depender de disciplina. **A policy só
-alcança um recurso do próprio namespace**, então a fronteira entre os donos é
-namespace e RBAC. E **a precedência fica escrita no status**: quando a exceção
-vence o teto, o teto diz que cedeu, e para quem. É o que as partes
+Isso se sustenta sem depender de disciplina: a fronteira entre os donos é
+namespace e RBAC, e a precedência fica escrita no status -- quando a exceção
+vence o teto, o teto diz que cedeu, e para quem. As partes
 xref:m1-03-precedencia.adoc[{p-precedencia}] e
-xref:m1-04-papeis.adoc[{p-papeis}] mostram, e a
-xref:leitura-multitenancy.adoc[leitura de multi-tenancy] leva isso para vários
-times.
+xref:m1-04-papeis.adoc[{p-papeis}] mostram as duas coisas, e a
+xref:leitura-multitenancy.adoc[leitura de multi-tenancy] explica por que valem
+para vários times.
 
 == 3. Como o parceiro se identifica
 
@@ -214,9 +213,10 @@ na leitura xref:m5-01-colheita.adoc[{p-colheita}].
 
 == O que muda de natureza quando o número cresce
 
-* **A plataforma é uma só por cluster.** Um Authorino e um Limitador atendem
-  todos os Gateways. A disponibilidade é comum, e por isso a plataforma precisa
-  avisar sobre si mesma -- a parte xref:m3-05-alerta.adoc[{p-alerta}].
+* **A plataforma é uma só por cluster** (ver a
+  xref:leitura-multitenancy.adoc[leitura de multi-tenancy]). A disponibilidade
+  é comum, e por isso a plataforma precisa avisar sobre si mesma -- a parte
+  xref:m3-05-alerta.adoc[{p-alerta}].
 * **O operator tem teto de memória.** Com centenas de policies ele passa do
   limite de fábrica e reinicia, e o que for criado nesse intervalo não é
   aplicado. Em ambiente grande, o limite é ampliado na instalação.

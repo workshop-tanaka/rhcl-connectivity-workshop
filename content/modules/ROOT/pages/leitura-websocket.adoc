@@ -96,8 +96,15 @@ requisição-resposta por um fluxo. Mas muda o que se pode **prometer**.
 
 == Duas configurações que a conexão precisa para não cair
 
+ifndef::foco_rhcl[]
 Estas foram medidas neste ambiente, e as duas produzem **o mesmo sintoma**
 quando faltam -- uma conexão que abre e morre sozinha, sem erro em log nenhum:
+endif::[]
+ifdef::foco_rhcl[]
+Estas foram medidas no ambiente de referência, que tem Service Mesh, e as
+duas produzem **o mesmo sintoma** quando faltam -- uma conexão que abre e
+morre sozinha, sem erro em log nenhum:
+endif::[]
 
 [cols="1,2",options="header"]
 |===

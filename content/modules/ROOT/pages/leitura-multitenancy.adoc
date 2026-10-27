@@ -1,6 +1,6 @@
 include::partial$numeros.adoc[]
-= Leitura: multi-tenancy com o Connectivity Link
-:navtitle: Leitura: multi-tenancy
+= {p-multitenancy}Leitura: multi-tenancy com o Connectivity Link
+:navtitle: {p-multitenancy}Leitura: multi-tenancy
 
 **Leitura · ~8 min · não muda estado**
 
@@ -73,7 +73,7 @@ oc get authpolicy travel-agency-authpolicy -n travel-agency \
 Não há campo de namespace ali. Um time não consegue escrever uma policy que
 governe a rota de outro time.
 
-=== Padrão e teto
+=== Padrão e trava
 
 Uma policy no `Gateway` vale para todas as rotas anexadas a ele, de duas
 formas:
@@ -86,14 +86,16 @@ formas:
 | vale enquanto a rota não trouxer a própria policy. O time de aplicação pode
   substituí-la
 
-| teto (`overrides`)
+| trava (`overrides`)
 | vale sempre. A rota não consegue derrubá-la
 |===
 
 É assim que a plataforma impõe uma regra a todos os times sem escrever em
 nenhuma rota. Neste workshop o "nega tudo" do Gateway é um padrão, e a policy
 da rota o substitui -- é o `Overridden` que a
-xref:m1-03-precedencia.adoc[parte {p-precedencia}] mostra.
+xref:m1-03-precedencia.adoc[parte {p-precedencia}] mostra. Quando as outras
+páginas falam do **teto do Gateway**, é dele que falam: a policy que a
+plataforma prende ao Gateway e que vale onde a rota não declarou a sua.
 
 === Contadores por rota
 
@@ -115,7 +117,12 @@ O produto governa a borda. Três coisas ele deixa para a plataforma por baixo:
 | `NetworkPolicy` e o Service Mesh. Uma chave de API protege a porta da rua;
   quem já está dentro do cluster alcança o serviço de outro namespace sem
   passar pelo Gateway, a menos que algo o impeça. É a fronteira leste-oeste
+ifndef::foco_rhcl[]
   da xref:m2-01-leste-oeste.adoc[parte {p-leste}]
+endif::[]
+ifdef::foco_rhcl[]
+  -- ver a leitura xref:papel-ossm.adoc[{p-papel-ossm}o papel do Service Mesh]
+endif::[]
 
 | regras que o Gateway API não expressa
 | controle de admissão -- por exemplo, exigir que o hostname de uma rota

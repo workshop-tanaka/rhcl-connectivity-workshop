@@ -1,6 +1,6 @@
 include::partial$numeros.adoc[]
-= Leitura: o papel do Service Interconnect
-:navtitle: Leitura: o papel do Service Interconnect
+= {p-papel-rhsi}Leitura: o papel do Service Interconnect
+:navtitle: {p-papel-rhsi}Leitura: o papel do Service Interconnect
 
 **Leitura · ~4 min · não muda estado**
 
@@ -41,7 +41,14 @@ lugar, é o Service Interconnect que carrega essa conversa.
 
 == Onde praticar
 
+ifndef::foco_rhcl[]
 A sessão de Service Interconnect está em preparação. A
 xref:m4-00-intro.adoc[proposta do módulo] descreve o que ela vai cobrir, e a
 xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
 requisição só.
+endif::[]
+ifdef::foco_rhcl[]
+A sessão de Service Interconnect está em preparação. A
+xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
+requisição só.
+endif::[]

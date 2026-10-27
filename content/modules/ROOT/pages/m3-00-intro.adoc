@@ -5,7 +5,7 @@ ifndef::foco_rhcl[]
 endif::[]
 ifdef::foco_rhcl[]
 = Fase 6 — Operação: a borda no dia a dia
-:navtitle: Introdução
+:navtitle: O que muda nesta fase
 endif::[]
 
 ifndef::foco_rhcl[]
@@ -39,6 +39,9 @@ percorre seis lugares onde uma chamada pode morrer, e dois deles são do Service
 Mesh: sem o Módulo 2, `sidecar` e `AuthorizationPolicy` seriam palavras novas
 no meio de um exercício de diagnóstico.
 
+As partes {p-rastreavel} e {p-trace} precisam do Service Mesh, que este
+ambiente ainda não tem: ficam no guia para leitura e revisão.
+
 == Aviso sobre a parte {p-degrada}
 
 Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
@@ -46,7 +49,7 @@ você interromper com `Ctrl-C`. As outras três não alteram nada.
 endif::[]
 ifdef::foco_rhcl[]
 
-**Quatro partes · cerca de 36 minutos · uma delas muda estado e devolve**
+**Quatro partes, a última opcional · cerca de 26 minutos, mais 10 da {p-auditoria} · duas mudam estado e devolvem**
 
 **Momento do projeto:** do dia 2 em diante · **Quem faz:** operação, suporte e SRE
 
@@ -84,5 +87,7 @@ dele] diz o que ele faria aqui.
 == Aviso sobre a parte {p-degrada}
 
 Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
-você interromper com `Ctrl-C`. As outras três não alteram nada.
+você interromper com `Ctrl-C`. A parte {p-alerta} também muda estado: aplica as
+regras de alerta e as remove no fim. A {p-negado} não altera nada, e a
+{p-auditoria} cria uma chave descartável e a revoga.
 endif::[]

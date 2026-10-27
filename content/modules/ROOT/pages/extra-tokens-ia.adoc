@@ -139,23 +139,18 @@ Na API do travels, ninguém vê isso porque a `PlanPolicy` exporta o plano
 sozinha. Quem escreve a policy de limite à mão precisa escrever o export
 também.
 
+Por isso, **não tente** o caminho intuitivo -- o predicado direto sobre
+`auth.identity.metadata.labels[...]`: sem o export, a policy existe, fica
+verde, e não morde.
+
 TIP: Se o exercício for interrompido no meio, limpe com
 `bash scripts/tokens-ia.sh limpa`.
-
-== Não tente isto
-
-Escrever a `TokenRateLimitPolicy` com predicado direto sobre
-`auth.identity.metadata.labels[...]`, que é o caminho intuitivo. Ela fica
-`Accepted=True`, `Enforced=True`, os limites aparecem no Limitador -- e **nada
-é contado**. O log do Gateway explica: `CelError::Resolve { NoSuchKey("identity") }`.
-
-O limite só enxerga o que a `AuthPolicy` exporta em `response.success.filters`.
-Sem esse export, a policy existe e não morde.
 
 == O que isso prova
 
 A plataforma que governa a API de viagens governa a API de IA com a mesma
-peça: o mesmo Gateway, a mesma chave, o mesmo plano. Muda a unidade da conta.
+peça: um Gateway, uma chave, um plano -- o exercício sobe os dele, iguais em
+forma aos da API de viagens. Muda a unidade da conta.
 
 E vale a mesma lição do resto do workshop, com um detalhe a mais: `Enforced`
 diz que a policy foi instalada, não que ela está contando. Aqui, a conta

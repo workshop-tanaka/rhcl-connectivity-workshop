@@ -31,6 +31,14 @@ ifndef::foco_rhcl[]
 :p-mr:
 :p-confere:
 :p-desvio:
+:p-parceiros:
+:p-multitenancy:
+:p-papel-ossm:
+:p-papel-rhsi:
+:p-waf:
+// quantos arquivos a parte {p-exposta} aplica: os seis de passos/exposta/,
+// nas duas sessoes desde a v0.81
+:n-exposta: seis
 :m1: Módulo 1
 :m2: Módulo 2
 :m3: Módulo 3
@@ -58,7 +66,7 @@ ifdef::foco_rhcl[]
 :p-degrada: 6.2
 :p-alerta: 6.3
 :p-auditoria: 6.4
-:p-colheita: 7.1
+:p-colheita: 5.5
 :p-dns: 3.2{sp}
 :p-versoes: 4.3{sp}
 :p-contextos: 4.4{sp}
@@ -67,6 +75,14 @@ ifdef::foco_rhcl[]
 :p-mr: 5.2{sp}
 :p-confere: 5.3{sp}
 :p-desvio: 5.4{sp}
+// a fase 7 e toda leitura, numerada de ponta a ponta; nas outras sessoes
+// essas paginas sao leituras de apoio, sem numero
+:p-parceiros: 7.1{sp}
+:p-multitenancy: 7.2{sp}
+:p-papel-ossm: 7.3{sp}
+:p-papel-rhsi: 7.4{sp}
+:p-waf: 7.5{sp}
+:n-exposta: seis
 // Na sessao de Connectivity Link nao ha modulos, ha fases. Onde a pagina dizia
 // 'Modulo N', sai o nome do trecho correspondente -- todos no masculino, para
 // a frase em volta continuar concordando.

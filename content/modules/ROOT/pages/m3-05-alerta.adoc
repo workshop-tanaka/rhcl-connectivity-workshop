@@ -16,10 +16,8 @@ Tudo que você diagnosticou até aqui foi falha que **alguém sente**: `401`, `4
 A proteção que deixou de valer não gera reclamação. O tráfego continua `200`, o
 painel continua verde, e a API está desprotegida. Os dois jeitos de isso
 acontecer já apareceram neste workshop -- a policy sobreposta da parte {p-precedencia} e o
-Limitador fora do ar da parte {p-degrada} -- e nos dois o material apresentou como
-acidente inevitável.
-
-Falta a segunda metade da frase.
+Limitador fora do ar da parte {p-degrada}. Nas duas, a página mostrou o efeito;
+falta quem avise.
 
 include::partial$diagrama.adoc[]
 
@@ -62,9 +60,10 @@ bash scripts/alerta.sh status
 | `limitador_up`
 | o rate limit **falhando aberto** agora
 
-| `travel-agency`
+| `ingress-gateway`
 | `istio_requests_total`
-| um parceiro saturando o plano, ou sendo recusado em série
+| um parceiro saturando o plano, ou sendo recusado em série -- no projeto do
+  Gateway, porque o `401` e o `429` nascem nele e não chegam à aplicação
 |===
 
 Elas não moram juntas por escolha. **O monitoramento de workload injeta o
@@ -129,7 +128,7 @@ somam: a métrica precisa ficar obsoleta (uma raspagem, ~30s) e só então o
 esperar calado.
 ====
 
-== Duas armadilhas que este ato mede
+== Duas armadilhas que esta parte mede
 
 Nenhuma das duas dá erro. As duas produzem um alerta que parece certo e nunca
 dispara.
@@ -192,8 +191,8 @@ estiver aceso.
 administração responde *"You don't have access to this section due to cluster
 policy"*: ela mostra os alertas de todos e da plataforma. As duas regras da
 plataforma (`monitoring/rhcl-protecao` e `kuadrant-system/rhcl-limitador`) são
-do instrutor -- `bash scripts/alerta.sh status` mostra as três, inclusive as
-que não são suas. É a mesma divisão da Policy Topology: o projeto é seu, a
+do instrutor -- o `bash scripts/alerta.sh status` lê a sua pelo projeto, e
+diz quando não tem acesso às da plataforma. É a mesma divisão da Policy Topology: o projeto é seu, a
 plataforma é de quem a opera.
 ifeval::["{usuario_console_plataforma}" != ""]
 

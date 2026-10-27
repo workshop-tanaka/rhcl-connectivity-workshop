@@ -60,7 +60,7 @@ exercício não depende de rota publicada nem de DNS externo.
 Sem credencial, a resposta é `code = Unauthenticated`. Com a chave no
 _metadata_ `apikey`, o serviço responde.
 
-E aqui está o ponto do módulo. Compare a `AuthPolicy` de gRPC com a de HTTP,
+E aqui está o ponto da página. Compare a `AuthPolicy` de gRPC com a de HTTP,
 campo a campo:
 
 [cols="1,1,1",options="header"]
@@ -127,5 +127,6 @@ programada, e o campo de status diz que está valendo. O contador diz que não
 está. **Quem confia no status sem medir o comportamento acredita num limite
 que não existe.**
 
-Guarde essa segunda lição: ela reaparece no {m3}, quando o assunto for
-diagnosticar o que a plataforma afirma contra o que ela faz.
+Essa segunda lição já apareceu no {m3}, na parte
+xref:m3-05-alerta.adoc[{p-alerta}]: a proteção caindo com tudo verde. Aqui é o
+caso extremo -- nada caiu, e o limite nunca existiu.

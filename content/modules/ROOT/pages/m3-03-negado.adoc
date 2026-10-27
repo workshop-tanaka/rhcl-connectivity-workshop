@@ -290,6 +290,12 @@ Traduzindo: a regra **está escrita corretamente** e foi aceita -- e **não
 está valendo**, porque outra, mais específica, a substitui. O próprio status
 diz o nome de quem a substituiu.
 
+Se a lista trouxer também `ingress-gateway/pega-tudo-421`, é uma rota da
+plataforma: ela responde `421` aos nomes que chegam ao Gateway sem serem da
+API -- o navegador reaproveita a conexão de um endereço para outro -- e, como
+toda rota do `prod-web`, tem `AuthPolicy` própria. Por isso ela também sobrepõe
+o nega-tudo.
+
 É o mesmo princípio de qualquer sistema de permissões: a regra específica
 vence a regra ampla. O que engana é que o arquivo que você abre está certo;
 ele só não é o que decide.
@@ -309,7 +315,7 @@ O comando provoca **uma das seis estações, sorteada**, e mostra só o sintoma.
 Você diz o número, e ele confirma ou corrige. Pode repetir quantas vezes
 quiser -- cada rodada sorteia outra.
 
-Se errar, o próprio resultado diz qual módulo rever.
+Se errar, o próprio resultado diz qual parte rever.
 
 == A cola, para levar embora
 

@@ -4,6 +4,13 @@ include::partial$numeros.adoc[]
 
 **Opcional · ~10 min · não muda estado**
 
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-02-planos.adoc[{p-planos}], que dá os três planos às
+chaves. A xref:m3-03-negado.adoc[{p-negado}] ajuda a ler as recusas: as
+estações que esta página cita são as dela.
+====
+
 O terminal prova o ponto com menos cliques, mas a maioria das pessoas testa API
 no Postman -- e ver os cabeçalhos numa interface ajuda a fixar o que os
 {m1e3} mostraram.
@@ -32,15 +39,17 @@ valor copiado em arquivo envelhece.
 
 == 1. Copie a coleção
 
-Ela está no terminal do workshop. Mostre o conteúdo:
+Ela está no terminal do workshop. Mostre o conteúdo -- é longo, e o terminal
+leva alguns segundos para despejá-lo:
 
 [source,bash,role="execute"]
 ----
 cat postman/rhcl-demo.postman_collection.json
 ----
 
-Selecione tudo, copie, e no Postman use **Import** e cole o texto -- ele
-aceita o JSON colado, sem precisar de arquivo.
+Selecione tudo, copie, e salve na sua máquina como
+`rhcl-demo.postman_collection.json`. A importação é no passo 3, junto com o
+_environment_.
 
 == 2. Gere o _environment_
 
@@ -96,8 +105,8 @@ vem esse certificado e quem o renova.
 == O que tentar primeiro
 
 Abra a pasta **A borda é fechada** e rode *GET travels SEM chave*. Olhe a aba
-**Headers** da resposta: lá está o `x-ext-auth-reason` da estação 3, na
-interface em vez do terminal.
+**Headers** da resposta: lá está o `x-ext-auth-reason` da estação 3 da parte
+{p-negado}, na interface em vez do terminal.
 
 Depois, na pasta **Planos comerciais**, rode *estourar o free* -- é o `429` mudo da
 estação 4, e você pode conferir na mesma aba que não há nenhum cabeçalho

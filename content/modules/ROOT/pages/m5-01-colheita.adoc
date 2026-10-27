@@ -1,28 +1,62 @@
 include::partial$numeros.adoc[]
+ifndef::foco_rhcl[]
 = {p-colheita} Leitura: a mesma API, pelo caminho pavimentado
 :navtitle: {p-colheita} Leitura: o caminho pavimentado
+endif::[]
+ifdef::foco_rhcl[]
+= {p-colheita} Leitura: do repositório ao formulário
+:navtitle: {p-colheita} Leitura: do repositório ao formulário
+endif::[]
 
 **Leitura · ~8 min · não muda estado**
 
 [WARNING.antes]
 ====
+ifndef::foco_rhcl[]
 **Antes: a parte {p-exposta}.** Ela é o contraste inteiro desta aqui. Sem ter escrito
-os quatro arquivos à mão, o que vem a seguir parece só um formulário
+os {n-exposta} arquivos à mão, o que vem a seguir parece só um formulário
 conveniente.
+endif::[]
+ifdef::foco_rhcl[]
+**Antes: a parte {p-exposta} e as partes {p-fonte}a {p-desvio}desta fase.** A
+primeira é o contraste: sem ter aplicado os {n-exposta} arquivos um a um, o que
+vem a seguir parece só um formulário conveniente. As outras são o caminho que
+este formulário alimenta.
+endif::[]
 ====
 
+ifndef::foco_rhcl[]
 Na parte anterior você publicou uma API do zero. Quatro arquivos, quatro
 momentos, e um checklist no fim listando tudo que ainda faltava: telemetria
 por plano, mTLS, identidade de serviço, canário, catálogo.
 
 Agora a mesma API, pelo caminho que a plataforma oferece -- o *golden path*.
+endif::[]
+ifdef::foco_rhcl[]
+Na parte {p-exposta} você publicou uma API do zero: {n-exposta} arquivos
+aplicados um a um, e um checklist no fim listando o que ainda faltava. Nesta
+fase os arquivos ganharam dono: um repositório, revisão por merge request e
+uma esteira que aplica. Falta uma pergunta: **quem escreve os arquivos?**
+
+Esta leitura mostra a resposta da plataforma -- o *golden path*: a mesma API,
+nascendo de um formulário.
+endif::[]
 
 [NOTE]
 ====
+ifndef::foco_rhcl[]
 **Esta parte é leitura, e não há nada a executar.** O caminho pavimentado
 passa pelo Red Hat Developer Hub e por um GitLab, que este ambiente de
 workshop não instala. O que você vai ver é o que acontece nele, com os
 arquivos reais do template que o percorre.
+endif::[]
+ifdef::foco_rhcl[]
+**Esta parte é leitura, e não há nada a executar.** O caminho pavimentado
+começa no Red Hat Developer Hub, que este ambiente não instala. O GitLab e o
+Argo CD que vêm depois dele são os que você usou nesta fase. O que você vai
+ver é o que acontece no portal, com os arquivos reais do template que o
+percorre.
+endif::[]
 ====
 
 == O ponto de partida: um formulário
@@ -62,8 +96,8 @@ decisões de produto disfarçadas de campo de formulário:
 
 | `planPreset`
 | `three-tier`
-| a API nasce com os três planos comerciais, como a do {m1} -- e não com
-  um só
+| a API nasce com os três planos comerciais, como a da parte {p-planos} --
+  e não com um só
 
 | `mtlsStrict`
 | `true`
@@ -100,7 +134,7 @@ escolha.
 
 == O repositório que nasce
 
-Você escreveu **quatro arquivos** na parte {p-exposta}. O template gera **vinte e
+Na parte {p-exposta} foram **{n-exposta} arquivos**. O template gera **vinte e
 três**. Este é o repositório inteiro, como ele nasce:
 
 [source,text]
@@ -125,16 +159,25 @@ echo-pavimentado/
 ├── catalog-info.yaml                 a entidade no catálogo
 ├── openapi.yaml                      o contrato, publicado no portal
 ├── docs/index.md + mkdocs.yml        documentação junto do código
-├── consumers/                        uma assinatura de cliente por pull request
+├── consumers/                        uma assinatura de cliente por merge request
 ├── gitops/application.yaml           o Application do Argo
 ├── verify.sh                         o preflight deste serviço
 └── README.md
 ----
 
+ifndef::foco_rhcl[]
 Compare com o checklist que fechou a parte {p-exposta}. Cada item que lá aparecia
 como "falta" é uma linha aqui: a telemetria é o `01`, a identidade de serviço
 é o `10`, o mTLS é o `50`, o canário são o `52` e o `53`, o catálogo são o
 `40` e o `catalog-info.yaml`.
+endif::[]
+ifdef::foco_rhcl[]
+Compare com o checklist que fechou a parte {p-exposta}: a telemetria é o `01`,
+a identidade própria do serviço é o `10`, o catálogo são o `40` e o
+`catalog-info.yaml`. Os arquivos `50` a `53` são do Service Mesh, que esta
+sessão não tem: o template os gera para o dia em que ele entrar (ver a leitura
+xref:papel-ossm.adoc[{p-papel-ossm}o papel do Service Mesh]).
+endif::[]
 
 == Um campo do formulário, lido no arquivo
 
@@ -172,7 +215,7 @@ formulário vira `mode: STRICT` no arquivo. E o `planPreset` decide se o
 == O que isso prova
 
 Não é sobre digitar menos. Os vinte e três arquivos seriam escrevíveis à mão
--- você escreveu quatro deles em dez minutos.
+-- na parte {p-exposta} foram {n-exposta}, em dez minutos.
 
 São duas outras coisas:
 
@@ -181,19 +224,44 @@ esqueça o mTLS, ou publique sem plano comercial, ou suba um endpoint que
 qualquer pod do cluster possa chamar. Não porque haja uma convenção escrita
 num wiki -- porque o formulário não oferece a alternativa.
 
+ifndef::foco_rhcl[]
 **A configuração passa a ter dono, data e revisão.** O que você fez à mão na
 parte {p-exposta} existe **só no cluster**: ninguém sabe quem criou, quando, nem por
 quê. Pelo template os mesmos objetos nascem num repositório, com autor e
 histórico. Mudar uma policy vira um merge request que alguém revisa.
 
 E essa segunda diferença é exatamente o que a próxima parte audita.
+endif::[]
+ifdef::foco_rhcl[]
+**O histórico começa no commit zero.** Nesta fase os arquivos já tinham dono e
+revisão, mas alguém os trouxe para o repositório depois de escritos. Pelo
+template, o primeiro commit já é o serviço completo, e cada mudança depois dele
+é um merge request -- o caminho que você seguiu nas partes {p-mr}e {p-desvio}desta
+fase.
+
+É esse histórico que a parte xref:m3-06-auditoria.adoc[{p-auditoria}] lê quando
+pergunta quem mudou o quê.
+endif::[]
 
 == Onde isto vira prática
 
+ifndef::foco_rhcl[]
 Percorrer o caminho pavimentado com as próprias mãos -- criar o produto,
-assinar como cliente e publicar uma segunda versão, tudo por pull request --
+assinar como cliente e publicar uma segunda versão, tudo por merge request --
 pede o Developer Hub e um GitLab no ambiente, e é assunto do
 xref:m5-00-intro.adoc[{m5}], que está a caminho. A página dele descreve o
 que vai cobrir.
+endif::[]
+ifdef::foco_rhcl[]
+Percorrer este caminho com as próprias mãos pede o Developer Hub no ambiente,
+e está em preparação. Três exercícios, cada um com um template:
+
+* **criar o produto** -- o formulário acima, e o Argo CD adotando o
+  repositório que ele cria;
+* **assinar a API** -- um consumidor pede uma chave por merge request no
+  repositório da API, e a aprovação acontece no portal;
+* **publicar uma v2** -- a segunda versão sobe ao lado da primeira, declarada
+  num merge request, como a parte {p-versoes}fez à mão.
+endif::[]
 
 Os templates fazem parte do material deste workshop, em `rhdh/templates/`.

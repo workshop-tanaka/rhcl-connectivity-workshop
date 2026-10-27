@@ -6,7 +6,7 @@ ifndef::foco_rhcl[]
 **Oito exercícios e duas leituras · ~75 min no total · fora do caminho principal**
 endif::[]
 ifdef::foco_rhcl[]
-**Quatro exercícios e duas leituras · ~39 min no total · fora do caminho principal**
+**Quatro exercícios e uma leitura · ~36 min no total · fora do caminho principal**
 endif::[]
 
 Os Extras não são continuação de nenhuma outra parte. Cada um responde uma pergunta
@@ -14,6 +14,7 @@ que aparece em conversa real e que o roteiro principal não cobre. Dá para
 fazer um só, na ordem que quiser, a qualquer momento depois da parte que ele
 pressupõe.
 
+ifndef::foco_rhcl[]
 [cols="2,3,1",options="header"]
 |===
 | Extra | escolha este se a sua conversa é sobre | antes
@@ -83,6 +84,50 @@ ifndef::foco_rhcl[]
 | {p-precedencia} e {p-exposta}
 endif::[]
 |===
+endif::[]
+ifdef::foco_rhcl[]
+[cols="2,3,2,1,1",options="header"]
+|===
+| Extra | escolha este se a sua conversa é sobre | o que prova | perfil | antes
+
+| xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
+| serviços internos em gRPC, e se a governança da borda vale para eles
+| a autenticação funciona igual; o limite aparece como `Enforced` e não corta
+  -- status verde não é efeito
+| Infra
+| {p-fechada}
+
+| xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa]
+| uma API que não é requisição e resposta, e sim uma conexão que fica aberta.
+  **Só leitura**
+| a policy decide no handshake; o que passa depois dele é da aplicação
+| --
+| {p-fechada}
+
+| xref:extra-postman.adoc[Testar a API no Postman]
+| entregar a API a quem vai consumi-la, com coleção e ambiente prontos
+| os três planos e as recusas da borda aparecem iguais numa ferramenta de
+  cliente, sem script
+| qualquer, e o seu computador
+| {p-planos} e {p-negado}
+
+| xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
+| integração B2B em que o parceiro se identifica por **certificado**, e não por
+  chave
+| o caminho da documentação não funciona nesta versão; o contorno medido, por
+  cabeçalho, funciona
+| Infra
+| {p-identidade}
+
+| xref:extra-tokens-ia.adoc[Limite por token (IA)]
+| expor modelos de IA, onde o que custa é o **token** e não a requisição. O
+  backend do exercício é um mock, e a página diz isso na primeira tela
+| a policy conta o que o modelo relata -- e acredita quando ele mente
+| Infra
+| {p-planos}
+|===
+
+endif::[]
 
 == Quanto custa cada um
 
@@ -91,8 +136,8 @@ endif::[]
 | Extra | tempo | muda estado?
 
 | gRPC
-| ~8 min
-| não
+| ~9 min
+| aplica e remove uma camada no seu ambiente
 
 | Postman
 | ~10 min
@@ -123,10 +168,11 @@ ifndef::foco_rhcl[]
 | ~9 min
 | cria e remove um namespace próprio
 
-endif::[]
 | Leitura: onde entra o WAF
 | ~4 min
 | não muda nada -- é leitura
+
+endif::[]
 
 | Leitura: WebSocket e conexão longa
 | ~5 min
@@ -157,6 +203,13 @@ ifndef::foco_rhcl[]
 * **Pediram uma lista de IPs?** *Listas de permissão e bloqueio*, que mede o
   que de fato chega ao Gateway antes de prometer qualquer coisa.
 endif::[]
+ifndef::foco_rhcl[]
 * **A conversa chegou em multicluster?** *O nome também é policy*, que mostra a
   estrutura de geografia e peso que o Connectivity Link usa para distribuir
   tráfego entre clusters -- e que aqui roda num cluster só.
+endif::[]
+ifdef::foco_rhcl[]
+* **Os serviços internos falam gRPC?** *gRPC*, que mostra a autenticação
+  valendo igual e o limite verde que não corta -- o caso extremo de "status
+  não é efeito".
+endif::[]

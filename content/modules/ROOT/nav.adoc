@@ -6,6 +6,7 @@
 * xref:aplicacao.adoc[A aplicação e as APIs]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
+* xref:se-algo-nao-responder.adoc[Se algo não responder]
 
 // A SESSAO DE CONNECTIVITY LINK TEM MENU PROPRIO, na ordem de um projeto real:
 // a plataforma, a borda, a primeira API, o produto, a esteira, a operacao. Os
@@ -41,30 +42,29 @@ ifdef::foco_rhcl[]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+* xref:m5-01-colheita.adoc[5.5 Leitura: do repositório ao formulário]
 
 .Fase 6 — Operação
-* xref:m3-00-intro.adoc[Introdução]
+* xref:m3-00-intro.adoc[O que muda nesta fase]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes]
+* xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
 
-.Fase 7 — Escala, e o que vem depois
-* xref:leitura-parceiros.adoc[Leitura: muitos parceiros, muitas APIs]
-* xref:leitura-multitenancy.adoc[Leitura: multi-tenancy]
-* xref:m5-00-intro.adoc[O caminho pavimentado: a proposta]
-* xref:m5-01-colheita.adoc[7.1 Leitura: o caminho pavimentado]
-* xref:papel-ossm.adoc[Leitura: o papel do Service Mesh]
-* xref:papel-rhsi.adoc[Leitura: o papel do Service Interconnect]
+.Fase 7 — Escala, e o que vem depois (só leitura)
+* xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
+* xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
+* xref:papel-ossm.adoc[7.3 O papel do Service Mesh]
+* xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
+* xref:leitura-waf.adoc[7.5 Onde entra o WAF]
 
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
+* xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa]
 * xref:extra-postman.adoc[Testar a API no Postman]
 * xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 * xref:extra-tokens-ia.adoc[Limite por token (IA)]
-* xref:leitura-waf.adoc[Leitura: onde entra o WAF]
-* xref:leitura-websocket.adoc[Leitura: WebSocket]
 endif::[]
 
 // As outras sessoes: o menu por modulo.
@@ -85,8 +85,8 @@ ifndef::foco_ossm,foco_rhsi[]
 endif::[]
 
 ifndef::foco_rhcl,foco_rhsi[]
-.Service Mesh — a fronteira de dentro
-* xref:m2-00-intro.adoc[Introdução]
+.Service Mesh — a fronteira de dentro (em preparação)
+* xref:m2-00-intro.adoc[Introdução (em preparação)]
 * xref:m2-01-leste-oeste.adoc[2.1 A borda não é a única fronteira]
 * xref:m2-02-canario.adoc[2.2 A promoção ao vivo]
 * xref:m2-03-resiliencia.adoc[2.3 Circuit breaker]
@@ -133,7 +133,7 @@ ifndef::foco_ossm,foco_rhsi[]
 * xref:leitura-websocket.adoc[Leitura: WebSocket]
 endif::[]
 ifndef::foco_rhcl,foco_ossm,foco_rhsi[]
-* xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras]
+* xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras (em preparação)]
 * xref:extra-saida.adoc[A saída também é borda]
 endif::[]
 

@@ -36,7 +36,7 @@ endif::[]
 
 O {m5} mostra **como uma equipe chega lá sem comando nenhum**. Um
 formulário no portal vira um repositório; o repositório vira o estado do
-cluster; e cada mudança depois disso é um pull request que alguém revisa.
+cluster; e cada mudança depois disso é um merge request que alguém revisa.
 
 A parte {p-colheita} mostra esse caminho no papel. Aqui você o percorre.
 
@@ -44,7 +44,7 @@ A parte {p-colheita} mostra esse caminho no papel. Aqui você o percorre.
 
 * publicar uma API completa -- namespace no Service Mesh, policies de borda,
   plano comercial e fronteira leste-oeste -- preenchendo três campos;
-* pedir acesso a uma API como consumidor, por pull request, e ver a aprovação
+* pedir acesso a uma API como consumidor, por merge request, e ver a aprovação
   acontecer no portal;
 * publicar a segunda versão de um serviço com canário declarado, sem tocar no
   cluster;
@@ -59,32 +59,32 @@ A parte {p-colheita} mostra esse caminho no papel. Aqui você o percorre.
 |===
 | parte | o que acontece | o que fica provado
 
-| 5.1 Adotar uma aplicação
+| Adotar uma aplicação
 | uma aplicação que já roda no cluster entra no portal: ganha repositório,
   entrada no catálogo e passa a ser aplicada pelo Argo
 | não há passo de deploy -- o git é a origem, o cluster é a consequência
 
-| 5.2 A API como produto
+| A API como produto
 | a mesma API da parte {p-exposta}, criada pelo template: três decisões no
   formulário, vinte e três arquivos no repositório
 | um serviço não consegue nascer sem mTLS, plano e fronteira leste-oeste
 
-| 5.3 Assinar uma API
-| o outro lado: um consumidor pede uma chave abrindo um pull request no
+| Assinar uma API
+| o outro lado: um consumidor pede uma chave abrindo um merge request no
   repositório da API, e a aprovação acontece no portal
 | acesso a uma API passa a ter pedido, aprovador e histórico
 
-| 5.4 Publicar uma v2
+| Publicar uma v2
 | a segunda versão sobe ao lado da primeira, com uma fração do tráfego
-  declarada num pull request
+  declarada num merge request
 | o canário do {m2} deixa de ser um comando e vira uma mudança revisada
 
-| 5.5 A imagem tem procedência
+| A imagem tem procedência
 | o serviço nasce com pipeline própria: portão de qualidade, varredura e
   assinatura registrada
 | a cadeia de suprimento faz parte do caminho, não é um passo à parte
 
-| 5.6 Operar pelo portal
+| Operar pelo portal
 | o estado das policies, dos planos e do consumo, visto de dentro do
   Developer Hub
 | o desenvolvedor acompanha a própria API sem precisar de acesso ao cluster

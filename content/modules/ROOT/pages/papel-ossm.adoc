@@ -1,6 +1,6 @@
 include::partial$numeros.adoc[]
-= Leitura: o papel do Service Mesh
-:navtitle: Leitura: o papel do Service Mesh
+= {p-papel-ossm}Leitura: o papel do Service Mesh
+:navtitle: {p-papel-ossm}Leitura: o papel do Service Mesh
 
 **Leitura · ~5 min · não muda estado**
 

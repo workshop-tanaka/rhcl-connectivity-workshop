@@ -95,7 +95,12 @@ workshop vem daqui:
 | quem emite o certificado que a `TLSPolicy` declara
 
 | https://argo-cd.readthedocs.io/[Argo CD^]
+ifndef::foco_rhcl[]
 | quem aplica no cluster o que a parte {p-colheita} publica no git
+endif::[]
+ifdef::foco_rhcl[]
+| quem aplica no cluster a pasta `esteira/` do seu repositório, na fase 5
+endif::[]
 
 | https://backstage.io/docs/features/software-templates/[Backstage Software Templates^]
 | o mecanismo por trás do template que a parte {p-colheita} usa
@@ -136,8 +141,10 @@ vale copiar antes de devolver a reserva.
 | `scripts/`, no terminal
 | os scripts que as partes rodam
 
+ifdef::rhdh_url[]
 | {rhdh_url}[o catálogo no Developer Hub^]
 | as APIs modeladas como produto, com os templates
+endif::[]
 
 | {grafana_url}[os painéis do Grafana^]
 | consumo por plano e por parceiro

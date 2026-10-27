@@ -6,9 +6,16 @@ include::partial$numeros.adoc[]
 
 [WARNING.antes]
 ====
+ifndef::perfis[]
 **Antes: as partes {p-papeis} e {p-planos}.** A {p-papeis} deixa o `Forbidden` que você levou como
-`app-dev`; a {p-planos} deixa as chamadas contadas por plano. Sem elas as fontes
-respondem "não há rastro" -- o que é verdade, mas não ensina nada.
+`app-dev`; a {p-planos} deixa as chamadas contadas por plano.
+endif::[]
+ifdef::perfis[]
+**Antes: as partes {p-papeis} e {p-planos}.** A {p-papeis} deixa o `Forbidden` que o perfil
+Dev levou; a {p-planos} deixa as chamadas contadas por plano.
+endif::[]
+Sem elas as fontes respondem "não há rastro" -- o que é verdade, mas não
+ensina nada.
 ====
 
 Auditoria costuma ser demonstrada com um exemplo inventado. Aqui as quatro
@@ -84,6 +91,13 @@ oc patch authpolicy prod-web-deny-all -n ingress-gateway --as=app-dev \
 A resposta é `Forbidden`: o `app-dev` é dono da rota dele, não do teto do
 gateway. Agora procure a tentativa:
 
+ifdef::perfis[]
+NOTE: Com os dois perfis, o `app-dev` é a identidade `dev` do seu ambiente --
+a do perfil Dev. O comando acima usa o token dela, e o efeito é o mesmo de
+rodá-lo na aba *Terminal Dev*, como na parte {p-papeis}.
+
+endif::[]
+
 [source,bash,role="execute"]
 ----
 bash scripts/auditoria.sh negadas
@@ -146,11 +160,19 @@ Repare como ela atravessa as quatro fontes:
   revisor, a data da aprovação;
 * **desde quando está valendo** -- o histórico do Argo CD, que amarra a
   revisão do git ao momento em que entrou no ar;
-* **e foi usado?** -- as métricas, quebradas pela dimensão de parceiro do
+* **e foi usado?** -- as métricas, quebradas pela dimensão de parceiro da
   parte {p-negocio}.
 
+ifndef::foco_rhcl[]
 Nenhuma responde sozinha. É por isso que a parte {p-exposta} termina onde termina -- com
 a configuração versionada, e não apenas aplicada.
+endif::[]
+ifdef::foco_rhcl[]
+Nenhuma responde sozinha. A segunda -- *com autorização de quem* -- você já
+produziu: é o merge request da parte
+xref:esteira-mr.adoc[{p-mr}Mudança por merge request], com autor, conferência
+e quem aceitou.
+endif::[]
 ====
 
 == Exercício: a chave vazou
@@ -202,6 +224,14 @@ Cada pergunta tem uma fonte diferente:
   à API passa pelo apiserver. A contagem é **por chave**, e não por plano,
   graças à dimensão de parceiro da parte xref:m1-05-negocio.adoc[{p-negocio}]. Os
   `429` também aparecem: o rastro inclui o que a chave tentou e não pôde.
+
+ifdef::perfis[]
+NOTE: Nesta turma, a pergunta 1 responde só o *quando*. O audit log é lido
+nos nós do cluster, e isso é do instrutor: no lugar da tabela de `QUEM`, o
+script diz que o seu terminal não tem essa permissão. É o limite que a
+seção acima descreve -- quem lê o audit log é quem administra o cluster.
+
+endif::[]
 * **Que parou** não é alguém afirmando que revogou. É o contador da chave que
   não anda mais, enquanto a mesma chave recebe `401`.
 
@@ -216,9 +246,17 @@ remove a chave que sobrou.
 A quarta fonte não é de graça: a dimensão que permite perguntar *quem
 consumiu* vem da TelemetryPolicy da parte {p-negocio}, não do audit log.
 
+ifndef::foco_rhcl[]
 É a `TelemetryPolicy` `prod-web-telemetry` que carimba o plano na métrica. O
 par é a `Telemetry` `partner-dimension`, que leva a mesma dimensão para o
 Service Mesh:
+endif::[]
+ifdef::foco_rhcl[]
+É a `TelemetryPolicy` `prod-web-telemetry` que carimba o plano na métrica. O
+par é a `Telemetry` `partner-dimension`, que põe o parceiro na métrica do
+Envoy do Gateway (`istio_requests_total`) -- é dela que sai a contagem por
+chave:
+endif::[]
 
 [source,bash,role="execute"]
 ----
@@ -226,8 +264,7 @@ oc get telemetrypolicy prod-web-telemetry -n ingress-gateway -o yaml
 oc get telemetries.telemetry.istio.io partner-dimension -n ingress-gateway -o yaml
 ----
 
- Sem as duas, o consumo existe
-agregado e a pergunta "quem" fica sem resposta.
+Sem as duas, o consumo existe agregado e a pergunta "quem" fica sem resposta.
 
 == O que isso prova
 
@@ -236,6 +273,7 @@ tentou, o que mudou, quando entrou no ar, quanto foi consumido. A outra
 metade -- *por quê* e *com autorização de quem* -- só existe se a
 configuração passou por um repositório antes de chegar ao cluster.
 
+ifndef::foco_rhcl[]
 Configuração que só existe no cluster é configuração auditável pela metade. É
 o argumento mais concreto a favor do GitOps que este workshop tem, e ele não
 depende de acreditar em ninguém: as quatro fontes estão aí para conferir.
@@ -246,3 +284,13 @@ Todo esse rastro identifica o consumidor por **chave de API** -- que é
 credencial de sistema. A parte xref:m1-07-identidade.adoc[{p-identidade}] trata do outro
 caso: quando quem consome é uma **pessoa**, e a pergunta deixa de ser "qual
 sistema é esse?".
+endif::[]
+ifdef::foco_rhcl[]
+Configuração que só existe no cluster é configuração auditável pela metade. A
+fase 5 é a outra metade, e ela não depende de acreditar em ninguém: as quatro
+fontes estão aí para conferir, e o histórico do repositório também.
+
+Todo esse rastro identifica o consumidor por **chave de API** -- credencial de
+sistema. A parte xref:m1-07-identidade.adoc[{p-identidade}] já tratou do caso em
+que quem consome é uma **pessoa**.
+endif::[]

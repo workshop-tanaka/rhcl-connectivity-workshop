@@ -45,16 +45,22 @@ linha**. O binário do `travels` é o mesmo do primeiro ao último exercício.
   produto por baixo.
 
 | **a borda**
-| Ela nasce fechada, a precedência entre as regras está escrita no status,
-  quem cuida do Gateway não é quem cuida da rota, e o certificado tem dono.
+| Ela nasce fechada, a precedência entre as regras está escrita no status, e
+  quem cuida do Gateway não é quem cuida da rota. O certificado de produção
+  ainda não tem dono -- e você viu o que daria um a ele.
 
 | **a primeira API**
-| Quatro arquivos levam uma API de aberta a governada, com nome e com a
+| Uma API vai de aberta a governada em {n-exposta} arquivos, com nome e com a
   escolha entre chave e identidade.
 
 | **o produto**
 | Planos comerciais no mesmo endereço, o consumo virando número, e a regra
   descendo até um caminho ou uma lista.
+
+| **a esteira**
+| A configuração da borda vira código: o Dev propõe, o Infra aprova, a esteira
+  confere antes e o Argo CD aplica. O desvio aparece, e voltar atrás é um
+  revert.
 
 | **a operação**
 | Dá para dizer onde uma recusa morreu, a plataforma avisa quando a proteção
@@ -98,8 +104,10 @@ DNS público, certificado e DNS -- todas mirando o mesmo Gateway, todas com
 status próprio, nenhuma escondida num campo de anotação.
 
 E uma ressalva que o workshop fez questão de medir em vez de omitir:
-**`Enforced=True` não é promessa de efeito.** A parte {p-identidade} mostra uma policy
-aceita, programada, com status verde -- e sem efeito nenhum sobre o tráfego.
+**`Enforced=True` não é promessa de efeito.** A parte {p-alerta} mostra a proteção
+caindo com tudo verde; o Extra xref:extra-grpc.adoc[gRPC], o caso extremo: uma
+policy aceita, programada, com status verde -- e sem efeito nenhum sobre o
+tráfego.
 Quem confia no status sem medir o comportamento acredita num limite que não
 existe.
 
@@ -112,6 +120,8 @@ inclui dizer onde ela ainda não chega.
 ----
 bash scripts/demo.sh pos --auto
 ----
+
+Leva pouco mais de um minuto.
 
 ifndef::foco_rhcl[]
 Procura o que os exercícios deixaram para trás (mTLS em PERMISSIVE, fault
