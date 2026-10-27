@@ -18,7 +18,12 @@ name: validate
 on:
   push:
     branches: [main]
-    tags: ['workshop-v*']
+    # a onda (workshop-vN, workshop-vN-rhcl) e a edicao (vX.Y, vX.Y-rhcl): a
+    # edicao e a tag que o pedido no RHDP usa, entao tambem ganha um run.
+    # Atencao: o GitHub nao dispara evento quando mais de TRES tags sobem num
+    # push so -- cortar edicao e onda juntos passa de tres; conferir com
+    # 'gh run list --branch <tag>' e, faltando, 'gh workflow run validate.yml --ref <tag>'.
+    tags: ['workshop-v*', 'v[0-9]*']
   pull_request:
   workflow_dispatch:
 
