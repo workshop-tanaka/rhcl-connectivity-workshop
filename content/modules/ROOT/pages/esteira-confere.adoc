@@ -92,10 +92,28 @@ confere-...     25 seconds ago   8s         Failed
 ----
 
 Abra o endereço do merge request. O status **Pipelines as Code CI /
-confere** está vermelho e o merge, bloqueado. O mesmo `PipelineRun` aparece no
-console do OpenShift -- *opcional*,
-os PipelineRuns de {openshift_console_url}/k8s/ns/esteira-ci-{user}/tekton.dev{tilde}v1{tilde}PipelineRun[`esteira-ci-{user}`^]
+confere** está vermelho e o merge, bloqueado.
+
+**Na console web:** o mesmo `PipelineRun`, na console do OpenShift -- os
+PipelineRuns de {openshift_console_url}/k8s/ns/esteira-ci-{user}/tekton.dev{tilde}v1{tilde}PipelineRun[`esteira-ci-{user}`^]
 (abre em aba nova), com o login Infra ou Dev: os dois leem, nenhum muda.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link e entre com o seu login da console, Infra ou Dev.
+. A lista traz um `confere-...` por push num merge request, com *Succeeded*
+  ou *Failed* -- o do passo 2 aparece como falho, como no
+  `tkn pipelinerun list`.
+. Clique nele: a aba *Logs* mostra a mesma recusa do
+  `tkn pipelinerun logs` (`NAO HTTPRoute/relatorios ...`), e a aba
+  *TaskRuns*, a tarefa `confere`.
+. Em *Actions*, *Rerun* e *Delete PipelineRun* vêm desabilitados, com
+  *Insufficient permissions*: quem roda a conferência é o webhook do GitLab,
+  não você.
+. Sem o link: no menu *Pipelines* da console, com o projeto
+  `esteira-ci-{user}` escolhido no alto.
+====
 
 [WARNING]
 .Recusa esperada -- o merge request não entra sem a conferência verde
