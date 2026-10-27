@@ -36,11 +36,26 @@ está no cluster é o que está no Git. Os seus identificadores de commit são
 outros.
 
 ifeval::["{argocd_url}" != ""]
-*Opcional:* a mesma resposta, na tela do Argo CD --
+**Na console web:** a mesma resposta, na tela do Argo CD --
 {argocd_url}/applications/openshift-gitops/esteira-{user}[a sua Application `esteira-{user}`^]
-(abre em aba nova). Entre com *Log in via OpenShift* e o seu login da console,
-Infra ou Dev; a tela mostra só a sua esteira, e só para ler: sincronizar
-continua sendo pelo Git.
+(abre em aba nova). A tela mostra só a sua esteira, e só para ler:
+sincronizar continua sendo pelo Git.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link acima e clique em *Log in via OpenShift*.
+. Entre com o seu login da console, Infra ou Dev (os dois estão em
+  xref:acessos.adoc[Seus acessos]).
+. A Application `esteira-{user}` abre com dois selos no alto: *Sync status*
+  (`Synced` é o mesmo "cluster x Git" do terminal) e *Last Sync*, com o
+  commit que foi aplicado -- o mesmo identificador da linha
+  `commit aplicado`.
+. A árvore mostra o que a pasta declara: a `PlanPolicy travels-plans`, e
+  depois da fase, o que você acrescentar.
+. Sem passar por ela: no menu da esquerda, *Applications* lista as
+  Applications que você pode ler -- só a sua.
+====
 endif::[]
 
 == Passo 2 -- o que há na pasta
@@ -65,6 +80,27 @@ que diz ao Argo CD o que aplicar. É a mesma `PlanPolicy` da parte
 xref:m1-02-planos.adoc[{p-planos}], que até aqui você aplicava à mão. A
 segunda saída é o histórico da pasta: cada linha é uma mudança, com autor e
 data.
+
+ifeval::["{repo_no_ambiente}" != ""]
+**Na console web:** o mesmo histórico, no GitLab --
+{repo_no_ambiente}/-/commits/main/esteira[os commits da pasta `esteira`^]
+(abre em aba nova), cada um com autor, data e o diff de cada arquivo.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link acima. Na tela de login do GitLab, clique em *Entrar com o
+  usuario do console* e use o seu login da console, Infra ou Dev.
+. A lista é a mesma do `git log --oneline -3 -- esteira`, do commit mais
+  recente para o mais antigo: o identificador curto, a mensagem, o autor e a
+  data.
+. Clique num commit para ver o que ele mudou, arquivo por arquivo.
+. Sem o link: no projeto, abra a pasta `esteira` na lista de arquivos e
+  clique em *History*, no alto, ao lado do nome da pasta. Os dois arquivos
+  também abrem ali: o `kustomization.yaml`, que o `grep` mostrou, e o
+  `planos.yaml`, que ele lista.
+====
+endif::[]
 
 == Passo 3 -- o que a esteira já aplicou
 
