@@ -46,7 +46,7 @@ troca de mãos várias vezes.
 | servir planos comerciais no mesmo endereço, transformar o consumo em número,
   publicar a segunda versão ao lado da primeira, e descer a regra até um
   caminho ou uma lista
-| ~60 min
+| ~65 min
 
 | xref:fase-esteira.adoc[**5 -- Da mão para a esteira**]
 | quando a segunda API chega
@@ -85,8 +85,8 @@ produtos entrariam.
 
 == Três trilhas, por tempo disponível
 
-Da fase 0 à 4 e mais a 6, cerca de **3 h 05**; com a fase 5 e as leituras da
-fase 7, perto de **4 h 30**. As somas saem do tempo que cada página declara no
+Da fase 0 à 4 e mais a 6, cerca de **3 h 10**; com a fase 5 e as leituras da
+fase 7, perto de **4 h 35**. As somas saem do tempo que cada página declara no
 topo. Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 [cols="1,1,3",options="header"]
@@ -100,12 +100,12 @@ topo. Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
   publica uma API e a vê virar produto
 
 | **completa**
-| ~3 h 05
+| ~3 h 10
 | as fases 0 a 4 e a 6, na ordem. É a trilha que o
   xref:99-encerramento.adoc[Encerramento] pressupõe
 
 | **aprofundada**
-| ~4 h 30, mais os Extras
+| ~4 h 35, mais os Extras
 | a completa, a fase 5 (a esteira), as leituras da fase 7 e os
   xref:extras.adoc[Extras] que interessarem ao seu dia
 |===

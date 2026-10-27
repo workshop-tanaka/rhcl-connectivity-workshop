@@ -2,7 +2,7 @@ include::partial$numeros.adoc[]
 = {p-versoes}Uma API, duas versões
 :navtitle: {p-versoes}Uma API, duas versões
 
-**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~15 min** · **depois das partes {p-planos} e {p-negocio}**
+**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~20 min** · **depois das partes {p-planos} e {p-negocio}**
 
 [NOTE.antes]
 ====
@@ -18,7 +18,7 @@ encontrado -- e um dia a v1 deixa de responder. Cada um desses momentos
 costuma ser código, e-mail e planilha.
 
 Nesta parte, nenhum deles toca a aplicação. A imagem da `travels` é a mesma
-nas duas versões: **a versão é uma decisão da borda**. São seis passos -- cinco
+nas duas versões: **a versão é uma decisão da borda**. São sete passos -- oito
 arquivos em `passos/versoes/` e um script de medição --, e quase todos são do
 perfil Dev -- é ele quem
 publica a API.
@@ -292,6 +292,113 @@ sleep 2
 curl -s -o /dev/null -w 'v1 gold: %{http_code}\n' "https://{api_host}/v1/travels?APIKEY={api_key_gold}"
 ----
 
+== 7. Um endereço sem versão
+
+Muito cliente não quer escolher versão: quer chamar **a API**, e receber a
+vigente. O sétimo arquivo acrescenta à rota uma regra `atual`: o caminho
+`/atual` é reescrito e entregue na versão da vez -- hoje, a v1. O cliente
+chama sempre `/atual/travels`; quem decide para onde vai é a borda.
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/07-atual-na-v1.yaml
+sleep 11
+for k in gold:{api_key_gold} free:{api_key_free}; do
+  printf '%-5s /atual %s, versao %s\n' ${k%%:*} \
+    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
+    "$(curl -s -D - -o /dev/null "https://{api_host}/atual/travels?APIKEY=${k#*:}" | grep -i '^x-api-version' | tr -d '\r' | cut -d' ' -f2)"
+done
+----
+
+[source,text]
+----
+gold  /atual 200, versao 1
+free  /atual 200, versao 1
+----
+
+**Agora a troca.** O oitavo arquivo é a mesma rota com uma única diferença: a
+regra `atual` entrega na v2. Numa esteira como a da fase 5, essa troca é um
+merge request -- com autor, aprovação e data -- e voltar é o revert.
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/08-atual-na-v2.yaml
+sleep 11
+for k in gold:{api_key_gold} free:{api_key_free}; do
+  printf '%-5s /atual %s, versao %s | /v2 direto %s\n' ${k%%:*} \
+    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
+    "$(curl -s -D - -o /dev/null "https://{api_host}/atual/travels?APIKEY=${k#*:}" | grep -i '^x-api-version' | tr -d '\r' | cut -d' ' -f2)" \
+    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v2/travels?APIKEY=${k#*:}")"
+done
+----
+
+[source,text]
+----
+gold  /atual 200, versao 2 | /v2 direto 200
+free  /atual 200, versao 2 | /v2 direto 403
+----
+
+[WARNING]
+.A policy é da regra, não da versão
+====
+Olhe a linha do free: pela `/v2` ele recebe `403` -- o acesso antecipado do
+passo 3 --, e pela `/atual` ele **chega à mesma v2** com `200`. A
+`AuthPolicy` do passo 3 aponta para a regra `v2` (`sectionName: v2`), e a
+regra `atual` é outra regra: a reescrita por dentro não passa pela policy da
+regra de destino. Quem abre um caminho novo para uma versão leva junto a
+decisão de quem pode usá-lo.
+====
+
+**A alternativa: redirecionar.** O nono arquivo troca a reescrita por um
+redirect: o Gateway responde `302` com `Location: /v2/...`, e o cliente faz a
+segunda chamada -- agora na regra `v2`, com as policies dela.
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/09-atual-redireciona.yaml
+sleep 11
+for k in gold:{api_key_gold} free:{api_key_free}; do
+  printf '%-5s /atual %s -> %s | seguindo o redirect: %s\n' ${k%%:*} \
+    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
+    "$(curl -s -o /dev/null -w '%{redirect_url}' "https://{api_host}/atual/travels?APIKEY=${k#*:}" | sed 's/?.*//')" \
+    "$(curl -s -L -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")"
+done
+----
+
+[source,text]
+----
+gold  /atual 302 -> https://api-travels-.../v2/travels | seguindo o redirect: 200
+free  /atual 302 -> https://api-travels-.../v2/travels | seguindo o redirect: 403
+----
+
+[cols="1,2,2",options="header"]
+|===
+| | reescrita (`URLRewrite`) | redirect (`RequestRedirect`)
+
+| o cliente vê a versão?
+| não: o endereço público continua `/atual`
+| sim: ele recebe o endereço novo e passa a usá-lo
+
+| quantas chamadas
+| uma
+| duas -- e as duas contam no plano
+
+| policies que valem
+| as da regra `atual`
+| as da regra de destino, na segunda chamada
+
+| bom para
+| um endereço estável que aponta para a vigente
+| migração explícita: "a partir de agora, chame /v2"
+|===
+
+Nos dois casos, a regra que só aponta para outra também precisa de policy: com
+a borda fechada por padrão, uma rota sem `AuthPolicy` responde `403`, inclusive
+a que só redireciona. Aqui a `versoes-chave` do passo 2 já vale para a rota
+inteira. E o redirect leva a chave junto, no `Location` -- mais um motivo para
+ela sair da URL (ver xref:ambiente-atalhos.adoc[O que aqui é atalho de
+laboratório]).
+
 == Limpando
 
 [source,bash,role="execute perfil-dev"]
@@ -305,7 +412,7 @@ estava.
 == O que isso prova
 
 O ciclo de vida inteiro de uma versão -- nascer, ser experimentada, avisar,
-ser medida, ser desligada -- foram **seis objetos declarados**, nenhum na
+ser medida, ser desligada, virar a vigente -- foram **sete objetos declarados**, nenhum na
 aplicação. Cada decisão tem dono e status, aparece no `oc get` e se desfaz
 apagando o objeto.
 
@@ -319,6 +426,7 @@ apagando o objeto.
 | a v1 vai sair | três cabeçalhos na regra `v1`
 | quem ainda depende | a métrica que já existia, por destino
 | a v1 saiu | `AuthPolicy` com `sectionName: v1` e `code: 410`
+| o endereço sem versão aponta para a vigente | a regra `atual`, com reescrita ou redirect
 |===
 
 [NOTE]
