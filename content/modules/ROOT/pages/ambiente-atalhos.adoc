@@ -3,7 +3,10 @@ include::partial$numeros.adoc[]
 :navtitle: O que aqui é atalho de laboratório
 
 Este ambiente foi montado para ensinar em poucas horas, com uma turma
-dividindo o mesmo cluster. Várias escolhas daqui são **atalhos**: servem ao
+dividindo o mesmo cluster. Para validar as funcionalidades e a solução, o
+laboratório tomou a liberdade de simplificar e de usar recursos técnicos
+próprios de laboratório, e por isso **não representa recomendações integrais
+para ambientes produtivos**. Várias escolhas daqui são **atalhos**: servem ao
 laboratório e não são a prática para produção. A tabela diz qual é o atalho,
 por que ele existe aqui, e o que considerar em produção -- sempre conferindo
 a documentação oficial da versão em uso e com o apoio do time de Serviços da

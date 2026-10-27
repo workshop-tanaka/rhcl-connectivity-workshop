@@ -10,9 +10,12 @@
 Connectivity Link funcionando, num ambiente de laboratório, para quem quer
 entender e validar a proposta. Não é treinamento oficial nem certificação da
 Red Hat -- para isso existem o treinamento oficial e a área dedicada a ele --,
-e não traz compromisso com ambientes produtivos. Para levar a solução a
-produção, conte com o apoio especializado do time de Serviços da Red Hat
-(Consultoria e Suporte Técnico).
+e não traz compromisso com ambientes produtivos. Para validar as
+funcionalidades e a solução, este laboratório tomou a liberdade de simplificar
+e de usar recursos técnicos próprios de laboratório: o que se vê aqui não
+representa recomendações integrais para ambientes produtivos. Para levar a
+solução a produção, conte com o apoio especializado do time de Serviços da Red
+Hat (Consultoria e Suporte Técnico).
 
 **Versões e alternativas.** O material foi construído e medido com as versões
 deste ambiente -- `{demo_ref}`, sobre o Red Hat Connectivity Link e o
