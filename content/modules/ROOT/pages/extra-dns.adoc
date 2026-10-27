@@ -18,9 +18,8 @@ endif::[]
 alguém a encontra.
 ====
 
-O Connectivity Link tem seis policies. O workshop exercita cinco. A que faltava
-é a `DNSPolicy` -- e ela faltava por um motivo prático: a leitura óbvia da
-documentação pede conta em nuvem, domínio público e um endereço externo para
+Das policies do xref:mapa-policies.adoc[mapa], a `DNSPolicy` é a que mais pede
+do ambiente: a leitura óbvia da documentação pede conta em nuvem, domínio público e um endereço externo para
 publicar.
 
 Só que o operador de DNS deste ambiente registra **cinco provedores**, e dois
@@ -167,10 +166,10 @@ Você não escreveu registro nenhum. **O operador leu o listener do Gateway** e
 derivou o nome, o tipo e o destino. São dois `DNSRecord`, e cada linha diz o
 papel do seu: o `lab-http` é o que a policy derivou do listener `http` -- o
 dono dele é a `DNSPolicy` --, e o `authoritative-record` é o que o servidor da
-zona publica. A árvore embaixo é o conteúdo: -- o mesmo padrão da parte
+zona publica. A árvore embaixo é o conteúdo. É o mesmo padrão da parte
 xref:m1-08-certificado.adoc[{p-certificado}] com a `TLSPolicy`, e da
 xref:m1-07-identidade.adoc[{p-identidade}] com a `OIDCPolicy`: intenção declarada, objeto
-derivado, com dono. O dono vai importar na parte 5.
+derivado, com dono. O dono vai importar na seção 5, abaixo.
 
 E repare em **como o CoreDNS descobre o registro**: pelo label
 `kuadrant.io/coredns-zone-name` que o operador carimbou. Não há arquivo de zona
@@ -199,8 +198,7 @@ Cada linha é um salto da resposta: o nome aponta para o `Service` do Gateway, e
 o `Service` tem um endereço. A última linha prova que o endereço é o certo -- a
 chamada HTTP foi feita **nele**, com o nome da API.
 
-O cliente é um pod com um resolvedor de trinta linhas em Python -- o terminal
-do workshop não tem `dig`, e a zona só existe dentro do cluster.
+O cliente é um pod com um resolvedor de trinta linhas em Python.
 
 include::partial$diagrama.adoc[]
 
@@ -301,7 +299,7 @@ NXDOMAIN -- ninguem criou o nome "api" nesta zona
 
 Ninguém apagou registro à mão. A policy saiu, os dois `DNSRecord` saíram com
 ela -- o dono deles era a policy -- e o nome deixou de existir em segundos
-(medido: cerca de 3 s). É o outro lado da parte 2: quem publica o nome é a
+(medido: cerca de 3 s). É o outro lado da seção 2: quem publica o nome é a
 declaração, e quem o retira também. Não sobra registro órfão apontando para um
 Gateway que já não atende.
 

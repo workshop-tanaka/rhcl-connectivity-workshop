@@ -45,6 +45,18 @@ Esta primeira parte só **lê**. Não muda nada.
      Certificate openshift-ingress/cert-manager-ingress-cert
 ----
 
+ifdef::perfis[]
+[NOTE]
+====
+**Numa turma, o item 2 sai mais curto.** O seu terminal não lista os
+`Certificate` do cluster inteiro nem lê o Secret do ingress do OpenShift, que
+são da plataforma, e o script diz o que não conseguiu procurar em vez de
+concluir que não existe. A saída acima é a de um ambiente com essa leitura; o
+achado é o mesmo -- nenhuma `TLSPolicy` no namespace do seu Gateway --, e a
+prova logo abaixo roda inteira no seu ambiente.
+====
+endif::[]
+
 Leia de baixo para cima:
 
 * O certificado **existe** e é gerido pelo cert-manager -- mas para o
@@ -422,8 +434,14 @@ o que não está declarado como policy funciona por acaso, até o dia em que par
 
 == Para ir além
 
+ifndef::foco_rhcl[]
 * xref:extra-dns.adoc[O nome também é policy (DNS)] -- o par desta parte: quem
   cria o nome da API, declarado junto com o Gateway.
+endif::[]
+ifdef::foco_rhcl[]
+* O par desta parte vem na fase 3: a xref:extra-dns.adoc[parte {p-dns}] trata
+  do nome da API, declarado junto com o Gateway, como aqui o certificado.
+endif::[]
 
 ifndef::foco_rhcl[]
 == Você concluiu o Módulo 1
@@ -441,12 +459,13 @@ ifdef::foco_rhcl[]
 == Fim da fase 2
 
 A borda existe: nasce fechada, a precedência entre as regras está escrita no
-status, quem cuida do Gateway não é quem cuida da rota, e o certificado tem
-dono.
+status, e quem cuida do Gateway não é quem cuida da rota. E o certificado dela
+ficou com uma pergunta em aberto: a prova mostrou que dono é uma `TLSPolicy`
+declarada, e a do `prod-web` não tem.
 
 Falta o que ela vai proteger. A xref:m1-06-exposta.adoc[fase 3] publica a
 primeira API, do zero.
 endif::[]
 
-Se quiser parar por aqui, o xref:99-encerramento.adoc[Encerramento] fecha o
-workshop e diz como devolver o ambiente ao estado inicial.
+Se o tempo acabou, o xref:99-encerramento.adoc[Encerramento] diz como devolver
+o ambiente ao estado inicial.

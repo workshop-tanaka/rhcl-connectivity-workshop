@@ -7,12 +7,12 @@ criado. Nada aqui é exemplo: são os endereços e as chaves que você vai usar.
 
 [TIP]
 ====
-Deixe esta página aberta numa aba à parte. Todos os módulos voltam a ela.
+Deixe esta página aberta numa aba à parte. O guia inteiro volta a ela.
 ====
 
 == A API do workshop
 
-A aplicação de viagens, que é o objeto de quase todos os módulos:
+A aplicação de viagens, que é o objeto de quase todo o guia:
 
 [cols="1,3"]
 |===
@@ -29,7 +29,7 @@ endif::[]
 == As três chaves
 
 Cada uma representa um cliente num plano comercial diferente. É a diferença
-entre elas que o {m1} explora:
+entre elas que a parte {p-planos} explora:
 
 [cols="1,1,2",options="header"]
 |===
@@ -58,14 +58,14 @@ curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 300
 [NOTE]
 ====
 Chave em URL é o mais fácil de demonstrar, e **não** é o que se usa em
-produção -- query string entra em log de acesso. O {m1} mostra que o
-mesmo mecanismo aceita cabeçalho.
+produção -- query string entra em log de acesso. A parte {p-fechada} mostra que
+o mesmo mecanismo aceita cabeçalho.
 ====
 
 == Os três portais de parceiro
 
 Cada um consome a API com a chave de um plano diferente. Vale deixar os três
-abertos em abas separadas -- o {m1} pede isso.
+abertos em abas separadas -- a parte {p-planos} pede isso.
 
 [cols="1,1,2",options="header"]
 |===
@@ -103,10 +103,6 @@ ifndef::foco_rhcl[]
 | {traces_url}[abrir^]
 endif::[]
 
-| Dev Spaces
-| editar a configuração sem instalar nada
-| {ide_url}[abrir^]
-
 | O seu repositório
 | os arquivos do roteiro já com os nomes do seu ambiente; só você enxerga
 | {repo_no_ambiente}[abrir^]
@@ -117,10 +113,10 @@ endif::[]
 |===
 
 ifndef::foco_rhcl[]
-=== Console do OpenShift, Traces e Dev Spaces
+=== Console do OpenShift e Traces
 endif::[]
 ifdef::foco_rhcl[]
-=== Console do OpenShift e Dev Spaces
+=== Console do OpenShift
 endif::[]
 
 include::partial$entrar-ocp.adoc[]
@@ -265,33 +261,17 @@ KUBECONFIG=/tmp/eu.kubeconfig oc whoami
 
 O segundo comando responde com o seu usuário. Repare no `KUBECONFIG=` na
 frente dos dois: sem ele, o `oc login` substituiria a sessão do terminal, e os
-comandos dos módulos passariam a falhar por falta de permissão -- o seu
+comandos do guia passariam a falhar por falta de permissão -- o seu
 usuário enxerga só o seu ambiente, e os scripts precisam ler também a
 plataforma.
 ====
 endif::[]
 
-Os comandos dos módulos são executados a partir do diretório do workshop, que
+Os comandos do guia são executados a partir do diretório do workshop, que
 já está no lugar certo quando o terminal abre.
 
 == Se alguma coisa não responder
 
-O ambiente é criado do zero para você, e uma peça ou outra pode demorar mais
-que as demais. Antes de investigar, peça o veredito:
-
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh check
-----
-
-Ele confere a cadeia inteira e diz, em uma linha, se o workshop pode começar.
-Avisos não impedem -- falhas, sim, e o texto diz qual módulo cada uma afeta.
-
-Se a resposta for `bash: scripts/demo.sh: No such file or directory`, o
-terminal saiu do diretório do workshop. Volte com:
-
-[source,bash,role="execute"]
-----
-cd /home/lab-user/rhcl-connectivity-demo
-----
-
+O veredito do ambiente, o caminho de volta ao diretório do workshop e o que
+fazer com um painel vazio estão em xref:se-algo-nao-responder.adoc[Se algo não
+responder].

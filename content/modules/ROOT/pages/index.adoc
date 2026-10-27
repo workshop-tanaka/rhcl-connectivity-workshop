@@ -36,8 +36,10 @@ endif::[]
 ifndef::foco_rhcl[]
 == Como o workshop está organizado
 
-Três módulos para percorrer, cada um com uma introdução própria e partes
-numeradas, e dois anunciados como "em breve".
+Dois módulos para percorrer, o 1 e o 3, cada um com uma introdução própria e
+partes numeradas. O 2 está em preparação: as páginas dele ficam no guia para
+leitura, mas este ambiente não tem o Service Mesh para executá-las. O 4 e o 5
+estão anunciados como "em breve".
 Cada um tem um produto protagonista -- a
 xref:fronteiras.adoc[página das fronteiras] explica a divisão. Dá para
 fazer na ordem, ou escolher pelo que interessa ao seu dia.
@@ -55,12 +57,13 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 | xref:m2-00-intro.adoc[**2** — Service Mesh: a fronteira de dentro]
 | proteger o tráfego **entre** os serviços, promover uma versão nova ao vivo,
   distinguir os dois `503` de uma falha no outro lado, e saber onde o mTLS termina
-| ~26 min
+| em preparação
 
 | xref:m3-00-intro.adoc[**3** — Observar e diagnosticar as duas fronteiras]
 | seguir uma requisição salto a salto, dizer em qual de seis lugares uma recusa
   morreu, prever o que o tráfego faz quando a plataforma falha, e auditar o
-  próprio rastro
+  próprio rastro. As partes {p-rastreavel} e {p-trace} dependem do Service
+  Mesh e ficam para leitura enquanto ele está em preparação
 | ~33 min
 
 | xref:m4-00-intro.adoc[**4** — Service Interconnect: o que não mora aqui]
@@ -73,7 +76,7 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
   Developer Hub e o GitOps
 | em breve
 
-| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras], xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos], xref:extra-listas.adoc[Listas de permissão e bloqueio], xref:extra-saida.adoc[A saída também é borda], e as leituras sobre xref:leitura-waf.adoc[WAF] e xref:leitura-websocket.adoc[WebSocket]
+| xref:extras.adoc[**Extras**] — xref:extra-grpc.adoc[gRPC], xref:extra-postman.adoc[Postman], xref:extra-parceiro-certificado.adoc[Parceiro com certificado], xref:extra-tokens-ia.adoc[Limite por token (IA)], xref:extra-bookinfo.adoc[Uma aplicação, duas fronteiras] (em preparação), xref:extra-dns.adoc[O nome também é policy (DNS)], xref:extra-contextos.adoc[Uma API, vários contextos], xref:extra-listas.adoc[Listas de permissão e bloqueio], xref:extra-saida.adoc[A saída também é borda], e as leituras sobre xref:leitura-waf.adoc[WAF] e xref:leitura-websocket.adoc[WebSocket]
 | opcionais, em qualquer ordem e a qualquer momento
 | ~75 min
 |===
@@ -85,7 +88,7 @@ produto e numa sessão completa, e o menu mostra só o que pertence à sua.
 
 == Três trilhas, por tempo disponível
 
-Os três módulos levam cerca de **2 h 20**; com os Extras, perto de **3 h 40**.
+Os módulos 1 e 3 levam cerca de **1 h 55**; com os Extras, perto de **3 h 15**.
 Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 [cols="1,1,3",options="header"]
@@ -94,18 +97,17 @@ Ninguém precisa fazer tudo de uma vez -- três recortes fecham sozinhos:
 
 | **rápida**
 | ~1 h
-| xref:00-preparacao.adoc[Preparação], partes {p-fechada} a {p-negocio} e a parte
-  xref:m2-01-leste-oeste.adoc[{p-leste}]. Você vê a API fechada, os planos
-  comerciais, a precedência, os papéis, o número de negócio -- e a segunda
-  fronteira, que é a pergunta que sempre vem
+| xref:00-preparacao.adoc[Preparação] e as partes {p-fechada} a {p-negocio}.
+  Você vê a API fechada, os planos comerciais, a precedência, os papéis e o
+  número de negócio
 
 | **completa**
-| ~2 h 20
-| os três módulos na ordem, sem os Extras. É a trilha que o
+| ~1 h 55
+| os módulos 1 e 3 na ordem, sem os Extras. É a trilha que o
   xref:99-encerramento.adoc[Encerramento] pressupõe
 
 | **aprofundada**
-| ~3 h 40
+| ~3 h 15
 | a completa mais os xref:extras.adoc[Extras] que interessarem ao seu dia
 |===
 
@@ -122,7 +124,7 @@ por onde começar:
 | se o seu dia é | comece por
 
 | segurança, ou plataforma
-| Módulo 1, e depois a parte {p-leste} -- a chave de API abre a porta da rua, não o cofre
+| Módulo 1, e depois a leitura da parte {p-leste} (em preparação) -- a chave de API abre a porta da rua, não o cofre
 
 | operação, suporte ou SRE
 | Módulo 3 inteiro, em especial a parte {p-negado}, que é diagnóstico de chamado

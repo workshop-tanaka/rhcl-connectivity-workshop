@@ -2,14 +2,14 @@ include::partial$numeros.adoc[]
 = {p-exposta} De aberta a governada, um passo por vez
 :navtitle: {p-exposta} De aberta a governada
 
-**Para quem:** Desenvolvedor -- e ao Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
+**Para quem:** Desenvolvedor -- e o Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
 
 ifdef::foco_rhcl[]
 [TIP]
 ====
 **Fase 3 -- A primeira API.** Ainda o dia 1, e a borda troca de mãos: quem faz
 agora é o time da aplicação, dentro dos limites que a plataforma deixou. Três
-partes, cerca de 25 minutos: publicar, dar nome, e decidir como o consumidor se
+partes, cerca de 26 minutos: publicar, dar nome, e decidir como o consumidor se
 identifica.
 ====
 endif::[]
@@ -21,121 +21,20 @@ endif::[]
 esperar dela.
 ====
 
-ifndef::foco_rhcl[]
-Até agora você observou uma API que **já estava** governada. Neste exercício
-você publica uma do zero e a leva, um passo por vez, de completamente aberta a
-governada -- e cada passo é **uma policy**.
-
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh exposta
-----
-
-include::partial$diagrama.adoc[]
-
-[mermaid]
-....
-flowchart LR
-  M1["<b>1</b> Route solta<br/>200 para qualquer um"] --> M2["<b>2</b> HTTPRoute no Gateway<br/>403: o teto da plataforma"]
-  M2 --> M3["<b>3</b> AuthPolicy da rota<br/>401 sem chave, 200 com chave"]
-  M3 --> M4["<b>4</b> PlanPolicy<br/>429 acima da cota"]
-....
-
-A mesma API, quatro estados. Só o que muda entre eles é **qual objeto
-declara o quê** -- a aplicação é a mesma nos quatro.
-
-== Momento 1 -- a `Route` que você já sabe usar
-
-O caminho que quase todo serviço segue no primeiro dia: sobe o pod, expõe o
-Service, publica uma `Route`. Pronto, está no ar.
-
-[source,text]
-----
-HTTP 200
-----
-
-Sem chave, sem limite, sem registro de quem chamou. **E não há nada de errado
-com esse YAML** -- ele está correto, e é exatamente por isso que passaria em
-qualquer revisão de código.
-
-O que falta não está no arquivo, e sim no formato: uma `Route` carrega
-hostname, TLS e destino num objeto só. Não há onde a plataforma pendurar uma
-regra, nem um segundo dono para a porta -- é a diferença que a
-xref:leitura-ingresso.adoc[leitura anterior] descreve, e o próximo momento a
-usa.
-
-== Momento 2 -- zero trust: ninguém passa
-
-A mesma API, agora entrando pela porta da plataforma: uma `HTTPRoute` anexada
-ao Gateway `prod-web`, em vez da Route solta.
-
-[source,text]
-----
-sem chave: 403
-----
-
-`403` -- e a API é sua, e você não escreveu nenhuma negativa.
-
-O Gateway carrega a AuthPolicy `prod-web-deny-all`, escrita pelo Engenheiro de
-Plataforma. **Toda rota anexada herda esse teto.** O padrão da plataforma não é
-"aberto até alguém fechar": é o contrário.
-
-[IMPORTANT]
-====
-Isto muda o que você entendeu na parte {p-fechada}. A API de viagens não está fechada
-porque plataformas fecham coisas -- ela está fechada porque **alguém escreveu
-um deny-all no Gateway**. E foi esse mesmo deny-all que acabou de impedir a
-**sua** API de ir ao ar sem ninguém olhando.
-====
-
-== Momento 3 -- liberação seletiva, e a sobreposição acontecendo
-
-Agora uma chave e uma `AuthPolicy` que mira **a sua rota**, não o Gateway.
-
-[source,text]
-----
-sem chave: 401
-com chave: 200
-----
-
-E então o passo mostra o status do teto:
-
-[source,text]
-----
-AuthPolicy is overridden by [echo-exposta/echo-exposta-authpolicy ...]
-----
-
-**O próprio deny-all declara que cedeu, e nomeia quem o sobrepôs.** São dois
-alvos diferentes: o teto mira o `Gateway`, a sua mira a `HTTPRoute`. O mais
-específico prevalece.
-
-A parte {p-precedencia} mostrou isso numa policy que outra pessoa escreveu. Aqui o
-`overridden` tem o nome da policy que **você** acabou de criar.
-
-== Momento 4 -- quem entra está resolvido; falta quanto pode
-
-Uma `PlanPolicy`, com um tier `experimental` de 3 requisições a cada 10 s:
-
-[source,text]
-----
-200 200 200 429 429 429
-----
-
-== E o que ainda falta
-
-O passo imprime um inventário do que a sua API tem e do que não tem. Quatro
-policies depois, ainda faltam telemetria por plano, mTLS, identidade de
-serviço, canário, pipeline e o registro no catálogo.
-
-**E nada disso falhou.** Não existe, simplesmente. O deploy passou, a rota foi
-aceita, o teste deu 200 -- e a única coisa que impediu um estrago foi o teto
-que outra pessoa tinha escrito antes.
-
-endif::[]
-ifdef::foco_rhcl[]
 Até agora você observou uma borda que **já estava** governada. Aqui você
 publica uma API do zero e a leva, um passo por vez, de completamente aberta a
 governada. Cada passo aplica **um arquivo**, e cada arquivo é uma decisão.
+
+ifdef::perfis[]
+[NOTE]
+====
+**Nesta parte tudo roda na aba `Terminal Infra`.** A API é do time da
+aplicação, mas o passo 4 é de quem cuida da plataforma (publicar o hostname no
+projeto do Gateway), e o passo 5 cria e lê a chave num `Secret`, que o perfil
+Dev não lê. A divisão de papéis voltou na parte {p-papeis}; aqui o que importa
+é a sequência das policies.
+====
+endif::[]
 
 include::partial$diagrama.adoc[]
 
@@ -323,8 +222,11 @@ bash scripts/exposta-checklist.sh echo-exposta
 ----
 
 É um inventário do que a sua API tem e do que não tem. Seis arquivos depois,
-ainda faltam telemetria por plano, identidade de serviço, canário, pipeline e
-o registro no catálogo. E nada disso falhou: simplesmente não existe.
+ainda faltam telemetria por plano, pipeline e o registro no catálogo.
+ifndef::foco_rhcl[]
+E, atrás da borda, identidade de serviço e canário, que são do Service Mesh.
+endif::[]
+E nada disso falhou: simplesmente não existe.
 
 == Limpando
 
@@ -335,57 +237,29 @@ Um comando desfaz os seis arquivos:
 oc delete -f passos/exposta/ --ignore-not-found
 ----
 
-endif::[]
-== O que o template geraria, para a mesma API
-
-ifndef::foco_rhcl[]
-Dezessete manifests. Você escreveu quatro, e levou dez minutos.
-
-Mas a diferença que mais importa não aparece em `oc get`: **o que você fez
-existe só no cluster.** Ninguém sabe quem criou, quando, nem por quê. Não há
-revisão, não há histórico, e a próxima mudança será outro `oc apply` de alguém
-numa terça-feira.
-endif::[]
-ifdef::foco_rhcl[]
-Dezessete manifests. Você aplicou seis, e levou dez minutos.
-
-Mas a diferença que mais importa não aparece em `oc get`: os seus arquivos
-estão num repositório, e **quem os aplicou foi você, à mão**. Nada garante que
-o cluster é o que está no Git: não houve revisão, e a próxima mudança será
-outro `oc apply` de alguém numa terça-feira.
-endif::[]
-
-Pelo template, os mesmos objetos nascem num **repositório**: com autor, data e
-merge request. O Argo aplica. Mudar uma policy passa a ser um PR que alguém
-revisa -- e o que está no cluster vira **consequência** do que está no git, não
-o contrário.
-
 == O que isso prova
 
-O golden path não economiza digitação. Ele torna **impossível** um serviço
-nascer sem autenticação, plano, telemetria e identidade -- e transforma
-configuração em algo que tem dono, data e revisão.
-
-É essa a diferença entre uma convenção escrita num wiki, que todo mundo
-concorda e alguém esquece numa terça-feira, e uma plataforma.
-
+Seis arquivos, nenhuma linha da aplicação. A mesma API foi de aberta a
+governada só por declaração, e cada estado tem um objeto que diz quem decidiu o
+quê. E o que impediu a API de ir ao ar sem ninguém olhando foi o teto que outra
+pessoa tinha escrito antes.
 
 ifndef::foco_rhcl[]
 == Fim do bloco B
 
-Você escreveu quatro arquivos e levou dez minutos. A **mesma** API nasce de um
-formulário pelo caminho que a plataforma oferece; a comparação está na leitura
-xref:m5-01-colheita.adoc[{p-colheita}], no Módulo 5, e vale os oito minutos.
+Você aplicou seis arquivos à mão e levou dez minutos. A **mesma** API nasce de
+um formulário pelo caminho que a plataforma oferece; a comparação está na
+leitura xref:m5-01-colheita.adoc[{p-colheita}], no Módulo 5, e vale os oito
+minutos.
 endif::[]
 ifdef::foco_rhcl[]
 == O que você tem, e o que vem depois
 
-Você aplicou seis arquivos e levou dez minutos. É o jeito certo de entender
-cada policy, e deixa de ser o jeito certo quando a segunda API chega: a
-xref:fase-esteira.adoc[fase 5] faz esses mesmos arquivos chegarem ao cluster
-por merge request, e a
-leitura xref:m5-01-colheita.adoc[{p-colheita}] mostra a **mesma** API nascendo
-de um formulário.
+Você aplicou seis arquivos à mão: é o jeito certo de entender cada policy, e
+deixa de ser quando a segunda API chega. A xref:fase-esteira.adoc[fase 5] faz
+esses arquivos chegarem ao cluster por merge request, e a
+xref:m5-01-colheita.adoc[leitura {p-colheita}] mostra a mesma API nascendo de
+um formulário.
 endif::[]
 
 Se a diferença entre `Route`, `Ingress` e `Gateway` ainda não ficou clara, a

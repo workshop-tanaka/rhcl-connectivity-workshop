@@ -1,0 +1,158 @@
+include::partial$numeros.adoc[]
+= Se algo não responder
+:navtitle: Se algo não responder
+
+O ambiente é criado do zero para você, e uma peça ou outra pode demorar mais
+que as demais. Esta página junta o que fazer quando uma parte devolve um número
+estranho, um painel vazio ou um comando que não acha o arquivo. Volte a ela no
+meio do caminho; não é preciso lê-la antes de começar.
+
+== O veredito do ambiente
+
+Um ambiente incompleto não dá erro logo: ele falha no meio de uma parte, com
+painel vazio ou número que não bate. Antes de investigar qualquer coisa, peça
+o veredito:
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh check --auto
+----
+
+ifndef::foco_rhcl[]
+Percorre a cadeia inteira -- operadores, gateway, policies, chaves, caminho de
+dados, Service Mesh, portais e portal do desenvolvedor. Leva **cerca de dois
+minutos** e termina assim:
+endif::[]
+ifdef::foco_rhcl[]
+Percorre a cadeia inteira -- operadores, gateway, policies, chaves, caminho de
+dados, portais e portal do desenvolvedor. Leva **de um a dois minutos**, sem
+nada na tela por alguns segundos de cada vez, e termina assim:
+endif::[]
+
+[source,text]
+----
+  ✓ sem chave -> 401 (a borda fechada)
+  ✓ cota diaria: gold 99980/100000, free 989/1000, silver 9987/10000
+  ✓ tier free: 3 servidas, 5 limitadas (planos comerciais)
+  ...
+[OK] o ambiente esta inteiro
+----
+
+Como ler o resultado:
+
+[cols="1,3",options="header"]
+|===
+| o que aparece | o que fazer
+
+| `[OK]` no fim
+| siga de onde parou
+
+| `!` amarelo
+| **não bloqueia.** Degrada uma parte específica, e a linha diz qual
+
+| `✗` vermelho
+| bloqueia. Cada `✗` vem com a correção ao lado -- rode o que ele indica e
+  repita a checagem
+
+| o comando não responde
+| a sessão do terminal caiu; abra a aba do terminal de novo e repita
+|===
+
+.Uma checagem mais curta
+[%collapsible]
+====
+A checagem completa confere coisas que só interessam a algumas partes. Se você
+só quer saber se o **caminho de dados** está de pé -- a API, as policies e os
+planos --, há uma versão de cerca de 50 segundos:
+
+[source,bash,role="execute"]
+----
+bash scripts/preflight.sh core
+----
+
+Ela termina em `[OK] núcleo pronto`. É a que vale rodar se uma parte devolver
+um número estranho no meio do caminho.
+====
+
+== `No such file or directory`
+
+Se um comando responder `bash: scripts/demo.sh: No such file or directory`, o
+terminal saiu do diretório do workshop. Volte com:
+
+[source,bash,role="execute"]
+----
+cd /home/lab-user/rhcl-connectivity-demo
+----
+
+O caminho é absoluto de propósito: neste terminal `~` aponta para `/data`, que
+não é gravável; `/home/lab-user` é o volume persistente.
+
+== Um painel do Grafana vazio
+
+Os painéis de consumo contam o tráfego dos **últimos 15 minutos**. Se você
+chegou à parte {p-negocio} sem ter rodado a {p-planos} pouco antes, ou voltou
+de uma pausa longa, a linha sai achatada. O aquecimento gera esse tráfego:
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh aquece --auto
+----
+
+São três minutos de tráfego de fundo e **depois** o reset das cotas. A ordem
+é obrigatória: o aquecimento queima cota diária, e o reset a devolve. Rode-o
+logo antes da parte que mostra o painel, e não no começo do workshop.
+
+== Uma tela que não abre
+
+Os endereços de cada tela estão em xref:acessos.adoc[Seus acessos]. Para
+imprimi-los de novo, resolvidos deste cluster:
+
+[source,bash,role="execute"]
+----
+bash scripts/demo.sh telas --auto
+----
+
+ifndef::foco_rhcl[]
+O console, o Grafana e o Kiali mandam `X-Frame-Options: DENY` e por isso não
+podem ser embutidos no painel à direita: abra-os **em abas do navegador**.
+Todos os links deste guia já abrem em aba nova. No painel ficam o **Terminal**
+e o **Traces**, que é a única tela que aceita ser embutida.
+endif::[]
+ifdef::foco_rhcl[]
+O console e o Grafana mandam `X-Frame-Options: DENY` e por isso não podem ser
+embutidos no painel à direita: abra-os **em abas do navegador**. Todos os links
+deste guia já abrem em aba nova. No painel fica o **Terminal**.
+endif::[]
+
+include::partial$entrar-grafana.adoc[]
+
+ifndef::foco_rhcl[]
+include::partial$entrar-kiali.adoc[]
+endif::[]
+
+include::partial$entrar-ocp.adoc[]
+
+== Para quem conduz: como o `demo.sh` funciona
+
+As partes do guia mandam rodar cada comando à mão. O `demo.sh` é a ferramenta
+de quem **apresenta** a demonstração inteira, e é ele que faz o veredito e o
+aquecimento acima.
+
+.Os passos, as pausas e os desvios
+[%collapsible]
+====
+Cada passo **pausa antes de executar**: `Enter` segue, `p` pula, `Ctrl-C` sai.
+Ele mostra o comando na tela antes de rodar, roda, e diz o que olhar na saída.
+
+[cols="1,3"]
+|===
+| `◇ depende:` | a linha abaixo do título diz o que o passo pressupõe. Quando falta, o script **pergunta** se roda o anterior agora e volta.
+| Desvio | na pausa, digite o nome de outro passo do roteiro (`ato5`, `trace`, ou só `5`): ele roda inteiro e **volta à mesma pausa**. É para a pergunta fora de ordem.
+| `◇ persona:` | para quem o passo fala. Use para escolher o que mostrar.
+|===
+
+[source,bash]
+----
+bash scripts/demo.sh --list      # todos os passos, a ordem, e as dependências
+----
+====

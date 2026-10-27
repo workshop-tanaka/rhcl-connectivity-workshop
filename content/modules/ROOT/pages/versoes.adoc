@@ -18,8 +18,9 @@ encontrado -- e um dia a v1 deixa de responder. Cada um desses momentos
 costuma ser código, e-mail e planilha.
 
 Nesta parte, nenhum deles toca a aplicação. A imagem da `travels` é a mesma
-nas duas versões: **a versão é uma decisão da borda**. São seis passos, cada um
-um arquivo em `passos/versoes/`, e quase todos são do perfil Dev -- é ele quem
+nas duas versões: **a versão é uma decisão da borda**. São seis passos -- cinco
+arquivos em `passos/versoes/` e um script de medição --, e quase todos são do
+perfil Dev -- é ele quem
 publica a API.
 
 == 1. A v2 nasce ao lado, e nasce fechada
@@ -103,8 +104,9 @@ O plano vale nas duas versões, e só a v2 carrega o cabeçalho.
 [NOTE]
 ====
 **Por que o plano vem junto.** Medido: só com a `AuthPolicy`, sem o
-`PlanPolicy`, a chave gold passou 14 de 14 na rota nova -- **a versão nova
-nasce sem limite** se ninguém lembrar do plano. O deny-all garante que ela não
+`PlanPolicy`, a chave **free** passou 8 de 8 na rota nova, onde o plano dela
+corta na quarta -- **a versão nova nasce sem limite** se ninguém lembrar do
+plano. O deny-all garante que ela não
 nasce aberta; o contrato comercial é preciso declarar.
 ====
 
@@ -197,6 +199,9 @@ Este passo é do perfil **Infra**: ele faz três parceiros chamarem as versões
 (acme só na v1, globex na v2, initech nas duas), e para isso lê as chaves --
 coisa que o Dev não faz.
 
+O bloco leva **pouco mais de um minuto**: o `sleep 60` espera a métrica do
+Gateway chegar ao Prometheus.
+
 [source,bash,role="execute"]
 ----
 bash scripts/uso-por-versao.sh trafego
@@ -216,9 +221,9 @@ bash scripts/uso-por-versao.sh
 
 **O que isso diz:** a acme é a conversa a ter antes da data do `Sunset`. A
 consulta é do seu terminal, e só enxerga os seus parceiros. Se aparecerem
-outros nomes na v1, são as chamadas a `/travels` das partes anteriores: a rota
-de sempre também vai ao Service `travels`, e quem ainda chama `/travels` não
-migrou.
+outros nomes na v1 -- ou a própria globex aparecer nas duas colunas --, são as
+chamadas a `/travels` das partes anteriores: a rota de sempre também vai ao
+Service `travels`, e quem ainda chama `/travels` não migrou.
 
 == 6. A v1 desligada -- e religada
 

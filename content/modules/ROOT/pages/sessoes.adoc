@@ -15,13 +15,8 @@ quem entra na API, sob qual plano, e como isso vira evidência -- na ordem em
 que um projeto real acontece, da plataforma instalada à operação.
 ====
 
-[NOTE]
-====
-**Aqui o Connectivity Link roda sozinho.** Este ambiente não tem Service Mesh:
-quem atende os Gateways é o Gateway API que o próprio OpenShift traz. Tudo o
-que você vai fazer nesta sessão vale assim, sem outro produto por baixo -- e a
+NOTE: **Aqui o Connectivity Link roda sozinho**, sem Service Mesh por baixo. A
 xref:leitura-instalacao.adoc[fase 1] mostra como isso foi montado.
-====
 endif::[]
 ifdef::foco_ossm[]
 [IMPORTANT]
@@ -62,12 +57,23 @@ endif::[]
 
 | **Service Mesh**
 | depois que a chamada entrou, quem pode falar com quem lá dentro?
-| o xref:m2-00-intro.adoc[Módulo 2], e o rastreio de uma requisição salto a
-  salto
+ifndef::foco_rhcl[]
+| em preparação: hoje, o xref:m2-00-intro.adoc[Módulo 2] para leitura
+endif::[]
+ifdef::foco_rhcl[]
+| o tráfego entre os serviços, e o rastreio de uma requisição salto a salto;
+  nesta sessão, a xref:papel-ossm.adoc[leitura sobre o papel dele]
+endif::[]
 
 | **Service Interconnect**
 | e o que a aplicação precisa e que não roda neste cluster?
+ifndef::foco_rhcl[]
 | em preparação: hoje, a xref:m4-00-intro.adoc[proposta do módulo]
+endif::[]
+ifdef::foco_rhcl[]
+| em preparação; nesta sessão, a xref:papel-rhsi.adoc[leitura sobre o papel
+  dele]
+endif::[]
 
 | **Completa**
 | como as três respostas se encaixam numa requisição só?
@@ -92,7 +98,9 @@ cada produto que **não** está no percurso, há uma leitura curta no fim do men
 dizendo o que ele resolve, o que ele não sabe, e em que ponto desta mesma
 aplicação ele entraria:
 
+ifndef::foco_rhcl[]
 * xref:papel-rhcl.adoc[O papel do Connectivity Link]
+endif::[]
 * xref:papel-ossm.adoc[O papel do Service Mesh]
 * xref:papel-rhsi.adoc[O papel do Service Interconnect]
 

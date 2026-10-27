@@ -20,7 +20,7 @@ projeto Kiali (https://kiali.io/docs/tutorials/travels/[tutorial do Kiali^]),
 com as imagens publicadas por ele (`quay.io/kiali/demo_travels_*`). Daquele
 demo entra só a parte `travel-agency`, sem os portais e sem o namespace de
 controle. Quem a consome aqui são parceiros com chave e plano, e o
-`discounts` ganhou uma segunda versão, com a mesma imagem, para o canário.
+`discounts` ganhou uma segunda versão, com a mesma imagem.
 
 === Os sete serviços
 
@@ -57,9 +57,11 @@ controle. Quem a consome aqui são parceiros com chave e plano, e o
 | não
 |===
 
-Só o `travels` tem rota externa. Os outros seis existem **atrás** dele, e é
-essa assimetria que o {m2} explora: proteger a entrada não diz nada sobre
-o que acontece depois dela.
+Só o `travels` tem rota externa. Os outros seis existem **atrás** dele.
+ifndef::foco_rhcl[]
+É essa assimetria que o {m2} explora: proteger a entrada não diz nada sobre o
+que acontece depois dela.
+endif::[]
 
 ifdef::foco_rhcl[]
 [NOTE]
@@ -69,11 +71,13 @@ xref:papel-ossm.adoc[leitura sobre o papel dele] diz o que ele faria aqui.
 ====
 endif::[]
 
+ifndef::foco_rhcl[]
 === O `discounts` tem duas versões de propósito
 
 `discounts-v1` e `discounts-v2` rodam ao mesmo tempo. É esse par que torna
 possível a parte {p-canario}, onde uma fração do tráfego vai para a versão nova sem
 ninguém trocar imagem de Deployment.
+endif::[]
 
 == A API que você vai chamar
 
@@ -84,14 +88,9 @@ Um `HTTPRoute` publica o `travels` em:
 | endereço | `\https://{api_host}`
 |===
 
-[NOTE]
-====
-**Abrir esse endereço no navegador responde `401`, e é o esperado.** A API
-nasce fechada: sem uma chave de API na requisição, a borda nega antes de a
-aplicação ser consultada -- e o navegador não manda chave nenhuma. Não é o
-ambiente fora do ar; é a primeira policy do workshop funcionando. A
-xref:m1-01-fechada.adoc[parte {p-fechada}] começa exatamente por esse `401`.
-====
+NOTE: **Abrir esse endereço no navegador dá tela em branco, e é o esperado**:
+sem chave, a borda responde `401`. A xref:m1-01-fechada.adoc[parte
+{p-fechada}] começa por aí.
 
 Dois caminhos interessam ao workshop:
 
@@ -104,7 +103,7 @@ Responde **45 destinos**, direto do banco:
 [{"city": "Amsterdam", "lat": "52.3500", "lng": "4.9166"}, ...]
 ----
 
-É a chamada mais usada nos módulos, porque é barata e a resposta é fácil de
+É a chamada mais usada no guia, porque é barata e a resposta é fácil de
 conferir: se vierem 45 itens, a cadeia inteira funcionou.
 
 === `GET /travels/<cidade>` -- o fan-out
@@ -147,14 +146,8 @@ A Rota Viagens vende acesso à API. Três parceiros já assinaram, e cada um tem
 o **próprio portal** -- uma aplicação de terceiro, que não pertence à Rota
 Viagens e que consome a API como qualquer cliente externo faria.
 
-[cols="1,1,2",options="header"]
-|===
-| portal | plano | endereço
-
-| Azul | gratuito | {portal_free_url}[abrir^]
-| Verde | intermediário | {portal_silver_url}[abrir^]
-| Vermelho | completo | {portal_gold_url}[abrir^]
-|===
+Os endereços estão em xref:acessos.adoc[Seus acessos]: o **Azul** é do plano
+gratuito, o **Verde** do intermediário, o **Vermelho** do completo.
 
 Os três rodam **a mesma aplicação**, com a mesma imagem. A única diferença
 entre eles é a chave de API que cada um carrega -- e é essa diferença que os
@@ -197,11 +190,16 @@ O `mysqldb` que a aplicação usa roda em `travel-agency`, ao lado dos outros
 serviços. Os 45 destinos saem dele.
 endif::[]
 
+ifndef::foco_rhcl[]
 Em cliente real é comum que não seja assim -- *"esse banco não vai para o
 Kubernetes"* -- e alcançá-lo de fora do cluster, sem VPN e sem expor nada, é
 o assunto do xref:m4-00-intro.adoc[{m4}], que está a caminho.
+endif::[]
 
 ifdef::foco_rhcl[]
+Em cliente real é comum que não seja assim -- *"esse banco não vai para o
+Kubernetes"*.
+
 [NOTE]
 ====
 **Aqui entraria o Service Interconnect.** Um banco que fica fora do cluster precisa ser alcançado sem VPN e sem porta aberta na internet. Esta sessão não o pratica; a

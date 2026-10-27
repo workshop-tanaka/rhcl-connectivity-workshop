@@ -125,8 +125,8 @@ na métrica:
 oc get telemetrypolicy prod-web-telemetry -n ingress-gateway -o yaml
 ----
 
- Sem ela a série responde "quantos 429 houve"; com
-ela responde "o tier free está saturando", que é outra conversa.
+A linha que conta está em `spec.metrics.default.labels`: `plan:
+auth.kuadrant.plan` é o rótulo que você viu em cada série.
 
 == O que isso prova
 
@@ -153,12 +153,12 @@ A API deste ambiente está fechada por padrão, atende três planos comerciais
 diferentes no mesmo endereço, e o consumo de cada cliente aparece em painel --
 e nada disso passou por uma linha de código da aplicação.
 
-É o momento em que o projeto costuma ouvir dois pedidos novos, e as duas
-partes seguintes tratam deles: regras diferentes para cada caminho da API, na
-xref:extra-contextos.adoc[parte {p-contextos}], e *"libera só a faixa de IP do
+É o momento em que o projeto costuma ouvir pedidos novos, e as três partes
+seguintes tratam deles: uma segunda versão da API, na
+xref:versoes.adoc[parte {p-versoes}]; regras diferentes para cada caminho, na
+xref:extra-contextos.adoc[parte {p-contextos}]; e *"libera só a faixa de IP do
 parceiro"*, na xref:extra-listas.adoc[parte {p-listas}].
 endif::[]
 
-Se quiser parar por aqui, este é um bloco completo: o
-xref:99-encerramento.adoc[Encerramento] fecha o workshop e diz como devolver o
-ambiente ao estado inicial.
+Se o tempo acabou, o xref:99-encerramento.adoc[Encerramento] diz como devolver
+o ambiente ao estado inicial.

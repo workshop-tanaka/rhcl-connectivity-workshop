@@ -4,6 +4,12 @@ include::partial$numeros.adoc[]
 
 **Para quem:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte {p-rastreavel}**
 
+[NOTE]
+====
+Esta parte precisa do Service Mesh, que este ambiente ainda não tem; fica no
+guia para leitura e revisão.
+====
+
 [WARNING.antes]
 ====
 **Antes: a parte {p-rastreavel}** (ou `bash scripts/traffic.sh mesh`) na última hora, para

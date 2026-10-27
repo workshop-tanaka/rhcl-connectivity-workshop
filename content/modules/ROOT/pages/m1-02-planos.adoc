@@ -9,7 +9,7 @@ ifdef::foco_rhcl[]
 ====
 **Fase 4 -- A API vira produto.** São as semanas seguintes do projeto, e quem
 puxa é o negócio: clientes que pagam diferente, o consumo em número, e regras
-que descem até uma versão, um caminho ou uma lista. Cinco partes, cerca de 50 minutos.
+que descem até uma versão, um caminho ou uma lista. Cinco partes, cerca de 60 minutos.
 ====
 endif::[]
 
@@ -230,15 +230,6 @@ cluster:
 oc get planpolicy travels-plans -n travel-agency -o yaml
 ----
 
-
-{ide_url}[Abrir o repositório no Dev Spaces^] -- o IDE sobe no próprio cluster,
-com o repositório que o ambiente hospeda. Abra
-`base/policies-plans/travels-plans.yaml` e leia as trinta linhas: é mais
-honesto que qualquer descrição delas.
-
-NOTE: O workspace leva 1 a 2 minutos para subir na primeira vez. Se você
-estiver com pouco tempo, o `oc get planpolicy travels-plans -n travel-agency -o yaml`
-mostra o mesmo conteúdo no terminal.
 
 .Mais detalhes: as duas janelas de um plano, e por que existem
 [%collapsible]

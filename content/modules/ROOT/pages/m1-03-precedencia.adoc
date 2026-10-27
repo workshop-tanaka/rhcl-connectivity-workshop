@@ -13,19 +13,6 @@ tiers da parte {p-planos}, mas nenhum comando aqui depende dele.
 O par aqui é Gateway contra rota. As policies que miram o `prod-web` valem
 para toda rota anexada, e **cedem** onde a rota declara a sua.
 
-== Terminal
-
-ifndef::foco_rhcl[]
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh ato3
-----
-
-O que tem de aparecer: `Enforced=False`, e a mensagem **nomeia** quem venceu
--- as policies das duas rotas. Depois, os artefatos que o PlanPolicy gerou
-sozinho: um contador por tier no Limitador e os predicados no filtro do Envoy.
-endif::[]
-ifdef::foco_rhcl[]
 Nada aqui muda o ambiente: são três leituras, uma por passo.
 
 == Passo 1 -- pergunte ao teto se ele está valendo
@@ -41,7 +28,7 @@ oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{range .stat
 [source,text]
 ----
 Accepted=True (AuthPolicy has been accepted)
-Enforced=False (AuthPolicy is overridden by [travel-agency/travel-agency-authpolicy])
+Enforced=False (AuthPolicy is overridden by [travel-agency/travel-agency-authpolicy ingress-gateway/pega-tudo-421])
 ----
 
 .O que este comando faz?
@@ -57,9 +44,13 @@ Enforced=False (AuthPolicy is overridden by [travel-agency/travel-agency-authpol
 da rota da API de viagens. O teto não foi apagado nem falhou; ele cedeu, e
 disse para quem.
 
-A lista entre colchetes traz **todas** as rotas que sobrepuseram o teto. Se
-você voltar aqui depois de publicar a sua própria API, na parte
-xref:m1-06-exposta.adoc[{p-exposta}], ela aparece ali também.
+A lista entre colchetes traz **todas** as rotas que sobrepuseram o teto. A
+segunda é da própria plataforma: `pega-tudo-421` é a policy de uma rota sem
+hostname, no projeto do Gateway, que responde `421` a todo nome que o Gateway
+não atende -- é o que faz o navegador, quando reaproveita a conexão da API para
+abrir o portal ou o Grafana, tentar de novo pelo caminho certo em vez de levar
+um `404`. Se você voltar aqui depois de publicar a sua própria API, na parte
+xref:m1-06-exposta.adoc[{p-exposta}], ela aparece na lista também.
 
 == Passo 2 -- a mesma pergunta, para o limite
 
@@ -73,11 +64,15 @@ oc get ratelimitpolicy ingress-gateway-rlp-lowlimits -n ingress-gateway -o jsonp
 [source,text]
 ----
 Accepted=True (RateLimitPolicy has been accepted)
-Enforced=False (RateLimitPolicy is overridden by [travel-agency/travels-plans])
+Enforced=True (RateLimitPolicy has been partially enforced)
 ----
 
-**O que isso diz:** a regra é a mesma para acesso e para limite. Quem venceu
-aqui foram os planos comerciais da rota. Numa pilha de anotações de ingress,
+**O que isso diz:** `partially` -- o limite do Gateway vale em parte das rotas.
+Na rota da API de viagens ele cedeu aos planos comerciais dela (a
+`travels-plans`, a `PlanPolicy` da parte {p-planos}, que gera uma
+`RateLimitPolicy` de mesmo nome). Na `pega-tudo` ele vale, porque aquela rota
+não declara limite próprio. A regra é a mesma para acesso e para limite: o mais
+específico prevalece, e o status diz onde. Numa pilha de anotações de ingress,
 responder "qual regra valeu para esta rota?" é arqueologia; aqui é um campo.
 
 == Passo 3 -- veja no que a policy virou, dentro do Gateway
@@ -103,9 +98,8 @@ oc get envoyfilter kuadrant-prod-web -n ingress-gateway -o jsonpath='{.spec.conf
 
 **O que isso diz:** uma policy declarativa de trinta linhas virou regra dentro
 do proxy: um predicado por plano, e o plano como rótulo de métrica. É o que a
-parte xref:m1-02-planos.adoc[{p-planos}] vai medir pelo lado de fora, e a
-xref:m1-05-negocio.adoc[{p-negocio}] vai transformar em painel.
-endif::[]
+parte xref:m1-02-planos.adoc[{p-planos}] mede pelo lado de fora, e a
+xref:m1-05-negocio.adoc[{p-negocio}] transforma em painel.
 
 == Navegador
 
@@ -126,8 +120,9 @@ O status, a console também mostra -- em duas telas:
 
 * {openshift_console_url}/kuadrant/policies/ns/ingress-gateway[Connectivity Link → Policies, no projeto do Gateway^]:
   o `prod-web-deny-all` aparece como **Overridden (Not Enforced)** -- a policy
-  da rota venceu na rota dela -- e o limite do Gateway, como **Enforced**. É a
-  precedência desta parte numa linha de tabela.
+  da rota venceu na rota dela -- e o limite do Gateway, como **Enforced**,
+  porque vale em parte das rotas (o `partially` do Passo 2). É a precedência
+  desta parte numa linha de tabela.
 * {openshift_console_url}/k8s/ns/ingress-gateway/gateway.networking.k8s.io{tilde}v1{tilde}Gateway/prod-web[o Gateway `prod-web`^],
   em *Conditions*: `AuthPolicyAffected` e `RateLimitPolicyAffected`, cada uma
   com o nome da policy. O Gateway diz quem o afeta.
@@ -192,36 +187,36 @@ endif::[]
 
 [source,bash,role="execute"]
 ----
-oc get limitador limitador -n kuadrant-system -o jsonpath='{.spec.limits}' | python3 -m json.tool | head -30
+oc get limitador limitador -n kuadrant-system -o jsonpath='{.spec.limits}' | python3 -c 'import json,sys; [print(x["name"], x["max_value"], "a cada", x["seconds"], "s") for x in sorted(json.load(sys.stdin), key=lambda x: (x["name"], -x["seconds"])) if x["namespace"].startswith("travel-agency/")]'
+----
+
+[source,text]
+----
+free 1000 a cada 86400 s
+free 3 a cada 10 s
+gold 100000 a cada 86400 s
+gold 30 a cada 10 s
+silver 10000 a cada 86400 s
+silver 10 a cada 10 s
+unclassified 1 a cada 60 s
 ----
 
 Um contador por tier, gerado pela policy. É a prova material de que a
-declaração virou configuração de data plane sem ninguém escrever.
+declaração virou configuração de data plane sem ninguém escrever. O filtro
+mostra só os da sua API: o Limitador é um só para o cluster, e guarda os
+contadores de todas as rotas que têm limite.
 
 == Configuração
 
-A precedência não está num arquivo: está no **status**. Mas os dois lados do
-par estão, e vale vê-los lado a lado no editor:
-
-Compare os dois lados do par: a `prod-web-deny-all` (o teto, que mira o
-**Gateway**) e a `travel-agency-authpolicy` (a exceção, que mira a **rota**).
-A diferença entre os dois é uma linha, o `targetRef`:
+A precedência não está em arquivo nenhum: está no **status**, que o Passo 1
+leu. Os dois lados do par estão, e a diferença entre eles é uma linha, o
+`targetRef` -- a `prod-web-deny-all` (o teto) mira o **Gateway**, a
+`travel-agency-authpolicy` (a exceção) mira a **rota**:
 
 [source,bash,role="execute"]
 ----
 oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{.spec.targetRef}{"\n"}'
 oc get authpolicy travel-agency-authpolicy -n travel-agency -o jsonpath='{.spec.targetRef}{"\n"}'
-----
-
-
-{ide_url}[Abrir o repositório de policies no Dev Spaces^] se preferir os dois
-lado a lado num editor.
-
-E a precedência não está em nenhum dos dois arquivos:
-
-[source,bash,role="execute"]
-----
-oc get authpolicy prod-web-deny-all -n ingress-gateway -o jsonpath='{range .status.conditions[*]}{.type}={.status} ({.message}){"\n"}{end}'
 ----
 
 == O que isso prova

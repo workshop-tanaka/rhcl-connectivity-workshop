@@ -297,8 +297,8 @@ authorization:
 ----
 
 O mesmo predicado serve para bloquear por plano, por anotação da chave, por
-`CN` de certificado ou por *claim* de token. E ela atravessa NAT, CDN e troca
-de operadora sem mudar de resposta.
+`CN` de certificado ou por *claim* de token. E, como não depende do endereço,
+não muda de resposta quando o cliente troca de rede ou passa por NAT.
 
 ifdef::foco_rhcl[]
 == Limpando
@@ -346,8 +346,8 @@ endif::[]
 == O que isso prova
 
 Lista por IP responde "de onde veio o pacote". Lista por identidade responde
-"quem é o cliente". São perguntas diferentes, e só a segunda sobrevive a NAT,
-CDN, nuvem e troca de operadora.
+"quem é o cliente". São perguntas diferentes, e só a segunda não depende do
+caminho que o pacote fez -- NAT, nuvem ou troca de operadora.
 
 A primeira ainda tem lugar -- como cerca, no nível da rede, onde o endereço é
 da conexão e não de um cabeçalho. O que não funciona é usá-la **como se fosse**
@@ -356,3 +356,11 @@ controle.
 
 TIP: Se o exercício for interrompido, `bash scripts/listas.sh limpa` remove o
 namespace.
+
+ifdef::foco_rhcl[]
+== Fim da fase 4
+
+A API virou produto: planos, consumo em número, duas versões, regras por
+caminho e listas. Falta tirar a configuração das suas mãos -- a
+xref:fase-esteira.adoc[fase 5] a leva para o repositório.
+endif::[]

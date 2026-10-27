@@ -12,11 +12,18 @@ no meio dessa mudança, descobriu que o produto mais valioso dela não é o site
 
 Os serviços já foram para o OpenShift, e neste ambiente o banco de dados veio
 junto. Na maioria das migrações reais ele fica de fora -- e alcançá-lo sem
+ifndef::foco_rhcl[]
 abrir a rede é o assunto do xref:m4-00-intro.adoc[{m4}], que está a
 caminho.
+endif::[]
+ifdef::foco_rhcl[]
+abrir a rede é o assunto do Service Interconnect, que a
+xref:papel-rhsi.adoc[leitura sobre o papel dele] resume.
+endif::[]
 
 include::partial$diagrama.adoc[]
 
+ifndef::foco_rhcl[]
 [mermaid]
 ....
 flowchart LR
@@ -41,6 +48,24 @@ tráfego se divide entre elas -- 90% para a v1, 10% para a v2. Nenhum outro
 serviço tem isso, e não é acaso: é o par que torna possível promover uma
 versão nova sem trocar a imagem de um Deployment, e é o que a parte {p-canario}
 exercita.
+endif::[]
+ifdef::foco_rhcl[]
+[mermaid]
+....
+flowchart LR
+  P["Parceiros<br/>(chave de API)"] -->|HTTPS| G["Gateway"]
+  G --> T["travels"]
+  T --> F["flights"]
+  T --> H["hotels"]
+  T --> C["cars"]
+  T --> I["insurances"]
+  T --> D["discounts"]
+  F & H & C & I --> DB[("banco<br/>mysqldb")]
+....
+
+O `travels` é a única porta de entrada: ele recebe a chamada e distribui para
+os outros cinco. É nele, e só nele, que esta sessão trabalha.
+endif::[]
 
 Os detalhes de cada serviço estão em xref:aplicacao.adoc[A aplicação e as APIs].
 
@@ -107,19 +132,20 @@ O caminho curto: o **Módulo 1** resolve os problemas 1, 2 e 4 sozinho. Os
 outros três tratam do que a borda não alcança.
 endif::[]
 ifdef::foco_rhcl[]
-Esta sessão resolve os problemas 1, 2 e 4, que são os da borda -- o
-xref:index.adoc[Sobre este workshop] traz as fases, o que cada uma entrega e
-quanto tempo leva.
+Esta sessão ataca os quatro: o 1 e o 2 nas fases 2 a 4, o 4 na fase 5, e o
+3, até onde a borda enxerga, na fase 6 -- o xref:index.adoc[Sobre este
+workshop] traz as fases, o que cada uma entrega e quanto tempo leva.
 
-O problema 3 é do que a borda não alcança. As leituras sobre o
-xref:papel-ossm.adoc[Service Mesh] e o xref:papel-rhsi.adoc[Service Interconnect]
-dizem que produto o resolve, e em que ponto desta mesma aplicação.
+O que fica atrás da borda -- um serviço interno recusando outro -- é do
+Service Mesh. As leituras sobre o xref:papel-ossm.adoc[Service Mesh] e o
+xref:papel-rhsi.adoc[Service Interconnect] dizem em que ponto desta mesma
+aplicação cada um entraria.
 endif::[]
 
 == A tese que o workshop defende
 
 Tudo que você vai fazer acontece **ao redor** da aplicação. O binário do
-`travels` é o mesmo do primeiro ao último módulo -- nenhuma linha de código é
+`travels` é o mesmo do primeiro ao último exercício -- nenhuma linha de código é
 alterada para autenticar, limitar, medir ou proteger.
 
 Se ao final isso estiver funcionando sem a aplicação ter mudado, a conclusão

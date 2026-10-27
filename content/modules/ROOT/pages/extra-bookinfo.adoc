@@ -2,7 +2,13 @@ include::partial$numeros.adoc[]
 = Uma aplicação, duas fronteiras
 :navtitle: Uma aplicação, duas fronteiras
 
-**Opcional · ~6 min · muda estado e desfaz no fim**
+**Opcional · em preparação · ~6 min no ambiente de referência**
+
+[NOTE]
+====
+Esta página precisa do Service Mesh, que este ambiente ainda não tem -- como o
+xref:m2-00-intro.adoc[Módulo 2], ela fica no guia para leitura e revisão.
+====
 
 **Para quem:** Arquitetura e Engenheiro de Plataforma -- quem precisa
 explicar o que o Service Mesh decide, o que o Connectivity Link decide, e por
@@ -16,7 +22,7 @@ coisas numa aplicação que não é a de viagens.
 ====
 
 O *bookinfo* é a aplicação de exemplo do projeto Istio: uma loja de livros
-com quatro serviços. Ele roda neste ambiente como o upstream o fez, com o
+com quatro serviços. Ele roda como o upstream o fez, com o
 gateway do próprio Istio. Duas coisas que a aplicação de viagens não permite
 mostrar ficam fáceis nele:
 

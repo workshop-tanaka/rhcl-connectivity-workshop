@@ -20,7 +20,8 @@ contrato -- nesses casos a pergunta muda de "qual sistema é esse?" para **"quem
 é essa pessoa?"**.
 
 São credenciais diferentes, e o Connectivity Link trata as duas. Este ambiente
-já tem as duas no ar, no **mesmo Gateway**.
+já tem as duas no ar, em **dois Gateways da mesma classe**, um por público: a
+API de viagens no `prod-web`, a `echo-api` no `echo-web`.
 
 == Terminal
 
@@ -79,6 +80,9 @@ endif::[]
     sub                  af24aa17-377c-447a-83ac-f33450037f0e
 ----
 
+Num ambiente de turma o usuário de teste é seu, e o nome sai com o seu usuário
+no fim (`teste-user1`, por exemplo) no lugar de `sistema-teste`.
+
 O token **carrega** a identidade. A chave de API não carrega nada -- ela é um
 identificador opaco, e quem é o dono está num `Secret` no cluster, não na
 credencial.
@@ -86,7 +90,7 @@ credencial.
 Há uma segunda diferença, que não aparece na tela mas muda a operação: o token
 expira em minutos, e a chave vale até alguém revogá-la.
 
-=== O mesmo Gateway, dois comportamentos
+=== A mesma borda, dois comportamentos
 
 ifdef::foco_rhcl[]
 **Passo 2.** Chame as duas APIs, cada uma sem credencial e com a dela:
@@ -242,8 +246,8 @@ documentação do Connectivity Link^] para a referência da `OIDCPolicy`.
 |===
 
 Não é uma escolha de plataforma tomada uma vez para todo mundo: é **por
-produto de API**, e os dois convivem no mesmo Gateway -- que é exatamente o que
-você acabou de medir.
+produto de API**, e os dois convivem na mesma borda, com o mesmo operator e as
+mesmas policies -- que é exatamente o que você acabou de medir.
 
 == O que isso prova
 
@@ -270,11 +274,11 @@ endif::[]
 ifdef::foco_rhcl[]
 == Fim da fase 3
 
-Chave ou token, toda credencial desta parte viajou dentro de TLS, sob o
-certificado que a parte xref:m1-08-certificado.adoc[{p-certificado}] deixou com
-dono.
+Chave ou token, toda credencial desta fase viajou dentro de TLS, sob um
+certificado que, como a parte xref:m1-08-certificado.adoc[{p-certificado}]
+mostrou, ainda não tem dono.
 
-A primeira API está publicada, tem nome e sabe quem a chama. A
+Você publicou uma API, deu nome a uma, e viu as duas credenciais. A
 xref:m1-02-planos.adoc[fase 4] trata do que o negócio pede em seguida: clientes
 que pagam diferente, no mesmo endereço.
 endif::[]

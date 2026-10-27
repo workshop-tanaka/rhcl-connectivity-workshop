@@ -34,7 +34,7 @@ flowchart LR
   end
   P -->|HTTPS| G
   G -->|"quem entra,<br/>quanto passa"| T
-  F -.->|"tunel mutuo"| DB
+  F -.->|"túnel mútuo"| DB
   H -.-> DB
   C -.-> DB
 ....
@@ -60,7 +60,13 @@ flowchart LR
 
 Neste ambiente o banco roda **dentro** do cluster: a terceira fronteira ainda
 não está montada aqui. Ela aparece no desenho porque é parte do raciocínio, e é
+ifndef::foco_rhcl[]
 o assunto do xref:m4-00-intro.adoc[{m4}], em preparação.
+endif::[]
+ifdef::foco_rhcl[]
+o assunto da xref:papel-rhsi.adoc[leitura sobre o papel do Service
+Interconnect].
+endif::[]
 
 A xref:sessoes.adoc[página das sessões] diz qual destas fronteiras o seu
 ambiente pratica, e onde estão as leituras sobre as outras.

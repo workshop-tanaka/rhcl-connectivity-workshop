@@ -1,8 +1,16 @@
 include::partial$numeros.adoc[]
-= Módulo 2 — Service Mesh: a fronteira de dentro
-:navtitle: Módulo 2 — Introdução
+= Módulo 2 — Service Mesh: a fronteira de dentro (em preparação)
+:navtitle: Módulo 2 — Em preparação
 
-**Quatro partes · cerca de 26 minutos · três mudam estado**
+**Em preparação · quatro partes · cerca de 26 minutos no ambiente de referência**
+
+[NOTE]
+====
+Este módulo ainda não roda neste ambiente: aqui não há Service Mesh, e os
+serviços da aplicação não têm proxy ao lado. As partes estão escritas e foram
+medidas no ambiente de referência, e ficam no guia para leitura e revisão. Os
+comandos delas não vão responder aqui.
+====
 
 **Produto protagonista:** Red Hat OpenShift Service Mesh
 

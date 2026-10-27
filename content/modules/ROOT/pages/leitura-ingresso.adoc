@@ -4,11 +4,20 @@ include::partial$numeros.adoc[]
 
 **Leitura · ~10 min · não muda estado**
 
+ifndef::foco_rhcl[]
 Até aqui você usou `Gateway` e `HTTPRoute` sem que ninguém explicasse por que
 não é uma `Route` do OpenShift, que é o jeito que todo mundo já conhece. A
 resposta importa, porque **os três convivem neste cluster** -- e a próxima
 parte, a xref:m1-06-exposta.adoc[{p-exposta}], começa justamente publicando uma
 `Route` para depois trocá-la.
+endif::[]
+ifdef::foco_rhcl[]
+Antes de ver como a plataforma foi instalada, vale saber de onde o projeto
+parte: o OpenShift publica com `Route`, o Kubernetes com `Ingress`, e o
+Connectivity Link trabalha sobre `Gateway` e `HTTPRoute`. **Os três convivem
+neste cluster**, e a parte xref:m1-06-exposta.adoc[{p-exposta}] começa
+publicando uma `Route` para depois trocá-la.
+endif::[]
 
 include::partial$diagrama.adoc[]
 
@@ -71,7 +80,7 @@ endif::[]
 ....
 flowchart LR
   C["cliente<br/>https://api-travels..."] -->|TLS| R["Route passthrough<br/>router do OpenShift<br/>(HAProxy)"]
-  R -->|"bytes, sem abrir"| G["Gateway prod-web<br/>Envoy do Service Mesh"]
+  R -->|"bytes, sem abrir"| G["Gateway prod-web<br/>Envoy do Gateway"]
   G -->|"chave, plano,<br/>telemetria"| A["travels"]
 ....
 
@@ -214,7 +223,7 @@ endif::[]
 Três consequências práticas:
 
 * **O teto não atravessa gateways.** O `prod-web-deny-all` da parte
-  xref:m1-06-exposta.adoc[{p-exposta}] vale para as rotas anexadas ao `prod-web`, e
+  xref:m1-01-fechada.adoc[{p-fechada}] vale para as rotas anexadas ao `prod-web`, e
   para mais nenhuma.
 ifndef::foco_rhcl[]
   Foi por isso que as amostras do Istio subiram com gateway
@@ -304,12 +313,11 @@ controlador `istio.io/gateway-controller`. Quem materializa o pod do gateway é
 o Service Mesh; o Connectivity Link **anexa políticas** a ele.
 endif::[]
 ifdef::foco_rhcl[]
-**Neste cluster, não. No produto, também não.** O Connectivity Link **não
-implementa Gateway API**: ele não traz `GatewayClass` nenhuma, e precisa de um
-provedor que a implemente. Aqui o provedor é o Gateway API do próprio
-OpenShift -- a classe em uso tem como controlador
-`openshift.io/gateway-controller/v1`. Quem materializa o pod do gateway é a
-plataforma; o Connectivity Link **anexa políticas** a ele.
+**Não.** O Connectivity Link **não implementa Gateway API**: precisa de um
+provedor que a implemente, e anexa políticas ao Gateway que esse provedor
+materializa. Aqui o provedor é o Gateway API do próprio OpenShift. A
+xref:leitura-instalacao.adoc[leitura seguinte] mostra isso no cluster, e diz o
+que se perde sem o Service Mesh.
 endif::[]
 
 Dá para ver isso no nome dos próprios controladores do operador, no log:
@@ -328,12 +336,6 @@ ifndef::foco_rhcl[]
 NOTE: O contrário não é verdade: o Service Mesh roda sozinho, sem o
 Connectivity Link -- o `bookinfo-gateway` acima é a prova. E a combinação
 suportada de versões dos dois produtos sai da
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
-do Connectivity Link^], não daqui.
-endif::[]
-ifdef::foco_rhcl[]
-NOTE: O contrário também vale: o Service Mesh roda sozinho, sem o
-Connectivity Link. E a combinação suportada de versões dos produtos sai da
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
 do Connectivity Link^], não daqui.
 endif::[]
@@ -413,7 +415,7 @@ A diferença que sustenta este workshop não é "um objeto mais novo". É a
 
 Enquanto hostname, TLS e destino moram num objeto só, não existe onde escrever
 o teto da plataforma: quem publica decide tudo. Com `Gateway` e `HTTPRoute`
-separados, existe um lugar para o `deny-all` da parte {p-exposta}, outro para a
+separados, existe um lugar para o `deny-all` da parte {p-fechada}, outro para a
 liberação da sua rota, e um terceiro conjunto de objetos -- as policies -- que
 diz o que vale em cada um.
 

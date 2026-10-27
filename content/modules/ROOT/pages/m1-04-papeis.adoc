@@ -50,18 +50,8 @@ flowchart TB
 
 == Terminal
 
-ifndef::foco_rhcl[]
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh papeis
-----
-
-O passo tem duas camadas. Vale entender a diferença entre elas.
-endif::[]
-ifdef::foco_rhcl[]
 São duas camadas: a primeira **pergunta** ao cluster o que cada papel pode; a
 segunda **age** como o desenvolvedor.
-endif::[]
 
 === Camada 1: a matriz, perguntada ao cluster
 
@@ -72,7 +62,8 @@ oc auth can-i patch authpolicy -n ingress-gateway --as=plat-eng
 ----
 
 `oc auth can-i --as=` pergunta ao apiserver o que **outra** pessoa poderia
-fazer, sem virar ela. O resultado, lado a lado:
+fazer, sem virar ela. Os dois comandos são a primeira linha da tabela abaixo;
+as outras seis são a mesma pergunta, com outro verbo ou outro recurso:
 
 [cols="3,1,1",options="header"]
 |===
@@ -98,7 +89,7 @@ exatamente o que o Gateway API existe para eliminar.
 A matriz acima só existe porque a porta e a rota são **dois objetos**. Numa
 `Route`, hostname, TLS e destino moram juntos, e quem tem permissão de editá-la
 decide os três. Não há um objeto "gateway" onde o Engenheiro de Plataforma
-escreva um teto -- e o `deny-all` da parte xref:m1-06-exposta.adoc[{p-exposta}] não
+escreva um teto -- e o `deny-all` da parte xref:m1-01-fechada.adoc[{p-fechada}] não
 teria onde existir.
 
 Neste cluster dá para ver a diferença na prática:
@@ -116,38 +107,6 @@ deste ambiente; as outras duas são o modelo que a
 xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] descreve.
 ====
 
-ifndef::foco_rhcl[]
-=== Camada 2: você entra como o desenvolvedor
-
-O passo faz um `oc login` real, pelo Keycloak, que é o provedor de identidade
-deste cluster.
-
-IMPORTANT: A sessão do desenvolvedor vai para um `KUBECONFIG` temporário --
-**a sua continua intacta**. O passo termina imprimindo com qual usuário você
-segue. Nada de `oc login` de volta no meio do workshop.
-
-Agora, como `app-dev`, o exercício tenta tocar no teto da plataforma:
-
-[source,text]
-----
-Error from server (Forbidden): authpolicies.kuadrant.io "prod-web-deny-all"
-is forbidden: User "app-dev" cannot get resource "authpolicies"
-in API group "kuadrant.io" in the namespace "ingress-gateway"
-----
-
-Leia a mensagem inteira. Ela traz o **nome do usuário**. Isso não é convenção
-de equipe, nem revisão de código, nem um combinado que alguém pode furar com
-pressa: é o apiserver recusando.
-
-E, na mesma sessão, a policy da rota dele:
-
-[source,text]
-----
-planpolicy.extensions.kuadrant.io/travels-plans patched
-----
-
-endif::[]
-ifdef::foco_rhcl[]
 ifndef::perfis[]
 === Camada 2: você age como o desenvolvedor
 
@@ -358,10 +317,13 @@ Gateways --, e uma parte do que ele produz não mora no projeto de ninguém:
   e os da plataforma; a sua regra você já vê no seu projeto (parte {p-alerta})
 |===
 
+.Mais detalhes: por que um terceiro login, e não mais permissão no Infra
+[%collapsible]
+=====
 Três saídas foram consideradas, e a escolha diz algo sobre como desenhar
 acesso em produção:
 
-* **Dar isso ao seu perfil Infra.** Era o que esta turma fazia. Funciona, mas
+* **Dar isso ao seu perfil Infra.** Funciona, mas
   mistura "os meus projetos" com "o cluster de todos" -- o perfil deixa de
   dizer, sozinho, o que a pessoa governa.
 * **O papel `cluster-reader` do OpenShift.** Ele não lê `Secret`, e parece
@@ -380,6 +342,7 @@ acesso em produção:
   escrito à mão -- um cabeçalho fixo, uma credencial --, e quem escreve a
   sua é você. Com a senha deste login no guia de todos, o que um escrevesse
   ali os outros leriam. Na topologia o `AuthConfig` aparece só pelo nome.
+=====
 
 O login é `{usuario_console_plataforma}`, **o mesmo para a turma inteira** --
 a visão é a mesma para todos, e a senha está em todos os guias. Isso só é
@@ -415,7 +378,7 @@ Depois volte ao seu login, `{usuario_console}`.
 endif::[]
 
 endif::[]
-endif::[]
+
 == Evidência
 
 [source,bash,role="execute"]

@@ -25,7 +25,6 @@ asciidoc:
     repo_no_ambiente: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/base/rhcl-connectivity-demo
     repo_policies: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
     config_url: https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies/-/blob/main
-    ide_url: https://devspaces.apps.cluster-guid.dominio.exemplo/#https://gitlab.apps.cluster-guid.dominio.exemplo/rhcl/policies/rhcl-policies
     keycloak_url: https://sso.apps.cluster-guid.dominio.exemplo
     gitlab_url: https://gitlab.apps.cluster-guid.dominio.exemplo
     roteiro_url: https://gitlab.apps.cluster-guid.dominio.exemplo/workshop/roteiro

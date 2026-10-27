@@ -304,7 +304,7 @@ spec:
     name: api1
     sectionName: publico        # <1>
 ----
-<1> As **cinco** policies do Connectivity Link aceitam `sectionName`:
+<1> Cinco das policies do Connectivity Link aceitam `sectionName`:
     `AuthPolicy`, `RateLimitPolicy`, `PlanPolicy`, `TokenRateLimitPolicy` e
     `TelemetryPolicy`.
 
@@ -331,6 +331,7 @@ O que a seta "cede" significa no status: a policy da rota fica
 
 == A matriz
 
+ifndef::foco_rhcl[]
 [source,text]
 ----
 host + caminho                             sem      free     gold
@@ -342,6 +343,10 @@ api2.ctx.lab/catalogo/listall              200      200      200
 ----
 
 Quatro leituras, uma por linha:
+endif::[]
+ifdef::foco_rhcl[]
+A matriz do passo 4, lida linha a linha:
+endif::[]
 
 * **`/listall` é público** -- e a `AuthPolicy` da rota exige chave. Uma
   `AuthPolicy` com `sectionName: publico` e `anonymous` **sobrepõe só naquele
@@ -356,12 +361,14 @@ Quatro leituras, uma por linha:
 
 == O limite também desce ao contexto
 
+ifndef::foco_rhcl[]
 [source,text]
 ----
 /catalogo/listbestsellers  (regra: 5/10s)  200 200 200 200 200 429 429 429
 /catalogo/search           (rota: 30/10s)  200 200 200 200 200 200 200 200
 ----
 
+endif::[]
 O contexto caro tem limite próprio, apertado; o resto da API segue com o
 limite largo da rota. Uma `RateLimitPolicy` por regra, e nenhuma linha de
 aplicação.
@@ -400,18 +407,6 @@ mais específicas. Quem opera descobre isso num `oc get`, sem abrir o Envoy.
 | `/listall` público, `/listbestsellers` com limite próprio
 |===
 
-ifdef::foco_rhcl[]
-== Limpando
-
-Leia antes o status das cinco policies, e então apague o projeto:
-
-[source,bash,role="execute"]
-----
-bash scripts/contextos.sh status
-oc delete project ctx-lab
-----
-
-endif::[]
 == Dois hostnames no mesmo Gateway
 
 `api1.ctx.lab` e `api2.ctx.lab` publicam **o mesmo caminho**, no mesmo Gateway,
@@ -429,6 +424,18 @@ Se duas rotas disputassem o **mesmo** hostname, valeriam as regras de
 precedência da Gateway API: vence o casamento mais específico e, em empate, a
 rota mais antiga.
 
+ifdef::foco_rhcl[]
+== Limpando
+
+Leia antes o status das cinco policies, e então apague o projeto:
+
+[source,bash,role="execute"]
+----
+bash scripts/contextos.sh status
+oc delete project ctx-lab
+----
+
+endif::[]
 == Um hostname, várias APIs
 
 Até aqui foi uma API com vários contextos. A outra metade da pergunta é o
@@ -877,16 +884,17 @@ quem opera, ela merece objeto próprio.
 == A parte honesta
 
 * **`TelemetryPolicy` não aceita rota.** Medido: `The only supported value is
-  'Gateway'`. Então "métrica por contexto" não sai dela -- sai das dimensões do
-  Service Mesh ou do cabeçalho que a `AuthPolicy` injeta.
+  'Gateway'`. Então "métrica por contexto" não sai dela -- sai do cabeçalho
+  que a `AuthPolicy` injeta, ou, com Service Mesh, das dimensões dele.
 * **A policy de regra substitui, não soma.** A `api1-admin` precisou declarar a
   autenticação de novo: ao mirar a regra, ela toma o lugar da policy da rota
   naquele trecho inteiro.
 * **O limite da regra vale para a regra, não para o cliente.** A
   `RateLimitPolicy` do exercício não declara `counters`, então o teto é da
   rota: todos os clientes daquele contexto dividem os mesmos 5 por 10 s. Para
-  contar por consumidor, é `counters` com a identidade -- que é o que a
-  `PlanPolicy` da parte xref:m1-02-planos.adoc[{p-planos}] faz.
+  contar por consumidor, é `counters` com a identidade. Nem a `PlanPolicy` da
+  parte xref:m1-02-planos.adoc[{p-planos}] faz isso: a `RateLimitPolicy` que ela
+  gera também não declara `counters`, e o contador lá é **por plano**.
 
 == O que isso prova
 

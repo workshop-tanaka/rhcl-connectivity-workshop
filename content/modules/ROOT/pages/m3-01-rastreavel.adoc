@@ -4,6 +4,12 @@ include::partial$numeros.adoc[]
 
 **Para quem:** Operação/SRE e Desenvolvedor -- a mesma tela serve a incidente e a debug. · **3 min**
 
+[NOTE]
+====
+Esta parte precisa do Service Mesh, que este ambiente ainda não tem; fica no
+guia para leitura e revisão.
+====
+
 [NOTE.antes]
 ====
 **Antes:** nada -- gera o próprio tráfego de fan-out, e não precisa da parte {p-planos}.

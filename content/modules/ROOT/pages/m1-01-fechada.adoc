@@ -9,7 +9,8 @@ ifdef::foco_rhcl[]
 ====
 **Fase 2 -- A borda.** É o dia 1 do projeto, e quem faz é o time de plataforma.
 Antes de qualquer API existir, a borda nasce fechada, com as regras de
-precedência à vista, com papéis separados e com um certificado que tem dono.
+precedência à vista, com papéis separados -- e com a pergunta de quem é o dono
+do certificado.
 Quatro partes, cerca de 26 minutos.
 ====
 endif::[]
@@ -21,19 +22,6 @@ endif::[]
 
 Esta é a API de viagens que já rodava. Vamos chamá-la sem credencial nenhuma.
 
-ifndef::foco_rhcl[]
-== Terminal
-
-[source,bash,role="execute"]
-----
-bash scripts/demo.sh ato1
-----
-
-O que tem de aparecer: `401` nas duas chamadas -- sem chave e com chave
-inválida -- e o motivo no **cabeçalho**, não no corpo:
-`x-ext-auth-reason: credential not found`.
-endif::[]
-ifdef::foco_rhcl[]
 == Passo 1 -- chame a API sem credencial nenhuma
 
 O comando pede só os cabeçalhos da resposta, que é onde a borda explica o que
@@ -111,7 +99,6 @@ não aceita chave de API: ela manda quem chega fazer login. Duas APIs, o mesmo
 tipo de Gateway, credenciais diferentes -- a fronteira é por **API**, não "tem
 chave ou não tem". A parte xref:m1-07-identidade.adoc[{p-identidade}] volta a
 ela.
-endif::[]
 
 == Navegador: os dois lados da mesma porta
 
@@ -159,7 +146,7 @@ linhas, e não há código de aplicação nenhum ali:
 
 [source,bash,role="execute"]
 ----
-oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml
+oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml | head -40
 ----
 
 O par dela é a `prod-web-deny-all`, o teto do gateway que ela sobrepõe:
@@ -169,14 +156,8 @@ O par dela é a `prod-web-deny-all`, o teto do gateway que ela sobrepõe:
 oc get authpolicy prod-web-deny-all -n ingress-gateway -o yaml
 ----
 
-
-Os dois arquivos vivem no GitLab **deste cluster**, com histórico e autoria --
-não é um link para documentação, é a configuração que está no ar.
-
-[source,bash,role="execute"]
-----
-oc get authpolicy travel-agency-authpolicy -n travel-agency -o yaml | head -40
-----
+Não é um link para documentação: é a configuração que está no ar, lida do
+cluster.
 
 .Mais detalhes: o que cada campo da AuthPolicy faz
 [%collapsible]
@@ -212,6 +193,13 @@ spec:
 <3> **O seletor é o contrato.** Qualquer `Secret` com `app: partner` vira uma
     credencial válida. Criar um cliente novo é criar um Secret com esse label;
     revogar é apagá-lo. Não há banco de dados de chaves para sincronizar.
+
+Num ambiente de turma o comando acima mostra **`allNamespaces: true`** e um
+segundo rótulo no seletor, `devportal.kuadrant.io/apiproduct: travels-api`: as
+suas chaves moram no namespace da sua aplicação, e não no do Authorino. O
+`true` é seguro por causa do seletor -- só vira credencial o `Secret` que tem
+os dois rótulos, e uma regra de admissão do cluster impede que o rótulo de um
+participante sirva a outro.
 <4> **Onde a credencial viaja.** `queryString` é o mais fácil de demonstrar,
     mas o mesmo bloco aceita `authorizationHeader` (o `Authorization: APIKEY
     <chave>`) e `customHeader`. Em produção, cabeçalho -- query string entra em
@@ -251,9 +239,17 @@ API e uma biblioteca de autenticação dentro de cada serviço.
 
 == Para ir além
 
+ifndef::foco_rhcl[]
 Opcionais, e os dois partem desta mesma porta fechada:
 
 * xref:extra-listas.adoc[Listas de permissão e bloqueio] -- "libera só a faixa
   de IP do parceiro": o que chega até o Gateway, e qual lista não se forja.
 * xref:extra-saida.adoc[A saída também é borda] -- a mesma autenticação e o
   mesmo limite, virados para o que a aplicação chama lá fora.
+endif::[]
+ifdef::foco_rhcl[]
+A mesma porta fechada volta mais de uma vez no percurso: na parte
+xref:m1-06-exposta.adoc[{p-exposta}], impedindo a sua API de ir ao ar sem
+ninguém olhando, e na parte xref:extra-listas.adoc[{p-listas}Listas de
+permissão e bloqueio], que pergunta qual lista de IP não se forja.
+endif::[]
