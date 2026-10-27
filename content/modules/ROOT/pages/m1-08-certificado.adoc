@@ -95,7 +95,7 @@ aparece no pior dia.
 |===
 
 Ver https://cert-manager.io/docs/[a documentação do cert-manager^] e
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[a do
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[a do
 Connectivity Link^].
 ====
 

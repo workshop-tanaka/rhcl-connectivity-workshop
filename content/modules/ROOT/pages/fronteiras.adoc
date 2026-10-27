@@ -84,7 +84,7 @@ credencial.
 O que ele **não** sabe: o que acontece depois que a chamada entrou. Uma vez
 passada a borda, ele não tem mais opinião.
 
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Documentação^]
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação^]
 ifndef::foco_rhcl[]
 · Módulo xref:m1-00-intro.adoc[1] inteiro, e o diagnóstico do
 xref:m3-00-intro.adoc[{m3}]

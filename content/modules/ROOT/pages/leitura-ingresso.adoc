@@ -336,7 +336,7 @@ ifndef::foco_rhcl[]
 NOTE: O contrário não é verdade: o Service Mesh roda sozinho, sem o
 Connectivity Link -- o `bookinfo-gateway` acima é a prova. E a combinação
 suportada de versões dos dois produtos sai da
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[documentação
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação
 do Connectivity Link^], não daqui.
 endif::[]
 
@@ -423,4 +423,4 @@ diz o que vale em cada um.
 `Ingress`.
 
 https://gateway-api.sigs.k8s.io/[Gateway API^]
-· https://docs.redhat.com/en/documentation/openshift_container_platform/latest/html/networking/index[Rede e ingresso no OpenShift^]
+· https://docs.redhat.com/en/documentation/openshift_container_platform/4.22/html/ingress_and_load_balancing/configuring-gateway-api[Gateway API no OpenShift^]

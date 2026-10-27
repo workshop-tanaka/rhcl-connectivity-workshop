@@ -11,7 +11,7 @@ ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
 |===
 | produto | onde aparece no workshop
 
-| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/[Red Hat Connectivity Link^]
+| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Red Hat Connectivity Link^]
 | {m1} inteiro, e o diagnóstico do {m3}
 
 | https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Red Hat OpenShift Service Mesh^]
