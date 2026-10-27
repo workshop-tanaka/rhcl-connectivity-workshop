@@ -59,6 +59,12 @@ sincronizar continua sendo pelo Git.
   depois da fase, o que você acrescentar.
 . Sem passar por ela: no menu da esquerda, *Applications* lista as
   Applications que você pode ler -- só a sua.
+. *User Info*, no menu da esquerda, diz com qual perfil você entrou.
+. Para trocar de perfil, o *Log out* do Argo CD não basta: ele encerra só a
+  sessão do Argo CD, e o *Log in via OpenShift* reaproveita a da console --
+  você volta com o mesmo usuário, sem senha. Saia também da console do
+  OpenShift (o seu nome, no canto superior direito, *Log out*) e entre de
+  novo pelo link.
 ====
 endif::[]
 
