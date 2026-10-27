@@ -2,7 +2,7 @@ include::partial$numeros.adoc[]
 = {p-versoes}Uma API, duas versões
 :navtitle: {p-versoes}Uma API, duas versões
 
-**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~20 min** · **depois das partes {p-planos} e {p-negocio}**
+**Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~25 min** · **depois das partes {p-planos} e {p-negocio}**
 
 [NOTE.antes]
 ====
@@ -18,7 +18,7 @@ encontrado -- e um dia a v1 deixa de responder. Cada um desses momentos
 costuma ser código, e-mail e planilha.
 
 Nesta parte, nenhum deles toca a aplicação. A imagem da `travels` é a mesma
-nas duas versões: **a versão é uma decisão da borda**. São sete passos -- oito
+nas duas versões: **a versão é uma decisão da borda**. São oito passos -- dez
 arquivos em `passos/versoes/` e um script de medição --, e quase todos são do
 perfil Dev -- é ele quem
 publica a API.
@@ -316,6 +316,19 @@ gold  /atual 200, versao 1
 free  /atual 200, versao 1
 ----
 
+[NOTE]
+.Por que `/atual`, e não a própria `/travels`?
+====
+Num projeto real, o endereço sem versão é o da API mesmo: `/travels`. Aqui ele
+ganhou um nome à parte porque a `/travels` deste ambiente já é de outra rota --
+a da parte {p-fechada}, com a chave e os planos que as outras fases usam, e na
+fase 5 acompanhada pela esteira. Duas rotas com o mesmo caminho no mesmo
+Gateway disputam o tráfego (a Gateway API desempata pela regra mais específica
+e, empatando, pela rota mais antiga); usar `/atual` deixa o exercício sem
+efeito no resto do guia. Em produção, a regra `atual` seria a própria regra da
+`/travels`, e a troca de versão seria a troca do destino dela.
+====
+
 **Agora a troca.** O oitavo arquivo é a mesma rota com uma única diferença: a
 regra `atual` entrega na v2. Numa esteira como a da fase 5, essa troca é um
 merge request -- com autor, aprovação e data -- e voltar é o revert.
@@ -399,6 +412,100 @@ inteira. E o redirect leva a chave junto, no `Location` -- mais um motivo para
 ela sair da URL (ver xref:ambiente-atalhos.adoc[O que aqui é atalho de
 laboratório]).
 
+== 8. Uma versão só para um parceiro
+
+Às vezes a v2 não é para um plano, é para **um** parceiro: o que pediu a
+funcionalidade nova, ou o que vai testá-la primeiro. O mesmo endereço
+`/atual` continua entregando a v1; quem mandar o cabeçalho
+`x-api-version: 2` recebe a v2 -- e quem pode mandar é decisão de uma policy.
+
+O décimo arquivo acrescenta à rota a regra `atual-v2`: o mesmo caminho, **com**
+o cabeçalho, entregando na v2. Antes de pôr a policy, veja o que acontece:
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/10-atual-com-escolha.yaml
+sleep 11
+v() { curl -s -D - -o /dev/null "$@" | awk 'NR==1{c=$2} tolower($1)=="x-api-version:"{x=$2} END{printf "%s v%s", c, x}' | tr -d '\r'; }
+for k in gold:{api_key_gold} silver:{api_key_silver} free:{api_key_free}; do
+  printf '%-6s sem cabecalho %s | com x-api-version: 2 -> %s\n' ${k%%:*} \
+    "$(v "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
+    "$(v -H 'x-api-version: 2' "https://{api_host}/atual/travels?APIKEY=${k#*:}")"
+  sleep 4
+done
+----
+
+[source,text]
+----
+gold   sem cabecalho 200 v1 | com x-api-version: 2 -> 200 v2
+silver sem cabecalho 200 v1 | com x-api-version: 2 -> 200 v2
+free   sem cabecalho 200 v1 | com x-api-version: 2 -> 200 v2
+----
+
+Qualquer chave que pede, leva -- inclusive o free, que a `/v2` recusa. É a
+lição do passo 7 de novo: a regra nova não herda a policy de outra regra.
+
+O décimo primeiro arquivo é uma `AuthPolicy` na regra `atual-v2`
+(`sectionName: atual-v2`). A forma é a do acesso antecipado do passo 3, com
+uma diferença: o predicado não olha o plano, olha **a chave** -- o nome do
+`Secret` dela.
+
+[source,yaml]
+----
+  targetRef: {kind: HTTPRoute, name: travels-versoes, sectionName: atual-v2}
+  rules:
+    authorization:
+      so-um-parceiro:
+        patternMatching:
+          patterns:
+            - predicate: 'auth.identity.metadata.name == "apikey-teste-gold"'
+----
+
+[source,bash,role="execute perfil-dev",subs="attributes+"]
+----
+oc apply -f passos/versoes/11-escolha-so-um-parceiro.yaml
+oc wait --for=condition=Enforced authpolicy/v2-so-um-parceiro -n travel-agency --timeout=90s
+sleep 11
+for k in gold:{api_key_gold} silver:{api_key_silver} free:{api_key_free}; do
+  printf '%-6s sem cabecalho %s | com x-api-version: 2 -> %s\n' ${k%%:*} \
+    "$(v "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
+    "$(v -H 'x-api-version: 2' "https://{api_host}/atual/travels?APIKEY=${k#*:}")"
+  sleep 4
+done
+curl -s -H 'x-api-version: 2' "https://{api_host}/atual/travels?APIKEY={api_key_silver}"; echo
+----
+
+[source,text]
+----
+gold   sem cabecalho 200 v1 | com x-api-version: 2 -> 200 v2
+silver sem cabecalho 200 v1 | com x-api-version: 2 -> 403 v2
+free   sem cabecalho 200 v1 | com x-api-version: 2 -> 403 v2
+{"error": "Forbidden", "message": "a v2 por este endereco esta liberada para um parceiro so. Use /atual sem o cabecalho."}
+----
+
+**O que isso diz:** o silver, que pelo plano poderia usar a v2 na `/v2`, aqui
+não pode: a liberação é de **uma chave**. Para liberar a própria `/v2` a um
+parceiro só, o caminho é o mesmo -- trocar, na policy do passo 3, o predicado
+de plano pelo nome da chave.
+
+.Para ir além: a borda escolhe a versão pela identidade
+[%collapsible]
+====
+Dá para o parceiro escolhido cair na v2 **sem mandar cabeçalho nenhum**: a
+`AuthPolicy` da regra `atual` acrescenta à requisição um cabeçalho com a
+versão daquela chave, e o Gateway reavalia a rota com ele. Medido neste
+ambiente: a chave escolhida, sem cabeçalho, recebeu a v2; as outras, a v1.
+
+O cuidado: o cabeçalho que a policy acrescenta é um cabeçalho como outro
+qualquer, e **um cliente pode mandá-lo por conta própria**. Medido: outra
+chave, forjando o cabeçalho, recebeu a v2 com `200`. Fecha com uma policy na
+regra da v2 que só aceite a chave escolhida -- a do passo acima: com ela, o
+forjado recebe `403`.
+
+É o caminho mais transparente para o cliente, e o que mais pede cuidado: a
+escolha da versão deixa de estar à vista no pedido.
+====
+
 == Limpando
 
 [source,bash,role="execute perfil-dev"]
@@ -412,7 +519,7 @@ estava.
 == O que isso prova
 
 O ciclo de vida inteiro de uma versão -- nascer, ser experimentada, avisar,
-ser medida, ser desligada, virar a vigente -- foram **sete objetos declarados**, nenhum na
+ser medida, ser desligada, virar a vigente, ser de um parceiro só -- foram **oito objetos declarados**, nenhum na
 aplicação. Cada decisão tem dono e status, aparece no `oc get` e se desfaz
 apagando o objeto.
 
@@ -427,6 +534,7 @@ apagando o objeto.
 | quem ainda depende | a métrica que já existia, por destino
 | a v1 saiu | `AuthPolicy` com `sectionName: v1` e `code: 410`
 | o endereço sem versão aponta para a vigente | a regra `atual`, com reescrita ou redirect
+| uma versão para um parceiro só | uma regra por cabeçalho e `AuthPolicy` com `sectionName` e predicado na chave
 |===
 
 [NOTE]

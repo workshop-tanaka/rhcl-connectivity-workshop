@@ -9,7 +9,7 @@ ifdef::foco_rhcl[]
 ====
 **Fase 4 -- A API vira produto.** São as semanas seguintes do projeto, e quem
 puxa é o negócio: clientes que pagam diferente, o consumo em número, e regras
-que descem até uma versão, um caminho ou uma lista. Cinco partes, cerca de 65 minutos.
+que descem até uma versão, um caminho ou uma lista. Cinco partes, cerca de 70 minutos.
 ====
 endif::[]
 
