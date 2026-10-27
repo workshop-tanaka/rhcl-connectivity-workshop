@@ -183,6 +183,8 @@ copiado de um arquivo.
 
 Os seus endereços e as suas chaves estão em xref:acessos.adoc[Seus acessos].
 
+include::partial$aviso-versoes.adoc[]
+
 '''
 
 Comece pela xref:00-preparacao.adoc[Preparação].

@@ -5,6 +5,8 @@ include::partial$numeros.adoc[]
 Tudo que este workshop usou, reunido -- o que fica disponível depois que o
 ambiente for devolvido, e o que só existe enquanto ele estiver de pé.
 
+include::partial$aviso-versoes.adoc[]
+
 == Documentação dos produtos
 
 [cols="1,2",options="header"]

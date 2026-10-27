@@ -1,0 +1,18 @@
+// Aviso de escopo: versoes, alternativas e o que fazer com uma divergencia.
+// Incluido na pagina inicial e nos Materiais de referencia. Pedido do Sandro
+// em 2026-10-27, para protecao do material: a referencia e a documentacao
+// oficial da versao em uso.
+[IMPORTANT]
+.Versões, alternativas e divergências
+====
+Este workshop foi construído e medido com as versões deste ambiente -- o
+material `{demo_ref}`, sobre o Red Hat Connectivity Link e o OpenShift que
+xref:ambiente-conferir.adoc[Conferir o ambiente] mostra. Outra versão pode
+mudar nomes de campo, telas, comandos e comportamentos. E há outras formas de
+implementar o mesmo resultado, que podem coexistir com as escolhas feitas
+aqui. A referência é sempre a documentação oficial da versão que você usa.
+
+Este é um material de apoio, não a documentação do produto, e pode conter
+divergências ou enganos. Se encontrar algo que não bata com o que você vê,
+informe o instrutor ou o time Red Hat que acompanha a sua sessão.
+====
