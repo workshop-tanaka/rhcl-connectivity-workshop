@@ -66,6 +66,32 @@ spec:
 Mesma forma de uma `RateLimitPolicy`. A diferença é o que ela soma: em vez de
 `1` por chamada, o número que o backend devolve em `usage.total_tokens`.
 
+.Mais detalhes: o que cada campo da TokenRateLimitPolicy faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef: {kind: HTTPRoute, name: chat}                   # <1>
+  limits:
+    free:                                                    # <2>
+      rates: [{limit: 300, window: 1m}]                      # <3>
+      when: [{predicate: 'auth.identity.plan == "free"'}]    # <4>
+      counters: [{expression: auth.identity.userid}]         # <5>
+----
+<1> **O alvo**, como nas outras policies: a rota da API de IA (ou uma regra
+    dela, com `sectionName`).
+<2> **Um limite por plano**, cada um com nome -- `limits` é um mapa.
+<3> **A taxa, em tokens.** `limit` e `window` têm a forma da
+    `RateLimitPolicy`; o que se soma por chamada é o `usage.total_tokens`
+    da resposta, e não `1`.
+<4> **Para quem o limite vale.** `when` seleciona pelo plano -- e
+    `auth.identity.plan` só existe porque a `AuthPolicy` o exporta (a
+    seção "A armadilha", abaixo).
+<5> **Um contador por consumidor.** Cada valor de `auth.identity.userid`
+    conta separado: o free de um parceiro não gasta o do outro.
+====
+
 == O free: poucas chamadas, muitos tokens
 
 [source,text]
@@ -134,6 +160,33 @@ response:
             userid: {expression: auth.identity.metadata.name}
             plan: {expression: 'auth.identity.metadata.labels["kuadrant.io/plan-id"]'}
 ----
+
+.Mais detalhes: o que o export faz
+[%collapsible]
+====
+[source,yaml]
+----
+response:
+  success:
+    filters:                                                  # <1>
+      identity:                                               # <2>
+        json:
+          properties:
+            userid: {expression: auth.identity.metadata.name} # <3>
+            plan: {expression: 'auth.identity.metadata.labels["kuadrant.io/plan-id"]'}
+----
+<1> **Dados para as outras policies.** `filters` é o que a `AuthPolicy`
+    entrega aos outros filtros do Connectivity Link no Gateway -- o de
+    limite, no caso (é assim que o schema o descreve). O vizinho
+    `headers` faz o mesmo para a aplicação, como o `x-partner` da parte
+    {p-negocio}.
+<2> **O nome vira a chave.** Sem `key`, o objeto é exposto com o nome da
+    entrada: `identity`. Por isso a policy de limite lê `auth.identity.plan`
+    e `auth.identity.userid`.
+<3> **O que se exporta**: expressões sobre a identidade resolvida -- o nome
+    do `Secret` e o rótulo do plano. A policy de limite enxerga só isto, e
+    não o `auth.identity.metadata` inteiro.
+====
 
 Na API do travels, ninguém vê isso porque a `PlanPolicy` exporta o plano
 sozinha. Quem escreve a policy de limite à mão precisa escrever o export

@@ -204,6 +204,33 @@ spec:
               - cluster.local/ns/ingress-gateway/sa/prod-web-istio
 ----
 
+.Mais detalhes: o que cada campo da AuthorizationPolicy faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  selector:
+    matchLabels:
+      app: echo-pavimentado                                   # <1>
+  action: ALLOW                                               # <2>
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/ingress-gateway/sa/prod-web-istio   # <3>
+----
+<1> **Em quais pods a regra vale**: os da aplicação nova, pelo rótulo.
+<2> **O sentido da regra.** `ALLOW` com uma lista é "só estes entram";
+    `DENY`, `AUDIT` e `CUSTOM` são as outras ações do mesmo objeto.
+<3> **Quem pode chamar**, pela identidade de serviço: a conta de serviço do
+    Gateway (`ns/<projeto>/sa/<conta>`), e nenhuma outra.
+
+É um objeto do Service Mesh, e quem o aplica é o proxy ao lado de cada pod
+-- esta sessão não o tem. O template o gera do mesmo jeito: a decisão fica
+escrita no repositório, para o dia em que o proxy existir.
+====
+
 Uma linha no formulário, e o serviço nasce aceitando chamada de **uma**
 identidade: a do Gateway. É a mesma fronteira leste-oeste que o {m2}
 exercita -- só que aqui ninguém precisou lembrar de escrevê-la.

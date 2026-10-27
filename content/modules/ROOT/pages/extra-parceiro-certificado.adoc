@@ -49,6 +49,32 @@ tls:
   options: {gateway.istio.io/tls-terminate-mode: MUTUAL}
 ----
 
+.Mais detalhes: o que cada campo do listener faz
+[%collapsible]
+====
+[source,yaml]
+----
+listeners:
+- name: https
+  protocol: HTTPS                                            # <1>
+  tls:
+    mode: Terminate                                          # <2>
+    certificateRefs: [{name: servidor, kind: Secret}]        # <3>
+    options: {gateway.istio.io/tls-terminate-mode: MUTUAL}   # <4>
+----
+<1> **TLS no Gateway.** Com `HTTPS`, o bloco `tls` é obrigatório.
+<2> **Quem termina o TLS.** `Terminate` é o Gateway, que então enxerga a
+    requisição; `Passthrough` repassa os bytes cifrados ao backend, e aí
+    nenhuma policy de borda lê nada.
+<3> **O certificado do servidor**: um `Secret` do tipo `kubernetes.io/tls`.
+    Aqui quem o emite é o cert-manager, e o mesmo `Secret` carrega a CA
+    (`ca.crt`) contra a qual o cliente é validado.
+<4> **Exigir certificado do cliente.** `options` é o campo da Gateway API
+    para o que é do provedor; este valor é o do Istio e pede TLS mútuo. É
+    o que produz o `exit=56` sem certificado -- e o que deixa o intruso
+    entrar, porque validar a CA não é reconhecer o parceiro.
+====
+
 A CA de parceiros emitiu dois certificados de cliente: `parceiro-gold` e
 `intruso`.
 
@@ -79,7 +105,8 @@ O Envoy **validou** o certificado no handshake, e mesmo assim o Authorino diz
 que ele não veio.
 
 O motivo é o caminho da chamada. O Envoy do Gateway pergunta ao Authorino por
-meio do wasm-shim do Kuadrant, e o wasm-shim não repassa o certificado do
+meio do filtro do Connectivity Link no Gateway (o wasm-shim), e esse filtro
+não repassa o certificado do
 cliente nessa pergunta. Nesta versão, com `x509`, **ninguém entra**.
 
 WARNING: Isto foi medido no RHCL 1.4. Não tome como definitivo em outra versão:
@@ -116,6 +143,43 @@ rules:
           value: 'Subject="CN=parceiro-(gold|silver|free)"'
 ----
 
+.Mais detalhes: o que cada campo do contorno faz
+[%collapsible]
+====
+[source,yaml]
+----
+# no Gateway
+spec:
+  infrastructure:
+    annotations:
+      proxy.istio.io/config: '{"gatewayTopology":{"forwardClientCertDetails":"SANITIZE_SET"}}'   # <1>
+---
+# na AuthPolicy
+rules:
+  authentication:
+    certificado-validado-no-gateway:
+      plain: {selector: request.headers.x-forwarded-client-cert}   # <2>
+  authorization:
+    so-parceiros-conhecidos:
+      patternMatching:
+        patterns:
+        - selector: request.headers.x-forwarded-client-cert       # <3>
+          operator: matches
+          value: 'Subject="CN=parceiro-(gold|silver|free)"'
+----
+<1> **Configuração do proxy**, passada ao Gateway por `infrastructure.annotations`
+    (o campo da Gateway API para anotações do que o provedor cria).
+    `SANITIZE_SET` apaga o `x-forwarded-client-cert` que veio de fora e
+    escreve o do certificado validado no handshake.
+<2> **Identidade vinda de um atributo.** `plain` não autentica nada: toma o
+    valor apontado por `selector` como identidade. Só é seguro porque o
+    passo 1 garante que esse cabeçalho é do Gateway.
+<3> **A outra forma de padrão.** Em vez de um `predicate` em CEL (como nas
+    partes {p-contextos} e {p-listas}), um `selector`, um `operator` e um
+    `value`: com `matches`, o valor é uma expressão regular sobre o
+    `Subject` do certificado.
+====
+
 [source,text]
 ----
 4. O contorno: o Gateway escreve o certificado num cabecalho
@@ -150,6 +214,18 @@ O caminho nativo para a segunda pergunta não funciona nesta versão, e o
 contorno funciona **porque** a primeira resposta chega à segunda por um canal
 que o cliente não controla. Se não fosse assim, a AuthPolicy estaria julgando
 o que o cliente disse de si mesmo.
+
+.Outro caso de uso: e se o certificado do parceiro vier de outra CA?
+[%collapsible]
+====
+Hoje o listener valida o cliente contra a CA que está no `ca.crt` do
+`Secret` do próprio servidor, e o laboratório emite os certificados dos
+parceiros nessa CA. Um parceiro que traz a própria CA precisa que **ela**
+esteja entre as confiadas pelo listener -- um `Secret` cujo `ca.crt` reúna
+as CAs aceitas --, e a regra do passo 3 continua decidindo pelo `Subject`.
+Não medido neste ambiente: antes de prometer isso a um parceiro, refaça o
+exercício com a CA dele.
+====
 
 [TIP]
 ====

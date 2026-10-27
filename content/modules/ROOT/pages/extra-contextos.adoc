@@ -94,6 +94,38 @@ bash scripts/contextos.sh matriz
 **O que isso diz:** tudo aberto. Não há teto neste Gateway, e nenhuma rota
 declarou regra.
 
+.Mais detalhes: o que cada campo da HTTPRoute faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  parentRefs: [{name: lab}]                                   # <1>
+  hostnames: ["api1.ctx.lab"]                                 # <2>
+  rules:
+    - name: publico                                           # <3>
+      matches: [{path: {type: PathPrefix, value: /catalogo/listall}}]   # <4>
+      backendRefs: [{name: app, port: 8080}]                  # <5>
+----
+<1> **A que Gateway a rota se prende.** Sem `namespace`, é o Gateway do
+    mesmo projeto. O segundo laboratório desta página prende rotas a um
+    Gateway de **outro** projeto.
+<2> **O hostname da rota.** O listener do Gateway aceita `*.ctx.lab`; cada
+    rota escolhe o seu. A `api2` usa outro hostname no mesmo Gateway.
+<3> **O nome da regra** -- é ele que uma policy referencia com `sectionName`
+    (a seção "A peça que faltava", abaixo).
+<4> **O que casa.** `PathPrefix` casa por elemento de caminho:
+    `/catalogo/listall` e `/catalogo/listall/x`, não `/catalogo/listallx`.
+    Os outros tipos são `Exact` (o caminho inteiro, usado no segundo
+    laboratório) e `RegularExpression`.
+<5> **Para onde vai.** O `Service` e a porta que atendem a regra -- aqui as
+    quatro regras vão ao mesmo `app`; o que muda entre elas é só a policy.
+
+O arquivo inteiro (`passos/contextos/01-laboratorio.yaml`) traz ainda a
+aplicação, o Gateway com o listener `*.ctx.lab` e duas chaves rotuladas
+`app: ctx-lab`, uma por plano.
+====
+
 === Passo 2 -- a rota inteira passa a exigir chave
 
 Uma `AuthPolicy` cujo alvo é a `HTTPRoute` `api1`.
@@ -132,6 +164,18 @@ bash scripts/contextos.sh matriz
 **O que isso diz:** os quatro caminhos da `api1` pedem chave, e qualquer chave
 serve. A `api2`, que é outra rota no mesmo Gateway com o **mesmo caminho**,
 continua aberta: a policy é presa à rota, não ao caminho.
+
+.Mais detalhes: o que mudou em relação à policy da parte {p-fechada}
+[%collapsible]
+====
+É a mesma `AuthPolicy` da parte xref:m1-01-fechada.adoc[{p-fechada}], e o
+"Mais detalhes" de lá vale aqui. Duas diferenças:
+
+* **o seletor** é `app: ctx-lab`, o rótulo das duas chaves deste laboratório
+  -- o contrato "qualquer `Secret` com este rótulo é credencial" é o mesmo;
+* **`allNamespaces: true`**: o Authorino procura essas chaves no cluster
+  inteiro, e quem as separa das chaves de outros laboratórios é o seletor.
+====
 
 [NOTE]
 ====
@@ -182,6 +226,31 @@ bash scripts/contextos.sh matriz
 **O que isso diz:** só a primeira linha mudou. A policy da **regra** venceu a
 da **rota**, e só naquele caminho.
 
+.Mais detalhes: o que cada campo da policy de regra faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef:
+    kind: HTTPRoute
+    name: api1
+    sectionName: publico          # <1>
+  rules:
+    authentication:
+      anonimo: {anonymous: {}}    # <2>
+----
+<1> **O alvo é uma regra, não a rota.** `sectionName` aponta para o `name`
+    de uma regra da `HTTPRoute`. Se o nome não existir na rota, a policy não
+    se prende e o status diz isso. O mesmo campo serve para `AuthPolicy`,
+    `RateLimitPolicy`, `PlanPolicy`, `TokenRateLimitPolicy` e
+    `TelemetryPolicy`.
+<2> **Autenticação anônima.** A policy precisa de alguma autenticação para
+    valer; `anonymous` aceita qualquer requisição sem credencial. É assim
+    que se escreve "este caminho é público" -- como decisão declarada, e não
+    como ausência de policy (que herdaria a da rota).
+====
+
 === Passo 4 -- o caminho administrativo, só para o plano gold
 
 Outra policy de regra, agora com autorização.
@@ -229,6 +298,30 @@ Abra o arquivo e repare que a autenticação é declarada **de novo**: a policy
 de regra **substitui** a da rota naquele trecho, não soma a ela. Esquecer isso
 deixaria o caminho administrativo sem autenticação nenhuma.
 
+.Mais detalhes: o que cada campo da autorização faz
+[%collapsible]
+====
+[source,yaml]
+----
+rules:
+  authentication:
+    chave: {apiKey: ..., credentials: ...}        # <1>
+  authorization:
+    so-gold:
+      patternMatching:
+        patterns:
+          - predicate: 'auth.identity.metadata.labels["kuadrant.io/plan-id"] == "gold"'   # <2>
+----
+<1> **Declarada de novo**, porque a policy de regra substitui a da rota
+    naquele trecho: sem este bloco, o `admin` não pediria chave.
+<2> **Autorização por padrão.** `patternMatching` avalia predicados em CEL
+    sobre o que a autenticação resolveu: `auth.identity` é o `Secret` da
+    chave, com os rótulos dele. Verdadeiro, passa; falso, `403`. O mesmo
+    bloco aceita a forma `selector`/`operator`/`value` (o Extra
+    xref:extra-parceiro-certificado.adoc[Parceiro com certificado] a usa) e
+    `opa`, com uma regra em Rego -- é o que o `deny-all` do Gateway usa.
+====
+
 === Passo 5 -- o limite também desce ao caminho
 
 Dois limites: um largo na rota (30 a cada 10 s) e um apertado na regra
@@ -269,6 +362,27 @@ bash scripts/contextos.sh rajada /catalogo/search
 
 **O que isso diz:** a mesma chave, a mesma rota, e o caminho caro corta na
 sexta chamada enquanto a busca passa inteira.
+
+.Mais detalhes: o que cada campo da RateLimitPolicy faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  targetRef: {kind: HTTPRoute, name: api1, sectionName: premium}   # <1>
+  limits:
+    premium:                                  # <2>
+      rates: [{limit: 5, window: 10s}]        # <3>
+----
+<1> **O alvo**, como na `AuthPolicy`: a rota inteira (`api1-limite`) ou uma
+    regra dela (`api1-premium`).
+<2> **`limits` é um mapa**: cada chave é um limite com nome, e uma policy
+    pode ter vários. O nome aparece nos contadores do Limitador.
+<3> **A taxa**: `limit` chamadas por `window`. Sem `counters`, é **um**
+    contador para o contexto inteiro -- todos os clientes do `premium`
+    dividem os mesmos 5 por 10 s (a seção "A parte honesta" volta a isso).
+    Os campos `when` e `counters` aparecem na seção "A outra estratégia".
+====
 
 As seções abaixo explicam o que você acabou de montar, peça por peça.
 endif::[]
@@ -328,6 +442,32 @@ flowchart TD
 
 O que a seta "cede" significa no status: a policy da rota fica
 `partially enforced`, e a da regra, `successfully enforced`.
+
+.Outro caso de uso: e se a regra fosse por método HTTP, e não por caminho?
+[%collapsible]
+====
+A regra de uma `HTTPRoute` também casa por **método** (`matches` aceita
+`method`, além de `path`, `headers` e `queryParams`). "Leitura pública,
+escrita com chave" no mesmo caminho fica em duas regras nomeadas:
+
+[source,yaml]
+----
+rules:
+  - name: leitura
+    matches: [{path: {type: PathPrefix, value: /catalogo}, method: GET}]
+  - name: escrita
+    matches: [{path: {type: PathPrefix, value: /catalogo}}]
+----
+
+e uma policy `anonymous` presa à regra `leitura`, com a da rota exigindo
+chave para o resto -- a mesma mecânica dos passos 2 e 3. Não medido neste
+ambiente: o campo está no schema da `HTTPRoute` (`oc explain
+httproute.spec.rules.matches`).
+
+E se duas **rotas** disputarem o mesmo caminho, o desempate é da Gateway
+API, não da policy: a nota do passo 7 da parte
+xref:versoes.adoc[{p-versoes}Uma API, duas versões] diz como ele acontece.
+====
 
 == A matriz
 
@@ -589,6 +729,42 @@ age **sobre uma rota**: sem rota que case, não há o que negar. A última linha
 o próprio teto dizendo isso no status -- é a estação 2 da parte
 xref:m3-03-negado.adoc[{p-negado}] aparecendo aqui.
 
+.Mais detalhes: o que cada campo do Gateway e do teto faz
+[%collapsible]
+====
+[source,yaml]
+----
+kind: Gateway
+spec:
+  gatewayClassName: istio                               # <1>
+  listeners:
+    - name: http
+      hostname: "api.pfx.lab"                           # <2>
+      port: 80
+      protocol: HTTP
+      allowedRoutes: {namespaces: {from: All}}          # <3>
+---
+kind: AuthPolicy
+spec:
+  targetRef: {kind: Gateway, name: borda}               # <4>
+  rules:
+    authorization:
+      deny: {opa: {rego: "allow = false"}}              # <5>
+----
+<1> **Quem implementa o Gateway**: a classe do provedor deste ambiente (a
+    leitura xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
+    diz qual é).
+<2> **Um listener, um hostname.** As rotas das equipes só podem usar
+    `api.pfx.lab`; a divisão entre elas é por prefixo de caminho.
+<3> **Quem pode se prender ao Gateway.** `All` aceita rota de qualquer
+    projeto; `Same`, só do projeto do Gateway; `Selector`, os projetos com
+    um rótulo. É a delegação da parte xref:m1-04-papeis.adoc[{p-papeis}].
+<4> **Alvo `Gateway`**: a policy vale para toda rota presa a ele -- é o
+    "teto" das partes {p-fechada} e {p-precedencia}.
+<5> **Nega tudo**, em Rego: uma rota sem policy própria herda esta e responde
+    `403`. Com policy própria, a da rota prevalece naquele trecho.
+====
+
 === Passo 2 -- a equipe A publica a API dela
 
 Uma `HTTPRoute` para o prefixo `/api1` e uma `AuthPolicy` que exige chave, as
@@ -657,6 +833,29 @@ delegação da parte xref:m1-04-papeis.adoc[{p-papeis}], agora entre namespaces.
 Neste laboratório os três projetos são seus. Num cluster real, cada equipe
 teria permissão só no próprio namespace -- e é isso que impede a equipe A de
 editar a policy da equipe B.
+====
+
+.Mais detalhes: o que cada campo da rota da equipe faz
+[%collapsible]
+====
+[source,yaml]
+----
+spec:
+  parentRefs: [{name: borda, namespace: pfx-gw}]                       # <1>
+  hostnames: ["api.pfx.lab"]
+  rules:
+    - name: tudo
+      matches: [{path: {type: PathPrefix, value: /api1}}]              # <2>
+      filters: [{type: URLRewrite, urlRewrite: {path: {type: ReplacePrefixMatch, replacePrefixMatch: /}}}]   # <3>
+----
+<1> **Gateway de outro projeto**: o `namespace` no `parentRefs`. Só funciona
+    porque o listener aceita (`allowedRoutes`, no bloco acima).
+<2> **O prefixo da equipe.** `/api1`, `/api1/` e `/api1/listall` casam;
+    `/api10` não.
+<3> **O que a aplicação recebe.** `URLRewrite` com `ReplacePrefixMatch`
+    troca o trecho que casou pelo valor dado: `/api1/listall` vira
+    `/listall`. Só é válido junto de um `PathPrefix`. A policy `api1-chave`
+    é a da parte {p-fechada}, com o seletor das chaves deste laboratório.
 ====
 
 === Passo 3 -- a equipe B publica a dela, e decide outra coisa
@@ -777,6 +976,20 @@ E as três últimas linhas saem da configuração que o Connectivity Link escrev
 no Envoy: não é documentação, é o que está valendo. Respondem "qual policy pega
 este caminho?" sem depender de quem leu o quê.
 
+.Mais detalhes: o que muda na rota de um endpoint só
+[%collapsible]
+====
+Dois campos novos em relação à rota da equipe A:
+
+* **`type: Exact`** casa o caminho inteiro, e só ele: `/api/getinfo/x` não
+  entra nesta rota;
+* **`ReplaceFullPath`** troca o caminho inteiro, e não um prefixo: seja qual
+  for o que casou, a aplicação recebe `/getinfo`.
+
+A policy `getinfo-gold` repete a forma do passo 4 do primeiro laboratório:
+autenticação por chave e autorização por predicado sobre o plano.
+====
+
 === Passo 5 -- a rota nova herda o teto, mas não na hora
 
 A equipe B publica mais uma rota, `/api3`, e **esquece a policy**. O comando
@@ -855,6 +1068,35 @@ limits:
     counters:
     - expression: auth.identity.userid
 ----
+
+.Mais detalhes: o que cada campo de um limite faz
+[%collapsible]
+====
+[source,yaml]
+----
+limits:
+  premium:
+    rates: [{limit: 5, window: 10s}]                                   # <1>
+    when:
+    - predicate: 'request.path.startsWith("/catalogo/listbestsellers")' # <2>
+    counters:
+    - expression: auth.identity.userid                                  # <3>
+----
+<1> **A taxa**, como no passo 5.
+<2> **Quando o limite vale.** `when` é uma lista de predicados em CEL sobre
+    a requisição -- `request.path`, `request.headers`, `source.address` e os
+    demais atributos que o Envoy expõe. Todos precisam ser verdadeiros, e a
+    rota ainda precisa casar: é uma condição a mais, não uma rota.
+<3> **Quantos contadores.** Cada valor distinto da expressão ganha um
+    contador: com `auth.identity.userid`, um por consumidor. Sem `counters`,
+    um só para todos. O `auth.identity.userid` só existe se a `AuthPolicy`
+    o **exportar** -- o Extra xref:extra-tokens-ia.adoc[Limite por token]
+    mostra o export, e o que acontece sem ele.
+
+No `Gateway`, a mesma policy aceita `defaults` e `overrides` em vez de
+`limits` direto: o que a parte {p-precedencia} e a leitura
+xref:leitura-multitenancy.adoc[{p-multitenancy}multi-tenancy] chamam de teto.
+====
 
 [cols="1,2,2",options="header"]
 |===

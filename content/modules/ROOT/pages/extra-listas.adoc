@@ -127,6 +127,40 @@ spec:
 valor escrito: a mesma lista com `100.64.` passaria de um notebook e falharia
 daqui.
 
+.Mais detalhes: o que cada campo de uma lista faz
+[%collapsible]
+====
+As três listas desta página são a mesma `AuthPolicy`, mudando só o
+predicado. O arquivo que o script aplica tem um bloco a mais que o trecho
+acima: `authentication: anonimo: {anonymous: {}}` -- a lista decide sem
+pedir chave, e por isso precisa dizer que aceita anônimo.
+
+[source,yaml]
+----
+spec:
+  targetRef: {kind: HTTPRoute, name: edge, sectionName: restrito}     # <1>
+  rules:
+    authentication:
+      anonimo: {anonymous: {}}                                        # <2>
+    authorization:
+      so-quem-vem-da-borda:
+        patternMatching:
+          patterns:
+          - predicate: 'request.headers["x-forwarded-for"].startsWith("10.10.")'   # <3>
+----
+<1> **Por contexto**: a regra `restrito` da rota, como na parte
+    xref:extra-contextos.adoc[{p-contextos}].
+<2> **Sem credencial.** Sem uma autenticação declarada, a policy não vale;
+    `anonymous` diz que qualquer um passa dessa etapa, e a decisão fica
+    toda na autorização.
+<3> **O predicado**, em CEL, sobre o que a requisição traz. As três listas
+    trocam só esta linha:
+    `request.headers[...]`, um cabeçalho (forjável por quem fala direto com
+    o Gateway); `source.address`, quem abriu a conexão (`IP:porta`); e
+    `auth.identity.metadata.name`, o nome do `Secret` da chave -- que exige
+    trocar o `anonymous` por `apiKey`, como na seção 6.
+====
+
 [source,text]
 ----
 /aberto   (sem policy), de fora    200
@@ -299,6 +333,30 @@ authorization:
 O mesmo predicado serve para bloquear por plano, por anotação da chave, por
 `CN` de certificado ou por *claim* de token. E, como não depende do endereço,
 não muda de resposta quando o cliente troca de rede ou passa por NAT.
+
+.Outro caso de uso: e se fosse uma lista de permissão por parceiro?
+[%collapsible]
+====
+O mesmo bloco, invertido: em vez de negar um nome, aceitar alguns. O
+operador `in` de CEL sobre o nome da chave:
+
+[source,yaml]
+----
+patterns:
+- predicate: 'auth.identity.metadata.name in ["chave-acme", "chave-globex"]'
+----
+
+ou sobre um rótulo do `Secret`, para a lista não precisar de edição a cada
+parceiro novo -- `auth.identity.metadata.labels["parceiro-liberado"] ==
+"sim"`. A forma `in [...]` é a mesma do passo 3 da parte
+xref:versoes.adoc[{p-versoes}Uma API, duas versões], medida lá; esta lista
+em si não foi medida neste ambiente.
+
+Lista por endereço vinda de um WAF ou CDN na frente da borda é outro caso, e
+tem o mesmo problema desta página: só vale se o cabeçalho for escrito por
+quem se confia e o caminho direto estiver fechado -- a leitura
+xref:leitura-waf.adoc[{p-waf}onde entra o WAF] trata disso.
+====
 
 ifdef::foco_rhcl[]
 == Limpando
