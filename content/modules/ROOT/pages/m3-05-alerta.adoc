@@ -190,9 +190,10 @@ estiver aceso.
 **A tela do cluster inteiro não é sua.** *Observe → Alerting* da
 administração responde *"You don't have access to this section due to cluster
 policy"*: ela mostra os alertas de todos e da plataforma. As duas regras da
-plataforma (`monitoring/rhcl-protecao` e `kuadrant-system/rhcl-limitador`) são
-do instrutor -- o `bash scripts/alerta.sh status` lê a sua pelo projeto, e
-diz quando não tem acesso às da plataforma. É a mesma divisão da Policy Topology: o projeto é seu, a
+plataforma (`monitoring/rhcl-protecao` e `kuadrant-system/rhcl-limitador`)
+valem para a turma inteira e já estão no ar desde o provisionamento -- o
+`bash scripts/alerta.sh status` lê a sua pelo projeto, e diz quando não tem
+acesso às da plataforma. É a mesma divisão da Policy Topology: o projeto é seu, a
 plataforma é de quem a opera.
 ifeval::["{usuario_console_plataforma}" != ""]
 

@@ -227,7 +227,7 @@ Cada pergunta tem uma fonte diferente:
 
 ifdef::perfis[]
 NOTE: Nesta turma, a pergunta 1 responde só o *quando*. O audit log é lido
-nos nós do cluster, e isso é do instrutor: no lugar da tabela de `QUEM`, o
+nos nós do cluster, e isso é de quem administra o cluster: no lugar da tabela de `QUEM`, o
 script diz que o seu terminal não tem essa permissão. É o limite que a
 seção acima descreve -- quem lê o audit log é quem administra o cluster.
 

@@ -2,46 +2,112 @@ include::partial$numeros.adoc[]
 = {p-degrada} O que acontece quando a policy cai
 :navtitle: {p-degrada} Quando a policy cai
 
-**Para quem:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **4 min** · **muda estado**
+**Para quem:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **6 min** · **muda estado e desfaz no fim**
 
 [NOTE.antes]
 ====
-**Antes:** o Limitador de pé -- é ele que cai e volta. O exercício gera as
-próprias rajadas, mas faz muito mais sentido depois de você ter visto o `429`
-da parte {p-planos}. Ao terminar, rodar a parte {p-planos} de novo confirma que tudo voltou.
+**Antes:** a parte {p-planos} -- é o `429` dela que vai sumir. O exercício
+gera as próprias rajadas.
 ====
 
-O que se mede: o rate limit **falha aberto**. Com o Limitador fora, a
-requisição passa em vez de ser recusada. Perde-se a contagem, não a venda. A
+O que se mede: o rate limit **falha aberto**. Com o Limitador fora de alcance,
+a requisição passa em vez de ser recusada. Perde-se a contagem, não a venda. A
 autenticação faz o oposto, e de propósito.
 
-== Terminal
+**Como se derruba sem derrubar ninguém.** O Authorino e o Limitador são um só
+para o cluster inteiro; desligá-los tiraria a proteção de todo mundo. O que
+cai aqui é o **caminho do seu Gateway** até eles: uma `NetworkPolicy` de saída
+no namespace do Gateway, que só você usa. Para o seu Gateway é a mesma falha --
+a chamada ao componente não volta --, e os outros não sentem nada.
 
-[source,bash,role="execute"]
+== Passo 1 -- a rajada de referência
+
+[source,bash,role="execute",subs="attributes+"]
 ----
-bash scripts/demo.sh degrada
-----
-
-Escala o Limitador a zero e o restaura ao sair, inclusive com Ctrl-C. O que
-tem de aparecer: com o Limitador de pé, o tier free corta na quarta
-requisição; sem ele, **as 14 passam**.
-
-== Evidência
-
-A evidência é a comparação das duas rajadas na tela, lado a lado. Não há
-painel para isso, e não precisa. Depois:
-
-[source,bash,role="execute"]
-----
-bash scripts/traffic.sh metrics
+CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
+rajada() { for i in $(seq 8); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo; }
+sleep 11; rajada
 ----
 
-confirma que a cota não se perdeu no processo.
+[source,text]
+----
+200 200 200 429 429 429 429 429
+----
+
+O free corta na quarta, como na parte {p-planos}. Os passos seguintes usam
+a `rajada` e a `CHAVE` deste bloco: se o terminal for reaberto no meio, rode-o
+de novo.
+
+== Passo 2 -- o Limitador fora de alcance
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc apply -f passos/degrada/01-sem-limitador.yaml
+sleep 11; rajada
+curl -s -o /dev/null -w 'sem chave: %{http_code}\n' "https://{api_host}/travels"
+----
+
+[source,text]
+----
+networkpolicy.networking.k8s.io/simula-limitador-fora created
+200 200 200 200 200 200 200 200
+sem chave: 401
+----
+
+**As oito passam.** O Gateway não conseguiu perguntar ao Limitador se ainda
+havia cota, e deixou passar. A chamada sem chave continua `401`: quem decide
+isso é o Authorino, e ele está ao alcance.
+
+== Passo 3 -- agora o Authorino
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc delete -f passos/degrada/01-sem-limitador.yaml
+oc apply -f passos/degrada/02-sem-authorino.yaml
+sleep 11
+for i in 1 2 3; do curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://{api_host}/travels?APIKEY=$CHAVE"; done
+----
+
+[source,text]
+----
+networkpolicy.networking.k8s.io "simula-limitador-fora" deleted
+networkpolicy.networking.k8s.io/simula-authorino-fora created
+com chave: 500
+com chave: 500
+com chave: 500
+----
+
+**Com chave válida, nada passa.** Sem quem diga se a chave vale, o Gateway
+recusa -- `500`, porque é falha da plataforma, não do cliente.
+
+== Passo 4 -- devolva o caminho
+
+[source,bash,role="execute",subs="attributes+"]
+----
+oc delete -f passos/degrada/ --ignore-not-found
+sleep 11; rajada
+----
+
+[source,text]
+----
+networkpolicy.networking.k8s.io "simula-authorino-fora" deleted
+200 200 200 429 429 429 429 429
+----
+
+O limite voltou na primeira rajada: o Limitador nunca saiu do ar, e a conta
+dele seguiu valendo para todos os outros Gateways enquanto o seu não o via.
 
 == Configuração
 
-Não há arquivo: o comportamento de falha vive dentro do plugin do gateway, e
-não há campo para exibir. Foi por isso que a parte mede em vez de ler.
+[source,bash,role="execute"]
+----
+cat passos/degrada/01-sem-limitador.yaml
+----
+
+O arquivo libera a saída do Gateway para todo o cluster, menos o
+`kuadrant-system` -- e, dentro dele, só o Authorino. O comportamento na falha
+não aparece em arquivo nenhum: ele vive dentro do filtro do Gateway, e não há
+campo para exibir. Foi por isso que a parte mede em vez de ler.
 
 == O que isso prova
 
@@ -52,9 +118,12 @@ oposto, e as duas escolhas estão certas, porque respondem a perguntas
 diferentes: "quem é você" não admite dúvida, "quantas vezes você já veio"
 admite.
 
+E isso decide o que proteger primeiro: o Authorino fora do ar **para a API**;
+o Limitador fora do ar **libera a API** sem que ninguém perceba.
+
 == E quem te avisa?
 
 O tráfego passou, o cliente não sentiu nada, e o controle de cota estava fora
-do ar. Nenhum painel acusou.
+de alcance. Nenhum painel acusou.
 
 É a pergunta que a xref:m3-05-alerta.adoc[parte {p-alerta}] responde.

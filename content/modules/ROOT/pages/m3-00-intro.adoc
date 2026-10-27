@@ -44,8 +44,9 @@ ambiente ainda não tem: ficam no guia para leitura e revisão.
 
 == Aviso sobre a parte {p-degrada}
 
-Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
-você interromper com `Ctrl-C`. As outras três não alteram nada.
+Ela corta, de propósito, o caminho do seu Gateway até um componente da
+plataforma, e o devolve no último passo -- os outros participantes não sentem
+nada. As outras três não alteram nada.
 endif::[]
 ifdef::foco_rhcl[]
 
@@ -86,8 +87,9 @@ dele] diz o que ele faria aqui.
 
 == Aviso sobre a parte {p-degrada}
 
-Ela derruba um componente de propósito, e o devolve no fim -- inclusive se
-você interromper com `Ctrl-C`. A parte {p-alerta} também muda estado: aplica as
+Ela corta, de propósito, o caminho do seu Gateway até um componente da
+plataforma, e o devolve no último passo -- os outros participantes não sentem
+nada. A parte {p-alerta} também muda estado: aplica as
 regras de alerta e as remove no fim. A {p-negado} não altera nada, e a
 {p-auditoria} cria uma chave descartável e a revoga.
 endif::[]
