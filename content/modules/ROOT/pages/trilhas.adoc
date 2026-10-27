@@ -10,10 +10,18 @@ tempo-alvo: sete delas estão abaixo, da degustação de meia hora ao percurso
 inteiro, e três são por perfil -- quem opera a plataforma, quem publica a API,
 quem responde pela borda no dia a dia.
 
-A trilha é sua, não do ambiente: ninguém a escolhe por você, e nada muda no
-menu. Cada página mostra, logo abaixo do cabeçalho, em quais trilhas ela está e
-um link de volta para esta -- trocar de trilha é só seguir outra lista a partir
-de onde você estiver.
+**Com uma trilha ligada no seu guia, o menu da esquerda é a trilha**, na
+ordem, e os botões *Anterior* e *Próxima* no fim de cada página seguem essa
+ordem: você escolhe a primeira página e vai até o Encerramento sem decidir
+nada no caminho. Cada página mostra, logo abaixo do cabeçalho, em quais
+trilhas ela está. Esta página fica no menu, como *As outras trilhas*, para
+você ver o que a sua deixou de fora.
+
+A trilha é ligada por quem publica o seu guia, um comando por participante:
+numa sessão de meia hora todos recebem a Degustação; numa turma mista, cada
+um a sua. Para trocar, peça a quem conduz a sessão -- o guia é republicado
+em um minuto, com o seu ambiente intacto. Sem trilha ligada, o menu é o da
+sessão inteira, e as listas abaixo valem como roteiro.
 
 [NOTE]
 ====
