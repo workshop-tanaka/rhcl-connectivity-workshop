@@ -6,7 +6,7 @@ include::partial$numeros.adoc[]
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:esteira-mr.adoc[{p-mr}], que mostra o caminho de um
+**Antes:** a parte xref:esteira-mr.adoc[{p-mr}Mudança por merge request], que mostra o caminho de um
 merge request até o cluster.
 ====
 
@@ -30,7 +30,7 @@ rota na pasta da esteira e roda a mesma conferência do CI, no seu terminal.
 [source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git checkout -q main && git pull -q
-git checkout -q -b rota-relatorios
+git checkout -q -B rota-relatorios
 cat > esteira/relatorios.yaml <<'EOF'
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -75,7 +75,7 @@ decidiu.
 [source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
 git add esteira && git commit -q -m 'relatorios: rota nova'
-git push -o merge_request.create -o merge_request.title='rota de relatorios' origin rota-relatorios 2>&1 | grep -E 'merge_requests|new branch'
+git push -f -o merge_request.create -o merge_request.title='rota de relatorios' origin rota-relatorios 2>&1 | grep -E 'merge_requests|new branch'
 sleep 30
 tkn pipelinerun list -n esteira-ci-{user} --limit 1
 tkn pipelinerun logs --last -n esteira-ci-{user} 2>&1 | grep -E 'NAO|RECUSADO'
@@ -83,7 +83,7 @@ tkn pipelinerun logs --last -n esteira-ci-{user} 2>&1 | grep -E 'NAO|RECUSADO'
 
 [source,text]
 ----
-remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/N
  * [new branch]      rota-relatorios -> rota-relatorios
 NAME            STARTED          DURATION   STATUS
 confere-...     25 seconds ago   8s         Failed
@@ -188,9 +188,9 @@ que era o trabalho dela.
 
 [source,bash,role="execute perfil-dev"]
 ----
-git checkout -q -b tira-relatorios
-git revert --no-edit -m 1 "$(git log --merges -1 --format=%H)" | head -1
-git push -o merge_request.create -o merge_request.title='tira a rota de relatorios' origin tira-relatorios 2>&1 | grep -E 'merge_requests'
+git checkout -q -B tira-relatorios
+git revert --no-edit -m 1 "$(git log --merges -1 --format=%H --grep=rota-relatorios)" | head -1
+git push -f -o merge_request.create -o merge_request.title='tira a rota de relatorios' origin tira-relatorios 2>&1 | grep -E 'merge_requests'
 ----
 
 [IMPORTANT]
@@ -240,7 +240,8 @@ encontra no caminho é cada merge request.
   (`.tekton/confere.yaml`), nunca do branch do merge request;
 * o pipeline recusa merge request que mexa fora de `esteira/` e roda
   `esteira.sh confere` a partir de uma cópia da plataforma;
-* o seu projeto só aceita merge com a conferência verde, e você é Developer
-  nele: abre merge request e aceita, mas não muda essas configurações;
+* o seu projeto só aceita merge com a conferência verde; o perfil Dev é
+  *Developer* nele: abre o merge request e não o aceita -- quem aceita é o
+  Infra, *Maintainer* -- e nenhum dos dois muda essas configurações;
 * no `esteira-ci-{user}` você **vê** as execuções e não muda nada.
 ====

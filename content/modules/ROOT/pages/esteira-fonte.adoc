@@ -75,7 +75,7 @@ bash scripts/esteira.sh historico
 
 [source,text]
 ----
-    2026-10-12T14:34:20Z  ce599dfd
+    2026-10-12T14:34:20Z  a7cd25fb
 ----
 
 **O que isso diz:** cada linha é uma vez em que a esteira levou um commit ao
@@ -96,4 +96,8 @@ oc auth can-i list applications.argoproj.io -n openshift-gitops
 ----
 
 `yes`, `no`, `no`.
+
+O `oc auth can-i` mede a permissão do Kubernetes, que é a que o `esteira.sh`
+usa. A tela do Argo CD segue a RBAC do próprio Argo CD, que o `can-i` não
+enxerga -- e lá, também, você só lê a sua esteira.
 ====

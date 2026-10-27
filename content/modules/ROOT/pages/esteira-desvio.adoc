@@ -6,7 +6,7 @@ include::partial$numeros.adoc[]
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:esteira-mr.adoc[{p-mr}]. Esta desfaz a mudança que você
+**Antes:** a parte xref:esteira-mr.adoc[{p-mr}Mudança por merge request]. Esta desfaz a mudança que você
 fez lá (a xref:esteira-confere.adoc[{p-confere}] pode vir antes ou depois).
 ====
 
@@ -60,9 +60,9 @@ da parte xref:esteira-mr.adoc[{p-mr}] -- o comando o acha pelo nome do branch.
 [source,bash,role="execute perfil-dev"]
 ----
 git checkout -q main && git pull -q
-git checkout -q -b volta-o-plano
+git checkout -q -B volta-o-plano
 git revert --no-edit -m 1 "$(git log --merges -1 --format=%H --grep=plano-free-6)" | head -1
-git push -o merge_request.create -o merge_request.title='volta o plano free' origin volta-o-plano 2>&1 | grep -E 'merge_requests|new branch'
+git push -f -o merge_request.create -o merge_request.title='volta o plano free' origin volta-o-plano 2>&1 | grep -E 'merge_requests|new branch'
 ----
 
 [source,text]
@@ -95,12 +95,12 @@ for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_hos
 
 [source,text]
 ----
-    esperando o commit a7cd25fb chegar ao cluster ........................
+    esperando o commit 5e01c3a7 chegar ao cluster ........................
     aplicado em 157s  (cluster x Git: Synced)
     repositorio            https://.../workshop/participantes/.../ambiente.git
     pasta                  esteira  (branch main)
-    ultimo commit no Git   a7cd25fb
-    commit aplicado        a7cd25fb
+    ultimo commit no Git   5e01c3a7
+    commit aplicado        5e01c3a7
     cluster x Git          Synced
       PlanPolicy/travels-plans  Synced
 200 200 200 429 429 429 429 429 429 429 429 429 429 429
@@ -113,7 +113,7 @@ a esteira aplica, vale o que está no Git.
 == E quando o commit está errado?
 
 Um commit que tenta sair do seu espaço é recusado **duas vezes**: antes do
-merge, pela conferência da parte xref:esteira-confere.adoc[{p-confere}], e, se
+merge, pela conferência da parte xref:esteira-confere.adoc[{p-confere}A esteira confere antes], e, se
 passasse por ela, na hora de aplicar -- pelo projeto do Argo CD e pelas regras
 de admissão do cluster (ver xref:fase-esteira.adoc[a cerca da esteira]). A
 recusa da hora de aplicar aparece no mesmo lugar em que você leu `aplicado`:

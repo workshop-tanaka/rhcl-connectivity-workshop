@@ -6,7 +6,7 @@ include::partial$numeros.adoc[]
 
 [NOTE.antes]
 ====
-**Antes:** a parte xref:esteira-fonte.adoc[{p-fonte}], que mostra o que a esteira
+**Antes:** a parte xref:esteira-fonte.adoc[{p-fonte}O repositório é a fonte], que mostra o que a esteira
 aplica.
 ====
 
@@ -36,12 +36,13 @@ for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_hos
 == Passo 2 -- a mudança, num branch
 
 O comando cria um branch, troca o número no arquivo da pasta `esteira/` e
-grava a mudança com uma mensagem que diz o porquê.
+grava a mudança com uma mensagem que diz o porquê. Se você já fez esta parte
+antes, o `-B` recria o branch a partir do `main` de agora.
 
 [source,bash,role="execute perfil-dev"]
 ----
 git checkout -q main && git pull -q
-git checkout -q -b plano-free-6
+git checkout -q -B plano-free-6
 sed -i '/tier: free/,/window/ s/limit: 3/limit: 6/' esteira/planos.yaml
 git diff -U0 | grep '^[-+] '
 git commit -q -am 'plano free: de 3 para 6 chamadas a cada 10s' && git log --oneline -1
@@ -85,7 +86,7 @@ por um merge request.
 
 [source,bash,role="execute perfil-dev"]
 ----
-git push -o merge_request.create -o merge_request.title='plano free: de 3 para 6' origin plano-free-6 2>&1 | grep -E 'merge_requests|new branch'
+git push -f -o merge_request.create -o merge_request.title='plano free: de 3 para 6' origin plano-free-6 2>&1 | grep -E 'merge_requests|new branch'
 ----
 
 [source,text]
@@ -93,6 +94,23 @@ git push -o merge_request.create -o merge_request.title='plano free: de 3 para 6
 remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
  * [new branch]      plano-free-6 -> plano-free-6
 ----
+
+.Se o merge request aparecer como *Draft*, ou a saída não trouxer o endereço
+[%collapsible]
+====
+O GitLab abre como rascunho (*Draft:* no título) o merge request cujo branch
+não traz **nenhum commit** além do `main` -- medido neste ambiente: os quatro
+merge requests vazios de uma rodada saíram *Draft*, e nenhum dos que tinham
+commit. Acontece quando o commit do passo 2 não foi para o branch. Confira:
+
+[source,bash,role="execute perfil-dev"]
+----
+git log --oneline origin/main..plano-free-6
+----
+
+Sem nenhuma linha, rode o passo 2 de novo e depois este passo: o `-f` do push
+substitui o branch antigo, e o mesmo merge request passa a mostrar a mudança.
+====
 
 O merge request foi aberto por `{usuario_console_dev}`: o terminal Dev empurra
 com a identidade Dev, que no projeto é *Developer*. E o `main` só aceita merge
@@ -155,6 +173,5 @@ esse aviso, o Argo CD só consulta o repositório de tempos em tempos -- medido:
 
 == O que isso prova
 
-**A mudança tem dono, revisão e data -- e o cluster não aceita outra
-entrada.** O limite de um plano deixou de ser um comando que alguém rodou e
+**A mudança tem dono, revisão e data -- e a entrada por fora aparece.** O limite de um plano deixou de ser um comando que alguém rodou e
 virou uma linha num histórico.

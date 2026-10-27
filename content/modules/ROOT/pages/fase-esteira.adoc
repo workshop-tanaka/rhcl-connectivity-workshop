@@ -101,6 +101,10 @@ aparece.
 | edita a policy direto no cluster, vê o desvio acusado, e desfaz a mudança
   anterior com um revert
 | o Git manda, e voltar atrás é um commit
+
+| xref:m5-01-colheita.adoc[{p-colheita} Leitura: do repositório ao formulário]
+| lê como os mesmos arquivos nascem de um formulário, em vez de escritos à mão
+| um serviço não consegue nascer sem as policies da plataforma
 |===
 
 == A cerca da esteira
@@ -132,8 +136,9 @@ E quem confere o merge request antes do merge também não é seu: o
 OpenShift Pipelines roda um pipeline que vem do `main`, com uma regra da
 plataforma, e o seu projeto não aceita merge sem ele verde.
 
-== Onde isso continua
+== Se você refizer a fase
 
-A xref:m5-01-colheita.adoc[leitura {p-colheita}] mostra o passo seguinte desta
-mesma esteira: em vez de alguém escrever os arquivos, eles nascem de um
-formulário.
+Os comandos recriam os branches a partir do `main` de agora (`git checkout
+-B`) e os empurram com `-f`: um branch que sobrou da rodada anterior é
+substituído, e não desvia o commit para o `main` local. Cada reversão acha o
+merge pelo nome do branch, e não pelo último merge.
