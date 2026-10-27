@@ -16,6 +16,8 @@ Antes de desfazer, vale o veredito de
 xref:ambiente-conferir.adoc[Conferir o ambiente]: se o problema for do
 ambiente, desfazer a parte não resolve.
 
+TIP: Usuário, senha e endereço de cada tela ficam em xref:acessos.adoc[Seus acessos], no topo do menu.
+
 == Zerar as cotas
 
 As rajadas gastam a cota diária dos planos, e uma janela de 10 segundos que

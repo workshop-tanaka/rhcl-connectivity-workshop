@@ -12,6 +12,8 @@ xref:ambiente-conferir.adoc[Conferir o ambiente]: ele diz se o problema é do
 ambiente ou da parte. Para desfazer uma parte e começar de novo, veja
 xref:ambiente-recomecar.adoc[Recomeçar uma parte].
 
+TIP: Usuário, senha e endereço de cada tela ficam em xref:acessos.adoc[Seus acessos], no topo do menu.
+
 == `No such file or directory`
 
 Se um comando responder `bash: scripts/demo.sh: No such file or directory`, o

@@ -6,6 +6,8 @@ Duas perguntas antes de qualquer investigação: **o ambiente está inteiro?** e
 **em que versão?** As duas respostas saem do cluster, do seu terminal, a
 qualquer momento -- não é preciso rodá-las antes de começar.
 
+TIP: Usuário, senha e endereço de cada tela ficam em xref:acessos.adoc[Seus acessos], no topo do menu.
+
 == O veredito do ambiente
 
 Um ambiente incompleto não dá erro logo: ele falha no meio de uma parte, com
