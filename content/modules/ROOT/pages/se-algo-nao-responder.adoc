@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = Se algo não responder
 :navtitle: Se algo não responder
+:page-trilhas: Avançado · Operações
+
+include::partial$trilha.adoc[]
 
 O ambiente é criado do zero para você, e uma peça ou outra pode demorar mais
 que as demais. Esta página junta o que fazer quando uma parte devolve um painel

@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = Leitura: Route, Ingress e Gateway API
 :navtitle: Leitura: Route, Ingress e Gateway API
+:page-trilhas: Avançado
 
 **Leitura · ~10 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 ifndef::foco_rhcl[]
 Até aqui você usou `Gateway` e `HTTPRoute` sem que ninguém explicasse por que

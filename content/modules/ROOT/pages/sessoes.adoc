@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = As sessões deste workshop
 :navtitle: As sessões deste workshop
+:page-trilhas: Avançado · Infra
+
+include::partial$trilha.adoc[]
 
 O workshop existe em quatro sessões. Três são **dedicadas a um produto**, para
 quem veio por ele; a quarta percorre os três juntos. O ambiente que você

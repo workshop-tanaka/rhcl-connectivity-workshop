@@ -6,9 +6,12 @@ endif::[]
 ifdef::foco_rhcl[]
 = Fase 1 — A arquitetura: dois planos e um Gateway
 :navtitle: A arquitetura: dois planos e um Gateway
+:page-trilhas: Avançado · Infra
 endif::[]
 
 **Leitura, com comandos que só leem · ~12 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 **Momento do projeto:** dia 0 · **Quem lê:** Arquitetura e o time de plataforma
 

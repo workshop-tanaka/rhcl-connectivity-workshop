@@ -1,6 +1,7 @@
 include::partial$numeros.adoc[]
 = Extras: qual escolher
 :navtitle: Extras: qual escolher
+:page-trilhas: Avançado
 
 ifndef::foco_rhcl[]
 **Oito exercícios e duas leituras · ~75 min no total · fora do caminho principal**
@@ -8,6 +9,8 @@ endif::[]
 ifdef::foco_rhcl[]
 **Quatro exercícios e uma leitura · ~36 min no total · fora do caminho principal**
 endif::[]
+
+include::partial$trilha.adoc[]
 
 Os Extras não são continuação de nenhuma outra parte. Cada um responde uma pergunta
 que aparece em conversa real e que o roteiro principal não cobre. Dá para

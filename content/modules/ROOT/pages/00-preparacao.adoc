@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = 0. Preparação
 :navtitle: 0. Preparação
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Infra · Desenvolvedor · Operações
+
+include::partial$trilha.adoc[]
 
 Cinco minutos, uma vez. O terminal ao lado já está autenticado no cluster e já
 tem tudo o que as partes executam.

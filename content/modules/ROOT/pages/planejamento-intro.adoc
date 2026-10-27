@@ -1,0 +1,154 @@
+include::partial$numeros.adoc[]
+= Fase 8 — Decidimos pelo Connectivity Link. E agora?
+:navtitle: O que muda nesta fase
+
+**Exercício · ~3 min · escreve no seu repositório**
+
+**Momento do projeto:** a semana depois da decisão · **Quem faz:** o time do projeto inteiro -- plataforma, aplicação, produto e operação, na mesma mesa
+
+== Por que neste ponto
+
+As fases 1 a 7 responderam "por que Connectivity Link". A pergunta agora é
+outra: **como entramos**. O que já existe e precisa conviver ou migrar, por
+qual API começar, o que decidir antes de cada marco, quanto custa errar cada
+decisão, de que tamanho a plataforma precisa ser, e quem sustenta depois.
+
+Esta fase não é leitura. Cada parte termina com um arquivo escrito no seu
+repositório, e a última abre um merge request com a pasta inteira: é o plano
+que vai para a reunião de kickoff, com as premissas ao lado de cada número.
+
+== O que esta fase não é
+
+Não é a venda -- a decisão pelo Connectivity Link é o ponto de partida. Não é
+consultoria -- o guia dá o método e o preço de cada escolha, e a decisão é do
+seu time, com o seu nome e a sua data em cada registro. E não substitui medir
+no seu ambiente: as partes {p-sizing}e {p-roteiro}terminam com a lista do que
+medir lá, e por quê. Para levar o plano adiante com quem já fez isso em outros
+clientes, o apoio é o time de Serviços da Red Hat.
+
+== O caso
+
+Você escolhe agora, e mantém a escolha nas sete partes:
+
+[cols="1,3,3",options="header"]
+|===
+| caso | o que é | para quem
+
+| **o caso do workshop** (padrão)
+| uma agência de viagens corporativa fictícia, a **Trajeto**, que acabou de
+  assinar o Connectivity Link. Hoje: 6 APIs publicadas por `Route`, 2 num
+  gateway de outro fornecedor, cerca de 14 parceiros, pico de 120 requisições
+  por segundo, SLA de 99,9% em horário comercial, um cluster e um segundo
+  planejado. Cada arquivo já vem com a coluna dela preenchida
+| quem quer um exemplo resolvido, ou não pode falar do próprio projeto
+
+| **o seu caso**
+| as mesmas perguntas, com os números da sua empresa, na coluna que vem em
+  branco
+| quem voltou com o time do projeto
+|===
+
+Os números da Trajeto são modestos de propósito e coerentes com o que o
+workshop mediu; eles não são uma recomendação de tamanho para ninguém.
+
+== O que muda no seu repositório
+
+ifeval::["{repo_no_ambiente}" != ""]
+O seu repositório ({repo_no_ambiente}[abrir^]) ganha uma pasta,
+`planejamento/`, num branch de mesmo nome.
+endif::[]
+ifeval::["{repo_no_ambiente}" == ""]
+O repositório do terminal, em `/home/lab-user/rhcl-connectivity-demo`, ganha
+uma pasta, `planejamento/`, num branch de mesmo nome.
+endif::[]
+Nada do que você escrever ali chega ao cluster: o Argo CD da
+xref:fase-esteira.adoc[fase 5] lê só a pasta `esteira/`. O que a pasta
+`planejamento/` ganha é o que a `esteira/` já tinha -- autor, histórico,
+revisão e um merge request para alguém aceitar.
+
+[NOTE]
+====
+**A conferência da fase 5 foi ampliada.** O pipeline que recusa merge request
+mexendo fora de `esteira/` passou a aceitar também a pasta `planejamento/`.
+Qualquer outro caminho continua recusado, pelo mesmo motivo da parte
+xref:esteira-confere.adoc[{p-confere}A esteira confere antes].
+====
+
+ifdef::perfis[]
+Os comandos desta fase rodam na aba `Terminal Dev`, como na fase 5: quem
+propõe o plano é o perfil Dev, e quem aceita o merge request é o Infra.
+endif::[]
+
+== As partes
+
+[cols="1,3,2,1",options="header"]
+|===
+| parte | o que você faz | sai com | tempo
+
+| xref:planejamento-partida.adoc[{p-partida}O ponto de partida]
+| descreve o que existe -- como as APIs são publicadas, quem as consome, como
+  se autenticam, que limites valem, quem cuida -- e os números
+| `levantamento.md`
+| ~12 min
+
+| xref:planejamento-piloto.adoc[{p-piloto}O piloto]
+| escolhe a primeira API pelos critérios da página e define o critério de
+  sucesso com o que o workshop mediu
+| `piloto.md`
+| ~10 min
+
+| xref:planejamento-fixas.adoc[{p-fixas}As decisões que não se desfazem]
+| quantos Gateways e de quem, uma plataforma por cluster, identidade do
+  consumidor, esquema de versão -- com o preço de cada opção à vista
+| 4 registros em `decisoes.md`
+| ~15 min
+
+| xref:planejamento-parceiro.adoc[{p-parceiro-dec}As decisões antes do primeiro parceiro]
+| provedor do Gateway, onde moram as chaves, mTLS interno, catálogo de planos,
+  storage do Limitador e falha, certificado e nome, o que vai para o Git
+| mais 7 registros, e a lista "pode evoluir"
+| ~15 min
+
+| xref:planejamento-sizing.adoc[{p-sizing}Quanto a plataforma vai precisar]
+| aplica o método aos números da {p-partida}desta fase, com a capacidade por réplica
+  medida no workshop como referência
+| `sizing.md`
+| ~12 min
+
+| xref:planejamento-papeis.adoc[{p-papeis-dia}Quem faz o quê, do dia 0 ao dia 2]
+| distribui os papéis que o workshop praticou e o que cada um precisa aprender;
+  ambientes, upgrade e suporte
+| `papeis.md`
+| ~8 min
+
+| xref:planejamento-roteiro.adoc[{p-roteiro}O roteiro: do piloto à produção]
+| ordena o projeto por marcos, cada um com as decisões que exige, o critério de
+  pronto e o risco; abre o merge request
+| `plano.md` e o merge request
+| ~10 min
+|===
+
+Cerca de 85 minutos. Para caber em menos, o caso do workshop já vem com a
+{p-partida}preenchida: você só revisa e segue.
+
+== Passo único -- abra o branch
+
+O comando volta ao `main`, cria o branch `planejamento` (ou o recria, se
+sobrou de uma rodada anterior) e a pasta vazia.
+
+[source,bash,role="execute perfil-dev"]
+----
+git checkout -q main && git pull -q
+git checkout -q -B planejamento
+mkdir -p planejamento && git branch --show-current && ls -d planejamento
+----
+
+[source,text]
+----
+planejamento
+planejamento
+----
+
+**O que isso diz:** você está no branch `planejamento`, e a pasta existe. Cada
+parte a seguir acrescenta um arquivo e um commit; a {p-roteiro}empurra o branch
+e abre o merge request.

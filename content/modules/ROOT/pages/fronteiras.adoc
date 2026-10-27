@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = A solução de conectividade: as três fronteiras
 :navtitle: As três fronteiras
+:page-trilhas: Avançado · Infra
+
+include::partial$trilha.adoc[]
 
 Uma aplicação distribuída tem três fronteiras, e cada uma é governada por um
 produto diferente. Este workshop tem uma sessão para cada produto e uma que

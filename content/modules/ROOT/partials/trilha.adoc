@@ -1,0 +1,10 @@
+// Linha de trilha no cabecalho da pagina. So aparece quando o ambiente liga o
+// atributo 'trilhas' (EXTRAS="trilhas" no tenant.sh showroom) E a pagina
+// declara ':trilhas:' -- as duas condicoes, para que o conteudo exista inerte
+// nas ondas e possa ser ligado e desligado por participante, sem onda nova.
+ifdef::trilhas[]
+ifdef::page-trilhas[]
+[.trilha]
+**Trilhas:** {page-trilhas} · xref:trilhas.adoc[trocar de trilha]
+endif::[]
+endif::[]

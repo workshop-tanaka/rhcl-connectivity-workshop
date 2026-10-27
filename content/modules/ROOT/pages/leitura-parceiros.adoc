@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-parceiros}Leitura: muitos parceiros, muitas APIs
 :navtitle: {p-parceiros}Leitura: muitos parceiros, muitas APIs
+:page-trilhas: Avançado · Operações
 
 **Leitura · ~9 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 ifdef::foco_rhcl[]
 [TIP]

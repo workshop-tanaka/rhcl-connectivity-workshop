@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-negocio} Isso vira número de negócio
 :navtitle: {p-negocio} Isso vira número
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Desenvolvedor · Operações
 
 **Para quem:** Negócio (a pergunta é dele) e Operação (quem mantém a cadeia que responde). · **4 min** · **depois da parte {p-planos}**
+
+include::partial$trilha.adoc[]
 
 [WARNING.antes]
 ====

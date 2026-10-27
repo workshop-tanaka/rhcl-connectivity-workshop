@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-exposta} De aberta a governada, um passo por vez
 :navtitle: {p-exposta} De aberta a governada
+:page-trilhas: Básico · Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Desenvolvedor -- e o Engenheiro de Plataforma, que escreveu o teto. · **10 min** · **muda estado**
+
+include::partial$trilha.adoc[]
 
 ifdef::foco_rhcl[]
 [TIP]

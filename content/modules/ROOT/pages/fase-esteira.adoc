@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = Fase 5 — Da mão para a esteira
 :navtitle: O que muda nesta fase
+:page-trilhas: Avançado
 
 **Para quem:** Engenheiro de Plataforma e Desenvolvedor -- e quem responde por mudança em produção.
+
+include::partial$trilha.adoc[]
 
 == Por que neste ponto
 

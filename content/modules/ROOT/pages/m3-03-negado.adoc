@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-negado} Onde a requisição morreu
 :navtitle: {p-negado} Onde a requisição morreu
+:page-trilhas: Básico · Intermediário · Avançado · Operações
 
 **Para quem:** Operação e Suporte -- e quem atende o cliente que diz "não consigo acessar". · **12 min** · **não muda estado**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

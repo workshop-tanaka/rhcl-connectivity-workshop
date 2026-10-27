@@ -6,6 +6,7 @@ endif::[]
 ifdef::foco_rhcl[]
 = Fase 1 — A plataforma no ar: como o Connectivity Link foi instalado
 :navtitle: Como a plataforma foi instalada
+:page-trilhas: Avançado · Infra
 endif::[]
 
 ifndef::foco_rhcl[]
@@ -16,6 +17,8 @@ ifdef::foco_rhcl[]
 
 **Momento do projeto:** dia 0 · **Quem faz:** o time de plataforma
 endif::[]
+
+include::partial$trilha.adoc[]
 
 O ambiente chegou pronto às suas mãos: a API já estava publicada e já
 respondia `401`. Esta página mostra o que foi feito antes de você chegar, na

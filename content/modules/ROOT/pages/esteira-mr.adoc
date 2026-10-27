@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-mr}Mudança por merge request
 :navtitle: {p-mr}Mudança por merge request
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Desenvolvedor e Engenheiro de Plataforma -- quem muda um limite e quem aprova. · **15 min, parte deles esperando**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

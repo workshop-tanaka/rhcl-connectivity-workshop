@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = O Connectivity Link em uma página
 :navtitle: O Connectivity Link em uma página
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Infra · Desenvolvedor · Operações
 
 **Leitura · ~5 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 **Momento do projeto:** dia 0, com a plataforma recém-instalada · **Quem lê:** todos
 

@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = Materiais de referência
 :navtitle: Materiais de referência
+:page-trilhas: Avançado
+
+include::partial$trilha.adoc[]
 
 Tudo que este workshop usou, reunido -- o que fica disponível depois que o
 ambiente for devolvido, e o que só existe enquanto ele estiver de pé.

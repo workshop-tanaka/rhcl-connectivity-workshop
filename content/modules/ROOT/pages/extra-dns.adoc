@@ -1,6 +1,7 @@
 include::partial$numeros.adoc[]
 = {p-dns}O nome da API também é policy
 :navtitle: O nome também é policy (DNS)
+:page-trilhas: Avançado · Infra
 
 ifndef::foco_rhcl[]
 **Opcional · ~7 min · cria e remove um namespace próprio**
@@ -8,6 +9,8 @@ endif::[]
 ifdef::foco_rhcl[]
 **~8 min · cria e remove um projeto próprio**
 endif::[]
+
+include::partial$trilha.adoc[]
 
 **Para quem:** Engenheiro de Plataforma e Arquitetura -- quem opera a borda, e quem vai desenhar mais de um cluster.
 

@@ -1,6 +1,7 @@
 include::partial$numeros.adoc[]
 = {p-contextos}Uma API, vários contextos
 :navtitle: Uma API, vários contextos
+:page-trilhas: Avançado · Desenvolvedor
 
 ifndef::foco_rhcl[]
 **Opcional · ~14 min · cria e remove namespaces próprios**
@@ -8,6 +9,8 @@ endif::[]
 ifdef::foco_rhcl[]
 **~25 min · dois laboratórios · cria e remove projetos próprios**
 endif::[]
+
+include::partial$trilha.adoc[]
 
 **Para quem:** Arquitetura e Engenheiro de Plataforma -- quem publica uma API com dez caminhos e precisa tratá-los de formas diferentes.
 

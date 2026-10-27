@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-versoes}Uma API, duas versões
 :navtitle: {p-versoes}Uma API, duas versões
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Produto e Arquitetura (quem decide a vida de uma versão) e o Desenvolvedor (quem a publica). · **~30 min** · **depois das partes {p-planos} e {p-negocio}**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

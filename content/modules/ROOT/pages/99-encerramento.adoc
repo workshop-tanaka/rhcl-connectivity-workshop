@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = Encerramento
 :navtitle: Encerramento
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Infra · Desenvolvedor · Operações
+
+include::partial$trilha.adoc[]
 
 == O que você percorreu
 

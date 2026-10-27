@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-identidade} E quando quem consome é uma pessoa?
 :navtitle: {p-identidade} Chave ou identidade
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Segurança, e quem desenha o produto de API. · **8 min** · **não muda estado**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-fechada} A API está fechada por padrão
 :navtitle: {p-fechada} Fechada por padrão
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Infra · Desenvolvedor
 
 **Para quem:** Segurança e Engenheiro de Plataforma -- e o Desenvolvedor, que não escreveu uma linha disto. · **5 min**
+
+include::partial$trilha.adoc[]
 
 ifdef::foco_rhcl[]
 [TIP]

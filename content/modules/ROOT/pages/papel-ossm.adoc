@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-papel-ossm}Leitura: o papel do Service Mesh
 :navtitle: {p-papel-ossm}Leitura: o papel do Service Mesh
+:page-trilhas: Avançado · Infra
 
 **Leitura · ~5 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 Esta sessão não pratica o Red Hat OpenShift Service Mesh. Esta página diz o
 que ele faz, para você saber onde ele entraria -- e o que **não** pedir ao

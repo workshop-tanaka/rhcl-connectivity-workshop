@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = Leitura: WebSocket e conexão longa
 :navtitle: Leitura: WebSocket
+:page-trilhas: Avançado
 
 **Leitura · ~5 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 Cotação em tempo real, chat, telemetria de dispositivo, notificação de
 pedido -- em algum momento aparece uma API que não é requisição e resposta, e

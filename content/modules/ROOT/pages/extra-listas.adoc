@@ -1,6 +1,7 @@
 include::partial$numeros.adoc[]
 = {p-listas}Listas de permissão e bloqueio
 :navtitle: Listas de permissão e bloqueio
+:page-trilhas: Avançado · Desenvolvedor
 
 ifndef::foco_rhcl[]
 **Opcional · ~9 min · cria e remove um namespace próprio**
@@ -8,6 +9,8 @@ endif::[]
 ifdef::foco_rhcl[]
 **~10 min · cria e remove um projeto próprio**
 endif::[]
+
+include::partial$trilha.adoc[]
 
 **Para quem:** Segurança e Arquitetura -- e quem já recebeu o pedido "libera só a faixa de IP do parceiro".
 

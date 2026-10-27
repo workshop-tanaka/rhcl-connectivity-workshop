@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-fonte}O repositório é a fonte
 :navtitle: {p-fonte}O repositório é a fonte
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Engenheiro de Plataforma e Desenvolvedor. · **5 min**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

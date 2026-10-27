@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = Limite por token: a API de IA
 :navtitle: Limite por token (IA)
+:page-trilhas: Avançado
 
 **Opcional · ~6 min · cria e remove um namespace próprio**
+
+include::partial$trilha.adoc[]
 
 **Para quem:** Engenheiro de Plataforma e Arquitetura -- quem vai expor
 modelos de IA para outros times.

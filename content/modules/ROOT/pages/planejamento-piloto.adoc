@@ -1,0 +1,190 @@
+include::partial$numeros.adoc[]
+= {p-piloto}O piloto
+:navtitle: {p-piloto}O piloto
+
+**Exercício · ~10 min · escreve no seu repositório**
+
+**Momento do projeto:** antes do kickoff · **Quem faz:** produto escolhe a API, com o dono dela; plataforma e operação dizem o que vão medir
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:planejamento-partida.adoc[{p-partida}O ponto de partida],
+que lista as APIs candidatas e quem as consome.
+====
+
+A primeira API no Gateway não é a mais importante nem a mais chamada. É a que
+prova, em semanas e com dado, que a plataforma faz o que o workshop mostrou --
+e que o time consegue operá-la. Escolher mal o piloto custa meses: a API
+errada traz uma dependência que a plataforma ainda não tem (um provedor de
+identidade novo, um parceiro que não pode trocar de endereço) e o projeto
+para esperando por ela.
+
+== Os critérios
+
+[cols="2,3,3",options="header"]
+|===
+| critério | por quê | o que exclui
+
+| **consumidor interno, ou um parceiro amigo**
+| o piloto vai mudar como o consumidor se autentica e por onde entra; isso
+  pede alguém que aceite a mudança e avise quando algo quebrar
+| a API que 14 parceiros chamam, todos de uma vez
+
+| **tráfego mensurável, e não o maior**
+| o critério de sucesso é medido no painel da parte {p-negocio}; sem tráfego não
+  há o que medir, e com o pico inteiro o erro custa caro
+| a API quase sem chamadas, e a que concentra o pico
+
+| **um dono disposto**
+| a rota e a policy da rota são do time da API (parte {p-papeis}); se o time
+  não quer, a plataforma acaba fazendo por ele e o modelo de donos nasce errado
+| a API que ninguém quer mexer
+
+| **sem dependência de identidade nova**
+| chave de API é o caminho curto e já está no produto; um parceiro como
+  cliente OIDC pede um provedor em que ele exista, e isso é a parte {p-fixas}
+| a API cujo primeiro consumidor exige token
+
+| **um caminho de migração visível**
+| a API nova nasce no Gateway e a antiga fica; o piloto tem de ter um "antigo"
+  para desligar depois, senão não prova a convivência que a {p-roteiro}planeja
+| uma API que nasce agora, sem versão anterior
+|===
+
+== O critério de sucesso: o que o workshop mediu
+
+O piloto deu certo quando cinco coisas são **observadas**, não declaradas.
+Todas foram medidas neste workshop, e a tabela diz onde:
+
+[cols="2,3,2",options="header"]
+|===
+| o que provar | como se vê | onde o workshop mediu
+
+| a API está **fechada por padrão**
+| chamada sem credencial responde `401`; uma rota nova do mesmo time nasce
+  negada pelo teto do Gateway
+| xref:m1-01-fechada.adoc[{p-fechada} A API está fechada por padrão]
+
+| **o plano vale no mesmo endereço**
+| duas chaves de planos diferentes, mesma URL, limites diferentes; trocar o
+  plano de um consumidor é trocar a credencial, não a policy
+| xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual]
+
+| **o consumo aparece em painel**, por plano
+| o Grafana mostra chamadas aceitas e cortadas por plano, desde o primeiro dia
+| xref:m1-05-negocio.adoc[{p-negocio} Isso vira número de negócio]
+
+| **a mudança chega por merge request**
+| o limite de um plano muda sem ninguém rodar `oc apply`, com autor, aprovador
+  e data
+| xref:esteira-mr.adoc[{p-mr}Mudança por merge request]
+
+| **a plataforma avisa sobre si mesma**
+| o alerta de Limitador fora do ar dispara no ambiente do piloto, e alguém o
+  recebe
+| xref:m3-05-alerta.adoc[{p-alerta} A plataforma avisando sobre si mesma]
+|===
+
+A quinta linha é a que os times esquecem, e é a que o workshop mediu como a
+mais perigosa: com o Limitador fora, a API continua respondendo `200` **sem
+limite** e com status verde (parte xref:m3-04-degrada.adoc[{p-degrada}]). Um
+piloto que não tem esse alerta recebido por uma pessoa não está pronto.
+
+== O caso do workshop: `tarifas`
+
+Das oito APIs da Trajeto, a tabela abaixo é como o time dela pontuou as
+candidatas. Não há conta certa: o que importa é que a escolha fique escrita
+com o motivo.
+
+[cols="1,1,1,1,1,2",options="header"]
+|===
+| API | consumidor amigo | tráfego mensurável | dono disposto | sem identidade nova | o que pesou
+
+| `tarifas` | sim: o portal web, e 1 agência parceira que já pediu planos | sim: ~30 req/s no pico | sim | sim: chave de API | **escolhida**
+| `reservas` | não: todos os canais | sim | sim | sim | o canal de receita, não vai primeiro
+| `busca-voos` | não: 8 parceiros no legado | sim: metade do pico | parcial | sim | migrar 8 parceiros é a {p-roteiro}desta fase, não o piloto
+| `viajantes` | sim: só interno | pouco | sim | **não**: dado pessoal, o time quer token de pessoa | depende de identidade que a plataforma ainda não tem
+| `relatorios` | sim: financeiro | quase nenhum | não | sim | sem tráfego para medir
+|===
+
+O piloto da Trajeto: `tarifas`, no Gateway novo, com dois consumidores -- o
+portal web (interno, plano gold) e a agência parceira que pediu planos (plano
+silver) --, por **seis semanas**. A `Route` atual de `tarifas` continua no ar
+para os outros consumidores até o fim do piloto. Em seguida, o
+`relatorios` entra na esteira como segunda API (o marco da {p-roteiro}desta fase).
+
+== Passo 1 -- grave o piloto
+
+[source,bash,role="execute perfil-dev"]
+----
+mkdir -p planejamento && cat > planejamento/piloto.md <<'EOF'
+# Piloto: a primeira API no Gateway
+
+## A escolha
+
+| | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| API | tarifas | |
+| por quê | consumidor interno + 1 parceiro amigo; ~30 req/s mensuráveis; dono disposto; chave de API basta; a Route antiga fica no ar para os demais | |
+| consumidores no piloto | portal web (gold), 1 agência parceira (silver) | |
+| o que fica fora, e por quê | reservas (receita), busca-voos (8 parceiros no legado), viajantes (pede token de pessoa) | |
+| duração | 6 semanas | |
+| dono da API | squad de precificação | |
+| dono da plataforma no piloto | time de plataforma | |
+
+## Critério de sucesso -- observado, não declarado
+
+| o que provar | como medir | onde o workshop mediu | atingido em |
+| --- | --- | --- | --- |
+| fechada por padrão | 401 sem credencial; rota nova nasce negada | 2.1 | |
+| plano no mesmo endereço | duas chaves, mesma URL, limites diferentes | 4.1 | |
+| consumo em painel, por plano | Grafana desde o dia 1 | 4.2 | |
+| mudança por merge request | limite muda sem oc apply, com autor e aprovador | 5.2 | |
+| a plataforma avisa sobre si mesma | alerta de Limitador fora recebido por uma pessoa | 6.3 | |
+
+## O que o piloto mede para as partes seguintes
+
+| medida | por quê | resultado |
+| --- | --- | --- |
+| pico real de tarifas, por plano | o levantamento tem 30 req/s de memória; o painel dá o número | |
+| p99 que a borda somou | o orçamento é 50 ms; confirmar com tracing no nível padrão | |
+| quantas chamadas cortadas por plano, por dia | é o que a negociação do primeiro plano pago vai usar | |
+| tempo de um merge request até valer no cluster | o workshop mediu de 1 s a quase 4 min; aqui é o nosso | |
+
+## Sinal de parar
+
+Se em 2 semanas o parceiro amigo não trocou para a nova URL ou o alerta não
+dispara em teste, o piloto para e o motivo vai para decisoes.md.
+EOF
+git add planejamento && git commit -q -m "planejamento: piloto" && echo ok
+----
+
+[source,text]
+----
+ok
+----
+
+**O que isso diz:** o piloto tem uma API, dois consumidores, seis semanas e
+cinco medidas -- e um sinal de parar. É o contrário de "vamos começar pelo
+Gateway e ver o que acontece".
+
+.Mais detalhes: por que o piloto não começa no Gateway de produção da plataforma
+[%collapsible]
+====
+O Gateway é a unidade em que a plataforma escreve o teto, o certificado e o
+nome (parte xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê]). Um piloto no
+Gateway que depois vai ser "o de parceiros" herda as decisões da parte
+{p-fixas}antes de elas estarem tomadas. Dois caminhos:
+
+* **um Gateway do piloto**, com o próprio nome, que morre com o piloto -- o que
+  custa é um pod de proxy a mais (neste ambiente, entre 300 e 370 MiB) e uma
+  troca de endereço para os dois consumidores no fim;
+* **já o Gateway definitivo do público do piloto** -- só se as quatro decisões
+  da {p-fixas}já estiverem tomadas para esse público.
+
+A Trajeto escolheu o primeiro: o piloto não deve esperar a {p-fixas}desta fase, e os dois
+consumidores aceitaram trocar de endereço uma vez. **Não medido neste
+workshop:** o que o consumidor sente ao mover a rota de um Gateway para outro
+(hostname, certificado, status das policies); medir antes de prometer a troca
+indolor.
+====

@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-certificado} O certificado tem dono?
 :navtitle: {p-certificado} O certificado tem dono?
+:page-trilhas: Avançado · Infra
 
 **Para quem:** Engenheiro de Plataforma, e quem fica de plantão no dia do vencimento. · **10 min** · **cria e remove um namespace próprio**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

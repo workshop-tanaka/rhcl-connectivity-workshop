@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-alerta} A plataforma avisando sobre si mesma
 :navtitle: {p-alerta} O alerta
+:page-trilhas: Intermediário · Avançado · Infra · Operações
 
 **Para quem:** Operação/SRE, e quem está de plantão. · **10 min** · **muda estado**
+
+include::partial$trilha.adoc[]
 
 [WARNING.antes]
 ====

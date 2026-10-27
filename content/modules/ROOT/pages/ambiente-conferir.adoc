@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = Conferir o ambiente
 :navtitle: Conferir o ambiente
+:page-trilhas: Avançado · Operações
+
+include::partial$trilha.adoc[]
 
 Duas perguntas antes de qualquer investigação: **o ambiente está inteiro?** e
 **em que versão?** As duas respostas saem do cluster, do seu terminal, a

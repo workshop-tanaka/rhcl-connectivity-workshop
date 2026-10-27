@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = Parceiro com certificado
 :navtitle: Parceiro com certificado
+:page-trilhas: Avançado
 
 **Opcional · ~6 min · cria e remove um namespace próprio**
+
+include::partial$trilha.adoc[]
 
 **Para quem:** Arquitetura e Segurança -- a integração B2B em que o
 parceiro não quer chave de API.

@@ -6,9 +6,12 @@ endif::[]
 ifdef::foco_rhcl[]
 = {p-colheita} Leitura: do repositório ao formulário
 :navtitle: {p-colheita} Leitura: do repositório ao formulário
+:page-trilhas: Avançado
 endif::[]
 
 **Leitura · ~8 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 [WARNING.antes]
 ====

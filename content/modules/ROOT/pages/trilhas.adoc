@@ -1,0 +1,335 @@
+include::partial$numeros.adoc[]
+= Escolha a sua trilha
+:navtitle: Escolha a sua trilha
+
+**Leitura · ~4 min · não muda estado**
+
+As páginas desta sessão são as mesmas para todo mundo; o que muda é **o caminho
+que você faz por elas**. Uma trilha é uma ordem de leitura e execução com um
+tempo-alvo: sete delas estão abaixo, da degustação de meia hora ao percurso
+inteiro, e três são por perfil -- quem opera a plataforma, quem publica a API,
+quem responde pela borda no dia a dia.
+
+A trilha é sua, não do ambiente: ninguém a escolhe por você, e nada muda no
+menu. Cada página mostra, logo abaixo do cabeçalho, em quais trilhas ela está e
+um link de volta para esta -- trocar de trilha é só seguir outra lista a partir
+de onde você estiver.
+
+[NOTE]
+====
+**O que uma trilha pula já está pronto no ambiente.** As policies da
+plataforma (a borda fechada, a precedência, os papéis, o certificado) e a
+esteira vêm do provisionamento, e as partes que uma trilha deixa de fora não
+quebram as que ficam. O que uma parte **cria para a seguinte** -- a chave com
+plano, o tráfego que o painel lê, o `Forbidden` que a auditoria procura -- está
+indicado no bloco **Antes** de cada página; é ele que as trilhas abaixo
+respeitam, e é por ele que algumas trazem uma parte a mais do que o perfil
+pediria.
+
+Os tempos são os que cada página declara no próprio cabeçalho. Onde a página
+não declara, o tempo é uma estimativa pelo tamanho do texto e está marcado com
+um asterisco (*).
+====
+
+== As sete trilhas, em uma tabela
+
+[cols="2,4,1",options="header"]
+|===
+| trilha | para quem | tempo
+
+| <<degustacao,**Degustação**>>
+| quem tem meia hora e quer ver a tese inteira em quatro telas: a API fechada,
+  os três planos, o número de negócio
+| ~38 min
+
+| <<basico,**Básico**>>
+| quem vai apresentar ou defender a solução e precisa dos fundamentos: borda,
+  precedência, a primeira API, o produto, a primeira recusa
+| ~1h04
+
+| <<intermediario,**Intermediário**>>
+| quem vai operar ou implantar e precisa do percurso de um projeto: identidade,
+  versões, a esteira, a degradação e o alerta
+| ~2h45
+
+| <<avancado,**Avançado**>>
+| quem quer a sessão inteira, com a Fase 7 e os Extras
+| ~6h30
+
+| <<infra,**Infra**>>
+| o time de plataforma: como ela foi instalada, a borda inteira, o DNS, a
+  queda e o alerta, multi-tenancy e Service Mesh
+| ~2h11
+
+| <<desenvolvedor,**Desenvolvedor**>>
+| o time da aplicação: publicar a API, dar identidade ao consumidor, o produto
+  inteiro, a esteira, gRPC e Postman
+| ~3h17
+
+| <<operacoes,**Operações**>>
+| quem responde pela borda no dia a dia: o número de negócio, a Fase 6 inteira,
+  muitos parceiros e as páginas de ambiente
+| ~1h38
+|===
+
+[[degustacao]]
+== Degustação -- ~38 min
+
+**Para quem:** quem tem meia hora e quer sair dizendo o que o Connectivity Link
+faz, com a prova na tela.
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-01-fechada.adoc[{p-fechada} Fechada por padrão] · 5 min
+. xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
+. xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+
+**Soma:** ~38 min.
+
+**O que fica de fora, e por quê:** a Fase 1 (a plataforma já está no ar e o
+Mapa resume os tipos de policy), a publicação de uma API (a {p-exposta} -- aqui
+a API já vem publicada), a esteira e a operação. É a tese em três movimentos:
+a borda nasce fechada, a mesma API serve três planos, e isso vira número.
+
+[[basico]]
+== Básico -- ~1h04
+
+**Para quem:** quem vai apresentar, defender ou decidir, e precisa dos
+fundamentos com as mãos no terminal -- sem o percurso completo de um projeto.
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-01-fechada.adoc[{p-fechada} Fechada por padrão] · 5 min
+. xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies] · 4 min
+. xref:m1-06-exposta.adoc[{p-exposta} De aberta a governada] · 10 min
+. xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
+. xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
+. xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+
+**Soma:** ~64 min.
+
+**O que fica de fora, e por quê:** a Fase 1 inteira, os papéis e o
+certificado ({p-papeis} e {p-certificado}), a identidade ({p-identidade}), as
+versões, a esteira e a Fase 7. A {p-exposta} cita a {p-papeis} no seu "Antes"
+como leitura recomendada, não como estado: ela roda inteira no terminal Infra.
+Quem quiser a Fase 2 completa segue para a trilha Infra.
+
+[[intermediario]]
+== Intermediário -- ~2h45
+
+**Para quem:** quem vai implantar ou operar e precisa ver o percurso de um
+projeto: da borda à esteira, com a degradação e o alerta no fim.
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-01-fechada.adoc[{p-fechada} Fechada por padrão] · 5 min
+. xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies] · 4 min
+. xref:m1-06-exposta.adoc[{p-exposta} De aberta a governada] · 10 min
+. xref:m1-07-identidade.adoc[{p-identidade} Chave ou identidade] · 8 min
+. xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
+. xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
+. xref:versoes.adoc[{p-versoes}Uma API, duas versões] · ~30 min
+. xref:esteira-fonte.adoc[{p-fonte}O repositório é a fonte] · 5 min
+. xref:esteira-mr.adoc[{p-mr}Mudança por merge request] · 15 min, parte esperando
+. xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
+. xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
+. xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
+. xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+
+**Soma:** ~165 min (2h45).
+
+**O que fica de fora, e por quê:** a Fase 1 (leitura, e o Mapa a resume), os
+papéis, o certificado e o DNS (são da trilha Infra), os contextos e as listas
+({p-contextos} e {p-listas}, que descem a regra a um caminho -- são da trilha
+Desenvolvedor), a auditoria, a Fase 7 e os Extras. Os ~30 min da {p-versoes}
+são o maior bloco desta trilha: quem estiver sem tempo pode pular para a
+{p-fonte} e fica dentro de ~2h15.
+
+[[avancado]]
+== Avançado -- ~6h30
+
+**Para quem:** quem quer a sessão inteira, na ordem em que o menu a conta: da
+plataforma instalada ao que vem depois, com os Extras.
+
+Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:sessoes.adoc[As sessões deste workshop] · ~3 min*
+. xref:fronteiras.adoc[As três fronteiras] · ~5 min*
+. xref:historia.adoc[A história por trás deste workshop] · ~5 min*
+. xref:aplicacao.adoc[A aplicação e as APIs] · ~6 min*
+. xref:leitura-ingresso.adoc[De onde o projeto parte: Route, Ingress e Gateway API] · ~10 min
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:leitura-instalacao.adoc[Como a plataforma foi instalada] · ~20 min
+. xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway] · ~12 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-01-fechada.adoc[{p-fechada} Fechada por padrão] · 5 min
+. xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies] · 4 min
+. xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê] · 7 min
+. xref:m1-08-certificado.adoc[{p-certificado} O certificado tem dono?] · 10 min
+. xref:m1-06-exposta.adoc[{p-exposta} De aberta a governada] · 10 min
+. xref:extra-dns.adoc[{p-dns}O nome também é policy (DNS)] · ~8 min
+. xref:m1-07-identidade.adoc[{p-identidade} Chave ou identidade] · 8 min
+. xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
+. xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
+. xref:versoes.adoc[{p-versoes}Uma API, duas versões] · ~30 min
+. xref:extra-contextos.adoc[{p-contextos}Uma API, vários contextos] · ~25 min
+. xref:extra-listas.adoc[{p-listas}Listas de permissão e bloqueio] · ~10 min
+. xref:fase-esteira.adoc[Fase 5 -- O que muda nesta fase] · ~4 min*
+. xref:esteira-fonte.adoc[{p-fonte}O repositório é a fonte] · 5 min
+. xref:esteira-mr.adoc[{p-mr}Mudança por merge request] · 15 min, parte esperando
+. xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
+. xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
+. xref:m5-01-colheita.adoc[{p-colheita} Leitura: do repositório ao formulário] · ~8 min
+. xref:m3-00-intro.adoc[Fase 6 -- O que muda nesta fase] · ~3 min*
+. xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
+. xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:m3-06-auditoria.adoc[{p-auditoria} Quatro perguntas, quatro fontes] · 10 min
+. xref:leitura-parceiros.adoc[{p-parceiros}Muitos parceiros, muitas APIs] · ~9 min
+. xref:leitura-multitenancy.adoc[{p-multitenancy}Multi-tenancy] · ~8 min
+. xref:papel-ossm.adoc[{p-papel-ossm}O papel do Service Mesh] · ~5 min
+. xref:papel-rhsi.adoc[{p-papel-rhsi}O papel do Service Interconnect] · ~4 min
+. xref:papel-rhdh.adoc[{p-papel-rhdh}O papel do Developer Hub] · ~4 min
+. xref:leitura-waf.adoc[{p-waf}Onde entra o WAF] · ~4 min
+. xref:extras.adoc[Extras: qual escolher] · ~3 min*
+. xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo] · ~9 min
+. xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa] · ~5 min
+. xref:extra-postman.adoc[Testar a API no Postman] · ~10 min
+. xref:extra-parceiro-certificado.adoc[Parceiro com certificado] · ~6 min
+. xref:extra-tokens-ia.adoc[Limite por token (IA)] · ~6 min
+. xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório] · ~4 min*
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+. xref:referencias.adoc[Materiais de referência] · ~3 min*
+
+**Soma:** ~391 min (6h31), sem contar as três páginas de ambiente
+(xref:ambiente-conferir.adoc[Conferir], xref:se-algo-nao-responder.adoc[Se algo
+não responder], xref:ambiente-recomecar.adoc[Recomeçar]), que se consultam
+quando precisar.
+
+**O que fica de fora, e por quê:** nada da sessão. Em um dia de trabalho ela
+não cabe inteira: o corte natural é a Fase 7 e os Extras (~73 min), que são
+leitura e opcionais e podem ficar para depois que o ambiente for devolvido --
+só os Extras precisam do cluster.
+
+[[infra]]
+== Infra -- ~2h11
+
+**Para quem:** o time de plataforma -- quem instala, quem é dono do Gateway, do
+certificado e do nome, e quem responde quando um componente cai.
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:sessoes.adoc[As sessões deste workshop] · ~3 min*
+. xref:fronteiras.adoc[As três fronteiras] · ~5 min*
+. xref:aplicacao.adoc[A aplicação e as APIs] · ~6 min*
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:leitura-instalacao.adoc[Como a plataforma foi instalada] · ~20 min
+. xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway] · ~12 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-01-fechada.adoc[{p-fechada} Fechada por padrão] · 5 min
+. xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies] · 4 min
+. xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê] · 7 min
+. xref:m1-08-certificado.adoc[{p-certificado} O certificado tem dono?] · 10 min
+. xref:extra-dns.adoc[{p-dns}O nome também é policy (DNS)] · ~8 min
+. xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
+. xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:leitura-multitenancy.adoc[{p-multitenancy}Multi-tenancy] · ~8 min
+. xref:papel-ossm.adoc[{p-papel-ossm}O papel do Service Mesh] · ~5 min
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+
+**Soma:** ~131 min (2h11).
+
+**O que fica de fora, e por quê:** a publicação da API, a identidade e a Fase 4
+inteira -- são do time da aplicação e do produto, e a plataforma já as deixa
+prontas no ambiente; a esteira (a trilha Desenvolvedor a percorre; o perfil
+Infra aparece lá como quem aprova); a {p-negado} e a {p-auditoria} (trilha
+Operações). O "Antes" da {p-dns} cita a {p-exposta} pelo conceito -- o
+laboratório de DNS sobe o próprio projeto e a própria rota --, e o da
+{p-degrada} cita a {p-planos} pelo `429` que vai sumir -- o exercício gera as
+próprias rajadas. Nenhuma das duas depende de estado deixado por outra parte.
+
+[[desenvolvedor]]
+== Desenvolvedor -- ~3h17
+
+**Para quem:** o time da aplicação -- quem publica a API, escolhe como o
+consumidor se identifica, transforma a API em produto e propõe a mudança pela
+esteira.
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:aplicacao.adoc[A aplicação e as APIs] · ~6 min*
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-01-fechada.adoc[{p-fechada} Fechada por padrão] · 5 min
+. xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies] · 4 min
+. xref:m1-06-exposta.adoc[{p-exposta} De aberta a governada] · 10 min
+. xref:m1-07-identidade.adoc[{p-identidade} Chave ou identidade] · 8 min
+. xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
+. xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
+. xref:versoes.adoc[{p-versoes}Uma API, duas versões] · ~30 min
+. xref:extra-contextos.adoc[{p-contextos}Uma API, vários contextos] · ~25 min
+. xref:extra-listas.adoc[{p-listas}Listas de permissão e bloqueio] · ~10 min
+. xref:esteira-fonte.adoc[{p-fonte}O repositório é a fonte] · 5 min
+. xref:esteira-mr.adoc[{p-mr}Mudança por merge request] · 15 min, parte esperando
+. xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
+. xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
+. xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo] · ~9 min
+. xref:extra-postman.adoc[Testar a API no Postman] · ~10 min
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+
+**Soma:** ~197 min (3h17).
+
+**O que fica de fora, e por quê:** a Fase 1 (a plataforma é do outro time; o
+Mapa dá o vocabulário), os papéis, o certificado e o DNS (trilha Infra), a Fase
+6 e a Fase 7 (trilhas Operações e Avançado). A {p-fechada} e a {p-precedencia}
+entram porque são o "Antes" explícito da {p-exposta}, da {p-identidade}, da
+{p-contextos}, da {p-listas} e do Extra de gRPC. A Fase 4 inteira pesa ~76 min:
+quem precisar caber em ~2h10 deixa a {p-contextos} e a {p-listas} para o fim e
+as faz se houver tempo.
+
+[[operacoes]]
+== Operações -- ~1h38
+
+**Para quem:** quem responde pela borda no dia a dia -- suporte, operação e
+plantão: onde a recusa morreu, o que acontece quando a plataforma falha, quem
+avisa, e o que responder à auditoria.
+
+. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:acessos.adoc[Seus acessos] · ~3 min*
+. xref:00-preparacao.adoc[Preparação] · 5 min
+. xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
+. xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê] · 7 min
+. xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
+. xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
+. xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
+. xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:m3-06-auditoria.adoc[{p-auditoria} Quatro perguntas, quatro fontes] · 10 min
+. xref:leitura-parceiros.adoc[{p-parceiros}Muitos parceiros, muitas APIs] · ~9 min
+. xref:ambiente-conferir.adoc[Conferir o ambiente] · ~4 min*
+. xref:se-algo-nao-responder.adoc[Se algo não responder] · ~4 min*
+. xref:ambiente-recomecar.adoc[Recomeçar uma parte] · ~3 min*
+. xref:99-encerramento.adoc[Encerramento] · ~5 min*
+
+**Soma:** ~98 min (1h38).
+
+**O que fica de fora, e por quê:** a Fase 1, a borda (menos os papéis), a
+publicação da API, as versões, a esteira e os Extras -- quem opera recebe tudo
+isso pronto, e o que precisa saber está no Mapa. Duas partes entram por
+pré-requisito, não por perfil: a {p-planos}, porque a {p-negocio} só lê e
+precisa de tráfego com chave nos últimos 15 min (e é o `429` dela que a
+{p-degrada} faz sumir); e a {p-papeis}, porque a {p-auditoria} procura o
+`Forbidden` que ela deixa. Sem a {p-auditoria}, que é opcional, a trilha fica
+em ~1h21 e a {p-papeis} pode sair junto.

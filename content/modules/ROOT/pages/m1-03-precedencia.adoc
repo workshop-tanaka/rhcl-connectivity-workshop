@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-precedencia} Precedência de policies é explícita
 :navtitle: {p-precedencia} Precedência de policies
+:page-trilhas: Básico · Intermediário · Avançado · Infra · Desenvolvedor
 
 **Para quem:** Engenheiro de Plataforma -- quem responde "qual policy venceu?" sem arqueologia. · **4 min**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

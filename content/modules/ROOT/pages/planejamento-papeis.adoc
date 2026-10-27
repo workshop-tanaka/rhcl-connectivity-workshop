@@ -1,0 +1,210 @@
+include::partial$numeros.adoc[]
+= {p-papeis-dia}Quem faz o quê, do dia 0 ao dia 2
+:navtitle: {p-papeis-dia}Quem faz o quê, do dia 0 ao dia 2
+
+**Exercício · ~8 min · escreve no seu repositório**
+
+**Momento do projeto:** antes do kickoff, e revisto no marco de operação · **Quem faz:** os quatro papéis, cada um escrevendo a própria linha
+
+[NOTE.antes]
+====
+**Antes:** as decisões das partes xref:planejamento-fixas.adoc[{p-fixas}] e
+xref:planejamento-parceiro.adoc[{p-parceiro-dec}]: cada uma tem um dono, e esta
+parte diz o que esse dono faz nos três dias do projeto.
+====
+
+O workshop praticou quatro papéis sem dizer que eram quatro: quem escreveu o
+teto no Gateway, quem pendurou a rota e a policy dela, quem definiu os planos,
+e quem leu o alerta e o trace. No produto a fronteira entre eles é namespace e
+RBAC, medida na parte xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê]. No
+projeto, a fronteira precisa de nomes de pessoas -- e de uma lista do que cada
+uma ainda não sabe.
+
+"Dia 0, dia 1, dia 2" são os três momentos de qualquer plataforma: montar,
+publicar o primeiro serviço, operar o que está no ar.
+
+== Os quatro papéis, nos três dias
+
+[cols="1,2,2,2",options="header"]
+|===
+| papel | dia 0 -- a plataforma no ar | dia 1 -- o piloto e o primeiro parceiro | dia 2 -- operação
+
+| **plataforma** (Gateway, teto, certificado, nome)
+| instala o operador e o CR `Kuadrant` (Fase 1); cria os Gateways (D2) com
+  `deny-all` e o teto (D4); `TLSPolicy` e `DNSPolicy` (D16); o pool de nós e
+  as réplicas da {p-sizing}desta fase; a esteira e a conferência (D13)
+| aprova o merge request do Gateway e do teto; emite a chave do parceiro pelo
+  portal (D7); confere que a rota nova nasceu negada
+| upgrade do operador (D18); revisão do sizing a cada parceiro grande; o
+  segundo cluster
+
+| **aplicação** (rota, policy da rota)
+| nada ainda -- lê a Fase 1 e a parte {p-exposta}
+| pendura a `HTTPRoute` e a `AuthPolicy` da API no Gateway do público, no
+  mesmo commit (parte {p-confere}A esteira confere antes); a `PlanPolicy` da API; a v2 ao lado da v1
+  (D14)
+| abre o merge request de cada mudança; lê o trace quando a requisição morre
+  (parte {p-negado})
+
+| **produto** (planos, contratos)
+| escreve o catálogo (D9): nomes, limites, o que cada plano compra
+| põe o primeiro parceiro num plano; lê o painel por plano e por parceiro
+  (parte {p-negocio}) desde o dia 1
+| negocia o plano com o número; decide o fim da v1 pelo painel (D14)
+
+| **operação** (alertas, diagnóstico, auditoria)
+| instala o alerta de Limitador fora e os de saturação ({p-sizing}desta fase, seção 6);
+  decide a falha (D11)
+| recebe o alerta em teste antes do parceiro entrar; mede o p99 da borda no
+  piloto
+| plantão da plataforma; responde às quatro perguntas da parte {p-auditoria}
+  (quem chamou, quando, com que plano, por que foi negado); trata o `OutOfSync`
+|===
+
+Um papel pode ser uma pessoa em dois chapéus -- na Trajeto, plataforma e
+operação são o mesmo time de três. O que não pode é um papel sem ninguém: o
+alerta que ninguém recebe (parte {p-alerta}) é a falha mais cara que o workshop
+mediu, e ela nasce de uma linha vazia nesta tabela.
+
+== O que cada um precisa aprender
+
+A lista é do caso do workshop; a sua é o que o seu time ainda não fez com as
+próprias mãos.
+
+[cols="1,3",options="header"]
+|===
+| papel | o que praticar antes do dia correspondente, e onde
+
+| plataforma
+| a instalação inteira (xref:leitura-instalacao.adoc[Fase 1]); a precedência
+  entre o teto e a rota (parte {p-precedencia}); o certificado com dono (parte
+  {p-certificado}); a conferência da esteira (parte {p-confere}A esteira confere antes); e a janela de
+  carga da {p-sizing}no ambiente de homologação
+
+| aplicação
+| publicar uma API do zero, policy por policy (parte {p-exposta}); a mudança
+  por merge request (parte {p-mr}Mudança por merge request); a v2 ao lado da v1 (parte {p-versoes}Uma API, duas versões);
+  uma API com vários contextos (Extra {p-contextos}Uma API, vários contextos)
+
+| produto
+| os três planos no mesmo endereço (parte {p-planos}); o painel por plano e
+  por parceiro (parte {p-negocio}); o portal como porta de entrada (leitura
+  {p-parceiros}Muitos parceiros, seção 5)
+
+| operação
+| onde a requisição morreu (parte {p-negado}); o que acontece quando a policy
+  cai (parte {p-degrada}); o alerta (parte {p-alerta}); as quatro perguntas de
+  auditoria (parte {p-auditoria}); o desvio e a reversão (parte {p-desvio}Desvio e reversão)
+|===
+
+== O ciclo de vida: ambientes, upgrade e suporte
+
+Três decisões que não são de arquitetura e por isso ninguém toma -- até o
+primeiro upgrade.
+
+[cols="1,3,2",options="header"]
+|===
+| tema | o que decidir | a Trajeto
+
+| **ambientes e promoção**
+| quantos ambientes (desenvolvimento, homologação, produção); se cada um é um
+  cluster ou um namespace; como uma policy é promovida -- no workshop, o
+  repositório tem uma pasta que o Argo CD aplica, e promover é um merge. Com
+  mais de um ambiente, é uma pasta ou um branch por ambiente, e a conferência
+  roda em todos
+| homologação é um namespace no mesmo cluster até o segundo cluster existir;
+  produção é a pasta `esteira/` do repositório de cada API; a carga da
+  {p-sizing}roda em homologação
+
+| **cadência de upgrade do operador** (D18)
+| canal fixo na *minor* com aprovação manual (Fase 1, "e se eu quiser fixar
+  a versão?"); cada *minor* passa por homologação antes, porque entre versões
+  a precedência de limite já mudou neste material; ampliar o limite de memória
+  do operador quando as policies forem centenas
+| uma *minor* por trimestre, sempre em homologação primeiro, com o
+  `traffic.sh tiers` da API do piloto como teste de regressão dos planos
+
+| **suporte**
+| quem abre o chamado, com qual versão, e o que vai nele (o CSV, o status das
+  policies, o trace de uma requisição); o que é do Connectivity Link e o que é
+  do OpenShift (o Gateway nativo é do operador de ingresso)
+| o time de plataforma abre; a subscription cobre o Connectivity Link e o
+  OpenShift; o time de Serviços da Red Hat acompanha o roteiro da {p-roteiro}
+|===
+
+== Passo 1 -- grave os papéis
+
+[source,bash,role="execute perfil-dev"]
+----
+mkdir -p planejamento && cat > planejamento/papeis.md <<'EOF'
+# Papéis: quem faz o quê, do dia 0 ao dia 2
+
+Um papel pode ser uma pessoa em dois chapéus. Nenhum papel pode ficar vazio.
+
+## Quem é quem
+
+| papel | caso do workshop (Trajeto) | o seu caso (nomes) |
+| --- | --- | --- |
+| plataforma | time de plataforma (3 pessoas) | |
+| aplicação | a squad dona de cada API; no piloto, a de precificação | |
+| produto | gerência de produto de parceiros | |
+| operação | o mesmo time de plataforma, no plantão | |
+
+## O que cada um faz
+
+| papel | dia 0: plataforma no ar | dia 1: piloto e primeiro parceiro | dia 2: operação |
+| --- | --- | --- | --- |
+| plataforma | operador, CR Kuadrant, Gateways com deny-all e teto, TLSPolicy/DNSPolicy, pool de nós, esteira | aprova MR de Gateway e teto; emite chave pelo portal | upgrade do operador; revisão do sizing; segundo cluster |
+| aplicação | lê a Fase 1 e a 3.1 | HTTPRoute + AuthPolicy no mesmo commit; PlanPolicy; v2 ao lado da v1 | MR de cada mudança; lê o trace quando a requisição morre |
+| produto | escreve o catálogo de planos | põe o parceiro num plano; lê o painel desde o dia 1 | negocia plano com número; decide o fim da v1 pelo painel |
+| operação | alertas (Limitador fora, saturação, p99); decide a falha | recebe o alerta em teste; mede o p99 no piloto | plantão; as quatro perguntas de auditoria; trata OutOfSync |
+
+## O que cada um ainda precisa praticar
+
+| papel | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| plataforma | a janela de carga em homologação; TLSPolicy com o emissor da empresa | |
+| aplicação | a v2 ao lado da v1 (4.3); contextos (4.4) | |
+| produto | o portal como porta de entrada | |
+| operação | o alerta recebido por uma pessoa; a reversão por revert (5.4) | |
+
+## Ciclo de vida
+
+| tema | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| ambientes | homologação = namespace no mesmo cluster; produção = pasta esteira/ por API | |
+| promoção | merge request; conferência roda em todos | |
+| upgrade do operador | canal fixo na minor, aprovação manual, uma minor por trimestre, homologação primeiro | |
+| teste de regressão do upgrade | os três planos da API do piloto respondendo como antes | |
+| suporte | plataforma abre; subscription cobre Connectivity Link e OpenShift; Serviços acompanha o roteiro | |
+EOF
+git add planejamento && git commit -q -m "planejamento: papeis" && echo ok
+----
+
+[source,text]
+----
+ok
+----
+
+**O que isso diz:** cada decisão do `decisoes.md` tem um dono, e agora cada
+dono tem uma linha dizendo o que faz em cada dia e o que ainda precisa
+praticar. É a diferença entre "o time de plataforma cuida" e um plano.
+
+.Mais detalhes: por que o ambiente de homologação não é opcional
+[%collapsible]
+====
+Três coisas deste material só se descobrem com carga ou com upgrade, e as
+duas não se fazem em produção:
+
+* a **capacidade por réplica** ({p-sizing}desta fase): sem homologação, a conta usa a
+  referência do workshop em vez do número do cliente, e a referência foi
+  medida com chave de API, num cluster que não é o dele;
+* a **mudança de precedência entre versões** (D18): o `PlanPolicy` e a
+  `RateLimitPolicy` plana trocaram de ordem entre a 1.2 e a 1.4, e tudo
+  respondeu `200` sem erro; só um teste de rajada por plano pega isso;
+* o **religamento do Gateway**: `503` com `wasm_fail_stream` até um `rollout
+  restart`, medido neste projeto depois de o cluster religar.
+
+Homologação não precisa ser um segundo cluster -- na Trajeto é um namespace
+--, mas precisa existir antes do primeiro upgrade.
+====

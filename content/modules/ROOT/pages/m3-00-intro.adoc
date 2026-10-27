@@ -6,7 +6,10 @@ endif::[]
 ifdef::foco_rhcl[]
 = Fase 6 — Operação: a borda no dia a dia
 :navtitle: O que muda nesta fase
+:page-trilhas: Avançado · Operações
 endif::[]
+
+include::partial$trilha.adoc[]
 
 ifndef::foco_rhcl[]
 **Cinco partes e uma opcional · cerca de 33 minutos, mais 10 da {p-auditoria} · duas delas mudam estado**

@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-waf}Leitura: onde entra o WAF
 :navtitle: {p-waf}Leitura: onde entra o WAF
+:page-trilhas: Avançado
 
 **Leitura · ~4 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 Duas perguntas, dois produtos:
 

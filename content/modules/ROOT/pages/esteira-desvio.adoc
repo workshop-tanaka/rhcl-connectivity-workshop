@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-desvio}Desvio e reversão
 :navtitle: {p-desvio}Desvio e reversão
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Engenheiro de Plataforma e quem responde por mudança em produção. · **12 min, parte deles esperando**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

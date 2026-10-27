@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = Testar a API no Postman
 :navtitle: Postman
+:page-trilhas: Avançado · Desenvolvedor
 
 **Opcional · ~10 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

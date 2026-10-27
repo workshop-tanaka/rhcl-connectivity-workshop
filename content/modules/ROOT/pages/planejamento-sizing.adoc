@@ -1,0 +1,334 @@
+include::partial$numeros.adoc[]
+= {p-sizing}Quanto a plataforma vai precisar
+:navtitle: {p-sizing}Quanto a plataforma vai precisar
+
+**Exercício · ~12 min · escreve no seu repositório**
+
+**Momento do projeto:** antes do primeiro parceiro externo; refeito a cada mudança grande de demanda · **Quem faz:** plataforma faz a conta; operação assina os alertas; produto fornece o pico
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:planejamento-partida.adoc[{p-partida}O ponto de partida]
+(os números) e a xref:planejamento-parceiro.adoc[{p-parceiro-dec}] (as
+réplicas do Limitador pedem Redis, e isso entra na conta).
+====
+
+"Isso aguenta a nossa segunda-feira de manhã?" A resposta não é um número do
+fornecedor: é uma medida do **seu** ambiente, feita com o **seu** pico. O que
+esta parte dá é o método, e uma referência medida para a conta não começar do
+zero.
+
+[IMPORTANT]
+====
+**Tudo o que está medido aqui foi medido neste ambiente -- não é benchmark.**
+Um cluster de laboratório, OpenShift 4.21, Connectivity Link 1.4.3, seis nós
+sem nó `infra`, um gerador de carga dentro do cluster chamando o Service do
+Gateway (o router ficou fora da medida), chave de API como credencial, uma
+réplica de cada componente salvo onde dito. Os números servem para
+**comparar** e para **saber o que medir**; os seus virão do seu ambiente.
+====
+
+== Por onde passa uma requisição, e o que escala com ela
+
+[cols="1,2,2",options="header"]
+|===
+| etapa | o que faz | escala com
+
+| Gateway (o proxy)
+| termina o TLS, casa a rota, chama o filtro do Connectivity Link
+| requisições por segundo; handshakes TLS novos; tamanho de corpo; conexões
+  longas; número de rotas e listeners (memória)
+
+| filtro do Gateway
+| pergunta ao Authorino e ao Limitador, na ordem
+| requisições × policies que a requisição atravessa
+
+| Authorino
+| decide **quem entra**: valida a chave ou o token
+| requisições autenticadas × custo do método (chave e JWT local são baratos;
+  introspecção e metadados externos dependem de outro serviço)
+
+| Limitador
+| decide **quanto passa**: conta contra o limite
+| requisições limitadas; **contadores ativos** = chaves × planos × janelas
+  (memória); mais de uma réplica pede Redis
+
+| o operador (`kuadrant-operator`)
+| traduz policies em configuração
+| número de policies, rotas e Gateways -- **não com tráfego**
+|===
+
+Só a parte de cima escala com tráfego: Gateway, Authorino e Limitador. É o que
+se dimensiona. O operador e o cert-manager se instalam uma vez e crescem com
+o número de objetos (leitura {p-parceiros}Muitos parceiros, muitas APIs: o teto de memória do operador).
+
+== A referência medida
+
+Com o tracing do Connectivity Link ligado em `debug`, como neste laboratório:
+
+[cols="1,1,1,1,1,1",options="header"]
+|===
+| req/s alvo | erro | p99 | Gateway (1 pod) | Authorino (1 pod) | Limitador
+
+| 25 | 0% | 109 ms | 80m · 341 Mi | 237m · 92 Mi | 9m · 5 Mi
+| 100 | 0,05% | 114 ms | 254m | 838m · 96 Mi | 23m
+| 400 | 0,22% | 88 ms | 849m | 3136m · 106 Mi | 69m
+| 600 | 0,30% | 406 ms | 1212m | 4352m | 97m
+| 800 | 8,5% | 1206 ms | 1514m | 6303m · 140 Mi | 100m
+|===
+
+O que a tabela diz, e o que foi confirmado a mais:
+
+* **Quem satura primeiro é o Authorino.** Uma réplica aguenta **~400 a 500
+  req/s limpos** nesta configuração (sem tracing: 400 req/s com 0% de erro e
+  p99 de 24 ms; 600, 5,9% de erro). O custo é **~7 a 8 mCPU por requisição**,
+  linear de 25 a 400 req/s -- ~130 req/s por core. O erro é o filtro do Gateway
+  desistindo de esperar o Authorino, não a aplicação.
+* **O Limitador não é o gargalo** com contadores em memória: nunca passou de
+  ~150m, até 800 req/s.
+* **O tracing produz a cauda.** A 400 req/s: desligado, 0% de erro e p99 de 24
+  ms; em `debug`, 0,22% e 88 ms; no nível padrão, 0,65% e 198 ms. Custa ~20 a
+  30% da CPU do Gateway e ~15% da do Authorino. **Amostragem não foi medida
+  neste workshop.**
+* **Mais Gateways sem mais Authorino piora**: 3 pods de Gateway e 2 de
+  Authorino a 1200 req/s serviram ~315/s -- mais requisições esperando o mesmo
+  Authorino, mais desistências. A segunda réplica do Authorino rendeu pouco
+  (de ~630 para ~713/s a 800 req/s); a hipótese é que o Gateway de um pod
+  passa a ser o limite, **a medir** com os dois escalados juntos.
+* **Réplica de Limitador sem Redis multiplica o limite**: duas réplicas em
+  memória deixaram passar 6 de 12 num plano de 3; com Redis, 3 de 12. O Redis
+  custou +0,7 ms no p50 e +3 ms no p99 a 400 req/s, 30m e 8 Mi.
+* **O teto deste laboratório** é 50 requisições por 10 s por Gateway (Fase 1,
+  passo 6): 5 req/s por participante, para 30 participantes somarem 150 req/s
+  -- menos de metade da saturação medida de um Authorino.
+
+== O método
+
+. **Demanda.** Pico (não média) por API e plano; fração com `AuthPolicy`
+  (quase tudo) e com limite; tipo de credencial; contadores ativos (chaves ×
+  planos × janelas); orçamento de latência; disponibilidade (zonas, N+1).
+  Vem do `levantamento.md`.
+. **Capacidade por réplica.** Medida **no seu ambiente**: carga em degraus
+  até o p99 sair do orçamento ou a CPU encostar no limite, anotando qual
+  componente satura primeiro. É a janela deste material, reduzida: cinco
+  degraus de dois minutos num ambiente de homologação bastam para o primeiro
+  número.
+. **Conta.** Réplicas = pico × (1 + folga) ÷ capacidade por réplica,
+  arredondado para cima, **+1 para N+1**; `requests` = consumo medido no pico,
+  e `requests` = `limits` no caminho de dados; Redis pelos contadores e
+  operações por segundo.
+. **Operação.** HPA no Gateway; réplicas fixas do Authorino e do Limitador
+  pela conta; alertas de saturação (CPU perto do request, p99 subindo) além do
+  de Limitador fora (parte {p-alerta}); refazer a conta a cada mudança grande
+  de demanda -- e a cada parceiro grande.
+
+== O caso do workshop: a conta da Trajeto
+
+Demanda: pico de **120 req/s**, +50% em 12 meses → **180 req/s** de pico
+planejado; orçamento de 50 ms no p99 na borda; SLA 99,9% em 3 zonas; chave de
+API; 3 planos × 8 APIs × 2 janelas (10 s e dia) ≈ **48 contadores ativos**.
+
+[cols="1,2,2,2",options="header"]
+|===
+| componente | a conta, com a referência medida | o que a Trajeto adota | premissa que precisa ser medida lá
+
+| Authorino
+| 180 ÷ 400 = 0,45 → 1 réplica; +1 para N+1 → **2**. CPU no pico se uma
+  réplica ficar sozinha: 180 × 8 mCPU ≈ 1,4 core
+| 2 réplicas; `requests` = `limits` = 1,5 core e 256 Mi (medido: 92 a 140
+  Mi); `topologySpreadConstraints` por zona; PDB `minAvailable: 1`
+| a capacidade por réplica **com a credencial dela** (chave de API aqui; se
+  entrar OIDC com introspecção, o custo muda)
+
+| Limitador
+| 2 réplicas pelo SLA → **Redis obrigatório** (D12). CPU medida ≤150m a 800
+  req/s. Contadores: ~48, pequeno
+| 2 réplicas, `storage.redis`; `requests` 250m; memória a confirmar -- o
+  limite de fábrica é 64 Mi e **a memória por contador não foi medida**
+| memória por contador ativo; a alta disponibilidade do **Redis** (que é
+  outro desenho, fora deste material)
+
+| Gateway
+| 180 req/s: entre os 254m medidos a 100 (com `debug`) e os 730m a 400 (sem
+  tracing). O provedor nativo vem com **HPA de 2 a 10 réplicas** de fábrica;
+  este laboratório o trava em 1 por um `ConfigMap` (`gateway-uma-replica`,
+  atalho declarado em xref:ambiente-atalhos.adoc[])
+| 2 Gateways (D2) × HPA mínimo 2, máximo 4, um pod por zona; ~300 a 370 Mi
+  por pod; `requests` 500m
+| o corte do router no caminho (abaixo), handshakes TLS dos parceiros, e o
+  comportamento do HPA no pico de 40 min
+
+| tracing
+| orçamento de 50 ms no p99. Medido a 200 e 400 req/s: ligado em qualquer
+  nível, p99 de 88 a 198 ms; desligado, 24 ms
+| nível padrão **com amostragem** em produção; `debug` só em homologação
+| **amostragem não foi medida neste workshop; medir antes de decidir**
+
+| teto do Gateway
+| não é sizing, é proteção (D4/D5): o limite para quem não tem plano
+| `parceiros`: 600 por 10 s (60 req/s); `interno`: 1800 por 10 s
+| que o teto fique acima do pico legítimo das rotas sem plano
+|===
+
+== O OpenShift na conta: onde a plataforma roda
+
+A referência deste laboratório é o que **não** fazer em produção, e a
+xref:ambiente-atalhos.adoc[lista de atalhos] já o declara. Medido aqui, e o
+que a Trajeto faz com cada ponto:
+
+[cols="2,2,2",options="header"]
+|===
+| medido neste ambiente | por que pesa | a Trajeto
+
+| 3 control-planes também agendáveis + 3 workers; **sem nó `infra`**, sem
+  rótulo de zona; o Authorino rodava num control-plane
+| disputa de CPU com `etcd` e `apiserver`; sem como espalhar por zona
+| um pool de nós para a borda (rótulo e *taint*; `nodeSelector` e
+  `tolerations` em Gateway, Authorino e Limitador), um por zona. **Se o nó
+  `infra` admite esses componentes na regra de subscription não tem fonte
+  neste material: confirmar com a Red Hat**
+
+| caminho de entrada: router do OpenShift (6 réplicas) → `Route` passthrough →
+  Service `ClusterIP` → Envoy do Gateway
+| dois proxies no caminho; o router entra na capacidade e na latência; o TLS
+  só termina no Envoy
+| o Service do Gateway como `LoadBalancer` (a nuvem tem), tirando o router do
+  caminho; medir a diferença antes de assumir
+
+| Authorino **sem requests nem limits** (BestEffort); Limitador com limite de
+  memória de 64 Mi; Gateway pedindo 128 Mi e usando ~300 Mi
+| o Authorino é o primeiro despejado em nó apertado, e o efeito é `500` em
+  toda API (parte {p-degrada}); muitos contadores viram OOMKill no Limitador --
+  e Limitador caído é API sem limite
+| QoS Guaranteed no caminho de dados, com os números da tabela acima,
+  confirmados pela carga em homologação
+
+| nenhum PDB nem `priorityClass`; uma réplica de cada
+| um dreno de nó (upgrade, `MachineConfig`) leva a única réplica junto
+| ≥2 réplicas, PDB e `priorityClass`; o upgrade do OpenShift entra no plano
+  como janela medida
+
+| o HPA de fábrica do Gateway nativo é 2 a 10; o laboratório fixa 1
+| trocado o `ConfigMap` por um com máximo 3, o HPA subiu a 3 pods na hora
+| HPA 2 a 4 por Gateway; o `parametersRef` funciona no controller nativo --
+  se é o caminho **suportado**, confirmar com a Red Hat
+
+| depois de reinício, o Gateway baixa de novo o módulo do filtro; já medido
+  neste projeto: `503` com `wasm_fail_stream` até um `rollout restart`
+| o religamento do cluster faz parte do sizing de disponibilidade
+| um teste de dreno e de religamento antes do primeiro parceiro
+
+| cada chave é um `Secret` observado pelo Authorino; cada policy é objeto
+  reconciliado
+| `etcd`, `apiserver` e a memória do operador crescem com consumidores e
+  policies, não com tráfego; o operador tem teto de memória (leitura
+  {p-parceiros}Muitos parceiros, muitas APIs)
+| ~20 parceiros e ~30 policies: longe do teto; rever no segundo cluster
+|===
+
+== Passo 1 -- grave o sizing
+
+[source,bash,role="execute perfil-dev"]
+----
+mkdir -p planejamento && cat > planejamento/sizing.md <<'EOF'
+# Sizing: quanto a plataforma vai precisar
+
+Referência: medido no ambiente do workshop (OpenShift 4.21, Connectivity Link
+1.4.3, 1 réplica salvo onde dito, chave de API, gerador dentro do cluster).
+NÃO é benchmark. Os números do seu ambiente substituem os daqui.
+
+## 1. Demanda (do levantamento.md)
+
+| | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| pico hoje (req/s) | 120 | |
+| folga (crescimento 12 meses) | +50% -> 180 | |
+| orçamento de latência na borda (p99) | 50 ms | |
+| disponibilidade | 99,9% horário comercial; 3 zonas; N+1 | |
+| credencial | chave de API (barata) | |
+| contadores ativos (planos x APIs x janelas) | 3 x 8 x 2 = 48 | |
+
+## 2. Capacidade por réplica
+
+| componente | referência medida no workshop | medido no seu ambiente |
+| --- | --- | --- |
+| Authorino | ~400-500 req/s limpos; 7-8 mCPU/req; satura primeiro | |
+| Limitador (memória) | <= 150m até 800 req/s; não é gargalo | |
+| Limitador (Redis, 2 réplicas) | limite volta a valer; +0,7 ms p50, +3 ms p99 a 400 req/s; Redis 30m / 8 Mi | |
+| Gateway (1 pod) | 254m a 100 req/s (tracing debug); 730m a 400 (sem tracing); 300-370 Mi | |
+| tracing | ligado: p99 88-198 ms a 200-400 req/s; desligado: 24 ms; amostragem NÃO medida | |
+
+## 3. A conta
+
+| componente | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| Authorino | 180/400 -> 1, +1 N+1 = 2 réplicas; req=lim 1,5 core / 256 Mi; spread por zona; PDB | |
+| Limitador | 2 réplicas + Redis; 250m; memória a confirmar (por contador não medido) | |
+| Gateway | 2 Gateways x HPA 2-4; 500m / 512 Mi por pod; um por zona | |
+| tracing | nível padrão com amostragem em produção; debug só em homologação | |
+| teto do Gateway (rotas sem plano) | parceiros 600/10s; interno 1800/10s | |
+
+## 4. O OpenShift
+
+| ponto | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| onde roda | pool da borda, 1 nó por zona, rótulo + taint | |
+| nó infra? | confirmar com a Red Hat se o Gateway e o Connectivity Link entram na regra | |
+| caminho de entrada | Service LoadBalancer, router fora do caminho (medir a diferença) | |
+| QoS | Guaranteed no caminho de dados | |
+| PDB / priorityClass | sim, nos três | |
+| upgrade do OpenShift | janela; teste de dreno e religamento antes do primeiro parceiro | |
+
+## 5. O que medir no nosso ambiente antes de fechar
+
+- [ ] capacidade por réplica do Authorino com a NOSSA credencial, em degraus até o p99 sair de 50 ms
+- [ ] Gateway e Authorino escalados juntos (não medido no workshop)
+- [ ] memória do Limitador por contador ativo (não medido no workshop)
+- [ ] tracing com amostragem: p99 e CPU (não medido no workshop)
+- [ ] o router no caminho x LoadBalancer: latência e CPU
+- [ ] HPA do Gateway no pico de 40 min: tempo de reação
+- [ ] dreno de nó e religamento do cluster com 2 réplicas e PDB
+- [ ] alta disponibilidade do Redis
+- [ ] antes do segundo cluster: limite global com store compartilhado (não medido no workshop)
+
+## 6. Alertas que saem desta conta
+
+| alerta | limiar | dono |
+| --- | --- | --- |
+| Limitador fora (6.3) | já existe | operação |
+| CPU do Authorino perto do request | > 80% por 5 min | operação |
+| p99 da borda | > 50 ms por 5 min | operação |
+| réplicas abaixo do desejado | < 2 em qualquer componente | operação |
+EOF
+git add planejamento && git commit -q -m "planejamento: sizing" && echo ok
+----
+
+[source,text]
+----
+ok
+----
+
+**O que isso diz:** a conta cabe numa página, e cada número tem ao lado a
+premissa de onde veio -- "medido no workshop", "a medir aqui" ou "não medido".
+A seção 5 é a mais importante do arquivo: é o que transforma a referência em
+número seu.
+
+.Mais detalhes: por que o pico, e não requisições por dia
+[%collapsible]
+====
+Tabelas por requisições por dia (menos de 1 milhão, de 1 a 10, mais de 10)
+aparecem em material de terceiros e enganam no eixo: 10 milhões por dia são
+~116 req/s de **média**, e o que derruba um Authorino é o pico. A Trajeto tem
+35 req/s de média e 120 de pico -- 3,4 vezes --, concentrados em 40 minutos de
+segunda-feira. Dimensionar pela média deixa o Authorino saturando toda semana
+no mesmo horário, com o alerta de CPU disparando depois do pico passar.
+
+E a duração do pico diz se o HPA do Gateway chega a tempo: 40 minutos dão
+tempo; um pico de 2 minutos não dá, e aí o mínimo do HPA é que precisa aguentar
+o pico sozinho.
+
+O que vale como fonte aqui é a
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação da versão em uso^];
+os datastores suportados para o Limitador e as versões de OpenShift estão lá.
+Artigo e blog são pista, não fonte.
+====

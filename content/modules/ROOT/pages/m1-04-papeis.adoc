@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-papeis} Quem pode o quê
 :navtitle: {p-papeis} Quem pode o quê
+:page-trilhas: Avançado · Infra · Operações
 
 **Para quem:** Engenheiro de Plataforma e Desenvolvedor -- os dois papéis que o Gateway API nomeia. · **7 min**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

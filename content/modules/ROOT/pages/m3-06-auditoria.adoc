@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-auditoria} Quatro perguntas, quatro fontes
 :navtitle: {p-auditoria} Quatro perguntas, quatro fontes
+:page-trilhas: Avançado · Operações
 
 **Para quem:** Segurança, Compliance e Operação -- e a quem vai responder a auditoria de verdade. · **10 min** · **opcional**
+
+include::partial$trilha.adoc[]
 
 [WARNING.antes]
 ====

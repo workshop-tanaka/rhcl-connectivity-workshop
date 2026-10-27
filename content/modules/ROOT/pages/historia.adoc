@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = A história por trás deste workshop
 :navtitle: A história
+:page-trilhas: Avançado
+
+include::partial$trilha.adoc[]
 
 Neste workshop você acompanha a **Rota Viagens**, uma empresa fictícia de
 serviços de viagem que está modernizando a própria infraestrutura -- e que,

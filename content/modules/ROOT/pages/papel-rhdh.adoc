@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-papel-rhdh}Leitura: o papel do Developer Hub
 :navtitle: {p-papel-rhdh}Leitura: o papel do Developer Hub
+:page-trilhas: Avançado
 
 **Leitura · ~4 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 Esta sessão não pratica o Red Hat Developer Hub. Esta página diz o que ele
 faz, para você saber onde ele entraria -- e o que **não** pedir ao produto que

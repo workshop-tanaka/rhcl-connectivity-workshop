@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-multitenancy}Leitura: multi-tenancy com o Connectivity Link
 :navtitle: {p-multitenancy}Leitura: multi-tenancy
+:page-trilhas: Avançado · Infra
 
 **Leitura · ~8 min · não muda estado**
+
+include::partial$trilha.adoc[]
 
 
 A pergunta chega cedo em qualquer conversa sobre plataforma de API: *"dá para

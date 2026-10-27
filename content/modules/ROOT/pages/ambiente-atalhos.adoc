@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = O que aqui é atalho de laboratório
 :navtitle: O que aqui é atalho de laboratório
+:page-trilhas: Avançado
+
+include::partial$trilha.adoc[]
 
 Este ambiente foi montado para ensinar em poucas horas, com uma turma
 dividindo o mesmo cluster. Para validar as funcionalidades e a solução, o

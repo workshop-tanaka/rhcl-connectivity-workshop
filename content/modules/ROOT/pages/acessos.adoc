@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = Seus acessos
 :navtitle: Seus acessos
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Infra · Desenvolvedor · Operações
+
+include::partial$trilha.adoc[]
 
 Tudo nesta página é **deste ambiente**, resolvido no momento em que ele foi
 criado. Nada aqui é exemplo: são os endereços e as chaves que você vai usar.

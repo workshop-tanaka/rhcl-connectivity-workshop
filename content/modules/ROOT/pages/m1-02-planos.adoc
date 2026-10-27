@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-planos} Nem todo cliente é igual
 :navtitle: {p-planos} Nem todo cliente é igual
+:page-trilhas: Degustação · Básico · Intermediário · Avançado · Desenvolvedor · Operações
 
 **Para quem:** Produto/Negócio (o plano é vocabulário comercial) e Engenheiro de Plataforma (quem o declara). · **7 min** · alimenta a parte {p-negocio}
+
+include::partial$trilha.adoc[]
 
 ifdef::foco_rhcl[]
 [TIP]

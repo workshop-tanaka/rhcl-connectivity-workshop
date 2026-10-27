@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = Recomeçar uma parte
 :navtitle: Recomeçar uma parte
+:page-trilhas: Avançado · Operações
+
+include::partial$trilha.adoc[]
 
 Cada parte que muda estado termina devolvendo o que mudou. Quando uma parte foi
 interrompida no meio, ou você quer refazê-la do zero, o caminho de volta está

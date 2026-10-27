@@ -9,6 +9,9 @@ ifdef::foco_rhcl[]
 endif::[]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
+ifdef::trilhas[]
+* xref:trilhas.adoc[Escolha a sua trilha]
+endif::[]
 
 // A SESSAO DE CONNECTIVITY LINK TEM MENU PROPRIO, na ordem de um projeto real:
 // a plataforma, a borda, a primeira API, o produto, a esteira, a operacao. Os
@@ -59,6 +62,18 @@ ifdef::foco_rhcl[]
 * xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
+
+ifdef::fase8[]
+.Fase 8 — Decidimos pelo Connectivity Link. E agora?
+* xref:planejamento-intro.adoc[O que muda nesta fase]
+* xref:planejamento-partida.adoc[8.1 O ponto de partida]
+* xref:planejamento-piloto.adoc[8.2 O piloto]
+* xref:planejamento-fixas.adoc[8.3 As decisões que não se desfazem]
+* xref:planejamento-parceiro.adoc[8.4 As decisões antes do primeiro parceiro]
+* xref:planejamento-sizing.adoc[8.5 Quanto a plataforma vai precisar]
+* xref:planejamento-papeis.adoc[8.6 Quem faz o quê, do dia 0 ao dia 2]
+* xref:planejamento-roteiro.adoc[8.7 O roteiro: do piloto à produção]
+endif::[]
 
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]

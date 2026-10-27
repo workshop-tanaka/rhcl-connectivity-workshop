@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-confere}A esteira confere antes
 :navtitle: {p-confere}A esteira confere antes
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
 
 **Para quem:** Engenheiro de Plataforma -- quem escreve a regra -- e Desenvolvedor -- quem a encontra no caminho. · **15 min, parte deles esperando**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = {p-degrada} O que acontece quando a policy cai
 :navtitle: {p-degrada} Quando a policy cai
+:page-trilhas: Intermediário · Avançado · Infra · Operações
 
 **Para quem:** Operação/SRE -- a pergunta "e se o componente cair?" é dele. · **6 min** · **muda estado e desfaz no fim**
+
+include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====

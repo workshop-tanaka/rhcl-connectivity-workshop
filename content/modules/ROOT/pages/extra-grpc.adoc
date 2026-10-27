@@ -1,8 +1,11 @@
 include::partial$numeros.adoc[]
 = gRPC: a mesma policy, outro protocolo
 :navtitle: gRPC
+:page-trilhas: Avançado · Desenvolvedor
 
 **Opcional · ~9 min · aplica e remove uma camada no seu ambiente**
+
+include::partial$trilha.adoc[]
 
 **Para quem:** Desenvolvedor de serviços internos, e Arquitetura.
 

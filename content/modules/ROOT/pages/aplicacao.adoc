@@ -1,6 +1,9 @@
 include::partial$numeros.adoc[]
 = A aplicação e as APIs
 :navtitle: A aplicação e as APIs
+:page-trilhas: Avançado · Infra · Desenvolvedor
+
+include::partial$trilha.adoc[]
 
 Antes de governar uma API, vale saber qual API é. Esta página descreve o que
 está rodando no seu cluster -- e o que **não** está, que também importa.
