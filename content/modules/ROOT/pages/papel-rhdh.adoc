@@ -80,7 +80,9 @@ reais que ele gera. A jornada de uma API fica em três templates:
 == Onde praticar
 
 Percorrer o caminho com as próprias mãos pede o Developer Hub no ambiente, e
-está em preparação. A leitura xref:m5-01-colheita.adoc[{p-colheita}] mostra
+está em preparação. Na versão 1.5 do Connectivity Link o plugin do Developer
+Hub passa a GA (https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento da 1.5^]), com os papéis `api-consumer`, `api-owner` e `api-admin`
+no portal; este ambiente está na 1.4. A leitura xref:m5-01-colheita.adoc[{p-colheita}] mostra
 o que acontece no portal, com os arquivos reais do template. A documentação
 do produto está em
 https://docs.redhat.com/en/documentation/red_hat_developer_hub[Red Hat Developer Hub^].

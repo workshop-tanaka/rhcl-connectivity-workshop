@@ -151,7 +151,7 @@ metadata:
   name: rhcl-operator
   namespace: kuadrant-system
 spec:
-  channel: stable
+  channel: stable-1.4
   name: rhcl-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
@@ -173,7 +173,7 @@ spec:
   name: rhcl-operator                     # <3>
   source: redhat-operators                # <4>
   sourceNamespace: openshift-marketplace
-  channel: stable                         # <5>
+  channel: stable-1.4                     # <5>
   installPlanApproval: Automatic          # <6>
 ----
 
@@ -190,8 +190,10 @@ spec:
     os outros três vêm como dependência dele.
 <4> **De qual catálogo.** O da Red Hat, publicado no OperatorHub do cluster.
 <5> **Qual trilha de versões.** O canal decide que versões a instalação
-    recebe; é o que determina, por exemplo, que esta instalação esteja na
-    1.4.
+    recebe. `stable-1.4` recebe só as correções da 1.4; o canal `stable`
+    recebe também a próxima versão no dia em que a Red Hat o mover -- e o
+    catálogo deste cluster já serve `stable-1.5`. Fixar o canal na *minor* é
+    o que faz este ambiente poder ser recriado igual.
 <6> **Quem aprova a atualização.** `Automatic` aplica as versões novas do
     canal assim que chegam; `Manual` espera alguém aprovar o `InstallPlan`.
 ====
@@ -206,7 +208,7 @@ de onde parte e aprovar cada salto.
 [source,yaml]
 ----
 spec:
-  channel: stable
+  channel: stable-1.4
   installPlanApproval: Manual             # <1>
   startingCSV: rhcl-operator.v1.4.3       # <2>
 ----

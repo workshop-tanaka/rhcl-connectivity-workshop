@@ -24,7 +24,9 @@ OpenShift que xref:ambiente-conferir.adoc[Conferir o ambiente] mostra. Outra
 versão pode mudar nomes de campo, telas, comandos e comportamentos, e há outras
 formas de implementar o mesmo resultado, que podem coexistir com as escolhas
 feitas aqui. A referência é sempre a documentação oficial da versão que você
-usa. Várias escolhas daqui são atalhos de laboratório, e
+usa. Enquanto este material era escrito, a versão 1.5 do Connectivity Link
+foi publicada; o ambiente segue na 1.4, e as notas *O que a 1.5 traz*, em
+algumas páginas, dizem com a fonte o que ela acrescenta ao assunto. Várias escolhas daqui são atalhos de laboratório, e
 xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório] diz o que fazer
 em produção.
 

@@ -251,3 +251,14 @@ antes de entrarem numa proposta:
 
 Poucos Gateways, poucos planos, a identidade fora das APIs, e tudo entrando por
 repositório. O que sobra para crescer são credenciais e rótulos.
+
+[NOTE]
+.O que a 1.5 traz
+====
+A linha *entrada: pedido e aprovação pelo portal* vira produto na 1.5
+(https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento da 1.5^]): o consumidor com o papel `api-consumer` cria um `APIKey` no próprio
+namespace, o dono da API vê um `APIKeyRequest` sem o valor da chave e aprova
+com um `APIKeyApproval`, pela console ou pelo plugin do Red Hat Developer Hub,
+que passa a GA. É o exercício que a seção 3 deixa em aberto; este ambiente
+está na 1.4.
+====

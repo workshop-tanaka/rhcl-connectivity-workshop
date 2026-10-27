@@ -15,6 +15,14 @@ comparação com ela.
 *"Funciona com gRPC?"* é a primeira pergunta de quem tem serviço interno em
 gRPC -- e a resposta honesta tem **duas metades que não são iguais**.
 
+[NOTE]
+.O que a 1.5 traz
+====
+Na 1.5 (https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento da 1.5^]) a `AuthPolicy` e a `RateLimitPolicy` sobre `GRPCRoute` são
+declaradas GA. O que esta página faz na 1.4 não muda; muda o que se pode
+prometer em produção.
+====
+
 == Terminal
 
 O serviço gRPC deste Extra não vem no ar: é uma camada à parte, em

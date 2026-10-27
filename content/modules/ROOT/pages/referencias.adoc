@@ -16,6 +16,9 @@ include::partial$aviso-versoes.adoc[]
 | https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Red Hat Connectivity Link^]
 | {m1} inteiro, e o diagnóstico do {m3}
 
+| https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[Connectivity Link 1.5: o que há de novo^]
+| as notas *O que a 1.5 traz* (7.1, 7.2, 7.5 e o Extra de gRPC); o ambiente segue na 1.4
+
 | https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Red Hat OpenShift Service Mesh^]
 | {m2}, e a instrumentação que o {m3} usa
 

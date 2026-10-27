@@ -164,6 +164,25 @@ ifdef::foco_rhcl[]
   Mesh, descrita na xref:papel-ossm.adoc[leitura sobre ele].
 endif::[]
 
+[NOTE]
+.O que a 1.5 traz
+====
+Este ambiente está na 1.4. A 1.5 (https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento da 1.5^]) acrescenta a este assunto, segundo a
+documentação dela:
+
+* **papéis predefinidos** para o catálogo de APIs: `api-catalog-browser`
+  (lê o catálogo no cluster inteiro), `api-consumer` (pede chaves no próprio
+  namespace), `api-owner` (publica o produto e aprova pedidos; não lê as
+  chaves) e `api-admin`;
+* **a chave por indireção**: o consumidor cria o `APIKey` e o `Secret` no
+  namespace dele, o controlador cria um `APIKeyRequest` no namespace do dono
+  **sem o valor da chave**, o dono responde com um `APIKeyApproval`, e o
+  Secret que o Authorino lê nasce no namespace do Connectivity Link. Dois
+  times, nenhum lê o segredo do outro;
+* **o MCP gateway**, para servidores de ferramentas de IA, com uma extensão
+  por namespace e por Gateway e a `NetworkPolicy` criada pelo controlador.
+====
+
 == Em resumo
 
 [cols="1,2",options="header"]
