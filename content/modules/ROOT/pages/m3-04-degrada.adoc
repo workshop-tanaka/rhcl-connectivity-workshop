@@ -58,6 +58,27 @@ sem chave: 401
 havia cota, e deixou passar. A chamada sem chave continua `401`: quem decide
 isso é o Authorino, e ele está ao alcance.
 
+ifeval::["{openshift_console_url}" != ""]
+**Na console web:** o corte que você aplicou --
+{openshift_console_url}/k8s/ns/ingress-gateway/networking.k8s.io{tilde}v1{tilde}NetworkPolicy/simula-limitador-fora[a `NetworkPolicy` `simula-limitador-fora`^]
+(abre em aba nova), no projeto do seu Gateway.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link e entre com o login `{usuario_console}`.
+ifdef::perfis[]
+  O perfil Dev não lê `NetworkPolicy`: para `{usuario_console_dev}` a tela nega.
+endif::[]
+. Na aba *YAML*, o `podSelector` escolhe só os pods do Gateway `prod-web`,
+  e a regra de saída libera o `kuadrant-system` apenas para o Authorino --
+  é por isso que o Limitador ficou fora de alcance.
+. Sem o link: no menu da console, *Networking → NetworkPolicies*, no projeto
+  `ingress-gateway`.
+. Depois do passo 4 desta parte, a lista fica vazia de novo.
+====
+endif::[]
+
 == Passo 3 -- agora o Authorino
 
 [source,bash,role="execute",subs="attributes+"]

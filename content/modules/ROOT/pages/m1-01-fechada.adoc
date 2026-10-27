@@ -159,6 +159,27 @@ oc get authpolicy prod-web-deny-all -n ingress-gateway -o yaml
 Não é um link para documentação: é a configuração que está no ar, lida do
 cluster.
 
+ifeval::["{openshift_console_url}" != ""]
+**Na console web:** as mesmas duas policies, na console do OpenShift --
+{openshift_console_url}/k8s/ns/travel-agency/kuadrant.io{tilde}v1{tilde}AuthPolicy/travel-agency-authpolicy/yaml[a `travel-agency-authpolicy`^]
+e
+{openshift_console_url}/k8s/ns/ingress-gateway/kuadrant.io{tilde}v1{tilde}AuthPolicy/prod-web-deny-all/yaml[a `prod-web-deny-all`^]
+(abrem em aba nova), com o mesmo YAML que o terminal mostrou.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra um dos links e entre com o seu login da console. Os dois perfis, Infra
+  e Dev, leem as duas policies; só o Infra muda a do Gateway.
+. A aba *YAML* mostra o objeto inteiro, como o `oc get ... -o yaml`; a aba
+  *Details* mostra as condições de status, que a parte {p-precedencia} lê no
+  terminal.
+. Sem o link: no menu da console, *Connectivity Link → Policies*, escolha o
+  projeto `travel-agency` (ou `ingress-gateway`, para o teto) e clique na
+  policy.
+====
+endif::[]
+
 .Mais detalhes: o que cada campo da AuthPolicy faz
 [%collapsible]
 ====

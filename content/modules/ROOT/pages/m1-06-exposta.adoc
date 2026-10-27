@@ -214,6 +214,29 @@ escreveu, preso à sua rota.
 Se vierem seis `200`, espere dez segundos e repita o laço: a janela é de 10 s
 e o limite pode levar alguns segundos a mais para chegar ao Gateway.
 
+ifeval::["{openshift_console_url}" != ""]
+**Na console web:** as duas policies que você criou, numa tela só --
+{openshift_console_url}/kuadrant/policies/ns/echo-exposta[Connectivity Link → Policies, no projeto `echo-exposta`^]
+(abre em aba nova): a `AuthPolicy` e a `PlanPolicy`, cada uma com o estado que
+o `oc wait` esperou.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link e entre com o login `{usuario_console}`.
+ifdef::perfis[]
+  O perfil Dev não lê este projeto: a tela nasce vazia para `{usuario_console_dev}`.
+endif::[]
+. A lista mostra as duas policies desta parte, `echo-exposta-authpolicy` e
+  `echo-exposta-plans`, com o estado de cada uma.
+. O desenho das peças está na
+  {openshift_console_url}/kuadrant/policy-topology/ns/echo-exposta[Policy Topology do projeto^]:
+  a rota presa ao Gateway, e as duas policies presas à rota.
+. Sem o link: no menu da console, *Connectivity Link → Policies*, e escolha o
+  projeto `echo-exposta`.
+====
+endif::[]
+
 == E o que ainda falta
 
 [source,bash,role="execute"]

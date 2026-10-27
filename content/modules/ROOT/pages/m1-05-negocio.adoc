@@ -125,6 +125,13 @@ na métrica:
 oc get telemetrypolicy prod-web-telemetry -n ingress-gateway -o yaml
 ----
 
+ifeval::["{openshift_console_url}" != ""]
+**Na console web:** o mesmo objeto --
+{openshift_console_url}/k8s/ns/ingress-gateway/extensions.kuadrant.io{tilde}v1alpha1{tilde}TelemetryPolicy/prod-web-telemetry/yaml[a `TelemetryPolicy` `prod-web-telemetry`^]
+(abre em aba nova), com a mesma linha `plan: auth.kuadrant.plan`. Os dois
+perfis a leem.
+endif::[]
+
 A linha que conta está em `spec.metrics.default.labels`: `plan:
 auth.kuadrant.plan` é o rótulo que você viu em cada série.
 

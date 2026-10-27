@@ -230,6 +230,13 @@ cluster:
 oc get planpolicy travels-plans -n travel-agency -o yaml
 ----
 
+ifeval::["{openshift_console_url}" != ""]
+**Na console web:** o mesmo objeto --
+{openshift_console_url}/k8s/ns/travel-agency/extensions.kuadrant.io{tilde}v1alpha1{tilde}PlanPolicy/travels-plans/yaml[a `PlanPolicy` `travels-plans`^]
+(abre em aba nova). Os dois perfis a leem; a lista das policies do projeto
+está na seção *Console: o plano que virou limite*, acima.
+endif::[]
+
 
 .Mais detalhes: as duas janelas de um plano, e por que existem
 [%collapsible]

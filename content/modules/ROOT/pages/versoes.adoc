@@ -158,6 +158,24 @@ lugar** da policy da rota inteira -- por isso ela repete a chave, e quem chega
 sem chave continua recebendo `401`.
 ====
 
+ifeval::["{openshift_console_url}" != ""]
+**Na console web:** as policies da aplicação, agora com a da regra `v2` --
+{openshift_console_url}/kuadrant/policies/ns/travel-agency[Connectivity Link → Policies, no projeto `travel-agency`^]
+(abre em aba nova).
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link e entre com o seu login da console, Infra ou Dev.
+. Na lista estão a `AuthPolicy` da rota nova e a `v2-acesso-antecipado`, com
+  o estado de cada uma -- o mesmo `Enforced` que o `oc wait` esperou.
+. Clique na `v2-acesso-antecipado` e abra a aba *YAML*: o `targetRef` com
+  `sectionName: v2` é o que faz ela valer só na regra `v2`.
+. Sem o link: no menu da console, *Connectivity Link → Policies*, e escolha o
+  projeto `travel-agency`.
+====
+endif::[]
+
 == 4. A v1 avisa que vai sair
 
 O quarto arquivo é a mesma rota, com três cabeçalhos a mais na regra `v1`.

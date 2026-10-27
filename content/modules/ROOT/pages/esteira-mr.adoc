@@ -95,6 +95,26 @@ remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
  * [new branch]      plano-free-6 -> plano-free-6
 ----
 
+ifeval::["{repo_no_ambiente}" != ""]
+**Na console web:** o merge request que o push abriu --
+{repo_no_ambiente}/-/merge_requests[os merge requests do seu projeto^]
+(abre em aba nova). O que conferir e quem aceita está no quadro do perfil
+Infra, logo abaixo.
+
+.Navegando, passo a passo
+[%collapsible]
+====
+. Abra o link. Na tela de login do GitLab, clique em *Entrar com o usuario do
+  console* e use o seu login da console.
+. O merge request `plano free: de 3 para 6` está na lista, aberto por
+  `{usuario_console_dev}`.
+. Dentro dele: a aba *Changes* tem a linha que mudou (o mesmo `git diff` do
+  passo 2), e a conferência *Pipelines as Code CI / confere* aparece com o
+  estado dela.
+. Sem o link: no projeto, o item *Merge requests* do menu à esquerda.
+====
+endif::[]
+
 Se o merge request aparecer como *Draft*, ou a saída não trouxer o endereço:
 xref:se-algo-nao-responder.adoc[Se algo não responder] diz por quê e como
 consertar.
