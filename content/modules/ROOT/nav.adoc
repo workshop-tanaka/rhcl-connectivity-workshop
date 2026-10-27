@@ -156,6 +156,7 @@ endif::[]
 * xref:ambiente-conferir.adoc[Conferir o ambiente]
 * xref:se-algo-nao-responder.adoc[Se algo não responder]
 * xref:ambiente-recomecar.adoc[Recomeçar uma parte]
+* xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório]
 
 .Para fechar
 * xref:99-encerramento.adoc[Encerramento]

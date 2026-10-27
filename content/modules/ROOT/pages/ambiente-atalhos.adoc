@@ -1,0 +1,63 @@
+include::partial$numeros.adoc[]
+= O que aqui é atalho de laboratório
+:navtitle: O que aqui é atalho de laboratório
+
+Este ambiente foi montado para ensinar em poucas horas, com uma turma
+dividindo o mesmo cluster. Várias escolhas daqui são **atalhos**: servem ao
+laboratório e não são a prática para produção. A tabela diz qual é o atalho,
+por que ele existe aqui, e o que considerar em produção -- sempre conferindo
+a documentação oficial da versão em uso e com o apoio do time de Serviços da
+Red Hat.
+
+TIP: Usuário, senha e endereço de cada tela ficam em xref:acessos.adoc[Seus acessos], no topo do menu.
+
+[cols="2,2,3",options="header"]
+|===
+| atalho deste ambiente | por que existe aqui | em produção
+
+| a chave de API na *query string* (`?APIKEY=`)
+| um `curl` só, legível, em todas as partes
+| a chave em cabeçalho, ou identidade (OIDC/JWT) e mTLS de parceiro: na URL
+  ela aparece em logs, históricos e traces
+
+| Gateway, Authorino e Limitador com uma réplica cada, sem `PodDisruptionBudget`
+  e, no Authorino, sem *requests* nem *limits*
+| cabem no cluster de uma turma
+| réplicas, `PodDisruptionBudget` e recursos tirados de uma medição de carga
+  no seu ambiente; um dreno de nó não pode levar a única réplica
+
+| contadores do Limitador em memória
+| uma réplica não precisa compartilhar contador
+| armazenamento compartilhado (Redis ou compatível) assim que houver mais de
+  uma réplica ou mais de um cluster: sem ele, cada réplica conta sozinha e o
+  limite se multiplica
+
+| o salto do Gateway até o Authorino e o Limitador sem mTLS
+| simplifica a instalação
+| avaliar a cifra desse salto na documentação da versão
+
+| tracing ligado no nível de depuração
+| mostrar a árvore inteira de uma requisição
+| amostragem e nível padrão: o rastreio tem custo sob carga
+
+| um cluster, uma plataforma e um Authorino e um Limitador para a turma
+  inteira
+| o laboratório é o mesmo para todos
+| o desenho de times e ambientes da leitura de multi-tenancy, com isolamento
+  por namespace, RBAC e, quando for o caso, clusters separados
+
+| traces e painéis legíveis por quem entra na console, com filtro por
+  participante
+| sala de aula cooperativa
+| RBAC por time e isolamento de leitura
+
+| senhas no guia, chaves descartáveis, entrada pelo router do OpenShift em
+  *passthrough*
+| ambiente efêmero, sem DNS nem balanceador próprios
+| cofre de segredos com rotação, e o caminho de entrada desenhado para o
+  volume e a disponibilidade do seu caso
+|===
+
+Nada disso diminui o que as partes mostram: o comportamento medido é o do
+produto. O que muda em produção é **quanto** de cada peça, e **quem** cuida
+dela.

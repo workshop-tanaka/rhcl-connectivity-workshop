@@ -88,6 +88,23 @@ git log --oneline origin/main..plano-free-6
 Sem nenhuma linha, rode de novo o passo 2 daquela parte e depois o push: o `-f`
 substitui o branch antigo, e o mesmo merge request passa a mostrar a mudança.
 
+[[reportar]]
+== Encontrou uma divergência ou um engano
+
+Avise o instrutor ou o time Red Hat que acompanha a sua sessão, com o que
+torna o caso reproduzível:
+
+. a página e o passo (o título da parte e o número do passo);
+. a saída de `bash scripts/versoes.sh --md`, que diz a versão do material e
+  dos produtos;
+. o comando que você rodou e o que ele respondeu;
+. o que você esperava -- de preferência, a frase da página que não bateu.
+
+[source,bash,role="execute"]
+----
+bash scripts/versoes.sh --md
+----
+
 == Como o `demo.sh` funciona
 
 As partes do guia mandam rodar cada comando à mão. O `demo.sh` é o que está

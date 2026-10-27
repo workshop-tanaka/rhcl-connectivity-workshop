@@ -5,6 +5,8 @@ include::partial$numeros.adoc[]
 Cinco minutos, uma vez. O terminal ao lado já está autenticado no cluster e já
 tem tudo o que as partes executam.
 
+NOTE: O ambiente é compartilhado e será destruído ao fim. Não use dados, nomes nem credenciais reais da sua empresa: o que você digita pode aparecer em logs, métricas e traces.
+
 == 1. Onde você vai trabalhar
 
 [source,bash,role="execute"]

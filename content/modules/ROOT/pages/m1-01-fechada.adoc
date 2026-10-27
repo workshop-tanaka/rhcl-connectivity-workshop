@@ -79,6 +79,11 @@ curl -s -o /dev/null -w '%{http_code}\n' "https://{api_host}/travels?APIKEY={api
 **O que isso diz:** mesmo endereço, mesma aplicação, e a única diferença entre
 o `401` e o `200` é a credencial. Nenhuma linha do `travels` trata disso.
 
+NOTE: *Atalho de laboratório:* a chave vai na URL (`?APIKEY=`) para cada
+`curl` caber numa linha. Em produção ela vai em cabeçalho, ou dá lugar a
+identidade -- ver xref:ambiente-atalhos.adoc[O que aqui é atalho de
+laboratório].
+
 == Passo 4 -- a chave certa, na API errada
 
 No mesmo ambiente há uma segunda API, a `echo-api`. Mande a ela a chave que

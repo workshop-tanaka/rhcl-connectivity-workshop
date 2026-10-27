@@ -77,7 +77,9 @@ workshop vem daqui:
 
 | https://docs.kuadrant.io/[Kuadrant^]
 | o upstream do Connectivity Link: `AuthPolicy`, `RateLimitPolicy`,
-  `TLSPolicy`, `DNSPolicy`
+  `TLSPolicy`, `DNSPolicy`. Upstream não é o produto: recursos e
+  comportamento podem diferir, e para o Connectivity Link vale a documentação
+  da Red Hat
 
 | https://istio.io/latest/docs/[Istio^]
 | `PeerAuthentication`, `AuthorizationPolicy`, `VirtualService`,
@@ -192,3 +194,12 @@ que cada um já permite descartar.
 
 As versões em markdown, prontas para colar num chamado, estão em
 xref:ambiente-conferir.adoc[Conferir o ambiente].
+
+'''
+
+[.small]
+Red Hat, Red Hat OpenShift, o logotipo Red Hat e os nomes dos produtos Red Hat
+são marcas registradas da Red Hat, Inc. ou de suas subsidiárias. Os demais
+nomes e marcas -- como Kubernetes, Istio, Envoy, Kuadrant, GitLab, Argo CD,
+Grafana, Redis e Valkey -- pertencem aos seus donos. Componentes de terceiros
+usados no ambiente têm licença e suporte próprios.

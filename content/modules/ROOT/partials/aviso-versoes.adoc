@@ -1,18 +1,39 @@
-// Aviso de escopo: versoes, alternativas e o que fazer com uma divergencia.
-// Incluido na pagina inicial e nos Materiais de referencia. Pedido do Sandro
-// em 2026-10-27, para protecao do material: a referencia e a documentacao
-// oficial da versao em uso.
+// Aviso de escopo: o que este material e, versoes, alternativas, dados e o
+// que fazer com uma divergencia. Incluido na pagina inicial e nos Materiais
+// de referencia. Pedidos do Sandro em 2026-10-27, para protecao do material:
+// a referencia e a documentacao oficial da versao em uso, e producao conta
+// com o time de Servicos da Red Hat.
 [IMPORTANT]
-.Versões, alternativas e divergências
+.O que este material é, e o que não é
 ====
-Este workshop foi construído e medido com as versões deste ambiente -- o
-material `{demo_ref}`, sobre o Red Hat Connectivity Link e o OpenShift que
-xref:ambiente-conferir.adoc[Conferir o ambiente] mostra. Outra versão pode
-mudar nomes de campo, telas, comandos e comportamentos. E há outras formas de
-implementar o mesmo resultado, que podem coexistir com as escolhas feitas
-aqui. A referência é sempre a documentação oficial da versão que você usa.
+**Uma referência para validar a solução.** Este workshop mostra o Red Hat
+Connectivity Link funcionando, num ambiente de laboratório, para quem quer
+entender e validar a proposta. Não é treinamento oficial nem certificação da
+Red Hat -- para isso existem o treinamento oficial e a área dedicada a ele --,
+e não traz compromisso com ambientes produtivos. Para levar a solução a
+produção, conte com o apoio especializado do time de Serviços da Red Hat
+(Consultoria e Suporte Técnico).
 
-Este é um material de apoio, não a documentação do produto, e pode conter
-divergências ou enganos. Se encontrar algo que não bata com o que você vê,
-informe o instrutor ou o time Red Hat que acompanha a sua sessão.
+**Versões e alternativas.** O material foi construído e medido com as versões
+deste ambiente -- `{demo_ref}`, sobre o Red Hat Connectivity Link e o
+OpenShift que xref:ambiente-conferir.adoc[Conferir o ambiente] mostra. Outra
+versão pode mudar nomes de campo, telas, comandos e comportamentos, e há outras
+formas de implementar o mesmo resultado, que podem coexistir com as escolhas
+feitas aqui. A referência é sempre a documentação oficial da versão que você
+usa. Várias escolhas daqui são atalhos de laboratório, e
+xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório] diz o que fazer
+em produção.
+
+**Números.** Tempos, latências e capacidades que aparecem no guia foram
+medidos neste ambiente, para ensinar o método de medir. Não são benchmark nem
+SLA do produto.
+
+**Dados.** O ambiente é compartilhado e será destruído ao fim. Não use dados,
+nomes nem credenciais reais da sua empresa: o que você digita pode aparecer em
+logs, métricas e traces.
+
+**Divergências.** Este é um material de apoio, não a documentação do produto,
+e pode conter divergências ou enganos. Se encontrar algo que não bata com o
+que você vê, informe o instrutor ou o time Red Hat que acompanha a sua sessão
+-- xref:se-algo-nao-responder.adoc#reportar[o que mandar junto].
 ====
