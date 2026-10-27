@@ -35,6 +35,7 @@ ifndef::foco_rhcl[]
 :p-multitenancy:
 :p-papel-ossm:
 :p-papel-rhsi:
+:p-papel-rhdh:
 :p-waf:
 // quantos arquivos a parte {p-exposta} aplica: os seis de passos/exposta/,
 // nas duas sessoes desde a v0.81
@@ -81,7 +82,8 @@ ifdef::foco_rhcl[]
 :p-multitenancy: 7.2{sp}
 :p-papel-ossm: 7.3{sp}
 :p-papel-rhsi: 7.4{sp}
-:p-waf: 7.5{sp}
+:p-papel-rhdh: 7.5{sp}
+:p-waf: 7.6{sp}
 :n-exposta: seis
 // Na sessao de Connectivity Link nao ha modulos, ha fases. Onde a pagina dizia
 // 'Modulo N', sai o nome do trecho correspondente -- todos no masculino, para

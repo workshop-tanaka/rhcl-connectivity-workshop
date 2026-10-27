@@ -1,0 +1,86 @@
+include::partial$numeros.adoc[]
+= {p-papel-rhdh}Leitura: o papel do Developer Hub
+:navtitle: {p-papel-rhdh}Leitura: o papel do Developer Hub
+
+**Leitura · ~4 min · não muda estado**
+
+Esta sessão não pratica o Red Hat Developer Hub. Esta página diz o que ele
+faz, para você saber onde ele entraria -- e o que **não** pedir ao produto que
+você está vendo.
+
+== A pergunta que ele responde
+
+*Como um time publica uma API nova sem precisar saber tudo o que este
+workshop mostrou?*
+
+Ele opera **antes da borda**, no momento em que um serviço nasce: é o portal
+em que o desenvolvedor encontra o que existe, cria o que falta e lê a
+documentação ao lado do código.
+
+[cols="1,3",options="header"]
+|===
+| o que ele dá | em uma frase
+
+| catálogo
+| o que existe, de quem é, de que depende e onde está documentado -- a API, o
+  time dono e os consumidores, numa página só
+
+| templates (o *golden path*)
+| um formulário que gera o repositório já com namespace, rota, policy de
+  acesso e plano: o serviço novo **não consegue nascer sem eles**
+
+| documentação junto do código
+| a página da API publicada a partir do próprio repositório, e atualizada
+  com ele
+
+| plugins
+| a plataforma vista de dentro do portal -- o inventário de Gateways, rotas e
+  policies, com o atalho para a tela da console quando é hora de mudar algo
+|===
+
+== O que ele não faz
+
+**Decidir uma requisição.** Nada do que o portal mostra vale em tempo de
+execução: quem responde `401`, `429` ou `200` é o Gateway com as policies
+dele, como nas fases 2 a 4. O portal não autentica parceiro, não aplica
+plano e não conta consumo.
+
+**Aplicar no cluster.** O template gera um repositório; quem o leva ao
+cluster é a esteira da fase 5 -- o merge request, a conferência e o Argo CD.
+O portal é o começo do caminho, não o fim.
+
+E o ponto do formulário não é digitar menos. É que a decisão de arquitetura
+-- toda API nasce fechada, com dono, plano e rota -- deixa de depender de
+quem lembra dela.
+
+== Onde ele entraria nesta aplicação
+
+No começo da fase 5. Os arquivos que a esteira aplica foram escritos à mão
+na parte {p-exposta}; com o portal, eles nascem de um formulário -- a leitura
+xref:m5-01-colheita.adoc[{p-colheita}] mostra esse formulário e os arquivos
+reais que ele gera. A jornada de uma API fica em três templates:
+
+* **criar o produto** -- o repositório novo, com a rota, a policy e o plano,
+  que o Argo CD adota;
+* **assinar a API** -- um consumidor pede a chave por merge request no
+  repositório da API, e a aprovação é de quem é dono dela;
+* **publicar a v2** -- o que a parte xref:versoes.adoc[{p-versoes}Uma API, duas
+  versões] fez à mão, por um template.
+
+== O que muda quando ele anda com o Connectivity Link
+
+* **O padrão vira o caminho fácil.** Com `oc apply`, a borda fechada depende
+  de alguém lembrar; com o template, não há outro jeito de nascer.
+* **O dono tem nome.** O catálogo responde a pergunta da parte {p-papeis} e da
+  leitura xref:leitura-parceiros.adoc[{p-parceiros}muitos parceiros, muitas
+  APIs]: de quem é esta API, e quem a consome.
+* **Nada muda na esteira.** O Git continua sendo a fonte, e o Argo CD, quem
+  aplica. O portal só muda de onde os arquivos vêm.
+
+== Onde praticar
+
+Percorrer o caminho com as próprias mãos pede o Developer Hub no ambiente, e
+está em preparação. A leitura xref:m5-01-colheita.adoc[{p-colheita}] mostra
+o que acontece no portal, com os arquivos reais do template. A documentação
+do produto está em
+https://docs.redhat.com/en/documentation/red_hat_developer_hub[Red Hat Developer Hub^].

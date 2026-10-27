@@ -209,7 +209,8 @@ portal **sem limite nenhum**, e sem erro.
 
 **Recomendado: repositório, com uma conferência que recusa rota sem policy de
 acesso.** É a xref:fase-esteira.adoc[fase 5]. O formulário é o passo seguinte,
-na leitura xref:m5-01-colheita.adoc[{p-colheita}].
+na leitura xref:m5-01-colheita.adoc[{p-colheita}] -- e quem o serve é o
+Developer Hub (xref:papel-rhdh.adoc[{p-papel-rhdh}o papel dele]).
 
 == O que muda de natureza quando o número cresce
 

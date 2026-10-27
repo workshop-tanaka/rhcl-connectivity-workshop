@@ -191,12 +191,6 @@ As personas deste ambiente. A senha é **a mesma para todas**:
 |===
 endif::[]
 
-== As versões deste ambiente
-
-**Versão deste material: `{demo_ref}`** -- a mesma tag nos dois repositórios
-do workshop, o do guia e o dos scripts. A versão de cada produto, lida do
-cluster, está em xref:ambiente-conferir.adoc[Conferir o ambiente].
-
 == O terminal
 
 O painel à direita já está autenticado no cluster. Não há login a fazer, e

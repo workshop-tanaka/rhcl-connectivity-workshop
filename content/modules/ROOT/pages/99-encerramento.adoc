@@ -91,9 +91,14 @@ fronteiras, e cada uma é de outro produto:
 | Red Hat Service Interconnect -- alcançar o que ficou fora, sem VPN e sem
   porta aberta
 | xref:papel-rhsi.adoc[o papel do Service Interconnect]
+
+| como um time publica uma API nova sem ter de saber tudo isto?
+| Red Hat Developer Hub -- o catálogo, e o formulário que gera o repositório
+  já com rota, policy e plano
+| xref:papel-rhdh.adoc[o papel do Developer Hub]
 |===
 
-Nenhum dos dois é requisito do que você fez aqui. Eles entram quando a
+Nenhum dos três é requisito do que você fez aqui. Eles entram quando a
 pergunta deles aparecer.
 endif::[]
 

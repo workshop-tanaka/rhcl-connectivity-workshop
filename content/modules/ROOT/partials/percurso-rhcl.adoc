@@ -67,8 +67,8 @@ troca de mãos várias vezes.
 | o trimestre seguinte
 | arquitetura
 | decidir como a governança cresce com parceiros e APIs, dividir a plataforma
-  entre times, e dizer onde entram o Service Mesh, o Service Interconnect e o
-  WAF
+  entre times, e dizer onde entram o Service Mesh, o Service Interconnect, o
+  Developer Hub e o WAF
 | ~30 min, só leitura
 
 | xref:extras.adoc[**Extras**]

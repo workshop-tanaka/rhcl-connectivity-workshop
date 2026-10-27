@@ -96,5 +96,21 @@ jobs:
               print('A onda e um trio de refs congelado; divergir aqui e divergir no ambiente.')
               sys.exit(1)
 
-          print('\nOK: a onda inteira em %s' % distintas.pop())
+          onda = distintas.pop()
+          # Os dois titulos do guia (barra do topo e cabecalho do menu) carregam
+          # a tag da onda -- e o que o participante ve sem abrir pagina nenhuma.
+          # Quem corta a onda troca os dois junto com as refs (docs/IMPLANTACAO).
+          titulos = {
+              'site.yml site.title':    ler('site.yml', 'title'),
+              'content/antora.yml title': ler('content/antora.yml', 'title'),
+          }
+          for k, v in titulos.items():
+              linha = next((l.strip() for l in open(k.split()[0]) if re.match(r'\s*title:', l)), '')
+              print('  %-42s %s' % (k, linha))
+              if not linha.endswith(onda):
+                  print('\nFALHA: %s nao termina com %s' % (k, onda))
+                  print('O titulo e a versao visivel do guia; sem a tag nele, o participante nao sabe qual material esta usando.')
+                  sys.exit(1)
+
+          print('\nOK: a onda inteira em %s' % onda)
           PY

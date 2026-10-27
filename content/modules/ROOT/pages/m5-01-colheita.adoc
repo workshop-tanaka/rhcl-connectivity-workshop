@@ -254,7 +254,9 @@ que vai cobrir.
 endif::[]
 ifdef::foco_rhcl[]
 Percorrer este caminho com as próprias mãos pede o Developer Hub no ambiente,
-e está em preparação. Três exercícios, cada um com um template:
+e está em preparação (o que ele é, e o que não é, está na leitura
+xref:papel-rhdh.adoc[{p-papel-rhdh}o papel do Developer Hub]). Três
+exercícios, cada um com um template:
 
 * **criar o produto** -- o formulário acima, e o Argo CD adotando o
   repositório que ele cria;

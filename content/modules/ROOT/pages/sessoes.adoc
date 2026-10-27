@@ -93,16 +93,18 @@ cruza a fronteira entre dois produtos. Onde isso acontece, a página avisa.
 
 == E os produtos que ficaram de fora desta sessão
 
-Uma sessão dedicada não finge que os outros dois produtos não existem. Para
-cada produto que **não** está no percurso, há uma leitura curta no fim do menu
-dizendo o que ele resolve, o que ele não sabe, e em que ponto desta mesma
-aplicação ele entraria:
+Uma sessão dedicada não finge que os outros produtos não existem. Para cada
+produto que **não** está no percurso -- e o Developer Hub fica fora de todas
+as sessões deste ambiente --, há uma leitura curta no fim do menu dizendo o
+que ele resolve, o que ele não sabe, e em que ponto desta mesma aplicação ele
+entraria:
 
 ifndef::foco_rhcl[]
 * xref:papel-rhcl.adoc[O papel do Connectivity Link]
 endif::[]
 * xref:papel-ossm.adoc[O papel do Service Mesh]
 * xref:papel-rhsi.adoc[O papel do Service Interconnect]
+* xref:papel-rhdh.adoc[O papel do Developer Hub]
 
 São leituras, sem comando. Servem para a conversa que sempre vem no fim: *"e
 isso que você mostrou, o outro produto não faz?"*
