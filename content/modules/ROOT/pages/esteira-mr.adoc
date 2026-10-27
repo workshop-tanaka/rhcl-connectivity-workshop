@@ -23,7 +23,7 @@ Uma rajada de 14 chamadas com uma chave do plano free.
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/travels"; done; echo
 ----
 
 [source,text]
@@ -157,7 +157,7 @@ levou. Depois, a mesma rajada do passo 1.
 git checkout -q main && git pull -q
 bash scripts/esteira.sh espera
 sleep 11
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/travels"; done; echo
 ----
 
 [source,text]

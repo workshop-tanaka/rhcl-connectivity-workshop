@@ -18,11 +18,6 @@ TIP: Usuário, senha e endereço de cada tela ficam em xref:acessos.adoc[Seus ac
 |===
 | atalho deste ambiente | por que existe aqui | em produção
 
-| a chave de API na *query string* (`?APIKEY=`)
-| um `curl` só, legível, em todas as partes
-| a chave em cabeçalho, ou identidade (OIDC/JWT) e mTLS de parceiro: na URL
-  ela aparece em logs, históricos e traces
-
 | Gateway, Authorino e Limitador com uma réplica cada, sem `PodDisruptionBudget`
   e, no Authorino, sem *requests* nem *limits*
 | cabem no cluster de uma turma

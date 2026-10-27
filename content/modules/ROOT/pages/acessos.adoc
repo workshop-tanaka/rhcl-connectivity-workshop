@@ -48,18 +48,18 @@ entre elas que a parte {p-planos} explora:
 | `{api_key_gold}`
 |===
 
-Para chamar a API com uma delas, a chave vai na própria URL:
+Para chamar a API com uma delas, a chave vai no header `Authorization`:
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 300
+curl -sk -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/travels" | head -c 300
 ----
 
 [NOTE]
 ====
-Chave em URL é o mais fácil de demonstrar, e **não** é o que se usa em
-produção -- query string entra em log de acesso. A parte {p-fechada} mostra que
-o mesmo mecanismo aceita cabeçalho.
+A chave vai no header `Authorization: APIKEY <chave>`, e não na URL: assim ela
+fica fora do log de acesso e do endereço de cada trace. A parte {p-fechada}
+mostra a policy que a lê de lá.
 ====
 
 == Os três portais de parceiro

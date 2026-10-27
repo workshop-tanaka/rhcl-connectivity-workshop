@@ -264,7 +264,7 @@ spec:
 <4> **`passthrough`**: o router não abre o TLS. Quem termina a conexão é o
     Gateway, com o certificado dele -- o que a parte
     xref:m1-08-certificado.adoc[{p-certificado}] examinou. É o que permite
-    o Gateway ver o `APIKEY` da requisição e aplicar as policies.
+    o Gateway ler o header `Authorization` da requisição e aplicar as policies.
 
 Num cluster com balanceador próprio para o Gateway, este passo não existe: o
 hostname aponta direto para ele. Aqui ele existe porque o Gateway recebe o
@@ -284,7 +284,7 @@ oc apply -f passos/exposta/05-chave-e-authpolicy.yaml
 oc wait --for=condition=Enforced authpolicy/echo-exposta-authpolicy -n echo-exposta --timeout=90s
 CHAVE=$(oc get secret apikey-echo-exposta -n echo-exposta -o jsonpath='{.data.api_key}' | base64 -d)
 curl -s -o /dev/null -w 'sem chave: %{http_code}\n' https://echo-exposta.{cluster_domain}/
-curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://echo-exposta.{cluster_domain}/?APIKEY=$CHAVE"
+curl -s -o /dev/null -w 'com chave: %{http_code}\n' -H "Authorization: APIKEY $CHAVE" "https://echo-exposta.{cluster_domain}/"
 ----
 
 [source,text]
@@ -343,7 +343,7 @@ spec:
         apiKey:
           allNamespaces: true                     # <6>
           selector: {matchLabels: {app: echo-exposta}}
-        credentials: {queryString: {name: APIKEY}}
+        credentials: {authorizationHeader: {prefix: APIKEY}}
 ----
 
 <1> **O rótulo que faz do `Secret` uma credencial.** É por ele que o Authorino
@@ -364,28 +364,35 @@ spec:
     a outro; num projeto, o RBAC sobre quem cria `Secret`.
 ====
 
-.Outro caso de uso: e se a chave vier no cabeçalho?
+.Outro caso de uso: e se um consumidor só souber mandar na URL?
 [%collapsible]
 ====
-A query string é o atalho deste laboratório (ver
-xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório]). O campo
-`credentials` aceita outros lugares -- muda o bloco, não a policy:
+A policy acima lê a chave do header `Authorization`. Um consumidor que só
+sabe montar a chave na URL (`?APIKEY=<chave>`) não precisa de outra policy:
+basta uma **segunda regra** de autenticação na mesma, com as mesmas chaves e
+outro `credentials`:
 
 [source,yaml]
 ----
-credentials:
-  authorizationHeader: {prefix: APIKEY}   # Authorization: APIKEY <chave>
+rules:
+  authentication:
+    api-key-authn:                                  # a principal
+      apiKey: {allNamespaces: true, selector: {matchLabels: {app: echo-exposta}}}
+      credentials: {authorizationHeader: {prefix: APIKEY}}
+    api-key-legado:                                 # so para quem ainda manda na URL
+      apiKey: {allNamespaces: true, selector: {matchLabels: {app: echo-exposta}}}
+      credentials: {queryString: {name: APIKEY}}
 ----
 
-[source,yaml]
-----
-credentials:
-  customHeader: {name: X-API-Key}         # X-API-Key: <chave>
-----
+O Authorino avalia as regras de autenticação e **basta uma casar** para a
+requisição seguir. É assim que a travel-agency atende os três portais de
+parceiro, que ainda montam a chave na URL: a regra `api-key-portais` existe
+para eles, enquanto a `api-key-authn` atende todo o resto. A regra antiga sai
+quando o último consumidor legado mudar -- e nada mais na policy muda.
 
-O esquema também aceita `cookie`. O resto -- o `Secret`, o `selector`, o
-plano -- não muda. Não medido neste ambiente; a troca do guia inteiro para o
-cabeçalho está prevista.
+O campo `credentials` ainda aceita `customHeader` (um header próprio, como
+`X-API-Key`) e `cookie`. O resto -- o `Secret`, o `selector`, o plano -- é o
+mesmo em qualquer dos casos.
 ====
 
 == Passo 6 -- quem entra está resolvido; falta quanto pode
@@ -398,7 +405,7 @@ O laço faz seis chamadas seguidas com a mesma chave.
 oc apply -f passos/exposta/06-plano.yaml
 oc wait --for=condition=Enforced planpolicy/echo-exposta-plans -n echo-exposta --timeout=90s
 CHAVE=$(oc get secret apikey-echo-exposta -n echo-exposta -o jsonpath='{.data.api_key}' | base64 -d)
-for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w '%{http_code} ' "https://echo-exposta.{cluster_domain}/?APIKEY=$CHAVE"; done; echo
+for i in 1 2 3 4 5 6; do curl -s -o /dev/null -w '%{http_code} ' -H "Authorization: APIKEY $CHAVE" "https://echo-exposta.{cluster_domain}/"; done; echo
 ----
 
 [source,text]

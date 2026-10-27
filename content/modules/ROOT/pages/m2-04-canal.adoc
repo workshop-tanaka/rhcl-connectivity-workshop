@@ -17,8 +17,8 @@ São duas chamadas gRPC que o Envoy do Gateway faz para fora dele mesmo.
 
 A parte {p-leste} mediu o mTLS entre os serviços da aplicação. Mas o Authorino e o
 Limitador moram em `kuadrant-system`, e esse namespace, por padrão, **não está
-no Service Mesh**. E a chave de API viaja na query string, então vai junto na
-chamada ao Authorino.
+no Service Mesh**. E a chave de API viaja no header `Authorization`, então vai
+junto na chamada ao Authorino -- num salto em claro, do mesmo jeito.
 
 A pergunta desta parte: **esse salto é cifrado?**
 

@@ -22,7 +22,7 @@ lugar de 6.
 ----
 oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":9}]'
 sleep 11
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/travels"; done; echo
 bash scripts/esteira.sh estado
 ----
 
@@ -110,7 +110,7 @@ git checkout -q main && git pull -q
 bash scripts/esteira.sh espera
 bash scripts/esteira.sh estado
 sleep 11
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY={api_key_free}"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/travels"; done; echo
 ----
 
 [source,text]

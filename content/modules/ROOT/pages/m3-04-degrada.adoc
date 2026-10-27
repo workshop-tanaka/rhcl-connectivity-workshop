@@ -25,7 +25,7 @@ a chamada ao componente não volta --, e os outros não sentem nada.
 [source,bash,role="execute",subs="attributes+"]
 ----
 CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
-rajada() { for i in $(seq 8); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo; }
+rajada() { for i in $(seq 8); do curl -s -o /dev/null -w '%{http_code} ' -H "Authorization: APIKEY $CHAVE" "https://{api_host}/travels"; done; echo; }
 sleep 11; rajada
 ----
 
@@ -86,7 +86,7 @@ endif::[]
 oc delete -f passos/degrada/01-sem-limitador.yaml
 oc apply -f passos/degrada/02-sem-authorino.yaml
 sleep 11
-for i in 1 2 3; do curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://{api_host}/travels?APIKEY=$CHAVE"; done
+for i in 1 2 3; do curl -s -o /dev/null -w 'com chave: %{http_code}\n' -H "Authorization: APIKEY $CHAVE" "https://{api_host}/travels"; done
 ----
 
 [source,text]

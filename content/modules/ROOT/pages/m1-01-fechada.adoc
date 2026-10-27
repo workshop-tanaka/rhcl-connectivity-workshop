@@ -36,24 +36,28 @@ curl -s -o /dev/null -D - https://{api_host}/travels | grep -iE '^HTTP|www-authe
 ----
 HTTP/2 401
 www-authenticate: APIKEY realm="api-key-authn"
+www-authenticate: APIKEY realm="api-key-portais"
 x-ext-auth-reason: credential not found
 ----
 
 **O que isso diz:** a recusa veio com o motivo, e o motivo está no cabeçalho,
 não no corpo. `credential not found` é a borda dizendo que nem chegou a
-conferir nada: não havia o que conferir.
+conferir nada: não havia o que conferir. E o `www-authenticate` veio em dobro
+porque a policy tem duas regras de identidade, e cada uma anuncia o próprio
+`realm`.
 
 == Passo 2 -- agora com uma chave que não existe
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-curl -s -o /dev/null -D - "https://{api_host}/travels?APIKEY=nao-existe" | grep -iE '^HTTP|www-authenticate|x-ext-auth-reason'
+curl -s -o /dev/null -D - -H 'Authorization: APIKEY nao-existe' "https://{api_host}/travels" | grep -iE '^HTTP|www-authenticate|x-ext-auth-reason'
 ----
 
 [source,text]
 ----
 HTTP/2 401
 www-authenticate: APIKEY realm="api-key-authn"
+www-authenticate: APIKEY realm="api-key-portais"
 x-ext-auth-reason: the API Key provided is invalid
 ----
 
@@ -68,7 +72,7 @@ xref:acessos.adoc[Seus acessos].
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-curl -s -o /dev/null -w '%{http_code}\n' "https://{api_host}/travels?APIKEY={api_key_gold}"
+curl -s -o /dev/null -w '%{http_code}\n' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/travels"
 ----
 
 [source,text]
@@ -79,10 +83,9 @@ curl -s -o /dev/null -w '%{http_code}\n' "https://{api_host}/travels?APIKEY={api
 **O que isso diz:** mesmo endereço, mesma aplicação, e a única diferença entre
 o `401` e o `200` é a credencial. Nenhuma linha do `travels` trata disso.
 
-NOTE: *Atalho de laboratório:* a chave vai na URL (`?APIKEY=`) para cada
-`curl` caber numa linha. Em produção ela vai em cabeçalho, ou dá lugar a
-identidade -- ver xref:ambiente-atalhos.adoc[O que aqui é atalho de
-laboratório].
+NOTE: A chave viaja no header `Authorization: APIKEY <chave>`, não na URL. É
+por isso que ela não aparece no access log do Gateway nem na URL de cada
+trace: o que esses dois registram é o endereço, e o endereço não a carrega.
 
 == Passo 4 -- a chave certa, na API errada
 
@@ -91,7 +94,7 @@ acabou de funcionar:
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-curl -s -o /dev/null -w '%{http_code}\n' "https://echo-travels.{cluster_domain}/?APIKEY={api_key_gold}"
+curl -s -o /dev/null -w '%{http_code}\n' -H 'Authorization: APIKEY {api_key_gold}' "https://echo-travels.{cluster_domain}/"
 ----
 
 [source,text]
@@ -206,8 +209,17 @@ spec:
             matchLabels:
               app: partner      # <3>
         credentials:
+          authorizationHeader:
+            prefix: APIKEY      # <4>
+      api-key-portais:
+        apiKey:
+          allNamespaces: false
+          selector:
+            matchLabels:
+              app: partner
+        credentials:
           queryString:
-            name: APIKEY        # <4>
+            name: APIKEY
 ----
 
 <1> **O alvo decide o alcance.** `kind: HTTPRoute` faz a policy valer só para
@@ -220,16 +232,22 @@ spec:
     credencial válida. Criar um cliente novo é criar um Secret com esse label;
     revogar é apagá-lo. Não há banco de dados de chaves para sincronizar.
 
-Num ambiente de turma o comando acima mostra **`allNamespaces: true`** e um
-segundo rótulo no seletor, `devportal.kuadrant.io/apiproduct: travels-api`: as
-suas chaves moram no namespace da sua aplicação, e não no do Authorino. O
-`true` é seguro por causa do seletor -- só vira credencial o `Secret` que tem
-os dois rótulos, e uma regra de admissão do cluster impede que o rótulo de um
-participante sirva a outro.
-<4> **Onde a credencial viaja.** `queryString` é o mais fácil de demonstrar,
-    mas o mesmo bloco aceita `authorizationHeader` (o `Authorization: APIKEY
-    <chave>`) e `customHeader`. Em produção, cabeçalho -- query string entra em
-    log de acesso.
+Num ambiente de turma o comando acima mostra **`allNamespaces: true`** nas
+regras de identidade, e a `api-key-authn` traz um segundo rótulo no seletor,
+`devportal.kuadrant.io/apiproduct: travels-api`: as suas chaves moram no
+namespace da sua aplicação, e não no do Authorino. O `true` é seguro por causa
+do seletor -- só vira credencial o `Secret` que tem os rótulos pedidos, e uma
+regra de admissão do cluster impede que o rótulo de um participante sirva a
+outro.
+<4> **Onde a credencial viaja.** `authorizationHeader` é a forma usada aqui:
+    o cliente manda `Authorization: APIKEY <chave>`, e a chave fica fora do
+    access log e da URL do trace. O mesmo bloco aceita `customHeader` (um
+    header próprio, como `X-API-Key`) e `queryString` (a chave na URL). A
+    travel-agency tem uma segunda regra, `api-key-portais`, com as mesmas
+    chaves e `queryString`: ela existe só para os três portais de parceiro,
+    sistemas de terceiros que ainda montam a chave na URL. É uma migração em
+    curso -- a borda aceita os dois formatos enquanto o consumidor legado não
+    muda, e a regra antiga sai quando o último mudar.
 ====
 
 .Outro caso de uso: e se a autenticação for JWT/OIDC?

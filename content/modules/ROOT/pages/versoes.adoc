@@ -100,7 +100,7 @@ spec:
 oc apply -f passos/versoes/01-v2-ao-lado.yaml
 sleep 8
 for p in /travels /v1/travels /v2/travels; do
-  printf '%-12s %s\n' $p "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}$p?APIKEY={api_key_gold}")"
+  printf '%-12s %s\n' $p "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}$p")"
 done
 ----
 
@@ -136,8 +136,8 @@ sleep 11
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-for v in v1 v2; do printf "free na $v: "; for i in $(seq 8); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/$v/travels?APIKEY={api_key_free}"; done; echo; sleep 11; done
-curl -s -D - -o /dev/null "https://{api_host}/v2/travels?APIKEY={api_key_gold}" | grep -i x-api-version
+for v in v1 v2; do printf "free na $v: "; for i in $(seq 8); do curl -s -o /dev/null -w '%{http_code} ' -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/$v/travels"; done; echo; sleep 11; done
+curl -s -D - -o /dev/null -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/v2/travels" | grep -i x-api-version
 ----
 
 [source,text]
@@ -184,9 +184,9 @@ sleep 11
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
 for k in gold:{api_key_gold} silver:{api_key_silver} free:{api_key_free}; do
-  printf '%-7s v1=%s v2=%s\n' ${k%%:*} "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v1/travels?APIKEY=${k#*:}")" "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v2/travels?APIKEY=${k#*:}")"
+  printf '%-7s v1=%s v2=%s\n' ${k%%:*} "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/v1/travels")" "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/v2/travels")"
 done
-curl -s "https://{api_host}/v2/travels?APIKEY={api_key_free}"; echo
+curl -s -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/v2/travels"; echo
 ----
 
 [source,text]
@@ -278,7 +278,7 @@ Eles são padrão da web, e um cliente bem escrito os registra:
 ----
 oc apply -f passos/versoes/04-aviso-na-v1.yaml
 sleep 8
-curl -s -D - -o /dev/null "https://{api_host}/v1/travels?APIKEY={api_key_free}" | grep -i -E '^HTTP|^deprecation|^sunset|^link'
+curl -s -D - -o /dev/null -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/v1/travels" | grep -i -E '^HTTP|^deprecation|^sunset|^link'
 ----
 
 [source,text]
@@ -387,10 +387,10 @@ oc wait --for=condition=Enforced authpolicy/v1-desligada -n travel-agency --time
 sleep 11
 printf 'v1 sem chave %s | v1 gold %s | v2 gold %s | /travels gold %s\n' \
   "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v1/travels")" \
-  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v1/travels?APIKEY={api_key_gold}")" \
-  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v2/travels?APIKEY={api_key_gold}")" \
-  "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/travels?APIKEY={api_key_gold}")"
-curl -s "https://{api_host}/v1/travels?APIKEY={api_key_gold}"; echo
+  "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/v1/travels")" \
+  "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/v2/travels")" \
+  "$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/travels")"
+curl -s -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/v1/travels"; echo
 ----
 
 [source,text]
@@ -407,7 +407,7 @@ segundo**, sem deploy nem rollback de código:
 ----
 oc delete -f passos/versoes/06-desliga-a-v1.yaml
 sleep 2
-curl -s -o /dev/null -w 'v1 gold: %{http_code}\n' "https://{api_host}/v1/travels?APIKEY={api_key_gold}"
+curl -s -o /dev/null -w 'v1 gold: %{http_code}\n' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/v1/travels"
 ----
 
 .Mais detalhes: o que cada campo da policy de desligamento faz
@@ -451,8 +451,8 @@ oc apply -f passos/versoes/07-atual-na-v1.yaml
 sleep 11
 for k in gold:{api_key_gold} free:{api_key_free}; do
   printf '%-5s /atual %s, versao %s\n' ${k%%:*} \
-    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
-    "$(curl -s -D - -o /dev/null "https://{api_host}/atual/travels?APIKEY=${k#*:}" | grep -i '^x-api-version' | tr -d '\r' | cut -d' ' -f2)"
+    "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")" \
+    "$(curl -s -D - -o /dev/null -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels" | grep -i '^x-api-version' | tr -d '\r' | cut -d' ' -f2)"
 done
 ----
 
@@ -485,9 +485,9 @@ oc apply -f passos/versoes/08-atual-na-v2.yaml
 sleep 11
 for k in gold:{api_key_gold} free:{api_key_free}; do
   printf '%-5s /atual %s, versao %s | /v2 direto %s\n' ${k%%:*} \
-    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
-    "$(curl -s -D - -o /dev/null "https://{api_host}/atual/travels?APIKEY=${k#*:}" | grep -i '^x-api-version' | tr -d '\r' | cut -d' ' -f2)" \
-    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/v2/travels?APIKEY=${k#*:}")"
+    "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")" \
+    "$(curl -s -D - -o /dev/null -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels" | grep -i '^x-api-version' | tr -d '\r' | cut -d' ' -f2)" \
+    "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/v2/travels")"
 done
 ----
 
@@ -518,9 +518,9 @@ oc apply -f passos/versoes/09-atual-redireciona.yaml
 sleep 11
 for k in gold:{api_key_gold} free:{api_key_free}; do
   printf '%-5s /atual %s -> %s | seguindo o redirect: %s\n' ${k%%:*} \
-    "$(curl -s -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
-    "$(curl -s -o /dev/null -w '%{redirect_url}' "https://{api_host}/atual/travels?APIKEY=${k#*:}" | sed 's/?.*//')" \
-    "$(curl -s -L -o /dev/null -w '%{http_code}' "https://{api_host}/atual/travels?APIKEY=${k#*:}")"
+    "$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")" \
+    "$(curl -s -o /dev/null -w '%{redirect_url}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")" \
+    "$(curl -s -L -o /dev/null -w '%{http_code}' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")"
 done
 ----
 
@@ -605,8 +605,8 @@ sleep 11
 v() { curl -s -D - -o /dev/null "$@" | awk 'NR==1{c=$2} tolower($1)=="x-api-version:"{x=$2} END{printf "%s v%s", c, x}' | tr -d '\r'; }
 for k in gold:{api_key_gold} silver:{api_key_silver} free:{api_key_free}; do
   printf '%-6s sem cabecalho %s | com x-api-version: 2 -> %s\n' ${k%%:*} \
-    "$(v "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
-    "$(v -H 'x-api-version: 2' "https://{api_host}/atual/travels?APIKEY=${k#*:}")"
+    "$(v -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")" \
+    "$(v -H 'x-api-version: 2' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")"
   sleep 4
 done
 ----
@@ -644,11 +644,11 @@ oc wait --for=condition=Enforced authpolicy/v2-so-um-parceiro -n travel-agency -
 sleep 11
 for k in gold:{api_key_gold} silver:{api_key_silver} free:{api_key_free}; do
   printf '%-6s sem cabecalho %s | com x-api-version: 2 -> %s\n' ${k%%:*} \
-    "$(v "https://{api_host}/atual/travels?APIKEY=${k#*:}")" \
-    "$(v -H 'x-api-version: 2' "https://{api_host}/atual/travels?APIKEY=${k#*:}")"
+    "$(v -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")" \
+    "$(v -H 'x-api-version: 2' -H "Authorization: APIKEY ${k#*:}" "https://{api_host}/atual/travels")"
   sleep 4
 done
-curl -s -H 'x-api-version: 2' "https://{api_host}/atual/travels?APIKEY={api_key_silver}"; echo
+curl -s -H 'x-api-version: 2' -H 'Authorization: APIKEY {api_key_silver}' "https://{api_host}/atual/travels"; echo
 ----
 
 [source,text]
@@ -728,7 +728,7 @@ em vinte chamadas.
 
 [source,bash,role="execute perfil-dev",subs="attributes+"]
 ----
-conta() { for i in $(seq 20); do curl -s -D - -o /dev/null "https://{api_host}/atual/travels?APIKEY={api_key_gold}" | awk 'tolower($1)=="x-api-version:"{print "v"$2}' | tr -d '\r'; done | sort | uniq -c | tr '\n' ' '; echo; }
+conta() { for i in $(seq 20); do curl -s -D - -o /dev/null -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/atual/travels" | awk 'tolower($1)=="x-api-version:"{print "v"$2}' | tr -d '\r'; done | sort | uniq -c | tr '\n' ' '; echo; }
 oc apply -f passos/versoes/12-promove-50-50.yaml
 sleep 11; printf '50/50:  '; conta
 ----

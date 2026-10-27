@@ -171,8 +171,9 @@ endif::[]
 |===
 
 Mesmo código, investigações completamente diferentes. E há um detalhe que
-poucos usam: o cabeçalho `www-authenticate` traz `realm="api-key-authn"`, que
-é o **nome da regra** que recusou. Você descobre em qual regra o cliente caiu
+poucos usam: cada cabeçalho `www-authenticate` traz um `realm`, que é o
+**nome da regra** de identidade que recusou -- na travel-agency vêm dois,
+`api-key-authn` e `api-key-portais`, um por regra. Você descobre em qual regra o cliente caiu
 sem abrir um arquivo de configuração e sem ter acesso ao cluster.
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401[O que o 401 significa no padrão HTTP^]

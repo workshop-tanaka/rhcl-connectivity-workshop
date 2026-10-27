@@ -85,7 +85,7 @@ mande a mesma rajada:
 oc label secret apikey-free-acme -n kuadrant-system kuadrant.io/plan-id=gold --overwrite
 sleep 11
 CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H "Authorization: APIKEY $CHAVE" "https://{api_host}/travels"; done; echo
 ----
 
 [source,text]
@@ -114,7 +114,7 @@ mesmo Secret, com o rótulo que você acabou de pôr:
 oc get secret apikey-free-acme -n kuadrant-system -o yaml | oc replace --force -f -
 sleep 5
 CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H "Authorization: APIKEY $CHAVE" "https://{api_host}/travels"; done; echo
 ----
 
 [source,text]
@@ -136,7 +136,7 @@ oc label secret apikey-free-acme -n kuadrant-system kuadrant.io/plan-id=free --o
 oc get secret apikey-free-acme -n kuadrant-system -o yaml | oc replace --force -f -
 sleep 11
 CHAVE=$(oc get secret apikey-free-acme -n kuadrant-system -o jsonpath='{.data.api_key}' | base64 -d)
-for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels?APIKEY=$CHAVE"; done; echo
+for i in $(seq 14); do curl -s -o /dev/null -w '%{http_code} ' -H "Authorization: APIKEY $CHAVE" "https://{api_host}/travels"; done; echo
 ----
 
 [source,text]

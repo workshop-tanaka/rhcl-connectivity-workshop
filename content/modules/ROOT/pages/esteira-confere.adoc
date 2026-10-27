@@ -143,7 +143,7 @@ spec:
     authentication:
       chave:
         apiKey: {allNamespaces: true, selector: {matchLabels: {app: partner}}}
-        credentials: {queryString: {name: APIKEY}}
+        credentials: {authorizationHeader: {prefix: APIKEY}}
 EOF
 echo '  - relatorios-chave.yaml' >> esteira/kustomization.yaml
 bash scripts/esteira.sh confere | tail -1
@@ -180,7 +180,7 @@ git checkout -q main && git pull -q
 bash scripts/esteira.sh espera
 bash scripts/esteira.sh estado | tail -3
 curl -s -o /dev/null -w 'sem chave: %{http_code}\n' "https://{api_host}/relatorios"
-curl -s -o /dev/null -w 'com chave: %{http_code}\n' "https://{api_host}/relatorios?APIKEY={api_key_gold}"
+curl -s -o /dev/null -w 'com chave: %{http_code}\n' -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/relatorios"
 ----
 
 [source,text]

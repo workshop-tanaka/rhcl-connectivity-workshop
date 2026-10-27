@@ -68,14 +68,15 @@ campo a campo:
 | | HTTP (`travels`) | gRPC (`bookings`)
 
 | `targetRef.kind` | `HTTPRoute` | **`GRPCRoute`**
-| `credentials` | `queryString: APIKEY` | **`customHeader: apikey`**
+| `credentials` | `authorizationHeader: APIKEY` | **`customHeader: apikey`**
 | seletor das chaves | `app=partner` | `app=partner` — igual
 | Gateway | `prod-web` | `prod-web` — **o mesmo**
 | listener | HTTPS/443 | HTTPS/443 — **o mesmo**, h2 por ALPN
 |===
 
-**Duas diferenças, e as duas são do protocolo.** gRPC não tem query string,
-então a credencial viaja em _metadata_. Nada mais muda.
+**Duas diferenças, e as duas são do protocolo.** Em gRPC a credencial viaja
+em _metadata_, que é o equivalente do header HTTP -- por isso `customHeader`,
+com o nome que o cliente gRPC usa. Nada mais muda.
 
 Não há porta nova, não há Gateway novo, não há operador novo. É por isso que a
 resposta curta a *"funciona com gRPC?"* é **"é a mesma policy"**.

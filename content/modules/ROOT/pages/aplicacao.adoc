@@ -244,7 +244,7 @@ oc get deploy,svc -n travel-agency
 
 [source,bash,role="execute perfil-qualquer",subs="attributes+"]
 ----
-curl -sk "https://{api_host}/travels?APIKEY={api_key_gold}" | head -c 200; echo
+curl -sk -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/travels" | head -c 200; echo
 ----
 
 O primeiro mostra os sete serviços; o segundo, com a chave gold na URL, traz os destinos que vieram do banco.
