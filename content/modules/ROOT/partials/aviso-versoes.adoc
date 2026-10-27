@@ -15,8 +15,8 @@ funcionalidades e a solução, este laboratório tomou a liberdade de simplifica
 e de usar recursos técnicos próprios de laboratório: o que se vê aqui não
 representa recomendações integrais para ambientes produtivos. Para levar a
 solução a produção, conte com o apoio especializado do time de Serviços da Red
-Hat (Consultoria). Com a implantação concluída, as questões do produto em uso
-seguem pelo Suporte Técnico da Red Hat.
+Hat (Consultoria). Para quem já concluiu a implantação, o Suporte Técnico da
+Red Hat é o canal para dúvidas e incidentes do produto em operação.
 
 **Versões e alternativas.** O material foi construído e medido com as versões
 deste ambiente -- `{demo_ref}`, sobre o Red Hat Connectivity Link e o
