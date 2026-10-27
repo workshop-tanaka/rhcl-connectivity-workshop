@@ -39,6 +39,38 @@ não declara, o tempo é uma estimativa pelo tamanho do texto e está marcado co
 um asterisco (*).
 ====
 
+ifdef::trilhas_links[]
+== Abrir uma trilha
+
+Cada trilha abaixo é um guia inteiro, com o menu só dela e os botões
+*Anterior* e *Próxima* na ordem, no mesmo terminal. Abra a que quiser; para
+trocar, volte a esta página (ela está no menu de todas) e abra outra. O menu
+completo da sessão fica em link:/[Todas as páginas,window=_top].
+
+[cols="1,2,1",options="header"]
+|===
+| trilha | para quem | abrir
+
+| **Degustação** · ~38 min | quem tem meia hora e quer ver a tese funcionando
+| link:/degustacao/[abrir,window=_top]
+| **Básico** · ~1h04 | quem vai usar o produto e precisa do caminho inteiro de uma API
+| link:/basico/[abrir,window=_top]
+| **Intermediário** · ~2h45 | quem vai operar a esteira e a borda no dia a dia
+| link:/intermediario/[abrir,window=_top]
+| **Avançado** · ~6h30 | a sessão inteira, com os Extras
+| link:/avancado/[abrir,window=_top]
+| **Infra** · ~2h11 | quem opera a plataforma: instalação, borda, certificado, DNS, alerta
+| link:/infra/[abrir,window=_top]
+| **Desenvolvedor** · ~3h17 | quem publica a API: rota, policy, planos, versões, esteira
+| link:/desenvolvedor/[abrir,window=_top]
+| **Operações** · ~1h38 | quem responde pela borda: número, diagnóstico, alerta, auditoria
+| link:/operacoes/[abrir,window=_top]
+|===
+
+Se um link devolver "não encontrado", aquela trilha não foi construída para o
+seu guia: peça a quem conduz a sessão.
+endif::[]
+
 == As sete trilhas, em uma tabela
 
 [cols="2,4,1",options="header"]
