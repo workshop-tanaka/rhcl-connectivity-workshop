@@ -89,7 +89,7 @@ Sem nenhuma linha, rode de novo o passo 2 daquela parte e depois o push: o `-f`
 substitui o branch antigo, e o mesmo merge request passa a mostrar a mudança.
 
 [[reportar]]
-== Encontrou uma divergência ou um engano
+== Encontrou uma divergência
 
 Avise o instrutor ou o time Red Hat que acompanha a sua sessão, com o que
 torna o caso reproduzível:

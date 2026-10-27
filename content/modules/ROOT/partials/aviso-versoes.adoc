@@ -37,7 +37,7 @@ nomes nem credenciais reais da sua empresa: o que você digita pode aparecer em
 logs, métricas e traces.
 
 **Divergências.** Este é um material de apoio, não a documentação do produto,
-e pode conter divergências ou enganos. Se encontrar algo que não bata com o
+e pode conter divergências. Se encontrar algo que não bata com o
 que você vê, informe o instrutor ou o time Red Hat que acompanha a sua sessão
 -- xref:se-algo-nao-responder.adoc#reportar[o que mandar junto].
 ====
