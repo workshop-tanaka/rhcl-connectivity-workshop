@@ -36,15 +36,13 @@ curl -s -o /dev/null -D - https://{api_host}/travels | grep -iE '^HTTP|www-authe
 ----
 HTTP/2 401
 www-authenticate: APIKEY realm="api-key-authn"
-www-authenticate: APIKEY realm="api-key-portais"
 x-ext-auth-reason: credential not found
 ----
 
 **O que isso diz:** a recusa veio com o motivo, e o motivo está no cabeçalho,
 não no corpo. `credential not found` é a borda dizendo que nem chegou a
-conferir nada: não havia o que conferir. E o `www-authenticate` veio em dobro
-porque a policy tem duas regras de identidade, e cada uma anuncia o próprio
-`realm`.
+conferir nada: não havia o que conferir. O `realm` do `www-authenticate` é o
+nome da regra de identidade que recusou.
 
 == Passo 2 -- agora com uma chave que não existe
 
@@ -57,7 +55,6 @@ curl -s -o /dev/null -D - -H 'Authorization: APIKEY nao-existe' "https://{api_ho
 ----
 HTTP/2 401
 www-authenticate: APIKEY realm="api-key-authn"
-www-authenticate: APIKEY realm="api-key-portais"
 x-ext-auth-reason: the API Key provided is invalid
 ----
 
@@ -211,15 +208,6 @@ spec:
         credentials:
           authorizationHeader:
             prefix: APIKEY      # <4>
-      api-key-portais:
-        apiKey:
-          allNamespaces: false
-          selector:
-            matchLabels:
-              app: partner
-        credentials:
-          queryString:
-            name: APIKEY
 ----
 
 <1> **O alvo decide o alcance.** `kind: HTTPRoute` faz a policy valer só para
@@ -242,12 +230,10 @@ outro.
 <4> **Onde a credencial viaja.** `authorizationHeader` é a forma usada aqui:
     o cliente manda `Authorization: APIKEY <chave>`, e a chave fica fora do
     access log e da URL do trace. O mesmo bloco aceita `customHeader` (um
-    header próprio, como `X-API-Key`) e `queryString` (a chave na URL). A
-    travel-agency tem uma segunda regra, `api-key-portais`, com as mesmas
-    chaves e `queryString`: ela existe só para os três portais de parceiro,
-    sistemas de terceiros que ainda montam a chave na URL. É uma migração em
-    curso -- a borda aceita os dois formatos enquanto o consumidor legado não
-    muda, e a regra antiga sai quando o último mudar.
+    header próprio, como `X-API-Key`) e `queryString` (a chave na URL, que
+    entra em log de acesso e em trace). Trocar o lugar da credencial é trocar
+    este bloco; o resto da policy não muda. A parte xref:m1-06-exposta.adoc[{p-exposta}]
+    mostra como aceitar dois formatos ao mesmo tempo, durante uma migração.
 ====
 
 .Outro caso de uso: e se a autenticação for JWT/OIDC?

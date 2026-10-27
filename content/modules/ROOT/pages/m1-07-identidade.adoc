@@ -270,10 +270,9 @@ policy -- o `Secret`, o `selector` e o plano são os mesmos nos três:
 
 | `queryString`
 | a chave na URL (`?APIKEY=<chave>`). Entra em log de acesso, histórico e
-  trace. Aceita aqui só para os portais de parceiro, pela regra
-  `api-key-portais` da travel-agency, e para o caso em que o cliente não
-  consegue mandar header -- como a API de WebSocket do navegador, ver
-  xref:leitura-websocket.adoc[WebSocket].
+  trace. Não é aceita neste ambiente. O caso em que se justifica é o do
+  cliente que não consegue mandar header -- como a API de WebSocket do
+  navegador, ver xref:leitura-websocket.adoc[WebSocket].
 |===
 
 == O que isso prova

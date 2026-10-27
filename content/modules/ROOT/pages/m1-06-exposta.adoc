@@ -385,10 +385,11 @@ rules:
 ----
 
 O Authorino avalia as regras de autenticação e **basta uma casar** para a
-requisição seguir. É assim que a travel-agency atende os três portais de
-parceiro, que ainda montam a chave na URL: a regra `api-key-portais` existe
-para eles, enquanto a `api-key-authn` atende todo o resto. A regra antiga sai
-quando o último consumidor legado mudar -- e nada mais na policy muda.
+requisição seguir. É assim que uma migração real se faz: a borda aceita os
+dois formatos enquanto o consumidor legado não muda, e a regra antiga sai
+quando o último mudar -- nada mais na policy muda. Neste ambiente a
+travel-agency passou por isso: os três portais de parceiro montavam a chave
+na URL, e tiveram uma regra assim até a imagem deles passar a mandar o header.
 
 O campo `credentials` ainda aceita `customHeader` (um header próprio, como
 `X-API-Key`) e `cookie`. O resto -- o `Secret`, o `selector`, o plano -- é o
