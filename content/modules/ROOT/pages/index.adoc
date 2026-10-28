@@ -1,12 +1,8 @@
 include::partial$numeros.adoc[]
 = Connectivity Link -- a API como plataforma
-:page-authorship: Sandro Tanaka
 :page-trilhas: Degustação · Básico · Intermediário · Avançado · Infra · Desenvolvedor · Operações
 
 include::partial$trilha.adoc[]
-
-[.subtitulo]
-_Workshop idealizado e construído por Sandro Tanaka._
 
 
 Uma aplicação de viagens, sem uma linha de código sobre segurança ou limites,

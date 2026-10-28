@@ -174,7 +174,3 @@ Tudo que o workshop usou -- documentação dos produtos, os projetos por trás, 
 configuração versionada e a coleção do Postman -- está reunido em
 xref:referencias.adoc[Materiais de referência].
 
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._

@@ -215,8 +215,3 @@ Tudo que você vai fazer acontece **ao redor** da aplicação: o binário do
 fechada, vendida em planos e observada sem a aplicação ter mudado, a conclusão
 se impõe sozinha: **o Connectivity Link não é um gateway com recursos extras.
 É onde a API vira produto.**
-
-'''
-
-[.autoria]
-_Workshop idealizado e construído por Sandro Tanaka._
