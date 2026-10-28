@@ -181,6 +181,7 @@ projeto: da borda à esteira, com a degradação e o alerta no fim.
 . xref:esteira-mr.adoc[{p-mr}Mudança por merge request] · 15 min, parte esperando
 . xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
 . xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
+. xref:esteira-bateria.adoc[{p-bateria}A bateria da borda] · 10 min
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
@@ -232,6 +233,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:esteira-mr.adoc[{p-mr}Mudança por merge request] · 15 min, parte esperando
 . xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
 . xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
+. xref:esteira-bateria.adoc[{p-bateria}A bateria da borda] · 10 min
 . xref:m5-01-colheita.adoc[{p-colheita} Leitura: do repositório ao formulário] · ~8 min
 . xref:m3-00-intro.adoc[Fase 6 -- O que muda nesta fase] · ~3 min*
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
@@ -329,6 +331,7 @@ esteira.
 . xref:esteira-mr.adoc[{p-mr}Mudança por merge request] · 15 min, parte esperando
 . xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
 . xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
+. xref:esteira-bateria.adoc[{p-bateria}A bateria da borda] · 10 min
 . xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo] · ~9 min
 . xref:extra-postman.adoc[Testar a API no Postman] · ~10 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*

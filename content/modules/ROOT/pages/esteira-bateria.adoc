@@ -1,0 +1,198 @@
+include::partial$numeros.adoc[]
+= {p-bateria}A bateria da borda: o contrato em teste
+:navtitle: {p-bateria}A bateria da borda
+:page-trilhas: Intermediário · Avançado · Desenvolvedor
+
+**Para quem:** Desenvolvedor da API e Operação. · **10 min** · **muda estado por dois minutos, e devolve**
+
+include::partial$trilha.adoc[]
+
+[NOTE.antes]
+====
+**Antes:** a parte {p-confere}, que recusa o merge request errado **antes** do
+merge, e a {p-desvio}, que mostra a edição à mão como desvio. Esta parte é o
+par das duas: o teste que diz, **depois**, se a borda continua como o contrato
+promete.
+====
+
+A conferência da {p-confere}lê o repositório: ela sabe que uma rota sem policy
+não entra. O que ela não sabe é se a borda, no ar, faz o que o repositório
+diz. Para isso existe uma bateria de testes: a mesma coleção do Postman do
+Extra xref:extra-postman.adoc[Testar a API no Postman], com asserções salvas
+em cada requisição, rodando sem Postman nenhum -- do terminal, e depois da
+esteira.
+
+[cols="1,3",options="header"]
+|===
+| pasta | o que afirma
+
+| **Contrato -- travels**
+| o corpo tem a forma prometida: a lista é de `{city, lat, lng}`; um destino
+  tem `city`, `status`, `flights[{airline, price}]` e `hotels[]`; é JSON; traz
+  `x-request-id`; responde em menos de 2 s. Um campo a menos reprova aqui,
+  mesmo com `200`
+
+| **A borda é fechada**
+| sem chave, `401`; chave inexistente, `401`; chave na URL em vez do
+  cabeçalho, `401`
+
+| **Planos -- por dados**
+| uma rodada por plano, lendo plano, chave e limite de um arquivo gerado na
+  hora: a primeira chamada responde `200`, e a de número limite+1 em dez
+  segundos leva `429`. **O limite vem do repositório**, não do cluster: é a
+  promessa, não o que está valendo
+
+| **Versões** (depois da {p-versoes})
+| a v1 avisa que vai sair, a v2 marca `x-api-version: 2`, e o free não entra
+  na v2. Só roda quando você pedir, porque a rota nasce na {p-versoes}
+|===
+
+== Passo 1 -- rode a bateria
+
+Ela gera os dados deste cluster, sobe um pod descartável com o runner oficial
+da coleção no seu namespace, e imprime o resultado. Leva cerca de um minuto;
+a maior parte é o pod subindo.
+
+[source,bash,role="execute perfil-dev"]
+----
+bash scripts/testa-borda.sh
+----
+
+[source,text]
+----
+== 1. environment e dados por plano (deste cluster) ==
+    escrito: postman/rhcl-demo.local.postman_environment.json
+    escrito: postman/rhcl-demo-planos.local.csv (plano, chave, limite -- limites de esteira/planos.yaml)
+== 2. ConfigMap testa-borda em travel-agency ==
+== 3. newman num pod descartavel ==
+  ✓  contrato: lista de {city, lat, lng}
+  ✓  401 sem credencial
+  ✓  401: a chave na URL nao e aceita
+  ...
+  ✓  free: a requisicao 4 em 10 s leva 429 do Limitador
+  ✓  silver: a requisicao 11 em 10 s leva 429 do Limitador
+  ✓  gold: a requisicao 31 em 10 s leva 429 do Limitador
+│              assertions │                20 │                0 │
+
+[OK] a borda esta como o contrato diz (newman rc=0).
+----
+
+**O que isso diz:** vinte afirmações sobre a sua borda, todas verdadeiras agora.
+Cada uma tem nome, e o nome é a promessa: "a requisição 4 em 10 s leva 429"
+é o plano free do catálogo, escrito como teste.
+
+== Passo 2 -- quebre uma promessa
+
+O mesmo gesto da {p-desvio}: alguém "só ajusta" o free à mão, de 3 para 9.
+Nada reclama -- o cluster aceita, e a API continua respondendo `200`.
+
+[source,bash,role="execute perfil-dev"]
+----
+oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":9}]'
+----
+
+[source,text]
+----
+planpolicy.kuadrant.io/travels-plans patched
+----
+
+== Passo 3 -- rode de novo
+
+[source,bash,role="execute perfil-dev"]
+----
+bash scripts/testa-borda.sh
+----
+
+[source,text]
+----
+  ✓  free: a primeira do plano responde 200
+  ✗  free: a requisicao 4 em 10 s leva 429 do Limitador
+  ✗  o 429 nasce na borda: corpo curto, sem JSON da aplicacao
+  ...
+│              assertions │                 9 │                2 │
+
+ 1.  AssertionError  free: a requisicao 4 em 10 s leva 429 do Limitador
+     iteration: 1    expected response to have status code 429 but got 200
+ 2.  AssertionError  o 429 nasce na borda: corpo curto, sem JSON da aplicacao
+     iteration: 1    expected '{"city":"Rome",...' to include 'Too Many Requests'
+
+[X] a bateria reprovou (newman rc=1): a borda nao esta como o contrato diz -- a assercao com nome acima e a promessa quebrada.
+----
+
+**O que isso diz:** o teste reprovou **pelo nome da promessa quebrada**. Não é
+"a API caiu": é "o free deixou de cortar no quarto" -- e a segunda asserção
+conta o mesmo fato por outro lado: a quarta chamada trouxe o JSON da
+aplicação, que não deveria ter sido acordada. O código de saída é 1, e é
+isso que uma esteira lê. A mudança foi à mão, mas poderia ter vindo por merge
+request com um número errado: a conferência da {p-confere}deixaria passar,
+porque o arquivo é válido; a bateria não, porque o comportamento mudou.
+
+== Passo 4 -- devolva, e confirme
+
+Devolva o valor do repositório. Aqui, pelo mesmo caminho curto; no projeto, o
+caminho é o da {p-desvio}: revert por merge request, com autor e data.
+
+[source,bash,role="execute perfil-dev"]
+----
+oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":3}]'
+sleep 5
+bash scripts/testa-borda.sh 2>&1 | tail -1
+----
+
+[source,text]
+----
+planpolicy.kuadrant.io/travels-plans patched
+[OK] a borda esta como o contrato diz (newman rc=0).
+----
+
+== O que isso prova
+
+**A conferência garante a sintaxe; a bateria garante a promessa.** Uma lê o
+repositório antes do merge, a outra lê a borda depois. Com as duas, "mudança
+por merge request" passa a valer para comportamento, e um upgrade do
+operador tem um teste de regressão pronto -- é o que a Fase 8 pede quando
+fala em homologar cada versão.
+
+.Mais detalhes: de onde vem cada pedaço
+[%collapsible]
+====
+* **A coleção** (`postman/rhcl-demo.postman_collection.json`) é o contrato:
+  requisições e asserções, sem endereço nem chave. É a mesma do Extra do
+  Postman, e abre no aplicativo.
+* **O environment e os dados por plano** saem de `scripts/postman-env.sh`, na
+  hora: os hosts das `HTTPRoute`, as chaves de teste dos `Secret`, e os
+  limites do `esteira/planos.yaml` do seu repositório. Os dois arquivos
+  carregam chave viva e nunca vão para o Git.
+* **O runner** é o `newman`, a linha de comando oficial da coleção. O terminal
+  não tem Node, então ele roda num pod descartável no seu namespace, com os
+  três arquivos montados de um `ConfigMap`. O código de saída do pod é o do
+  `newman`.
+* **A pasta por dados** roda numa chamada à parte: o runner aplica o arquivo
+  de dados à corrida inteira, e sem separar as pastas fixas rodariam uma vez
+  por plano.
+====
+
+.Outro caso de uso: as versões, depois da {p-versoes}
+[%collapsible]
+====
+A pasta *Versões* só vale com a rota `travels-versoes` no ar. Depois daquela
+parte:
+
+[source,bash,role="execute perfil-dev"]
+----
+bash scripts/testa-borda.sh versoes
+----
+
+Entram três afirmações: a v1 responde com o aviso de descontinuação e o link
+para a sucessora; a v2 marca `x-api-version: 2`; o free leva `403` na v2 com a
+mensagem dizendo para onde ir.
+====
+
+.Outro caso de uso: na esteira, depois de cada merge
+[%collapsible]
+====
+O mesmo pod, como tarefa do pipeline depois que o Argo CD sincroniza: o merge
+request mostra verde ou vermelho pela bateria, não só pela conferência. É o
+próximo passo deste material; o que você rodou aqui é exatamente o que a
+tarefa vai rodar.
+====

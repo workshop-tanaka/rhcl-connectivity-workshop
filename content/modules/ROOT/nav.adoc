@@ -108,6 +108,7 @@ ifdef::trilha_intermediario[]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+* xref:esteira-bateria.adoc[5.5 A bateria da borda]
 
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
@@ -155,7 +156,8 @@ ifdef::trilha_avancado[]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
-* xref:m5-01-colheita.adoc[5.5 Leitura: do repositório ao formulário]
+* xref:esteira-bateria.adoc[5.5 A bateria da borda]
+* xref:m5-01-colheita.adoc[5.6 Leitura: do repositório ao formulário]
 
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[O que muda nesta fase]
@@ -247,6 +249,7 @@ ifdef::trilha_desenvolvedor[]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+* xref:esteira-bateria.adoc[5.5 A bateria da borda]
 
 .Fase 6 — Operação
 * xref:fase-6-resumo.adoc[O que há nesta fase]
@@ -327,7 +330,8 @@ ifdef::foco_rhcl[]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
-* xref:m5-01-colheita.adoc[5.5 Leitura: do repositório ao formulário]
+* xref:esteira-bateria.adoc[5.5 A bateria da borda]
+* xref:m5-01-colheita.adoc[5.6 Leitura: do repositório ao formulário]
 
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[O que muda nesta fase]
@@ -409,6 +413,7 @@ ifndef::foco_ossm,foco_rhsi[]
 .O caminho pavimentado (em preparação)
 * xref:m5-00-intro.adoc[A proposta do módulo]
 * xref:m5-01-colheita.adoc[5.1 Leitura: o caminho pavimentado]
+* xref:esteira-bateria.adoc[5.2 A bateria da borda]
 endif::[]
 
 ifndef::foco_ossm,foco_rhsi[]

@@ -25,7 +25,10 @@ projeto continuar inteira. O que há nela: A configuração como código: o repo
 | xref:esteira-desvio.adoc[5.4 Desvio e reversão]
 | --
 | Intermediário · Avançado · Desenvolvedor
-| xref:m5-01-colheita.adoc[5.5 Leitura: do repositório ao formulário]
+| xref:esteira-bateria.adoc[5.5 A bateria da borda]
+| 10 min
+| Intermediário · Avançado · Desenvolvedor
+| xref:m5-01-colheita.adoc[5.6 Leitura: do repositório ao formulário]
 | ~8 min
 | Avançado
 |===

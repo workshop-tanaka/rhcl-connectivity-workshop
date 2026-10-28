@@ -18,11 +18,12 @@ O terminal prova o ponto com menos cliques, mas a maioria das pessoas testa API
 no Postman -- e ver os cabeçalhos numa interface ajuda a fixar o que os
 {m1e3} mostraram.
 
-A coleção cobre mais que um módulo: as chamadas recusadas, os três planos
-comerciais lado a lado, o estouro de cota determinístico, e a autenticação por
-identidade.
+A coleção é a **bateria da borda** da parte {p-bateria}: o contrato do corpo,
+as chamadas recusadas, os planos por dados e as versões, mais a autenticação
+por identidade. O que roda no pod da {p-bateria}é o que você vai abrir aqui,
+requisição por requisição, com as asserções visíveis na aba *Tests*.
 
-== São dois arquivos, e eles são diferentes
+== São três arquivos, e eles são diferentes
 
 [cols="1,2",options="header"]
 |===
@@ -35,6 +36,11 @@ identidade.
 | **o _environment_** (`rhcl-demo.local.postman_environment.json`)
 | os endereços e as **chaves reais deste cluster**. É gerado na hora, nunca
   vem pronto
+
+| **os dados por plano** (`rhcl-demo-planos.local.csv`)
+| uma linha por plano: nome, chave e o limite que o repositório promete. É o
+  que a pasta *Planos -- por dados* lê, uma rodada por linha; gerado junto
+  com o _environment_
 |===
 
 O motivo da separação é o mesmo do workshop inteiro: o cluster é efêmero, e
@@ -63,8 +69,8 @@ No terminal do workshop:
 bash scripts/postman-env.sh
 ----
 
-Ele descobre os endereços e as chaves **deste** cluster e escreve o arquivo.
-Agora mostre o conteúdo para copiar:
+Ele descobre os endereços e as chaves **deste** cluster e escreve os dois
+arquivos. Agora mostre o _environment_ para copiar:
 
 [source,bash,role="execute"]
 ----
@@ -72,7 +78,9 @@ cat postman/rhcl-demo.local.postman_environment.json
 ----
 
 São cerca de 20 linhas. Selecione, copie, e salve na sua máquina como
-`rhcl-demo.postman_environment.json`.
+`rhcl-demo.postman_environment.json`. Faça o mesmo com
+`postman/rhcl-demo-planos.local.csv` (quatro linhas), se for rodar a pasta
+*Planos -- por dados* pelo *Collection Runner*, que pede o arquivo de dados.
 
 [WARNING]
 ====
@@ -107,13 +115,16 @@ vem esse certificado e quem o renova.
 
 == O que tentar primeiro
 
-Abra a pasta **A borda é fechada** e rode *GET travels SEM chave*. Olhe a aba
+Abra a pasta **A borda é fechada** e rode *sem chave -> 401*. Olhe a aba
 **Headers** da resposta: lá está o `x-ext-auth-reason` da estação 3 da parte
-{p-negado}, na interface em vez do terminal.
+{p-negado}, na interface em vez do terminal. Na aba **Test Results**, a
+asserção com nome, verde.
 
-Depois, na pasta **Planos comerciais**, rode *estourar o free* -- é o `429` mudo da
-estação 4, e você pode conferir na mesma aba que não há nenhum cabeçalho
-explicando o limite.
+Depois, na pasta **Contrato -- travels**, rode *GET /travels/Rome*: a aba
+*Tests* mostra o JSON Schema que o corpo precisa cumprir. E, no *Collection
+Runner* com o arquivo de dados, a pasta **Planos -- por dados** faz o `429`
+mudo da estação 4, uma vez por plano -- você pode conferir na aba **Headers**
+que não há nenhum cabeçalho explicando o limite.
 
 == O que isso prova
 

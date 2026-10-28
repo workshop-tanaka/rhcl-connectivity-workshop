@@ -24,6 +24,7 @@ ifndef::foco_rhcl[]
 :p-auditoria: 3.6
 :p-observar: 3.7
 :p-colheita: 5.1
+:p-bateria:
 :p-dns:
 :p-contextos:
 :p-listas:
@@ -75,7 +76,7 @@ ifdef::foco_rhcl[]
 :p-alerta: 6.3
 :p-observar: 6.4
 :p-auditoria: 6.5
-:p-colheita: 5.5
+:p-colheita: 5.6
 :p-dns: 3.2{sp}
 :p-versoes: 4.3{sp}
 :p-contextos: 4.4{sp}
@@ -84,6 +85,7 @@ ifdef::foco_rhcl[]
 :p-mr: 5.2{sp}
 :p-confere: 5.3{sp}
 :p-desvio: 5.4{sp}
+:p-bateria: 5.5{sp}
 // a fase 7 e toda leitura, numerada de ponta a ponta; nas outras sessoes
 // essas paginas sao leituras de apoio, sem numero
 :p-parceiros: 7.1{sp}
