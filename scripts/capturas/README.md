@@ -18,7 +18,11 @@ skill de automacao de navegador serve):
 
 Cada item de `capturas.json`: `arquivo`, `url` (com `${variavel}` do env),
 `esperar` (seletores), `pausa` (ms), `recorte` (seletor fotografado),
-`marcar` (lista de `{texto|seletor, n, dentro}`), `login` (`openshift`).
+`marcar` (lista de `{texto|seletor, n, dentro, ate}`; `ate` sobe ate o
+ancestral que casa o seletor, como a linha inteira de uma tabela), `login`
+(`openshift`). A figura do Jaeger (6.2) pede no env `traces_url` (a rota
+`tempo-tempo-jaegerui` em `tracing-system`) e `trace_429`: o id de um trace de
+`429` do participante modelo, que `bash scripts/trace.sh ultimo 8` lista.
 
 Estado: oito figuras -- tres do Grafana (2.1 e 4.1), quatro da console (2.1
 Observe > Metrics, 2.3 lista de policies, 4.x API Products, 5.3 PipelineRuns)

@@ -74,6 +74,10 @@ export default async function run(page) {
           // sobe ate um bloco com area, para a borda nao ficar colada na letra
           while (el && el.getBoundingClientRect().height < 16 && el.parentElement) el = el.parentElement
         }
+        // 'ate': sobe ate o ancestral que casa o seletor (a linha inteira, por
+        // exemplo) -- para quando o pai corta o elemento do texto por overflow
+        // e a borda nao apareceria
+        if (el && it.ate) el = el.closest(it.ate) || el
         if (!el) { r.push({ n: it.n, ok: false }); continue }
         el.classList.add('cap-marca')
         const b = el.getBoundingClientRect()

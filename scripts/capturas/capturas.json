@@ -1,242 +1,267 @@
 [
- {
-  "arquivo": "2-1-grafana-401-destino.png",
-  "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
-  "esperar": [
-   "section[data-testid=\"data-testid Panel header API fechada · 401 na borda: quem foi o destino?\"]"
-  ],
-  "pausa": 2500,
-  "recorte": "section[data-testid=\"data-testid Panel header API fechada · 401 na borda: quem foi o destino?\"]",
-  "marcar": [
-   {
-    "texto": "401 -> unknown",
-    "n": 1,
-    "dentro": true
-   }
-  ]
- },
- {
-  "arquivo": "2-1-grafana-recusas.png",
-  "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
-  "esperar": [
-   "section[data-testid=\"data-testid Panel header API fechada · Recusas por código (2 min)\"]"
-  ],
-  "pausa": 2500,
-  "recorte": "section[data-testid=\"data-testid Panel header API fechada · Recusas por código (2 min)\"]",
-  "marcar": [
-   {
-    "texto": "401",
-    "n": 1,
-    "dentro": true
-   },
-   {
-    "texto": "429",
-    "n": 2,
-    "dentro": true
-   }
-  ]
- },
- {
-  "arquivo": "4-1-grafana-planos.png",
-  "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
-  "esperar": [
-   "section[data-testid=\"data-testid Panel header Planos · Servidas por plano (15 min)\"]"
-  ],
-  "pausa": 2500,
-  "recorte": "section[data-testid=\"data-testid Panel header Planos · Servidas por plano (15 min)\"]",
-  "marcar": [
-   {
-    "texto": "free",
-    "n": 1,
-    "dentro": true
-   },
-   {
-    "texto": "silver",
-    "n": 2,
-    "dentro": true
-   },
-   {
-    "texto": "gold",
-    "n": 3,
-    "dentro": true
-   }
-  ]
- },
- {
-  "arquivo": "2-1-console-metrics.png",
-  "url": "${openshift_console_url}/dev-monitoring/ns/ingress-gateway-${guid}/metrics?query0=sum%20by%20(response_code%2C%20destination_workload)%20(increase(istio_requests_total%7Bresponse_code%3D%22401%22%7D%5B15m%5D))",
-  "login": "openshift",
-  "esperar": [
-   "text=unknown"
-  ],
-  "pausa": 4000,
-  "recorte": "[data-test=\"page-content\"], #content, main",
-  "marcar": [
-   {
-    "texto": "unknown",
-    "n": 2,
-    "dentro": true
-   },
-   {
-    "seletor": "[data-test-id=\"namespace-bar-dropdown\"], [data-test=\"namespace-bar-dropdown\"]",
-    "n": 1
-   }
-  ],
-  "viewport": {
-   "width": 1440,
-   "height": 800
+  {
+    "arquivo": "2-1-grafana-401-destino.png",
+    "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": [
+      "section[data-testid=\"data-testid Panel header API fechada · 401 na borda: quem foi o destino?\"]"
+    ],
+    "pausa": 2500,
+    "recorte": "section[data-testid=\"data-testid Panel header API fechada · 401 na borda: quem foi o destino?\"]",
+    "marcar": [
+      {
+        "texto": "401 -> unknown",
+        "n": 1,
+        "dentro": true
+      }
+    ]
   },
-  "clicar": [
-   "text=Hide graph"
-  ]
- },
- {
-  "arquivo": "2-3-console-policies.png",
-  "url": "${openshift_console_url}/kuadrant/policies/ns/travel-agency-${guid}",
-  "pausa": 10000,
-  "recorte": "#content, main",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "2-1-grafana-recusas.png",
+    "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": [
+      "section[data-testid=\"data-testid Panel header API fechada · Recusas por código (2 min)\"]"
+    ],
+    "pausa": 2500,
+    "recorte": "section[data-testid=\"data-testid Panel header API fechada · Recusas por código (2 min)\"]",
+    "marcar": [
+      {
+        "texto": "401",
+        "n": 1,
+        "dentro": true
+      },
+      {
+        "texto": "429",
+        "n": 2,
+        "dentro": true
+      }
+    ]
   },
-  "marcar": [
-   {
-    "texto": "travel-agency-authpolicy",
-    "n": 1,
-    "dentro": true
-   }
-  ],
-  "login": "openshift"
- },
- {
-  "arquivo": "4-1-console-apiproducts.png",
-  "url": "${openshift_console_url}/kuadrant/apiproducts/ns/travel-agency-${guid}",
-  "pausa": 10000,
-  "recorte": "#content, main",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "4-1-grafana-planos.png",
+    "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": [
+      "section[data-testid=\"data-testid Panel header Planos · Servidas por plano (15 min)\"]"
+    ],
+    "pausa": 2500,
+    "recorte": "section[data-testid=\"data-testid Panel header Planos · Servidas por plano (15 min)\"]",
+    "marcar": [
+      {
+        "texto": "free",
+        "n": 1,
+        "dentro": true
+      },
+      {
+        "texto": "silver",
+        "n": 2,
+        "dentro": true
+      },
+      {
+        "texto": "gold",
+        "n": 3,
+        "dentro": true
+      }
+    ]
   },
-  "marcar": [],
-  "login": "openshift"
- },
- {
-  "arquivo": "5-3-console-pipelineruns.png",
-  "url": "${openshift_console_url}/k8s/ns/esteira-ci-${guid}/tekton.dev~v1~PipelineRun",
-  "pausa": 10000,
-  "recorte": "#content, main",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "2-1-console-metrics.png",
+    "url": "${openshift_console_url}/dev-monitoring/ns/ingress-gateway-${guid}/metrics?query0=sum%20by%20(response_code%2C%20destination_workload)%20(increase(istio_requests_total%7Bresponse_code%3D%22401%22%7D%5B15m%5D))",
+    "login": "openshift",
+    "esperar": [
+      "text=unknown"
+    ],
+    "pausa": 4000,
+    "recorte": "[data-test=\"page-content\"], #content, main",
+    "marcar": [
+      {
+        "texto": "unknown",
+        "n": 2,
+        "dentro": true
+      },
+      {
+        "seletor": "[data-test-id=\"namespace-bar-dropdown\"], [data-test=\"namespace-bar-dropdown\"]",
+        "n": 1
+      }
+    ],
+    "viewport": {
+      "width": 1440,
+      "height": 800
+    },
+    "clicar": [
+      "text=Hide graph"
+    ]
   },
-  "marcar": [
-   {
-    "texto": "Failed",
-    "n": 1,
-    "dentro": true
-   },
-   {
-    "texto": "Succeeded",
-    "n": 2,
-    "dentro": true
-   }
-  ],
-  "login": "openshift"
- },
- {
-  "arquivo": "5-2-gitlab-merge-requests.png",
-  "url": "${repo_no_ambiente}/-/merge_requests?scope=all&state=all",
-  "login": "gitlab",
-  "pausa": 8000,
-  "recorte": "body",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "2-3-console-policies.png",
+    "url": "${openshift_console_url}/kuadrant/policies/ns/travel-agency-${guid}",
+    "pausa": 10000,
+    "recorte": "#content, main",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "travel-agency-authpolicy",
+        "n": 1,
+        "dentro": true
+      }
+    ],
+    "login": "openshift"
   },
-  "marcar": [
-   {
-    "texto": "Merge requests",
-    "n": 1,
-    "dentro": true
-   }
-  ]
- },
- {
-  "arquivo": "5-1-argo-synced.png",
-  "url": "${argocd_url}/applications/openshift-gitops/esteira-${guid}",
-  "login": "argo",
-  "pausa": 20000,
-  "recorte": "body",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "4-1-console-apiproducts.png",
+    "url": "${openshift_console_url}/kuadrant/apiproducts/ns/travel-agency-${guid}",
+    "pausa": 10000,
+    "recorte": "#content, main",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [],
+    "login": "openshift"
   },
-  "marcar": [
-   {
-    "texto": "Synced",
-    "n": 1,
-    "dentro": true
-   }
-  ],
-  "esperar": []
- },
- {
-  "arquivo": "5-3-gitlab-mr-pipelines.png",
-  "url": "${repo_no_ambiente}/-/merge_requests/26/pipelines",
-  "pausa": 8000,
-  "recorte": "body",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "5-3-console-pipelineruns.png",
+    "url": "${openshift_console_url}/k8s/ns/esteira-ci-${guid}/tekton.dev~v1~PipelineRun",
+    "pausa": 10000,
+    "recorte": "#content, main",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "Failed",
+        "n": 1,
+        "dentro": true
+      },
+      {
+        "texto": "Succeeded",
+        "n": 2,
+        "dentro": true
+      }
+    ],
+    "login": "openshift"
   },
-  "marcar": [
-   {
-    "texto": "Pipelines",
-    "n": 1,
-    "dentro": true
-   }
-  ],
-  "login": "gitlab"
- },
- {
-  "arquivo": "5-2-gitlab-mr.png",
-  "url": "${repo_no_ambiente}/-/merge_requests/25",
-  "login": "gitlab",
-  "pausa": 8000,
-  "recorte": "body",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "5-2-gitlab-merge-requests.png",
+    "url": "${repo_no_ambiente}/-/merge_requests?scope=all&state=all",
+    "login": "gitlab",
+    "pausa": 8000,
+    "recorte": "body",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "Merge requests",
+        "n": 1,
+        "dentro": true
+      }
+    ]
   },
-  "marcar": [
-   {
-    "texto": "Changes",
-    "n": 1,
-    "dentro": true
-   },
-   {
-    "texto": "Merge",
-    "n": 2,
-    "dentro": true
-   }
-  ]
- },
- {
-  "arquivo": "5-1-gitlab-commits-esteira.png",
-  "url": "${repo_no_ambiente}/-/commits/main/esteira",
-  "login": "gitlab",
-  "pausa": 6000,
-  "recorte": "body",
-  "viewport": {
-   "width": 1440,
-   "height": 900
+  {
+    "arquivo": "5-1-argo-synced.png",
+    "url": "${argocd_url}/applications/openshift-gitops/esteira-${guid}",
+    "login": "argo",
+    "pausa": 20000,
+    "recorte": "body",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "Synced",
+        "n": 1,
+        "dentro": true
+      }
+    ],
+    "esperar": []
   },
-  "marcar": [
-   {
-    "texto": "esteira",
-    "n": 1,
-    "dentro": true
-   }
-  ]
- }
+  {
+    "arquivo": "5-3-gitlab-mr-pipelines.png",
+    "url": "${repo_no_ambiente}/-/merge_requests/26/pipelines",
+    "pausa": 8000,
+    "recorte": "body",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "Pipelines",
+        "n": 1,
+        "dentro": true
+      }
+    ],
+    "login": "gitlab"
+  },
+  {
+    "arquivo": "5-2-gitlab-mr.png",
+    "url": "${repo_no_ambiente}/-/merge_requests/25",
+    "login": "gitlab",
+    "pausa": 8000,
+    "recorte": "body",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "Changes",
+        "n": 1,
+        "dentro": true
+      },
+      {
+        "texto": "Merge",
+        "n": 2,
+        "dentro": true
+      }
+    ]
+  },
+  {
+    "arquivo": "5-1-gitlab-commits-esteira.png",
+    "url": "${repo_no_ambiente}/-/commits/main/esteira",
+    "login": "gitlab",
+    "pausa": 6000,
+    "recorte": "body",
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "marcar": [
+      {
+        "texto": "esteira",
+        "n": 1,
+        "dentro": true
+      }
+    ]
+  },
+  {
+    "arquivo": "6-2-jaeger-trace-429.png",
+    "url": "${traces_url}/api/traces/v1/dev/trace/${trace_429}",
+    "login": "openshift",
+    "esperar": [
+      "text=should_rate_limit"
+    ],
+    "pausa": 3000,
+    "viewport": {
+      "width": 1440,
+      "height": 690
+    },
+    "marcar": [
+      {
+        "texto": "should_rate_limit",
+        "ate": ".span-row",
+        "n": 1
+      },
+      {
+        "texto": "send_reply",
+        "ate": ".span-row",
+        "n": 2
+      }
+    ]
+  }
 ]
