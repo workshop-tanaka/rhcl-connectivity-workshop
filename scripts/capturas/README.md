@@ -20,7 +20,17 @@ Cada item de `capturas.json`: `arquivo`, `url` (com `${variavel}` do env),
 `esperar` (seletores), `pausa` (ms), `recorte` (seletor fotografado),
 `marcar` (lista de `{texto|seletor, n, dentro}`), `login` (`openshift`).
 
-Estado: quatro figuras -- tres do Grafana (2.1 e 4.1) e a da console (2.1,
-Observe > Metrics). O login da console e o do Keycloak deste ambiente
-(usuario/senha do participante no env); `viewport` e `clicar` por captura
-servem para caber a tabela e esconder o grafico.
+Estado: oito figuras -- tres do Grafana (2.1 e 4.1), quatro da console (2.1
+Observe > Metrics, 2.3 lista de policies, 4.x API Products, 5.3 PipelineRuns)
+e uma do GitLab (5.2 merge requests). Logins: `login: openshift` (a console
+manda para o Keycloak), `argo` (clica em LOG IN VIA OPENSHIFT antes),
+`gitlab` (clica em "Entrar com o usuario do console" antes); o consentimento
+do OAuth e aceito quando aparece. `quem: plataforma` usa o login de quem
+opera a plataforma (usuario_console_plataforma no env) para telas do cluster
+inteiro, como a Policy Topology. `viewport` e `clicar` por captura servem
+para caber a tabela e esconder um grafico.
+
+Ainda nao sai: a Policy Topology util (com o login da plataforma ela abre,
+mas desenha a turma inteira, ilegivel; falta filtrar o namespace pela UI) e
+o Argo (o participante nao enxerga a aplicacao na UI do Argo; o guia tambem
+nao a abre).

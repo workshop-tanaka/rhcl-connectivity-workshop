@@ -89,5 +89,76 @@
   "clicar": [
    "text=Hide graph"
   ]
+ },
+ {
+  "arquivo": "2-3-console-policies.png",
+  "url": "${openshift_console_url}/kuadrant/policies/ns/travel-agency-${guid}",
+  "pausa": 10000,
+  "recorte": "#content, main",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "travel-agency-authpolicy",
+    "n": 1,
+    "dentro": true
+   }
+  ],
+  "login": "openshift"
+ },
+ {
+  "arquivo": "4-1-console-apiproducts.png",
+  "url": "${openshift_console_url}/kuadrant/apiproducts/ns/travel-agency-${guid}",
+  "pausa": 10000,
+  "recorte": "#content, main",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [],
+  "login": "openshift"
+ },
+ {
+  "arquivo": "5-3-console-pipelineruns.png",
+  "url": "${openshift_console_url}/k8s/ns/esteira-ci-${guid}/tekton.dev~v1~PipelineRun",
+  "pausa": 10000,
+  "recorte": "#content, main",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "Failed",
+    "n": 1,
+    "dentro": true
+   },
+   {
+    "texto": "Succeeded",
+    "n": 2,
+    "dentro": true
+   }
+  ],
+  "login": "openshift"
+ },
+ {
+  "arquivo": "5-2-gitlab-merge-requests.png",
+  "url": "${repo_no_ambiente}/-/merge_requests?scope=all&state=all",
+  "login": "gitlab",
+  "pausa": 8000,
+  "recorte": "body",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "Merge requests",
+    "n": 1,
+    "dentro": true
+   }
+  ]
  }
 ]

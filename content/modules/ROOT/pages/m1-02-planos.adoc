@@ -166,6 +166,9 @@ Products e API Keys: os parceiros com plano e solicitante.
 
 include::partial$entrar-ocp.adoc[]
 
+.Figura: o produto `travels-api` na console, com a rota, o `PlanPolicy` e o status *Published* -- edição 1.0; clique para ampliar
+image::capturas/4-1-console-apiproducts.png[API Products na console com o produto travels-api publicado,360,link=self,window=_blank]
+
 WARNING: **Não aprove nada em API Key Approvals.** Aprovar cunha um Secret com
 o plano em *annotation* em vez de *label*; o predicado aguenta, mas a parte
 perde o fio.

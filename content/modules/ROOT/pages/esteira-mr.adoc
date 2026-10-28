@@ -104,6 +104,9 @@ ifeval::["{repo_no_ambiente}" != ""]
 (abre em aba nova). O que conferir e quem aceita está no quadro do perfil
 Infra, logo abaixo.
 
+.Figura: os merge requests do seu projeto no GitLab, com ① o menu; cada um com a conferência ao lado -- edição 1.0; clique para ampliar
+image::capturas/5-2-gitlab-merge-requests.png[A lista de merge requests do projeto no GitLab,360,link=self,window=_blank]
+
 .Navegando, passo a passo
 [%collapsible]
 ====

@@ -289,6 +289,9 @@ quatro telas, cada uma com o mesmo recado:
 cluster decide o que cada um vê -- e a tela explica a recusa em vez de
 esconder o botão sem dizer por quê.
 
+.Figura: as policies do seu projeto na console, com ① a `AuthPolicy` da rota; as três *Enforced* -- edição 1.0; clique para ampliar
+image::capturas/2-3-console-policies.png[A lista de policies do projeto na console com a AuthPolicy marcada,360,link=self,window=_blank]
+
 Para voltar ao perfil Infra, saia e entre de novo com `{usuario_console}`.
 endif::[]
 

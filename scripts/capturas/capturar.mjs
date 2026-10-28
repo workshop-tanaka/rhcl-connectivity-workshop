@@ -18,18 +18,31 @@ const MARCA = `
              width: 22px; height: 22px; border-radius: 50%; text-align: center; box-shadow: 0 0 0 2px #fff; pointer-events: none; }
 `
 
-async function loginOpenShift(page) {
-  // a console manda para o OAuth; neste ambiente o provedor e o Keycloak
-  // ("Sign in to sso"): campos username/password e o botao Sign In. Espera o
-  // formulario aparecer, preenche, e espera voltar para a console.
+// Logins: todos terminam no Keycloak deste ambiente ("Sign in to sso").
+// 'openshift' = a console manda direto para o formulario; 'argo' = clicar em
+// LOG IN VIA OPENSHIFT antes; 'gitlab' = clicar em "Entrar com o usuario do
+// console" antes. Se o formulario nao aparecer (sessao ja aberta), segue.
+async function keycloak(page, quem) {
+  // quem: 'participante' (padrao) ou 'plataforma' (o login de quem opera a
+  // plataforma, para as telas que sao do cluster inteiro, como a Policy Topology)
+  const u = quem === 'plataforma' ? env.usuario_console_plataforma : env.usuario_console
+  const p = quem === 'plataforma' ? env.senha_console_plataforma : env.senha_console
   const user = page.locator('input[name="username"], #username')
-  try { await user.first().waitFor({ timeout: 20000 }) } catch { return false }
-  await user.first().fill(env.usuario_console)
-  await page.locator('input[name="password"], #password').first().fill(env.senha_console)
+  try { await user.first().waitFor({ timeout: 15000 }) } catch { return false }
+  await user.first().fill(u)
+  await page.locator('input[name="password"], #password').first().fill(p)
   await page.locator('#kc-login, button[type="submit"], input[type="submit"]').first().click()
-  await page.waitForURL(/console-openshift-console/, { timeout: 60000 })
   await page.waitForLoadState('domcontentloaded')
+  await page.waitForTimeout(2000)
   return true
+}
+async function login(page, tipo, quem) {
+  if (tipo === 'argo')   { try { await page.locator('text=LOG IN VIA OPENSHIFT').first().click({ timeout: 10000 }) } catch {} }
+  if (tipo === 'gitlab') { try { await page.locator('text=Entrar com o usuario do console').first().click({ timeout: 10000 }) } catch {} }
+  const ok = await keycloak(page, quem)
+  // o OAuth do OpenShift pede consentimento na primeira vez (Argo, GitLab)
+  try { await page.locator('input[name="approve"], button:has-text("Allow selected permissions")').first().click({ timeout: 8000 }); await page.waitForLoadState('domcontentloaded'); await page.waitForTimeout(2000) } catch {}
+  return ok
 }
 
 export default async function run(page) {
@@ -38,9 +51,9 @@ export default async function run(page) {
     // viewport por captura: uma tela com tabela abaixo da dobra pede mais altura
     await page.setViewportSize(cap.viewport || { width: 1440, height: 900 })
     await page.goto(subst(cap.url), { waitUntil: 'domcontentloaded', timeout: 90000 })
-    if (cap.login === 'openshift') {
+    if (cap.login) {
       await page.waitForTimeout(1500)
-      if (await loginOpenShift(page)) await page.goto(subst(cap.url), { waitUntil: 'domcontentloaded', timeout: 90000 })
+      if (await login(page, cap.login, cap.quem)) await page.goto(subst(cap.url), { waitUntil: 'domcontentloaded', timeout: 90000 })
     }
     for (const sel of cap.esperar ?? []) await page.locator(subst(sel)).first().waitFor({ timeout: 90000 })
     if (cap.pausa) await page.waitForTimeout(cap.pausa)

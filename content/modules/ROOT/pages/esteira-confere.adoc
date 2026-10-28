@@ -101,6 +101,9 @@ confere** está vermelho e o merge, bloqueado.
 PipelineRuns de {openshift_console_url}/k8s/ns/esteira-ci-{user}/tekton.dev{tilde}v1{tilde}PipelineRun[`esteira-ci-{user}`^]
 (abre em aba nova), com o login Infra ou Dev: os dois leem, nenhum muda.
 
+.Figura: os PipelineRuns da conferência, com ① um *Failed* (a rota sem policy) e ② um *Succeeded* -- edição 1.0; clique para ampliar
+image::capturas/5-3-console-pipelineruns.png[PipelineRuns da conferencia na console com um Failed e um Succeeded marcados,360,link=self,window=_blank]
+
 .Navegando, passo a passo
 [%collapsible]
 ====
