@@ -105,6 +105,13 @@ ifndef::foco_rhcl[]
 | o caminho de uma requisição, salto a salto
 | {traces_url}[abrir^]
 endif::[]
+ifdef::foco_rhcl[]
+ifeval::["{traces_url}" != ""]
+| Traces
+| os saltos da borda numa chamada: filtro, Authorino, Limitador (parte {p-tempo-borda})
+| {traces_url}[abrir^]
+endif::[]
+endif::[]
 
 | O seu repositório
 | os arquivos do roteiro já com os nomes do seu ambiente; só você enxerga
@@ -159,9 +166,11 @@ endif::[]
 ifdef::foco_rhcl[]
 [NOTE]
 ====
-Esta sessão não tem Kiali nem a tela de Traces: as duas vêm do Service Mesh,
-que fica fora dela. A xref:papel-ossm.adoc[leitura sobre o Service Mesh] diz o
-que elas mostram.
+Esta sessão não tem Kiali: ele vem do Service Mesh, que fica fora dela. Os
+traces que ela tem são os da borda -- o filtro do Gateway, o Authorino e o
+Limitador (parte {p-tempo-borda}); o salto entre serviços, que o Service Mesh
+rastrearia, não aparece. A xref:papel-ossm.adoc[leitura sobre o Service Mesh]
+diz o que ele acrescentaria.
 ====
 endif::[]
 

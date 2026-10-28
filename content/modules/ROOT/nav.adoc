@@ -75,6 +75,7 @@ ifdef::trilha_basico[]
 
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
+* xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
@@ -111,9 +112,10 @@ ifdef::trilha_intermediario[]
 
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
-* xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
-* xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
+* xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
+* xref:m3-04-degrada.adoc[6.3 Quando a policy cai]
+* xref:m3-05-alerta.adoc[6.4 O alerta]
+* xref:m3-07-observar.adoc[6.5 Observar: simular e ver no painel]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
@@ -160,10 +162,11 @@ ifdef::trilha_avancado[]
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[O que muda nesta fase]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
-* xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
-* xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
-* xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
+* xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
+* xref:m3-04-degrada.adoc[6.3 Quando a policy cai]
+* xref:m3-05-alerta.adoc[6.4 O alerta]
+* xref:m3-07-observar.adoc[6.5 Observar: simular e ver no painel]
+* xref:m3-06-auditoria.adoc[6.6 Quatro perguntas, quatro fontes (opcional)]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
@@ -209,9 +212,10 @@ ifdef::trilha_infra[]
 * xref:fase-5-resumo.adoc[O que há nesta fase]
 
 .Fase 6 — Operação
-* xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
-* xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
+* xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
+* xref:m3-04-degrada.adoc[6.3 Quando a policy cai]
+* xref:m3-05-alerta.adoc[6.4 O alerta]
+* xref:m3-07-observar.adoc[6.5 Observar: simular e ver no painel]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
@@ -283,10 +287,11 @@ ifdef::trilha_operacoes[]
 
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
-* xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
-* xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
-* xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
+* xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
+* xref:m3-04-degrada.adoc[6.3 Quando a policy cai]
+* xref:m3-05-alerta.adoc[6.4 O alerta]
+* xref:m3-07-observar.adoc[6.5 Observar: simular e ver no painel]
+* xref:m3-06-auditoria.adoc[6.6 Quatro perguntas, quatro fontes (opcional)]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
@@ -334,10 +339,11 @@ ifdef::foco_rhcl[]
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[O que muda nesta fase]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
-* xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
-* xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
-* xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
+* xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
+* xref:m3-04-degrada.adoc[6.3 Quando a policy cai]
+* xref:m3-05-alerta.adoc[6.4 O alerta]
+* xref:m3-07-observar.adoc[6.5 Observar: simular e ver no painel]
+* xref:m3-06-auditoria.adoc[6.6 Quatro perguntas, quatro fontes (opcional)]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
@@ -401,6 +407,7 @@ ifndef::foco_ossm,foco_rhsi[]
 * xref:m3-05-alerta.adoc[3.5 O alerta]
 * xref:m3-06-auditoria.adoc[3.6 Quatro perguntas, quatro fontes]
 * xref:m3-07-observar.adoc[3.7 Observar: simular e ver no painel]
+* xref:m3-08-tempo.adoc[3.8 Onde a requisição gastou o tempo]
 endif::[]
 
 ifndef::foco_rhcl,foco_ossm[]

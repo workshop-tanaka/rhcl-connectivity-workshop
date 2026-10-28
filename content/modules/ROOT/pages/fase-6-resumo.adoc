@@ -4,7 +4,7 @@
 **Leitura · ~1 min · não muda estado**
 
 A sua trilha não passa por esta fase; ela fica no menu para a sequência do
-projeto continuar inteira. O que há nela: O dia a dia da borda: onde uma requisição morreu, o que acontece quando uma policy cai, o alerta, a simulação vista nos dois níveis de painel, e as quatro perguntas da auditoria.
+projeto continuar inteira. O que há nela: O dia a dia da borda: onde uma requisição morreu e quanto cada salto custou, o que acontece quando uma policy cai, o alerta, a simulação vista nos dois níveis de painel, e as quatro perguntas da auditoria.
 
 [cols="3,1,2",options="header"]
 |===
@@ -16,16 +16,19 @@ projeto continuar inteira. O que há nela: O dia a dia da borda: onde uma requis
 | xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 | --
 | Básico · Intermediário · Avançado · Operações
-| xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
+| xref:m3-08-tempo.adoc[6.2 Onde a requisição gastou o tempo]
+| 10 min
+| Intermediário · Avançado · Infra · Operações
+| xref:m3-04-degrada.adoc[6.3 Quando a policy cai]
 | --
 | Intermediário · Avançado · Infra · Operações
-| xref:m3-05-alerta.adoc[6.3 O alerta]
+| xref:m3-05-alerta.adoc[6.4 O alerta]
 | --
 | Intermediário · Avançado · Infra · Operações
-| xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
+| xref:m3-07-observar.adoc[6.5 Observar: simular e ver no painel]
 | 12 min
 | Intermediário · Avançado · Infra · Operações
-| xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
+| xref:m3-06-auditoria.adoc[6.6 Quatro perguntas, quatro fontes (opcional)]
 | --
 | Avançado · Operações
 |===

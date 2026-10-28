@@ -182,6 +182,7 @@ projeto: da borda à esteira, com a degradação e o alerta no fim.
 . xref:esteira-confere.adoc[{p-confere}A esteira confere antes] · 15 min, parte esperando
 . xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão] · 12 min, parte esperando
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:m3-08-tempo.adoc[{p-tempo-borda} Onde a requisição gastou o tempo] · 10 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
 . xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
@@ -235,6 +236,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:m5-01-colheita.adoc[{p-colheita} Leitura: do repositório ao formulário] · ~8 min
 . xref:m3-00-intro.adoc[Fase 6 -- O que muda nesta fase] · ~3 min*
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:m3-08-tempo.adoc[{p-tempo-borda} Onde a requisição gastou o tempo] · 10 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
 . xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
@@ -287,6 +289,7 @@ certificado e do nome, e quem responde quando um componente cai.
 . xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê] · 7 min
 . xref:m1-08-certificado.adoc[{p-certificado} O certificado tem dono?] · 10 min
 . xref:extra-dns.adoc[{p-dns}O nome também é policy (DNS)] · ~8 min
+. xref:m3-08-tempo.adoc[{p-tempo-borda} Onde a requisição gastou o tempo] · 10 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
 . xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
@@ -360,6 +363,7 @@ avisa, e o que responder à auditoria.
 . xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual] · 7 min
 . xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
+. xref:m3-08-tempo.adoc[{p-tempo-borda} Onde a requisição gastou o tempo] · 10 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
 . xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min

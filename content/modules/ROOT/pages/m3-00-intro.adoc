@@ -53,13 +53,15 @@ nada. As outras três não alteram nada.
 endif::[]
 ifdef::foco_rhcl[]
 
-**Cinco partes, a última opcional · cerca de 38 minutos, mais 10 da {p-auditoria} · duas mudam estado e devolvem**
+**Seis partes, a última opcional · cerca de 48 minutos, mais 10 da {p-auditoria} · duas mudam estado e devolvem**
 
 **Momento do projeto:** do dia 2 em diante · **Quem faz:** operação, suporte e SRE
 
 == O que você vai conseguir fazer
 
 * olhar uma recusa de API e dizer em qual lugar da borda ela parou;
+* ler o trace de uma chamada e dizer quanto cada salto da borda custou --
+  inclusive quando ela foi recusada;
 * prever o que acontece com o tráfego quando um componente da plataforma cai;
 * fazer a plataforma **avisar sobre si mesma** -- inclusive quando o tráfego
   está perfeito e ninguém reclama;
@@ -67,7 +69,7 @@ ifdef::foco_rhcl[]
   vem com o produto e o que o workshop construiu por cima;
 * responder quem mudou o quê, com a fonte que prova cada resposta.
 
-== A ideia que atravessa as cinco partes
+== A ideia que atravessa as seis partes
 
 Medir é fácil; **atribuir** é difícil. Um gráfico diz que houve erro. Ele não
 diz de quem, nem onde, nem por quê.
@@ -95,6 +97,6 @@ dele] diz o que ele faria aqui.
 Ela corta, de propósito, o caminho do seu Gateway até um componente da
 plataforma, e o devolve no último passo -- os outros participantes não sentem
 nada. A parte {p-alerta} também muda estado: aplica as
-regras de alerta e as remove no fim. A {p-negado} não altera nada, a {p-observar} só gera tráfego, e a
-{p-auditoria} cria uma chave descartável e a revoga.
+regras de alerta e as remove no fim. A {p-negado} e a {p-tempo-borda} não alteram nada, a {p-observar} só gera
+tráfego, e a {p-auditoria} cria uma chave descartável e a revoga.
 endif::[]

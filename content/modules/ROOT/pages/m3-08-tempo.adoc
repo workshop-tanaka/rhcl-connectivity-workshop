@@ -1,0 +1,179 @@
+include::partial$numeros.adoc[]
+= {p-tempo-borda} Onde a requisição gastou o tempo
+:navtitle: {p-tempo-borda} Onde a requisição gastou o tempo
+:page-trilhas: Intermediário · Avançado · Infra · Operações
+
+**Para quem:** Operação/SRE e Arquitetura -- quem precisa responder "quanto essa plataforma acrescenta em cada chamada". · **10 min** · **não muda estado**
+
+include::partial$trilha.adoc[]
+
+[NOTE.antes]
+====
+**Antes:** a parte {p-negado}. Ela diz **onde** a requisição morreu; esta diz
+**quanto** cada etapa da borda custou -- inclusive quando ela morreu.
+====
+
+"Quanto custa em latência?" é uma das quatro perguntas que sempre aparecem
+quando se fala de uma plataforma de API. A resposta honesta não é um número
+de folheto: é o **trace** de uma chamada, com cada salto da borda e a duração
+dele. O Connectivity Link exporta esses saltos por conta própria -- o filtro
+do Gateway, o Authorino e o Limitador --, e este ambiente os guarda num Tempo.
+Você vai ler três traces: uma chamada que passa, uma que leva `401` e uma que
+leva `429`.
+
+== Passo 1 -- uma chamada que passa
+
+A chamada guarda o `x-request-id` que a borda devolve: é o que liga o seu
+`curl` ao trace dele. O collector envia em lotes, por isso a espera.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+RID=$(curl -s -D - -o /dev/null -H 'Authorization: APIKEY {api_key_gold}' "https://{api_host}/travels" | awk 'tolower($1)=="x-request-id:"{print $2}' | tr -d '\r')
+echo "x-request-id: $RID"; sleep 15
+bash scripts/trace.sh id "$RID"
+----
+
+[source,text]
+----
+x-request-id: 3e21e476-...
+trace 3e21e4760b442cf86a5370bef8d1c5db
+  +   0.00ms  wasm-shim  kuadrant_filter                         22.70ms  api-travels.apps...
+    +   0.04ms  wasm-shim  grpc                                     8.10ms  authpolicy
+      +   0.50ms  authorino  envoy.service.auth.v3.Authorization/     6.24ms  grpc=OK
+        +   0.71ms  authorino  Check                                    5.95ms
+    +   8.15ms  wasm-shim  grpc                                     2.39ms  ratelimitpolicy
+      +   9.64ms  limitador  should_rate_limit                        0.08ms  limited=False
+  tela: https://tempo-...-tracing-system.apps.../api/traces/v1/dev/trace/3e21e476...
+----
+
+**O que isso diz:** a borda é três saltos, e cada um tem preço. `wasm-shim` é
+o filtro dentro do Gateway, e o span `kuadrant_filter` vai do início da
+requisição até os cabeçalhos da resposta -- inclui a aplicação. Dentro dele,
+dois `grpc`: a ida e volta ao Authorino, que decidiu **quem entra** (o
+`Check`, ~6 ms), e a ida e volta ao Limitador, que decidiu **quanto passa**
+(o `should_rate_limit`, 0,08 ms -- o resto dos 2,4 ms é rede e serialização).
+Somados, cerca de 10 ms: é o que a plataforma acrescentou nesta chamada. Os
+seus números serão outros; a forma do trace, não.
+
+== Passo 2 -- uma recusa de autenticação
+
+[source,bash,role="execute",subs="attributes+"]
+----
+RID=$(curl -s -D - -o /dev/null "https://{api_host}/travels" | awk 'tolower($1)=="x-request-id:"{print $2}' | tr -d '\r')
+echo "x-request-id: $RID"; sleep 15
+bash scripts/trace.sh id "$RID"
+----
+
+[source,text]
+----
+trace 8f7c9ac6636f15353b9ae9e1a2fbfb0f
+  +   0.00ms  wasm-shim  kuadrant_filter                          4.30ms  api-travels.apps...
+    +   0.04ms  wasm-shim  grpc                                     4.25ms  authpolicy
+      +   0.33ms  authorino  envoy.service.auth.v3.Authorization/     2.51ms  grpc=OK
+        +   0.49ms  authorino  Check                                    2.31ms
+      +   4.22ms  wasm-shim  send_reply                               0.06ms  status=401
+----
+
+**O que isso diz:** o trace **para no Authorino**. Não há span do Limitador:
+a requisição que não se identificou nem chega a contar. O `send_reply` com
+`status=401` é o filtro respondendo por conta própria, antes de qualquer
+backend -- a estação do `401` da {p-negado}, agora com o tempo ao lado: 4 ms
+no total, e a aplicação nunca soube.
+
+== Passo 3 -- uma recusa de limite
+
+Quatro chamadas com a chave free: a quarta estoura o plano.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+for i in 1 2 3 4; do RID=$(curl -s -D - -o /dev/null -H 'Authorization: APIKEY {api_key_free}' "https://{api_host}/travels" | awk 'tolower($1)=="x-request-id:"{print $2}' | tr -d '\r'); done
+echo "x-request-id da quarta: $RID"; sleep 15
+bash scripts/trace.sh id "$RID"
+----
+
+[source,text]
+----
+trace 110c0586b0a0ad928ca08c2989b1948
+  +   0.68ms  wasm-shim  kuadrant_filter                          6.63ms  api-travels.apps...
+    +   0.72ms  wasm-shim  grpc                                     5.54ms  authpolicy
+      +   0.00ms  authorino  envoy.service.auth.v3.Authorization/     4.15ms  grpc=OK
+        +   0.10ms  authorino  Check                                    3.95ms
+    +   6.26ms  wasm-shim  grpc                                     1.05ms  ratelimitpolicy
+      +   6.75ms  limitador  should_rate_limit                        0.09ms  limited=True
+      +   7.22ms  wasm-shim  send_reply                               0.08ms  status=429
+----
+
+**O que isso diz:** a chave valeu (o Authorino disse quem é), o Limitador
+disse `limited=True`, e o filtro respondeu `429`. Repare no
+`should_rate_limit`: 0,09 ms, o mesmo de quando a chamada passa. **Recusar por
+limite não sai mais barato que aceitar** -- a borda paga a autenticação e a
+contagem inteiras para dizer não. É um argumento de capacidade: uma rajada
+recusada custa à plataforma quase o mesmo que uma servida.
+
+== A tela
+
+O mesmo trace, no Jaeger do Tempo. O endereço sai do terminal, e a tela pede o
+seu login do OpenShift:
+
+[source,bash,role="execute"]
+----
+bash scripts/trace.sh url
+----
+
+Na tela, o serviço é `wasm-shim`, e a busca por `hostname` com o endereço da
+sua API traz só as suas chamadas. Abra um trace de `200` e um de `429` lado a
+lado: a diferença é um span.
+
+== O que isso prova
+
+**A plataforma de API explica o próprio custo, por etapa, sem instrumentar a
+aplicação.** Cada policy tem um preço que se mede -- a autenticação custa
+milissegundos, a contagem custa microssegundos mais a rede --, e a resposta a
+"quanto custa" vira um trace que qualquer pessoa da operação abre, não uma
+promessa.
+
+.Mais detalhes: o que cada span é, e de onde vem
+[%collapsible]
+====
+* **`wasm-shim`** é o filtro do Connectivity Link que roda dentro do proxy do
+  Gateway. `kuadrant_filter` é a requisição inteira do ponto de vista dele;
+  cada `grpc` é uma consulta a um componente, e o `send_reply` é ele
+  respondendo sozinho quando a decisão é recusar.
+* **`authorino`** recebe o `Check` da `AuthPolicy`: valida a chave (ou o
+  token), e devolve a identidade. É o salto mais caro, e cresce com o método:
+  chave de API e JWT local custam pouco; introspecção e metadados externos
+  esperam outro serviço.
+* **`limitador`** recebe o `should_rate_limit` do `PlanPolicy`: conta contra o
+  limite do plano e responde. O span dele é mínimo; a ida e volta é rede.
+* O `x-request-id` que o `curl` mostra é o mesmo que o filtro e o Authorino
+  gravam no span -- e o mesmo que aparece no log deles. É o fio que liga a
+  reclamação do cliente ao trace.
+
+Quem exporta isso é o próprio Connectivity Link: o CR `Kuadrant` aponta para
+um collector, e o collector entrega ao Tempo. O nível de detalhe que encadeia
+os três num trace só é o `debug`; no nível padrão cada componente abre o seu,
+ligados só pelo `x-request-id`.
+====
+
+.Mais detalhes: o que o trace não mostra aqui
+[%collapsible]
+====
+* **O tempo da aplicação**, separado. O span do filtro vai até a resposta,
+  então inclui a aplicação, mas não há um span só dela: isso pediria o span do
+  próprio Gateway, que o provedor nativo não exporta nesta configuração.
+* **O salto entre serviços**, do `travels` para o `discounts` e o `hotels`. Esse
+  caminho é leste-oeste, e quem o rastreia é o Service Mesh -- a leitura
+  xref:papel-ossm.adoc[{p-papel-ossm}o papel do Service Mesh] diz o que ele
+  acrescentaria aqui.
+====
+
+.Outro caso de uso: quanto custa observar
+[%collapsible]
+====
+Tracing tem preço, e ele aparece sob carga. Neste ambiente, a 400 requisições
+por segundo numa réplica de cada componente, o nível `debug` que encadeia o
+trace levou o p99 de 24 ms para 88 ms, e o filtro passou a avisar que o
+buffer de spans encheu. O ambiente do workshop tem tráfego baixo, e o `debug`
+fica ligado para a parte existir; em produção a escolha é o nível padrão com
+amostragem -- uma das perguntas da xref:planejamento-partida.adoc[Fase 8].
+====

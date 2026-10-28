@@ -23,6 +23,7 @@ ifndef::foco_rhcl[]
 :p-alerta: 3.5
 :p-auditoria: 3.6
 :p-observar: 3.7
+:p-tempo-borda: 3.8
 :p-colheita: 5.1
 :p-bateria:
 :p-dns:
@@ -72,10 +73,11 @@ ifdef::foco_rhcl[]
 :p-rastreavel: 3.1 da sessão de Service Mesh
 :p-trace: 3.2 da sessão de Service Mesh
 :p-negado: 6.1
-:p-degrada: 6.2
-:p-alerta: 6.3
-:p-observar: 6.4
-:p-auditoria: 6.5
+:p-tempo-borda: 6.2
+:p-degrada: 6.3
+:p-alerta: 6.4
+:p-observar: 6.5
+:p-auditoria: 6.6
 :p-colheita: 5.5
 :p-dns: 3.2{sp}
 :p-versoes: 4.3{sp}
