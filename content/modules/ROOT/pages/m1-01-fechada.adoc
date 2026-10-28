@@ -147,6 +147,46 @@ O resultado é `destination_workload=unknown`: o destino é desconhecido
 **porque não houve destino**. A recusa foi contada na borda e a aplicação
 nunca foi acordada.
 
+.Mais detalhes: o que a consulta faz, de dentro para fora
+[%collapsible]
+====
+* `istio_requests_total{response_code="401"}` é o contador de requisições que
+  o proxy do Gateway exporta, filtrado nas que terminaram em `401`. É
+  acumulado desde que o pod subiu; sozinho, não diz nada sobre "agora".
+* `increase(...[15m])` é quanto esse contador cresceu nos últimos 15 minutos:
+  transforma o acumulado em "quantos 401 houve na última aula". O painel põe
+  um `round()` por fora, porque o `increase` extrapola e pode devolver fração.
+* `sum by (response_code, destination_workload)` soma todas as séries e guarda
+  só dois rótulos: o código e o destino. Sem ele, apareceria uma linha por
+  pod, por rota e por origem.
+
+O rótulo que importa é `destination_workload`. Numa chamada que chegou à
+aplicação ele vale o nome do deployment, `travels-v1`; no `401` ele sai
+`unknown`, e é essa a prova: o Gateway recusou antes de encaminhar.
+====
+
+.Outro caso de uso: a mesma consulta na console do OpenShift
+[%collapsible]
+====
+Não precisa do Grafana para ver isso. A perspectiva *Developer* da console tem
+a mesma consulta em
+{openshift_console_url}/dev-monitoring/ns/ingress-gateway/metrics?query0=sum%20by%20(response_code%2C%20destination_workload)%20(increase(istio_requests_total%7Bresponse_code%3D%22401%22%7D%5B15m%5D))[Observe → Metrics, no projeto do Gateway^]
+-- o link já abre com a consulta preenchida; se vier vazio, cole o bloco
+acima em *Custom query* e clique em **Run queries**.
+
+**O projeto certo é o do Gateway, não o da aplicação.** Medido neste
+ambiente: no projeto `ingress-gateway` a consulta devolve a linha
+`response_code=401, destination_workload=unknown`; no projeto `travel-agency`
+ela volta **vazia**. A métrica é do proxy do Gateway, raspada no namespace
+dele, e a console filtra pelo projeto escolhido -- coerente com o que a página
+diz: o `401` nasce na borda, então a evidência mora no namespace da borda.
+
+[source,text]
+----
+response_code=401, destination_workload=unknown   1
+----
+====
+
 == Configuração
 
 A `AuthPolicy` `travel-agency-authpolicy` é a policy que recusa. São vinte
