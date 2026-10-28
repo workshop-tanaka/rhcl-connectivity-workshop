@@ -1,0 +1,27 @@
+= Fase 3 — A primeira API: o que há nesta fase
+:navtitle: O que há nesta fase
+
+**Leitura · ~1 min · não muda estado**
+
+A sua trilha não passa por esta fase; ela fica no menu para a sequência do
+projeto continuar inteira. O que há nela: Publicar uma API do zero e levá-la de aberta a governada: a rota, a chave, o plano, o nome por `DNSPolicy`, e a escolha entre chave e identidade.
+
+[cols="3,1,2",options="header"]
+|===
+| parte | tempo | está nas trilhas
+
+| xref:m1-06-exposta.adoc[3.1 De aberta a governada]
+| --
+| Básico · Intermediário · Avançado · Desenvolvedor
+| xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
+| ~7 min
+| Avançado · Infra
+| xref:m1-07-identidade.adoc[3.3 Chave ou identidade]
+| --
+| Intermediário · Avançado · Desenvolvedor
+|===
+
+Para fazer uma destas partes agora, abra uma trilha que a contenha pela
+página xref:trilhas.adoc[Escolha a sua trilha], ou o
+link:/[guia completo,window=_top], que tem todas as fases. O seu ambiente é
+o mesmo nos dois.

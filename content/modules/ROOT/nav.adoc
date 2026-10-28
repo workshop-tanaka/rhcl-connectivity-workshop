@@ -20,20 +20,31 @@ endif::[]
 // numeros das partes vem de partials/numeros.adoc -- mudar a ordem aqui e la.
 
 // TRILHAS: com trilha_<nome> ligado, as MESMAS fases, so com as paginas da
-// trilha; o bloco comum, a Fase 8, Ambiente e Para fechar ficam iguais.
+// trilha (fase sem pagina mostra um resumo); o bloco comum, a Fase 8,
+// Ambiente e Para fechar ficam iguais.
 ifdef::foco_rhcl[]
 ifdef::trilha_degustacao[]
-// trilha Degustação (~38 min): as mesmas fases, so com as paginas dela
+// trilha Degustação: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
+.Fase 3 — A primeira API
+* xref:fase-3-resumo.adoc[O que há nesta fase]
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
+.Fase 5 — Da mão para a esteira
+* xref:fase-5-resumo.adoc[O que há nesta fase]
+.Fase 6 — Operação
+* xref:fase-6-resumo.adoc[O que há nesta fase]
+.Fase 7 — Escala, e o que vem depois (só leitura)
+* xref:fase-7-resumo.adoc[O que há nesta fase]
+.Extras — opcionais, em qualquer ordem
+* xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_basico[]
-// trilha Básico (~1h04): as mesmas fases, so com as paginas dela
+// trilha Básico: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
 .Fase 2 — A borda
@@ -44,11 +55,17 @@ ifdef::trilha_basico[]
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
+.Fase 5 — Da mão para a esteira
+* xref:fase-5-resumo.adoc[O que há nesta fase]
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
+.Fase 7 — Escala, e o que vem depois (só leitura)
+* xref:fase-7-resumo.adoc[O que há nesta fase]
+.Extras — opcionais, em qualquer ordem
+* xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_intermediario[]
-// trilha Intermediário (~2h45): as mesmas fases, so com as paginas dela
+// trilha Intermediário: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
 .Fase 2 — A borda
@@ -70,9 +87,13 @@ ifdef::trilha_intermediario[]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
+.Fase 7 — Escala, e o que vem depois (só leitura)
+* xref:fase-7-resumo.adoc[O que há nesta fase]
+.Extras — opcionais, em qualquer ordem
+* xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_avancado[]
-// trilha Avançado (~6h30): as mesmas fases, so com as paginas dela
+// trilha Avançado: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
 * xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway]
@@ -121,7 +142,7 @@ ifdef::trilha_avancado[]
 * xref:extra-tokens-ia.adoc[Limite por token (IA)]
 endif::[]
 ifdef::trilha_infra[]
-// trilha Infra (~2h11): as mesmas fases, so com as paginas dela
+// trilha Infra: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
 * xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway]
@@ -133,15 +154,21 @@ ifdef::trilha_infra[]
 * xref:m1-08-certificado.adoc[2.4 O certificado tem dono?]
 .Fase 3 — A primeira API
 * xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
+.Fase 4 — A API vira produto
+* xref:fase-4-resumo.adoc[O que há nesta fase]
+.Fase 5 — Da mão para a esteira
+* xref:fase-5-resumo.adoc[O que há nesta fase]
 .Fase 6 — Operação
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
 * xref:papel-ossm.adoc[7.3 O papel do Service Mesh]
+.Extras — opcionais, em qualquer ordem
+* xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_desenvolvedor[]
-// trilha Desenvolvedor (~3h17): as mesmas fases, so com as paginas dela
+// trilha Desenvolvedor: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
 .Fase 2 — A borda
@@ -161,19 +188,27 @@ ifdef::trilha_desenvolvedor[]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+.Fase 6 — Operação
+* xref:fase-6-resumo.adoc[O que há nesta fase]
+.Fase 7 — Escala, e o que vem depois (só leitura)
+* xref:fase-7-resumo.adoc[O que há nesta fase]
 .Extras — opcionais, em qualquer ordem
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
 endif::[]
 ifdef::trilha_operacoes[]
-// trilha Operações (~1h38): as mesmas fases, so com as paginas dela
+// trilha Operações: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
 .Fase 2 — A borda
 * xref:m1-04-papeis.adoc[2.3 Quem pode o quê]
+.Fase 3 — A primeira API
+* xref:fase-3-resumo.adoc[O que há nesta fase]
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
+.Fase 5 — Da mão para a esteira
+* xref:fase-5-resumo.adoc[O que há nesta fase]
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
@@ -181,6 +216,8 @@ ifdef::trilha_operacoes[]
 * xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
+.Extras — opcionais, em qualquer ordem
+* xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 endif::[]
 

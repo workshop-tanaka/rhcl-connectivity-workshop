@@ -1,0 +1,36 @@
+= Fase 5 — Da mão para a esteira: o que há nesta fase
+:navtitle: O que há nesta fase
+
+**Leitura · ~1 min · não muda estado**
+
+A sua trilha não passa por esta fase; ela fica no menu para a sequência do
+projeto continuar inteira. O que há nela: A configuração como código: o repositório como fonte, a mudança por merge request, a conferência antes do merge, o desvio e a reversão, e a leitura do que o portal geraria.
+
+[cols="3,1,2",options="header"]
+|===
+| parte | tempo | está nas trilhas
+
+| xref:fase-esteira.adoc[O que muda nesta fase]
+| --
+| Avançado
+| xref:esteira-fonte.adoc[5.1 O repositório é a fonte]
+| --
+| Intermediário · Avançado · Desenvolvedor
+| xref:esteira-mr.adoc[5.2 Mudança por merge request]
+| --
+| Intermediário · Avançado · Desenvolvedor
+| xref:esteira-confere.adoc[5.3 A esteira confere antes]
+| --
+| Intermediário · Avançado · Desenvolvedor
+| xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+| --
+| Intermediário · Avançado · Desenvolvedor
+| xref:m5-01-colheita.adoc[5.5 Leitura: do repositório ao formulário]
+| ~8 min
+| Avançado
+|===
+
+Para fazer uma destas partes agora, abra uma trilha que a contenha pela
+página xref:trilhas.adoc[Escolha a sua trilha], ou o
+link:/[guia completo,window=_top], que tem todas as fases. O seu ambiente é
+o mesmo nos dois.

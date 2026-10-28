@@ -1,0 +1,33 @@
+= Fase 4 — A API vira produto: o que há nesta fase
+:navtitle: O que há nesta fase
+
+**Leitura · ~1 min · não muda estado**
+
+A sua trilha não passa por esta fase; ela fica no menu para a sequência do
+projeto continuar inteira. O que há nela: A mesma API em três planos, o consumo virando número no Grafana, duas versões convivendo, contextos e listas de permissão e bloqueio.
+
+[cols="3,1,2",options="header"]
+|===
+| parte | tempo | está nas trilhas
+
+| xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
+| --
+| Degustação · Básico · Intermediário · Avançado · Desenvolvedor · Operações
+| xref:m1-05-negocio.adoc[4.2 Isso vira número]
+| --
+| Degustação · Básico · Intermediário · Avançado · Desenvolvedor · Operações
+| xref:versoes.adoc[4.3 Uma API, duas versões]
+| ~30 min
+| Intermediário · Avançado · Desenvolvedor
+| xref:extra-contextos.adoc[4.4 Uma API, vários contextos]
+| ~14 min
+| Avançado · Desenvolvedor
+| xref:extra-listas.adoc[4.5 Listas de permissão e bloqueio]
+| ~9 min
+| Avançado · Desenvolvedor
+|===
+
+Para fazer uma destas partes agora, abra uma trilha que a contenha pela
+página xref:trilhas.adoc[Escolha a sua trilha], ou o
+link:/[guia completo,window=_top], que tem todas as fases. O seu ambiente é
+o mesmo nos dois.

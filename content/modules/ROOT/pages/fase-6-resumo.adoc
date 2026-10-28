@@ -1,0 +1,33 @@
+= Fase 6 — Operação: o que há nesta fase
+:navtitle: O que há nesta fase
+
+**Leitura · ~1 min · não muda estado**
+
+A sua trilha não passa por esta fase; ela fica no menu para a sequência do
+projeto continuar inteira. O que há nela: O dia a dia da borda: onde uma requisição morreu, o que acontece quando uma policy cai, o alerta, e as quatro perguntas da auditoria.
+
+[cols="3,1,2",options="header"]
+|===
+| parte | tempo | está nas trilhas
+
+| xref:m3-00-intro.adoc[O que muda nesta fase]
+| --
+| Avançado
+| xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
+| --
+| Básico · Intermediário · Avançado · Operações
+| xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
+| --
+| Intermediário · Avançado · Infra · Operações
+| xref:m3-05-alerta.adoc[6.3 O alerta]
+| --
+| Intermediário · Avançado · Infra · Operações
+| xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
+| --
+| Avançado · Operações
+|===
+
+Para fazer uma destas partes agora, abra uma trilha que a contenha pela
+página xref:trilhas.adoc[Escolha a sua trilha], ou o
+link:/[guia completo,window=_top], que tem todas as fases. O seu ambiente é
+o mesmo nos dois.

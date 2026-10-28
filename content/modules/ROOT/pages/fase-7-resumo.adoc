@@ -1,0 +1,36 @@
+= Fase 7 — Escala, e o que vem depois (só leitura): o que há nesta fase
+:navtitle: O que há nesta fase
+
+**Leitura · ~1 min · não muda estado**
+
+A sua trilha não passa por esta fase; ela fica no menu para a sequência do
+projeto continuar inteira. O que há nela: Leituras para o projeto crescer: muitos parceiros, multi-tenancy, e o papel do Service Mesh, do Service Interconnect, do Developer Hub e do WAF.
+
+[cols="3,1,2",options="header"]
+|===
+| parte | tempo | está nas trilhas
+
+| xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
+| ~9 min
+| Avançado · Operações
+| xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
+| ~8 min
+| Avançado · Infra
+| xref:papel-ossm.adoc[7.3 O papel do Service Mesh]
+| ~5 min
+| Avançado · Infra
+| xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
+| ~4 min
+| Avançado
+| xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
+| ~4 min
+| Avançado
+| xref:leitura-waf.adoc[7.6 Onde entra o WAF]
+| ~4 min
+| Avançado
+|===
+
+Para fazer uma destas partes agora, abra uma trilha que a contenha pela
+página xref:trilhas.adoc[Escolha a sua trilha], ou o
+link:/[guia completo,window=_top], que tem todas as fases. O seu ambiente é
+o mesmo nos dois.
