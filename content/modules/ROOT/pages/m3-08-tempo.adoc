@@ -113,28 +113,34 @@ recusada custa à plataforma quase o mesmo que uma servida.
 
 == A tela
 
-O mesmo trace, no Jaeger do Tempo. O endereço sai do terminal, e a tela pede o
-seu login do OpenShift:
+O mesmo trace, na aba *Observe → Traces* do console. O endereço sai do
+terminal já com a instância, o tenant e a consulta pela sua API:
 
 [source,bash,role="execute"]
 ----
 bash scripts/trace.sh url
 ----
 
-Na tela, o serviço é `wasm-shim`, e a busca por `hostname` com o endereço da
-sua API traz só as suas chamadas. Abra um trace de `200` e um de `429` lado a
-lado: a diferença é um span.
+Na tela, ① a instância é `tracing-system / tempo` e o tenant é `dev`; a
+consulta (② *Run query*) é TraceQL, `{ span.hostname = "{api_host}" }`, e traz
+só as suas chamadas. Cada linha da lista é um trace; ③ abra um de `13 spans`
+(passou, ou levou `429`) e um de `7 spans` (levou `401`): a diferença é o
+Limitador. A linha `tela:` que o `trace.sh` imprime abre o trace daquela
+chamada direto.
 
-.Figura: o trace do `429` no Jaeger, com ① o `should_rate_limit` do Limitador e ② o `send_reply` do filtro respondendo sozinho -- edição 1.0; clique para ampliar
-image::capturas/6-2-jaeger-trace-429.png[O trace de uma recusa por limite no Jaeger do Tempo,360,link=self,window=_blank]
+.Figura: a aba *Observe → Traces* com ① a instância, ② a consulta pela sua API e ③ a lista de traces -- edição 1.0; clique para ampliar
+image::capturas/6-2-console-traces-lista.png[A lista de traces da sua API na aba Observe → Traces do console,360,link=self,window=_blank]
+
+.Figura: o trace do `429` aberto, com ① o `should_rate_limit` do Limitador e ② o `send_reply` do filtro respondendo sozinho -- edição 1.0; clique para ampliar
+image::capturas/6-2-console-trace-429.png[O trace de uma recusa por limite na aba de Traces do console,360,link=self,window=_blank]
 
 ifdef::perfis[]
 [NOTE]
 ====
 **A tela é da turma, como o Grafana.** O Authorino e o Limitador são um só
 para todos, e os traces ficam num tenant que qualquer login do cluster lê: o
-`trace.sh` filtra pelo hostname da sua API, mas a tela mostra também as
-chamadas dos colegas. O que há num span é hostname, `x-request-id`, nomes de
+`trace.sh url` já abre a aba filtrada pelo hostname da sua API, mas quem
+apagar a consulta vê também as chamadas dos colegas. O que há num span é hostname, `x-request-id`, nomes de
 policy e a decisão -- nunca a chave.
 ====
 endif::[]

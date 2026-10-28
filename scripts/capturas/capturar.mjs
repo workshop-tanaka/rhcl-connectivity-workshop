@@ -71,6 +71,10 @@ export default async function run(page) {
           const folhas = [...(it.dentro ? root : document).querySelectorAll('*')]
             .filter(e => e.children.length === 0 && (e.innerText || e.textContent || '').trim() === it.texto)
           el = folhas[0] || null
+          // sem folha com o texto exato (o rotulo mistura <strong> e texto, por
+          // exemplo): o elemento mais fundo cujo texto inteiro e aquele
+          if (!el) el = [...(it.dentro ? root : document).querySelectorAll('*')]
+            .filter(e => (e.textContent || '').trim() === it.texto).pop() || null
           // sobe ate um bloco com area, para a borda nao ficar colada na letra
           while (el && el.getBoundingClientRect().height < 16 && el.parentElement) el = el.parentElement
         }

@@ -240,26 +240,57 @@
     ]
   },
   {
-    "arquivo": "6-2-jaeger-trace-429.png",
-    "url": "${traces_url}/api/traces/v1/dev/trace/${trace_429}",
+    "arquivo": "6-2-console-traces-lista.png",
+    "url": "${openshift_console_url}/observe/traces?namespace=tracing-system&name=tempo&tenant=dev&start=1h&q=%7B+span.hostname+%3D+%22${api_host}%22+%7D",
     "login": "openshift",
     "esperar": [
-      "text=should_rate_limit"
+      "text=kuadrant_filter"
     ],
-    "pausa": 3000,
+    "pausa": 4000,
     "viewport": {
       "width": 1440,
-      "height": 690
+      "height": 900
     },
+    "recorte": "[data-test=\"page-content\"], #content, main",
+    "clicar": [
+      "text=Hide graph"
+    ],
     "marcar": [
       {
-        "texto": "should_rate_limit",
-        "ate": ".span-row",
+        "texto": "Tempo instance",
         "n": 1
       },
       {
-        "texto": "send_reply",
-        "ate": ".span-row",
+        "texto": "Run query",
+        "n": 2
+      },
+      {
+        "texto": "wasm-shim:",
+        "ate": "a",
+        "n": 3
+      }
+    ]
+  },
+  {
+    "arquivo": "6-2-console-trace-429.png",
+    "url": "${openshift_console_url}/observe/traces/${trace_429}?namespace=tracing-system&name=tempo&tenant=dev",
+    "login": "openshift",
+    "esperar": [
+      "text=send_reply"
+    ],
+    "pausa": 4000,
+    "viewport": {
+      "width": 1440,
+      "height": 860
+    },
+    "recorte": "[data-test=\"page-content\"], #content, main",
+    "marcar": [
+      {
+        "texto": "limitador: should_rate_limit",
+        "n": 1
+      },
+      {
+        "texto": "wasm-shim: send_reply",
         "n": 2
       }
     ]
