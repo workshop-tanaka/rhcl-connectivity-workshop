@@ -53,7 +53,7 @@ demo:
 # do provedor nativo do OpenShift (provision.sh, _sem_mesh). 'ossm' e 'rhsi' por
 # enquanto so mudam o menu. Valor fora da lista e tratado como vazio.
 workshop:
-  foco: ""
+  foco: "rhcl"
 
 ansible:
   repository:
