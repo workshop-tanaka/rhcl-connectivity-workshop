@@ -25,94 +25,123 @@ endif::[]
 ifdef::foco_rhcl[]
 ifdef::trilha_degustacao[]
 // trilha Degustação: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
+
 .Fase 3 — A primeira API
 * xref:fase-3-resumo.adoc[O que há nesta fase]
+
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
+
 .Fase 5 — Da mão para a esteira
 * xref:fase-5-resumo.adoc[O que há nesta fase]
+
 .Fase 6 — Operação
 * xref:fase-6-resumo.adoc[O que há nesta fase]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_basico[]
 // trilha Básico: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
 * xref:m1-03-precedencia.adoc[2.2 Precedência de policies]
+
 .Fase 3 — A primeira API
 * xref:m1-06-exposta.adoc[3.1 De aberta a governada]
+
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
+
 .Fase 5 — Da mão para a esteira
 * xref:fase-5-resumo.adoc[O que há nesta fase]
+
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_intermediario[]
 // trilha Intermediário: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
 * xref:m1-03-precedencia.adoc[2.2 Precedência de policies]
+
 .Fase 3 — A primeira API
 * xref:m1-06-exposta.adoc[3.1 De aberta a governada]
 * xref:m1-07-identidade.adoc[3.3 Chave ou identidade]
+
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
 * xref:versoes.adoc[4.3 Uma API, duas versões]
+
 .Fase 5 — Da mão para a esteira
 * xref:esteira-fonte.adoc[5.1 O repositório é a fonte]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_avancado[]
 // trilha Avançado: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
 * xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway]
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
 * xref:m1-03-precedencia.adoc[2.2 Precedência de policies]
 * xref:m1-04-papeis.adoc[2.3 Quem pode o quê]
 * xref:m1-08-certificado.adoc[2.4 O certificado tem dono?]
+
 .Fase 3 — A primeira API
 * xref:m1-06-exposta.adoc[3.1 De aberta a governada]
 * xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
 * xref:m1-07-identidade.adoc[3.3 Chave ou identidade]
+
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
 * xref:versoes.adoc[4.3 Uma API, duas versões]
 * xref:extra-contextos.adoc[4.4 Uma API, vários contextos]
 * xref:extra-listas.adoc[4.5 Listas de permissão e bloqueio]
+
 .Fase 5 — Da mão para a esteira
 * xref:fase-esteira.adoc[O que muda nesta fase]
 * xref:esteira-fonte.adoc[5.1 O repositório é a fonte]
@@ -120,12 +149,14 @@ ifdef::trilha_avancado[]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
 * xref:m5-01-colheita.adoc[5.5 Leitura: do repositório ao formulário]
+
 .Fase 6 — Operação
 * xref:m3-00-intro.adoc[O que muda nesta fase]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
 * xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
 * xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
@@ -133,6 +164,7 @@ ifdef::trilha_avancado[]
 * xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
@@ -143,79 +175,103 @@ ifdef::trilha_avancado[]
 endif::[]
 ifdef::trilha_infra[]
 // trilha Infra: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:leitura-instalacao.adoc[Como a plataforma foi instalada]
 * xref:arquitetura.adoc[A arquitetura: dois planos e um Gateway]
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
 * xref:m1-03-precedencia.adoc[2.2 Precedência de policies]
 * xref:m1-04-papeis.adoc[2.3 Quem pode o quê]
 * xref:m1-08-certificado.adoc[2.4 O certificado tem dono?]
+
 .Fase 3 — A primeira API
 * xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
+
 .Fase 4 — A API vira produto
 * xref:fase-4-resumo.adoc[O que há nesta fase]
+
 .Fase 5 — Da mão para a esteira
 * xref:fase-5-resumo.adoc[O que há nesta fase]
+
 .Fase 6 — Operação
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
 * xref:papel-ossm.adoc[7.3 O papel do Service Mesh]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
 ifdef::trilha_desenvolvedor[]
 // trilha Desenvolvedor: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-01-fechada.adoc[2.1 Fechada por padrão]
 * xref:m1-03-precedencia.adoc[2.2 Precedência de policies]
+
 .Fase 3 — A primeira API
 * xref:m1-06-exposta.adoc[3.1 De aberta a governada]
 * xref:m1-07-identidade.adoc[3.3 Chave ou identidade]
+
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
 * xref:versoes.adoc[4.3 Uma API, duas versões]
 * xref:extra-contextos.adoc[4.4 Uma API, vários contextos]
 * xref:extra-listas.adoc[4.5 Listas de permissão e bloqueio]
+
 .Fase 5 — Da mão para a esteira
 * xref:esteira-fonte.adoc[5.1 O repositório é a fonte]
 * xref:esteira-mr.adoc[5.2 Mudança por merge request]
 * xref:esteira-confere.adoc[5.3 A esteira confere antes]
 * xref:esteira-desvio.adoc[5.4 Desvio e reversão]
+
 .Fase 6 — Operação
 * xref:fase-6-resumo.adoc[O que há nesta fase]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
 endif::[]
 ifdef::trilha_operacoes[]
 // trilha Operações: as mesmas fases, so com as paginas dela; fase sem pagina ganha o resumo
+
 .Fase 1 — A plataforma no ar
 * xref:mapa-policies.adoc[O Connectivity Link em uma página]
+
 .Fase 2 — A borda
 * xref:m1-04-papeis.adoc[2.3 Quem pode o quê]
+
 .Fase 3 — A primeira API
 * xref:fase-3-resumo.adoc[O que há nesta fase]
+
 .Fase 4 — A API vira produto
 * xref:m1-02-planos.adoc[4.1 Nem todo cliente é igual]
 * xref:m1-05-negocio.adoc[4.2 Isso vira número]
+
 .Fase 5 — Da mão para a esteira
 * xref:fase-5-resumo.adoc[O que há nesta fase]
+
 .Fase 6 — Operação
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
 * xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
+
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
