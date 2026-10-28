@@ -1,0 +1,35 @@
+[
+  {
+    "arquivo": "2-1-grafana-401-destino.png",
+    "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": ["section[data-testid=\"data-testid Panel header API fechada · 401 na borda: quem foi o destino?\"]"],
+    "pausa": 2500,
+    "recorte": "section[data-testid=\"data-testid Panel header API fechada · 401 na borda: quem foi o destino?\"]",
+    "marcar": [ {"texto": "401 -> unknown", "n": 1, "dentro": true} ]
+  },
+  {
+    "arquivo": "2-1-grafana-recusas.png",
+    "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": ["section[data-testid=\"data-testid Panel header API fechada · Recusas por código (2 min)\"]"],
+    "pausa": 2500,
+    "recorte": "section[data-testid=\"data-testid Panel header API fechada · Recusas por código (2 min)\"]",
+    "marcar": [ {"texto": "401", "n": 1, "dentro": true}, {"texto": "429", "n": 2, "dentro": true} ]
+  },
+  {
+    "arquivo": "4-1-grafana-planos.png",
+    "url": "${grafana_url}/d/rhcl-evidencia/evidencia-das-partes?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": ["section[data-testid=\"data-testid Panel header Planos · Servidas por plano (15 min)\"]"],
+    "pausa": 2500,
+    "recorte": "section[data-testid=\"data-testid Panel header Planos · Servidas por plano (15 min)\"]",
+    "marcar": [ {"texto": "free", "n": 1, "dentro": true}, {"texto": "silver", "n": 2, "dentro": true}, {"texto": "gold", "n": 3, "dentro": true} ]
+  },
+  {
+    "arquivo": "2-1-console-metrics.png",
+    "url": "${openshift_console_url}/dev-monitoring/ns/ingress-gateway-${guid}/metrics?query0=sum%20by%20(response_code%2C%20destination_workload)%20(increase(istio_requests_total%7Bresponse_code%3D%22401%22%7D%5B15m%5D))",
+    "login": "openshift",
+    "esperar": ["text=unknown"],
+    "pausa": 3000,
+    "recorte": "[data-test-id=\"page-layout\"], main, #content",
+    "marcar": [ {"texto": "unknown", "n": 2, "dentro": true} ]
+  }
+]

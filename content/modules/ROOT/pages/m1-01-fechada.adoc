@@ -138,6 +138,12 @@ Painel **API fechada · 401 na borda: quem foi o destino?** em {grafana_url}/d/r
 
 include::partial$entrar-grafana.adoc[]
 
+.Figura: o painel, com ① a linha `401 -> unknown` -- edição 1.0; clique para ampliar
+image::capturas/2-1-grafana-401-destino.png[O painel "401 na borda" com a linha 401 -> unknown marcada,360,link=self,window=_blank]
+
+.Figura: ao lado dele, as recusas por código: ① o `401` desta parte, ② o `429` que a {p-planos}vai produzir -- edição 1.0; clique para ampliar
+image::capturas/2-1-grafana-recusas.png[O painel de recusas por código com 401 e 429 marcados,360,link=self,window=_blank]
+
 [source,promql]
 ----
 sum by (response_code, destination_workload) (increase(istio_requests_total{response_code="401"}[15m]))

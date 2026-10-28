@@ -222,6 +222,9 @@ série `sistema-teste`, isolada dos parceiros da história.
 
 include::partial$entrar-grafana.adoc[]
 
+.Figura: servidas por plano, com ① `free`, ② `silver` e ③ `gold` -- edição 1.0; clique para ampliar
+image::capturas/4-1-grafana-planos.png[O painel de servidas por plano com os três planos marcados,360,link=self,window=_blank]
+
 == Configuração
 
 A `PlanPolicy` `travels-plans` -- **é este objeto que a parte defende**. Trinta
