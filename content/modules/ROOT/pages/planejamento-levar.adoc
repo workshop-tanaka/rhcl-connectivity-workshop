@@ -8,10 +8,11 @@ As perguntas da Fase 8 numa lista só. Nenhuma precisa de resposta hoje; a
 decisão por adotar o Connectivity Link começa quando o time souber quais
 delas já consegue responder, e quais só o seu ambiente responde.
 
-== Sobre a evidência ({p-provas}O que o workshop provou)
+== Sobre a evidência ({p-provas}O que esta edição provou)
 
 * Quais das medidas das fases 1 a 7 importam para o nosso caso, e quais não?
-* Qual item da lista "não medido" pesa na nossa decisão, e como o mediríamos?
+* Qual item do que esta edição ainda não mediu pesa na nossa decisão, e como o
+  mediríamos no nosso ambiente?
 
 == Sobre o que existe hoje ({p-conhecer}O que precisa ser conhecido)
 

@@ -4,7 +4,7 @@ ifdef::fase8[]
 
 .Fase 8 — Antes de decidir
 * xref:planejamento-intro.adoc[O que muda nesta fase]
-* xref:planejamento-provas.adoc[8.1 O que o workshop provou, e o que não provou]
+* xref:planejamento-provas.adoc[8.1 O que esta edição provou, e o que ainda vai medir]
 * xref:planejamento-partida.adoc[8.2 O que precisa ser conhecido]
 * xref:planejamento-decisoes.adoc[8.3 As decisões que a adoção vai pedir]
 * xref:planejamento-papeis.adoc[8.4 Papéis e responsabilidades]

@@ -1,6 +1,6 @@
 include::partial$numeros.adoc[]
-= {p-provas}O que o workshop provou, e o que não provou
-:navtitle: {p-provas}O que o workshop provou
+= {p-provas}O que esta edição provou, e o que ainda vai medir
+:navtitle: {p-provas}O que esta edição provou
 
 **Leitura · ~8 min**
 

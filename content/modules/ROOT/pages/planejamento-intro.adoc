@@ -53,9 +53,9 @@ Nada é gravado. O que o participante leva é a lista de perguntas, reunida na
 |===
 | parte | o que responde | tempo
 
-| xref:planejamento-provas.adoc[{p-provas}O que o workshop provou, e o que não provou]
-| a base de evidência: o que foi medido nas fases 1 a 7, e a lista honesta do
-  que ficou sem medida
+| xref:planejamento-provas.adoc[{p-provas}O que esta edição provou, e o que ainda vai medir]
+| a base de evidência: o que foi medido nas fases 1 a 7, e o que está no
+  roteiro das próximas edições
 | ~8 min
 
 | xref:planejamento-partida.adoc[{p-conhecer}O que precisa ser conhecido]
