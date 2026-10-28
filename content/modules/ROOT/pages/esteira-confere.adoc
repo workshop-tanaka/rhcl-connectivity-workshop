@@ -16,7 +16,7 @@ merge request até o cluster.
 A plataforma tem uma regra desde a parte
 xref:m1-06-exposta.adoc[{p-exposta}]: **rota nova nasce com policy própria.**
 Até aqui ela era um conselho -- uma rota sem `AuthPolicy` fica aberta até o
-teto do Gateway alcançá-la, e isso já foi medido neste workshop. Nesta parte a
+teto do Gateway alcançá-la, e você já viu isso acontecer. Nesta parte a
 regra vira **portão**: o merge request que a fere não entra no `main`.
 
 Quem confere é o **OpenShift Pipelines**. A cada push num merge request, o
@@ -197,8 +197,8 @@ sem chave: 401
 com chave: 404
 ----
 
-Os seus tempos vão ser outros: o GitLab avisa o Argo CD a cada push, e medi
-de um segundo a quase quatro minutos neste ambiente.
+Os seus tempos vão ser outros: o GitLab avisa o Argo CD a cada push, e a
+espera vai de um segundo a quase quatro minutos neste ambiente.
 
 **O que isso diz:** a rota e a policy chegaram ao cluster **no mesmo commit**
 -- não houve um instante em que `/relatorios` respondesse sem chave. O `404`

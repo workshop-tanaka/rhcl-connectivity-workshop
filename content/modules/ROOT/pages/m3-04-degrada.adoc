@@ -173,7 +173,7 @@ dele não volta.
 ====
 Não há campo para isso. O esquema das policies desta versão
 (`oc explain --recursive ratelimitpolicy`, `authpolicy`, `kuadrant`) não tem
-nenhum campo de modo de falha: o comportamento medido acima -- limite falha
+nenhum campo de modo de falha: o comportamento visto acima -- limite falha
 aberto, autenticação falha fechada -- é o do filtro do Gateway, e não uma
 escolha por policy.
 

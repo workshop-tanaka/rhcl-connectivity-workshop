@@ -103,7 +103,7 @@ para vários times.
 | certificado de cliente
 | integração entre empresas em que o certificado já é a identidade
 | nesta versão a policy não enxerga o certificado do cliente; há um contorno
-  medido, por cabeçalho
+  por cabeçalho
 |===
 
 **Recomendado: token, quando os parceiros passam de dezenas.** A chave de API
@@ -185,7 +185,7 @@ que alguém aprova. O plano faz parte do pedido.
 
 [NOTE]
 ====
-Um detalhe medido: a chave que o portal cria grava o plano numa **anotação**, e
+Um detalhe que importa: a chave que o portal cria grava o plano numa **anotação**, e
 a chave escrita à mão o grava num **rótulo**. As policies deste material leem
 os dois lugares. Uma policy que leia só um deles deixa a chave aprovada pelo
 portal **sem limite nenhum**, e sem erro.
@@ -228,7 +228,7 @@ Developer Hub (xref:papel-rhdh.adoc[{p-papel-rhdh}o papel dele]).
   medir o tráfego em vez de confiar no status -- e mais vale o alerta que
   acusa uma policy sobreposta.
 
-== O que este material não mediu
+== O que fica para o seu ambiente
 
 Três coisas que o desenho acima pressupõe e que valem um teste no seu ambiente
 antes de entrarem numa proposta:

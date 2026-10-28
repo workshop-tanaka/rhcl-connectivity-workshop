@@ -368,7 +368,7 @@ endif::[]
 <6> **Quanto o data plane conta.** Com `debug`, o módulo do Connectivity Link
     dentro do Gateway abre o próprio span e aparece como raiz do trace. É o
     nível deste laboratório, para a leitura ser completa; custa latência
-    (medido aqui: o p99 de 24 para 88 ms a 400 requisições por segundo), e em
+    (o p99 vai de 24 para 88 ms a 400 requisições por segundo), e em
     produção fica no nível padrão.
 ====
 
@@ -390,7 +390,7 @@ spec: {}
 
 Cada campo acima é uma decisão que pode vir depois, com uma exceção: o
 `mtls.enable` se liga **na criação** do ambiente. Ligá-lo com tráfego
-passando reinicia o Authorino e o Limitador (uma medição registrou cerca de
+passando reinicia o Authorino e o Limitador (cerca de
 8 segundos de `500` para todas as APIs; nenhuma requisição sem chave passou).
 ====
 
@@ -841,7 +841,7 @@ endif::[]
 
 == Três coisas que a instalação ensinou
 
-Nenhuma delas dá erro na hora. Todas foram medidas neste material.
+Nenhuma delas dá erro na hora.
 
 . **O operator do Connectivity Link (`kuadrant-operator`) vem com 300 Mi de memória.** Com centenas de
   policies no cluster ele passa disso e reinicia -- e as policies criadas

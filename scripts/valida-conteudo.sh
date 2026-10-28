@@ -170,6 +170,25 @@ sys.exit(1 if ruim else 0)
 PY
 if [[ "$?" -ne 0 ]]; then FALHAS=$((FALHAS+1)); fi
 
+# ----- 4. vocabulario de metodo fora do guia -------------------------------
+# "medido"/"nao medido" e a disciplina de quem escreve, nao informacao para
+# quem le (decisao de 2026-10-28): o participante quer o fato e a instrucao.
+# O que o guia nao confirmou vira "a conferir no seu ambiente" ou sai. As
+# excecoes (outro sentido: medidor do Grafana, "medir por parceiro", o metodo
+# de medir) ficam em scripts/valida-conteudo.permitidos, um trecho por linha.
+_sec "vocabulario de metodo"
+PERMITIDOS="scripts/valida-conteudo.permitidos"
+ACHADOS="$(grep -nE '\bmedid[oa]s?\b|\bmediu\b|\bremedid' "$PAGINAS"/*.adoc content/modules/ROOT/partials/*.adoc 2>/dev/null || true)"
+if [[ -n "$ACHADOS" && -f "$PERMITIDOS" ]]; then
+  ACHADOS="$(printf '%s\n' "$ACHADOS" | grep -vFf "$PERMITIDOS" || true)"
+fi
+if [[ -n "$ACHADOS" ]]; then
+  printf '%s\n' "$ACHADOS" | sed 's/^/  /' | cut -c1-160
+  _falha "o guia diz ao participante o que foi ou nao foi medido; fica o fato, sem o selo (ou um trecho em $PERMITIDOS)"
+else
+  printf '  nenhuma pagina fala em medido/nao medido\n'
+fi
+
 printf '\n'
 if [[ "$FALHAS" -eq 0 ]]; then
   printf '%s[OK]%s o conteudo esta publicavel.\n' "$_GRN" "$_RST"

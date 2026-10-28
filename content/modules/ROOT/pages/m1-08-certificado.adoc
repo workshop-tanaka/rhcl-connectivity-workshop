@@ -517,7 +517,7 @@ endif::[]
 == Por que não emitimos um certificado público no exercício
 
 Seria o natural, e o ambiente tem o Issuer para isso. Não usamos por um motivo
-medido: o desafio DNS-01 do ACME cria um registro `TXT` temporário, e esse
+concreto: o desafio DNS-01 do ACME cria um registro `TXT` temporário, e esse
 registro pode sobrepor o wildcard DNS do cluster para aquele nome
 (https://www.rfc-editor.org/rfc/rfc4592[RFC 4592^]). Num ambiente
 compartilhado, um exercício não deveria correr esse risco -- e a lição, *quem

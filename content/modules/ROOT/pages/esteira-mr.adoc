@@ -176,8 +176,8 @@ porque um merge request foi aceito.
 [IMPORTANT]
 ====
 **A espera varia.** O GitLab avisa o Argo CD a cada push, e a mudança costuma
-chegar em segundos; medi de 1 segundo a quase 4 minutos neste ambiente. Sem
-esse aviso, o Argo CD só consulta o repositório de tempos em tempos -- medido:
+chegar em segundos -- de 1 segundo a quase 4 minutos neste ambiente. Sem
+esse aviso, o Argo CD só consulta o repositório de tempos em tempos, a cada
 157 a 354 segundos. O comando espera em vez de prometer um tempo.
 ====
 

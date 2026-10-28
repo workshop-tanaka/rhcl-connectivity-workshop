@@ -9,11 +9,11 @@ include::partial$numeros.adoc[]
 O workshop praticou quatro papéis sem dizer que eram quatro: quem escreveu o
 teto no Gateway, quem pendurou a rota e a policy dela, quem definiu os planos,
 e quem leu o alerta e o trace. No produto, a fronteira entre eles é namespace
-e RBAC, medida na parte xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê]. Na
+e RBAC, como a parte xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê] mostra. Na
 sua empresa, a pergunta que decide é mais simples: **há alguém para cada
 linha?** Um papel pode ser uma pessoa em dois chapéus; o que não pode é um
 papel sem ninguém -- o alerta que ninguém recebe (parte {p-alerta}) é a falha
-mais cara que o workshop mediu, e ela nasce de uma linha vazia.
+mais cara que o workshop mostrou, e ela nasce de uma linha vazia.
 
 == O que cada papel teria de assumir
 

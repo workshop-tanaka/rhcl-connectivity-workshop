@@ -117,7 +117,7 @@ projeto do Argo CD, um por participante:
 
 [cols="2,3",options="header"]
 |===
-| a esteira só | medido neste ambiente
+| a esteira só | o que a segura na prática
 
 | lê o **seu** repositório
 | a credencial dela é só de leitura e só vale no seu projeto

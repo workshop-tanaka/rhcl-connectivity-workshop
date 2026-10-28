@@ -215,7 +215,7 @@ spec:
 
 O esquema tem ainda `healthCheck` (uma sonda que o provedor roda em cada
 registro), `excludeAddresses` (endereços do Gateway que não devem virar
-registro) e `delegate`; nenhum foi medido neste ambiente.
+registro) e `delegate`, a conferir no seu ambiente.
 ====
 
 == 3. O nome resolve, e responde
@@ -368,7 +368,7 @@ NXDOMAIN -- ninguem criou o nome "api" nesta zona
 
 Ninguém apagou registro à mão. A policy saiu, os dois `DNSRecord` saíram com
 ela -- o dono deles era a policy -- e o nome deixou de existir em segundos
-(medido: cerca de 3 s). É o outro lado da seção 2: quem publica o nome é a
+(cerca de 3 s). É o outro lado da seção 2: quem publica o nome é a
 declaração, e quem o retira também. Não sobra registro órfão apontando para um
 Gateway que já não atende.
 
@@ -380,7 +380,7 @@ ifdef::foco_rhcl[]
 bash scripts/dns-nome.sh limpa
 ----
 
-A limpeza é um script, e não um `oc delete project`, por um motivo medido: os
+A limpeza é um script, e não um `oc delete project`, por um motivo concreto: os
 registros precisam ser finalizados **antes** de o projeto sumir, senão ele fica
 preso em `Terminating`. O script apaga a policy (se ainda houver), espera os
 registros saírem, e só então remove o projeto.

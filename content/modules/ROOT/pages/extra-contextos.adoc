@@ -463,8 +463,8 @@ rules:
 ----
 
 e uma policy `anonymous` presa à regra `leitura`, com a da rota exigindo
-chave para o resto -- a mesma mecânica dos passos 2 e 3. Não medido neste
-ambiente: o campo está no schema da `HTTPRoute` (`oc explain
+chave para o resto -- a mesma mecânica dos passos 2 e 3. Fica a conferir no
+seu ambiente: o campo está no schema da `HTTPRoute` (`oc explain
 httproute.spec.rules.matches`).
 
 E se duas **rotas** disputarem o mesmo caminho, o desempate é da Gateway
@@ -1035,7 +1035,7 @@ httproute.gateway.networking.k8s.io/api3 created
 
 **O que isso diz:** a rota esquecida acaba negada, e a última linha mostra quem
 a nega: o teto da plataforma. Mas houve uma chamada com `200` antes. Os seus
-tempos vão ser outros -- já medi `~1s`, `~7s`, `~13s` e mais de um minuto,
+tempos vão ser outros -- a janela já foi de `~1s`, `~7s`, `~13s` a mais de um minuto,
 quando o operador estava reconciliando outras mudanças. **A janela existe e o
 tamanho varia.**
 

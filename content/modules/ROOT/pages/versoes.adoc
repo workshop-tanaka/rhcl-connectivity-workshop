@@ -585,7 +585,7 @@ que para `/`; o arquivo 9 a troca por um redirect:
 <2> **O que vai no `Location`.** A mesma troca de prefixo da reescrita:
     `/atual/travels` vira `/v2/travels`. Quando `hostname`, `scheme` e `port`
     não são ditos, saem da própria requisição -- foi assim que o `Location`
-    medido acima veio com o hostname da API.
+    acima veio com o hostname da API.
 
 Uma regra de redirect não tem `backendRefs`: ninguém atende a chamada, o
 Gateway só responde.

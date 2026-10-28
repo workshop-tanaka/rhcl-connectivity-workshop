@@ -78,7 +78,7 @@ include::partial$entrar-ocp.adoc[]
 == O merge request saiu como *Draft*
 
 O GitLab abre como rascunho (*Draft:* no título) o merge request cujo branch
-não traz **nenhum commit** além do `main` -- medido neste ambiente: os quatro
+não traz **nenhum commit** além do `main` -- neste ambiente, os quatro
 merge requests vazios de uma rodada saíram *Draft*, e nenhum dos que tinham
 commit. Acontece quando o commit da mudança não foi para o branch. Na parte
 xref:esteira-mr.adoc[{p-mr}Mudança por merge request], confira:

@@ -78,8 +78,8 @@ quem nem tem chave; **depois**, só com quem já provou quem é.
 == Não tente isto
 
 Escrever regra de conteúdo na própria `AuthPolicy`, com CEL ou Rego. **A policy
-não recebe o corpo da requisição** -- medido na configuração do Envoy deste
-Gateway: o filtro de autorização não pede o *body*. Ela vê método, caminho,
+não recebe o corpo da requisição** -- na configuração do Envoy deste
+Gateway, o filtro de autorização não pede o *body*. Ela vê método, caminho,
 cabeçalhos e a identidade resolvida, e nada mais.
 
 == O que isso prova

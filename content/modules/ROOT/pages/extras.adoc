@@ -35,7 +35,7 @@ ifndef::foco_rhcl[]
 
 | xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 | integração B2B em que o parceiro se identifica por **certificado**, e não por
-  chave. Inclui o que **não** funciona nesta versão, e o contorno medido
+  chave. Inclui o que **não** funciona nesta versão, e o contorno que funciona
 | {p-identidade}
 
 | xref:extra-tokens-ia.adoc[Limite por token (IA)]
@@ -117,8 +117,8 @@ ifdef::foco_rhcl[]
 | xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 | integração B2B em que o parceiro se identifica por **certificado**, e não por
   chave
-| o caminho da documentação não funciona nesta versão; o contorno medido, por
-  cabeçalho, funciona
+| o caminho da documentação não funciona nesta versão; o contorno por
+  cabeçalho funciona
 | Infra
 | {p-identidade}
 

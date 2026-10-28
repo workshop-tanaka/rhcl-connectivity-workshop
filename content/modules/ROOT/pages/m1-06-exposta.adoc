@@ -235,7 +235,7 @@ hostname novo, e até lá responde `503`. Se ainda vier `503`, repita só o `cur
 [WARNING]
 ====
 **Se a resposta for `200`, repita o `curl`.** O teto leva alguns segundos para
-alcançar uma rota recém-criada: medido neste ambiente, a primeira chamada logo
+alcançar uma rota recém-criada: neste ambiente, a primeira chamada logo
 depois do `apply` passou, e a seguinte, três segundos depois, já foi negada.
 Vale guardar: uma rota nova fica **aberta por alguns segundos**, e quem publica
 algo sensível espera o `403` antes de divulgar o endereço.

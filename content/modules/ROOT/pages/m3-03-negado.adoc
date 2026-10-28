@@ -339,8 +339,8 @@ As duas perguntas que resolvem a maioria dos chamados:
 
 == O que esta plataforma ainda não responde
 
-Um workshop honesto também diz onde a ferramenta não chega. Tudo abaixo foi
-**medido neste ambiente**, não suposto:
+Um workshop honesto também diz onde a ferramenta não chega. Tudo abaixo vale
+neste ambiente, nesta versão:
 
 * o `429` não explica nada ao cliente, e não há como ligar isso;
 * o cliente **não recebe um número de protocolo** para citar no chamado -- e o

@@ -33,8 +33,8 @@ Três movimentos, sequenciais:
 . **A chave abriu a porta da rua, não o cofre** -- `travels` recebe `403`, os
   quatro vendedores `200`. A recusa vem do sidecar; o que compara é o SPIFFE
   ID que o mTLS provou.
-. **Versão é decisão de plataforma** -- ~90/10 medido. Antes do
-  VirtualService o mesmo comando media ~50/50.
+. **Versão é decisão de plataforma** -- ~90/10. Antes do
+  VirtualService o mesmo comando dava ~50/50.
 
 == Navegador
 

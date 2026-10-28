@@ -66,8 +66,8 @@ válida, e vale mais do que uma estimativa disfarçada de número.
 
 Nenhum número de fora responde "isso aguenta a nossa segunda-feira de manhã":
 a capacidade depende de variáveis que mudam de um ambiente para outro. A
-tabela lista o que precisa ser conhecido para a estimativa existir; a medida
-se faz em homologação, com carga em degraus, até ver qual componente satura
+tabela lista o que precisa ser conhecido para a estimativa existir; o número
+se obtém em homologação, com carga em degraus, até ver qual componente satura
 primeiro.
 
 [cols="2,2,2,1",options="header"]
@@ -112,12 +112,13 @@ primeiro.
   `LoadBalancer` direto
 | um proxy a mais entra na latência e na capacidade; neste laboratório o
   router está na frente
-| o que a nuvem ou o datacenter oferece, e a diferença medida entre os dois
+| o que a nuvem ou o datacenter oferece, e a diferença entre os dois, em
+  homologação
 | plataforma
 
 | **nível de tracing e amostragem**
 | tracing produz a cauda de latência e consome CPU do Gateway e do Authorino
-| o nível que a operação precisa, medido com amostragem
+| o nível que a operação precisa, testado com amostragem
 | operação
 
 | **onde os pods rodam**: pool próprio, nó `infra`, zonas, `taints`
@@ -131,7 +132,7 @@ primeiro.
 | sem `requests`, o Authorino é o primeiro despejado num nó apertado, e o
   efeito é `500` em toda API (parte {p-degrada}); Limitador caído é API sem
   limite
-| os números medidos em homologação, não os de fábrica
+| os números obtidos em homologação, não os de fábrica
 | plataforma
 
 | **número de consumidores e de policies**
@@ -142,8 +143,8 @@ primeiro.
 | produto, plataforma
 
 | **o religamento**: dreno de nó, upgrade do OpenShift, reinício do Gateway
-| o filtro do Gateway é baixado de novo depois de um reinício; já medido neste
-  projeto, `503` até um `rollout restart`
+| o filtro do Gateway é baixado de novo depois de um reinício, e até lá a
+  resposta é `503`; um `rollout restart` resolve
 | um teste de dreno e de religamento em homologação
 | operação
 |===

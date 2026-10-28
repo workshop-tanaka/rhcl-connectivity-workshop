@@ -7,10 +7,10 @@ include::partial$numeros.adoc[]
 **Momento do projeto:** a avaliação · **Quem lê:** quem vai defender ou questionar a adoção
 
 Uma decisão sobre plataforma se apoia em evidência, e a evidência deste
-workshop é o que você executou nas fases 1 a 7. Esta parte a reúne em duas
-listas: o que foi **observado** no cluster, com a parte em que aconteceu, e o
-que o material **não mediu** -- para que ninguém saia daqui com uma promessa
-que o workshop não fez.
+workshop é o que você executou nas fases 1 a 7. Esta parte a reúne numa
+lista só: o que foi **observado** no cluster, com a parte em que aconteceu.
+O que ainda não está aqui vai entrando nas próximas edições, pelo roteiro
+que acompanha o repositório do workshop.
 
 == O que foi observado
 
@@ -29,9 +29,9 @@ que o workshop não fez.
 
 | **o plano vale no mesmo endereço**
 | duas chaves de planos diferentes, mesma URL, limites diferentes; trocar o
-  plano de um consumidor é trocar a credencial, não a policy. E a ressalva
-  medida: trocar só o rótulo da chave **não** muda o limite; recriar a chave
-  muda em segundos
+  plano de um consumidor é trocar a credencial, não a policy. A ressalva:
+  trocar só o rótulo da chave **não** muda o limite; recriar a chave muda em
+  segundos
 | xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual]
 
 | **o consumo vira número por plano e por parceiro**
@@ -91,56 +91,7 @@ que o workshop não fez.
 | xref:leitura-instalacao.adoc[Fase 1, "e se eu quiser fixar a versão?"] e o aviso de versões da xref:index.adoc[abertura]
 |===
 
-== O que esta edição ainda não mediu
-
-Cada linha abaixo é uma afirmação que **não** pode sair desta edição como
-fato. Nenhuma delas é lacuna esquecida: estão mapeadas e fazem parte do
-roteiro das próximas edições do workshop, que as transformam em medida no
-mesmo formato das partes anteriores. Até lá, onde uma delas importar para a
-sua decisão, é algo a medir no seu ambiente.
-
-[cols="2,3",options="header"]
-|===
-| ainda não medido (no roteiro das próximas edições) | por que importa
-
-| **capacidade por réplica** do Gateway, do Authorino e do Limitador
-| depende do pico, da credencial, do caminho de entrada, do tracing e de onde
-  os pods rodam; este material não entrega número
-
-| **o corte de tráfego ao trocar a classe do Gateway** (nativo ↔ Service Mesh)
-| decide se a escolha do provedor pode mudar depois sem janela
-
-| **mover uma rota de um Gateway para outro**
-| hostname, certificado e status das policies do lado do consumidor; decide
-  quantos Gateways nascer
-
-| **a troca de rota com o mesmo hostname** da API antiga
-| para parceiros que não podem mudar de endereço na migração
-
-| **mTLS no salto interno sem Service Mesh**
-| a credencial atravessa o cluster em claro no provedor nativo
-
-| **parceiro como sistema entrando por OIDC**, com o plano vindo do token
-| o token exercitado foi de pessoa
-
-| **tracing com amostragem**: p99 e CPU
-| o nível de produção não foi medido; só `debug` e padrão
-
-| **memória do Limitador por contador ativo**, e a alta disponibilidade do store
-| decide o tamanho e o desenho do store
-
-| **quantas séries a dimensão por parceiro cria** com centenas de parceiros
-| decide até onde "medir por parceiro" vai sem log ou trace
-
-| **dois clusters na borda**: limite global com store compartilhado, DNS comum
-| o segundo cluster deste material não foi exercitado
-
-| **se o nó `infra` admite esses componentes** na regra de subscription
-| não tem fonte neste material; confirmar com a Red Hat
-|===
-
-O roteiro das edições, com o que cada uma pretende medir, acompanha o
-repositório do workshop; a edição em que você está é a do título do guia. O
-que vale como fonte para o que ainda não está aqui é a
+A edição em que você está é a do título do guia. O que vale como fonte para
+o que ainda não está aqui é a
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação da versão em uso^].
 Artigo e blog são pista, não fonte.

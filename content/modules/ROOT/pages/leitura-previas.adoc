@@ -53,7 +53,7 @@ cada uma, e as notas da versão que você for usar.
 
 | **Autenticação por certificado X.509** na `AuthPolicy`
 | o Extra xref:extra-parceiro-certificado.adoc[Parceiro com certificado] -- com
-  a ressalva medida: no Gateway nativo desta sessão, o `x509` puro não enxerga
+  a ressalva: no Gateway nativo desta sessão, o `x509` puro não enxerga
   o certificado, e o caminho é o cabeçalho que o Gateway escreve
 |===
 

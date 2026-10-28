@@ -331,8 +331,8 @@ acesso em produção:
   dizer, sozinho, o que a pessoa governa.
 * **O papel `cluster-reader` do OpenShift.** Ele não lê `Secret`, e parece
   bastar. Não basta: lê a spec de todo `Deployment`, `Pod` e `ConfigMap` do
-  cluster, e credencial também mora ali. Neste cluster, medido antes de
-  decidir, havia segredo escrito em variável de ambiente do registro de
+  cluster, e credencial também mora ali. Neste cluster havia segredo
+  escrito em variável de ambiente do registro de
   imagens e do Pipelines, e em `ConfigMap` do GitLab. "Só leitura" não é o
   mesmo que "sem segredo".
 * **Um papel fechado, num login à parte.** É o escolhido:

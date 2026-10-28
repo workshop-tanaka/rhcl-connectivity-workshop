@@ -14,9 +14,8 @@ pedir antes de decidir por ela.
 
 [IMPORTANT]
 ====
-**O custo de desfazer é a avaliação deste material, não uma medida.** O que
-foi medido está dito como medido, com a parte em que aconteceu; o resto é a
-leitura de quem escreveu o guia, marcada como tal.
+**O custo de desfazer é a leitura de quem escreveu o guia.** As opções e os
+sinais vêm das partes em que apareceram; a decisão é do seu time.
 ====
 
 As perguntas vêm em três grupos, pelo preço de mudar de ideia depois: as
@@ -39,8 +38,8 @@ ficam no padrão do produto até um sinal aparecer.
 | um para tudo: um erro de teto ou certificado alcança todas as APIs. Um por
   público: cada Gateway é um pod de proxy a mais e repete teto, certificado,
   nome e telemetria. Desfazer é **alto**: mover uma API entre Gateways muda
-  hostname, certificado, teto e painel -- **não medido**. Sinal: um time pede
-  exceção ao teto que só vale para ele
+  hostname, certificado, teto e painel. Sinal: um time pede exceção ao teto
+  que só vale para ele
 | plataforma, produto
 
 | **Uma plataforma por cluster, ou um cluster por domínio?**
@@ -49,8 +48,8 @@ ficam no padrão do produto até um sinal aparecer.
   xref:leitura-multitenancy.adoc[{p-multitenancy}multi-tenancy])
 | compartilhado: uma operação e um catálogo, mas a disponibilidade é comum (o
   Limitador fora é de todos, parte {p-degrada}). Um cluster por domínio: N
-  operações, e dois Limitadores concordando sobre um limite **não foi
-  medido**. Sinal: um time precisa de janela ou de versão do operador própria
+  operações, e dois Limitadores precisando concordar sobre um limite. Sinal:
+  um time precisa de janela ou de versão do operador própria
 | plataforma
 
 | **Como o consumidor se identifica?** chave de API · token OIDC · certificado
@@ -88,9 +87,9 @@ ficam no padrão do produto até um sinal aparecer.
   diz o que o Service Mesh acrescenta
 | nativo: menos memória e operação, mas sem identidade entre serviços e com o
   salto interno em claro. Service Mesh: mTLS e autorização entre serviços, ao
-  preço de sidecar e de um control plane a mais. **O corte ao trocar a classe
-  do Gateway não foi medido.** Sinal: a primeira exigência de mTLS entre
-  serviços
+  preço de sidecar e de um control plane a mais. Trocar a classe do Gateway
+  depois é uma janela a conferir no seu ambiente. Sinal: a primeira exigência
+  de mTLS entre serviços
 | plataforma
 
 | **Onde moram as chaves de API?** no namespace da plataforma · no de cada time
@@ -107,8 +106,8 @@ ficam no padrão do produto até um sinal aparecer.
 | **O salto do Gateway até o Authorino e o Limitador é cifrado?**
 | sem `Kuadrant.spec.mtls` a credencial atravessa o cluster legível (a
   xref:ambiente-atalhos.adoc[lista de atalhos] o declara); ligar pede o
-  Service Mesh; medido com Service Mesh, ligar custou segundos de `500` em
-  todas as APIs. **Sem Service Mesh, não medido**
+  Service Mesh; com ele, ligar custa alguns segundos de `500` em todas as
+  APIs
 | desligado: a proteção é a rede do cluster. Ligado: o provedor é o Service
   Mesh. Sinal: uma auditoria pergunta por onde a credencial passa em claro
 | plataforma, operação
@@ -117,8 +116,8 @@ ficam no padrão do produto até um sinal aparecer.
   plano por API · um catálogo comum · limite por consumidor
 | três planos reaproveitados, o consumidor entrando por rótulo (parte
   {p-planos}); **medir por parceiro não é limitar por parceiro**: o contador é
-  por plano, o parceiro é dimensão da métrica (parte {p-negocio}). Quantas
-  séries isso cria com centenas de parceiros **não foi medido**
+  por plano, o parceiro é dimensão da métrica (parte {p-negocio}); com
+  centenas de parceiros, é uma série por parceiro
 | catálogo comum: um consumidor novo custa uma credencial e um rótulo; a
   exceção vira um plano com nome. Limite por consumidor: a configuração volta a
   crescer, e quem comprou limite próprio não volta ao plano. Sinal: muitas
@@ -140,8 +139,8 @@ ficam no padrão do produto até um sinal aparecer.
 | **Quem é dono do certificado e do nome?**
 | o certificado desta sessão não tem dono -- é o curinga do cluster; a
   `TLSPolicy` dá dono (parte {p-certificado}); o nome também é policy (Extra
-  xref:extra-dns.adoc[{p-dns}]); duas armadilhas medidas: `Secret`
-  compartilhado entre Gateways, e hostname de dois rótulos no curinga
+  xref:extra-dns.adoc[{p-dns}]); duas armadilhas: `Secret` compartilhado
+  entre Gateways, e hostname de dois rótulos no curinga
 | curinga: nada a fazer, sem renovação própria. Emissor da empresa: dono,
   renovação e revogação, ao preço de um `ClusterIssuer` e da regra de um
   `Secret` por Gateway. Trocar o emissor depois pode exigir que o consumidor
@@ -181,7 +180,7 @@ ficam no padrão do produto até um sinal aparecer.
 | **O que se mede desde o dia 1?**
 | métrica por plano e por parceiro, alertas da plataforma, tracing no nível
   padrão (partes {p-negocio}e {p-alerta})
-| dado retroativo não existe: o que não se mediu no lançamento não volta, e a
+| dado retroativo não existe: o que não se registrou no lançamento não volta, e a
   primeira negociação de plano usa o consumo dos primeiros meses
 
 | **Como se atualiza o operador?**
@@ -198,5 +197,5 @@ ficam no padrão do produto até um sinal aparecer.
 
 | **Um cluster ou vários na borda?**
 | um; o segundo cluster é outra instalação
-| limite global e DNS comum entre clusters **não foram medidos** neste material
+| o segundo cluster: limite global e DNS comum entre os dois
 |===

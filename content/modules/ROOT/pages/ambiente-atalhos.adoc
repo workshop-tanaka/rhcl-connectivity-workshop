@@ -59,6 +59,6 @@ TIP: Usuário, senha e endereço de cada tela ficam em xref:acessos.adoc[Seus ac
   volume e a disponibilidade do seu caso
 |===
 
-Nada disso diminui o que as partes mostram: o comportamento medido é o do
+Nada disso diminui o que as partes mostram: o comportamento que você vê é o do
 produto. O que muda em produção é **quanto** de cada peça, e **quem** cuida
 dela.

@@ -68,7 +68,7 @@ a mostra.
 == A parte honesta
 
 Timeout e retry estão configurados no VirtualService e são legítimos de
-produção. Mas **não se demonstram com fault injection**, e isto foi medido:
+produção. Mas **não se demonstram com fault injection**:
 `delay 5s` com `timeout 3s` devolve `200` em 5,03 s; `abort 503 em 50%`
 falha ~55 % mesmo com retry. O delay acontece antes da chamada upstream; o
 abort é um *local reply* que o retry não vê.
@@ -78,13 +78,13 @@ abort é um *local reply* que o retry não vê.
 Fault injection **provoca** o cenário; ela não **prova** o retry. Muito
 tutorial encadeia as duas coisas como se compusessem, e o que parece uma
 demonstração vira uma promessa que o ambiente não cumpre. Os dois mecanismos
-que você mediu -- `UO` e `UH` -- esses sim são visíveis, e são decisões de
+que você viu -- `UO` e `UH` -- esses sim são visíveis, e são decisões de
 plataforma opostas com o mesmo código de erro.
 
 
 == Falta um salto
 
-Na parte {p-leste} você mediu o mTLS entre os serviços da aplicação. Mas antes de
+Na parte {p-leste} você comprovou o mTLS entre os serviços da aplicação. Mas antes de
 chegar a eles, toda requisição passa por duas chamadas que não aparecem no
 grafo: do Gateway ao Authorino e ao Limitador. A parte
 xref:m2-04-canal.adoc[{p-canal}] pergunta se esse salto também é cifrado.

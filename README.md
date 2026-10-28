@@ -166,3 +166,21 @@ nenhuma leitura do `.adoc` pegaria. Ele precisa do `asciidoctor`
 
 O conteúdo Antora renderiza com o [showroom-content](https://github.com/rhpds/showroom-content)
 ou qualquer Antora 3 (`npx antora site.yml`).
+
+## O que o participante lê, e o que fica com quem escreve
+
+"Medido" e "não medido" são a disciplina de quem escreve o guia, não
+informação para quem o lê (decisão de 2026-10-28). No texto das páginas:
+
+- fica o **fato**, sem o selo: "nesta versão o `x509` não enxerga o
+  certificado", e não "medido neste ambiente: ...". O número fica quando ele é
+  o conteúdo;
+- o que o guia **não confirmou** ou sai, ou vira "a conferir no seu ambiente",
+  curto e num bloco oculto, nunca no corpo do passo;
+- a contabilidade do método vive nas mensagens de commit, nos documentos de
+  engenharia da demo e em `edicoes/ROADMAP.md` (o que cada edição ainda vai
+  medir).
+
+O `valida-conteudo.sh` reprova "medido/não medido" nas páginas; as exceções
+de outro sentido (o *medidor* do Grafana, "medir por parceiro") ficam em
+`scripts/valida-conteudo.permitidos`, um trecho por linha.

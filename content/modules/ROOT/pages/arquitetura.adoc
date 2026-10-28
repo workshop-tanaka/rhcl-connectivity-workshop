@@ -128,7 +128,7 @@ flowchart TB
 O que dá para ver daqui: a `RateLimitPolicy` do Gateway e o `PlanPolicy` da
 sua API viraram **limites dentro do CR `Limitador`**, vários por policy (um
 por plano e por janela), rotulados pela policy de origem. Conte-os por policy,
-e ache a sua (medido aqui: sete limites para a policy da travel-agency):
+e ache a sua (sete limites para a policy da travel-agency):
 
 [source,bash,role="execute"]
 ----

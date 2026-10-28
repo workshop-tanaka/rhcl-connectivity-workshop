@@ -18,7 +18,7 @@ solução a produção, conte com o apoio especializado do time de Serviços da 
 Hat (Consultoria). Para quem já concluiu a implantação, o Suporte Técnico da
 Red Hat é o canal para dúvidas e incidentes do produto em operação.
 
-**Versões e alternativas.** O material foi construído e medido com as versões
+**Versões e alternativas.** O material foi construído com as versões
 deste ambiente -- edição {edicao} (build `{demo_ref}`), sobre o Red Hat Connectivity Link e o
 OpenShift que xref:ambiente-conferir.adoc[Conferir o ambiente] mostra. Outra
 versão pode mudar nomes de campo, telas, comandos e comportamentos, e há outras
@@ -30,8 +30,8 @@ algumas páginas, dizem com a fonte o que ela acrescenta ao assunto. Várias esc
 xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório] diz o que fazer
 em produção.
 
-**Números.** Tempos, latências e capacidades que aparecem no guia foram
-medidos neste ambiente, para ensinar o método de medir. Não são benchmark nem
+**Números.** Tempos, latências e capacidades que aparecem no guia são
+deste ambiente, e servem para ensinar o método de medir. Não são benchmark nem
 SLA do produto.
 
 **Dados.** O ambiente é compartilhado e será destruído ao fim. Não use dados,

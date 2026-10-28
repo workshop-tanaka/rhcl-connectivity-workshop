@@ -121,7 +121,7 @@ meio do filtro do Connectivity Link no Gateway (o wasm-shim), e esse filtro
 não repassa o certificado do
 cliente nessa pergunta. Nesta versão, com `x509`, **ninguém entra**.
 
-WARNING: Isto foi medido no RHCL 1.4. Não tome como definitivo em outra versão:
+WARNING: Isto vale para o RHCL 1.4. Não tome como definitivo em outra versão:
 refaça o exercício antes de decidir.
 
 == 3. O contorno: o Gateway escreve o certificado num cabeçalho
@@ -235,7 +235,7 @@ Hoje o listener valida o cliente contra a CA que está no `ca.crt` do
 parceiros nessa CA. Um parceiro que traz a própria CA precisa que **ela**
 esteja entre as confiadas pelo listener -- um `Secret` cujo `ca.crt` reúna
 as CAs aceitas --, e a regra do passo 3 continua decidindo pelo `Subject`.
-Não medido neste ambiente: antes de prometer isso a um parceiro, refaça o
+A conferir no seu ambiente: antes de prometer isso a um parceiro, refaça o
 exercício com a CA dele.
 ====
 

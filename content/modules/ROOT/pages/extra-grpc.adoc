@@ -117,8 +117,8 @@ No mesmo cluster e no mesmo minuto, o limite de HTTP corta no quarto request.
 
 [IMPORTANT]
 ====
-Isto foi **medido**, não suposto: em 2026-08-28 e remedido em 2026-09-20 sobre
-o RHCL 1.4.3, que é a versão corrente. O resultado se repetiu.
+Isto vale para o RHCL 1.4.3, que é a versão corrente, e se repete a cada
+rodada.
 ====
 
 == Limpando

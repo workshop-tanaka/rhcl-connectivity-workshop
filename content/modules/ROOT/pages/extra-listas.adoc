@@ -93,7 +93,7 @@ cada um.
   pod que chamou.
 
 De um notebook, pela internet, a linha `edge` muda de valor e não de natureza:
-medido neste tipo de ambiente, o primeiro endereço estava na faixa
+neste tipo de ambiente, o primeiro endereço estava na faixa
 `100.64.0.0/10` (RFC 6598), a de NAT de operadora. O IP público real de quem
 chamou, conferido no mesmo instante, não apareceu em lugar nenhum. Os valores
 que você vê variam de turma para turma e de nó para nó; a natureza deles não.
@@ -276,7 +276,7 @@ caminho direto, não há o que forjar -- e quem vem pela borda continua entrando
 .Três formas erradas de escrever essa NetworkPolicy, e por que cada uma falha
 [%collapsible]
 ====
-As três foram medidas neste cluster, e cada erro ensina algo sobre a rede do
+As três acontecem neste cluster, e cada erro ensina algo sobre a rede do
 OpenShift:
 
 [cols="1,1,2",options="header"]
@@ -352,8 +352,8 @@ patterns:
 ou sobre um rótulo do `Secret`, para a lista não precisar de edição a cada
 parceiro novo -- `auth.identity.metadata.labels["parceiro-liberado"] ==
 "sim"`. A forma `in [...]` é a mesma do passo 3 da parte
-xref:versoes.adoc[{p-versoes}Uma API, duas versões], medida lá; esta lista
-em si não foi medida neste ambiente.
+xref:versoes.adoc[{p-versoes}Uma API, duas versões]; esta lista em si fica
+a conferir no seu ambiente.
 
 Lista por endereço vinda de um WAF ou CDN na frente da borda é outro caso, e
 tem o mesmo problema desta página: só vale se o cabeçalho for escrito por

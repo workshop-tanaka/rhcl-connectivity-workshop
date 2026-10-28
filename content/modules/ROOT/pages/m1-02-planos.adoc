@@ -300,7 +300,7 @@ dedicado -- um bloco a mais no YAML, e o label da chave dele apontando para lá.
 Você acabou de ver três contratos comerciais diferentes saírem de **um label**
 num Secret. Criar um tier novo é acrescentar um bloco de trinta linhas; mover
 um cliente de plano é trocar esse label **e recriar a chave** -- só o label,
-nesta versão, não muda o limite (medido: dois minutos depois o plano antigo
+nesta versão, não muda o limite (dois minutos depois o plano antigo
 ainda valia). Nenhum dos dois passa por build, deploy ou mudança de código.
 
 == Para ir além

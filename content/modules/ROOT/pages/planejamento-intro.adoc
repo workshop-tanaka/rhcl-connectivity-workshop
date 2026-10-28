@@ -8,12 +8,12 @@ include::partial$numeros.adoc[]
 
 == Por que neste ponto
 
-As fases 1 a 7 mostraram, com medida, o que a plataforma faz: a API fechada
+As fases 1 a 7 mostraram o que a plataforma faz: a API fechada
 por padrão, o plano no mesmo endereço, a mudança por merge request, o alerta
 que a plataforma dá sobre si mesma. Esta fase não acrescenta nada ao cluster
 nem ao repositório. Ela organiza o que o workshop mostrou em **perguntas que o
 seu time precisa responder para decidir** -- e separa o que já tem resposta
-medida do que só o seu ambiente responde.
+do que só o seu ambiente responde.
 
 == O que esta fase não é
 
@@ -21,7 +21,7 @@ Não é um plano de adoção: a decisão ainda não foi tomada, e nada aqui a
 pressupõe. Não é um exercício: não há arquivo a escrever, branch a abrir ou
 merge request a aceitar. Não é um dimensionamento: nenhuma página crava
 réplica, capacidade ou prazo. E não é consultoria: cada pergunta vem com o
-que o workshop mediu e com o que falta ver no seu ambiente; a resposta é do
+que o workshop mostrou e com o que falta ver no seu ambiente; a resposta é do
 seu time.
 
 == Como ler
@@ -33,8 +33,7 @@ Cada parte é uma tabela de perguntas com três colunas:
 | coluna | o que traz
 
 | **o que o workshop mostrou**
-| a medida que sustenta a pergunta, com o link para a parte onde aconteceu.
-  Onde o workshop **não** mediu, está escrito assim
+| o que sustenta a pergunta, com o link para a parte onde aconteceu
 
 | **o que ver no seu ambiente**
 | o que o time precisa levantar ou testar antes de responder; sem número
@@ -54,8 +53,7 @@ Nada é gravado. O que o participante leva é a lista de perguntas, reunida na
 | parte | o que responde | tempo
 
 | xref:planejamento-provas.adoc[{p-provas}O que esta edição provou, e o que ainda vai medir]
-| a base de evidência: o que foi medido nas fases 1 a 7, e o que está no
-  roteiro das próximas edições
+| a base de evidência: o que as fases 1 a 7 mostraram, parte por parte
 | ~8 min
 
 | xref:planejamento-partida.adoc[{p-conhecer}O que precisa ser conhecido]

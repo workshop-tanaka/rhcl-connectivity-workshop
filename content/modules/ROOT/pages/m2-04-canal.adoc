@@ -15,7 +15,7 @@ Toda requisição que chega à API faz duas perguntas antes de seguir: ao
 **Authorino** ("esta chave vale?") e ao **Limitador** ("ainda cabe no plano?").
 São duas chamadas gRPC que o Envoy do Gateway faz para fora dele mesmo.
 
-A parte {p-leste} mediu o mTLS entre os serviços da aplicação. Mas o Authorino e o
+A parte {p-leste} comprovou o mTLS entre os serviços da aplicação. Mas o Authorino e o
 Limitador moram em `kuadrant-system`, e esse namespace, por padrão, **não está
 no Service Mesh**. E a chave de API viaja no header `Authorization`, então vai
 junto na chamada ao Authorino -- num salto em claro, do mesmo jeito.
@@ -54,7 +54,7 @@ destino é um *cluster* do Envoy, e um cluster cifrado carrega um
 == O mesmo comando, antes
 
 Este ambiente já nasce com o salto cifrado. Não foi sempre assim: esta é a
-mesma leitura, **medida neste ambiente** antes da correção.
+mesma leitura, neste mesmo ambiente, antes da correção.
 
 [source,text]
 ----
@@ -114,7 +114,7 @@ dois.
 
 == A parte honesta
 
-Ligar o campo teve dois custos, e os dois foram medidos.
+Ligar o campo teve dois custos.
 
 **A troca não é gratuita.** Ao ligar num ambiente em uso, os pods do Authorino
 e do Limitador reiniciam. Uma sonda de 1 segundo registrou cerca de **8
@@ -162,7 +162,7 @@ bash scripts/mapa-mtls.sh
 ----
 
 Também só lê. O script percorre o caminho de uma requisição, do cliente até o
-banco, e diz o que protege cada salto. A resposta vem **medida**, e não do que
+banco, e diz o que protege cada salto. A resposta vem **do tráfego real**, e não do que
 está declarado: a métrica `connection_security_policy` do Service Mesh,
 reportada por quem recebe a chamada.
 

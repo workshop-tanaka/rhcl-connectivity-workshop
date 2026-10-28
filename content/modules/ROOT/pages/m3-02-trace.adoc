@@ -2,7 +2,7 @@ include::partial$numeros.adoc[]
 = 3.2 O que um contador não responde
 :navtitle: 3.2 O que um contador não responde
 
-**Para quem:** Operação/SRE (o custo medido) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte {p-rastreavel}**
+**Para quem:** Operação/SRE (o custo da policy) e Desenvolvedor (as três linhas de propagação são dele). · **4 min** · **depois da parte {p-rastreavel}**
 
 [NOTE]
 ====
@@ -30,8 +30,8 @@ bash scripts/demo.sh trace
 ----
 
 Gera seis chamadas, espera ~25 s pela indexação e imprime o span de borda e o
-de aplicação de cada uma, lado a lado: **a diferença é o custo da policy,
-medido** -- neste cluster, com estas policies.
+de aplicação de cada uma, lado a lado: **a diferença é o custo da policy**
+-- neste cluster, com estas policies.
 
 O terceiro movimento é a parte que quase ninguém mostra: o fan-out tem seis
 serviços atrás do `travels`, e o trace alcança **dois**.
