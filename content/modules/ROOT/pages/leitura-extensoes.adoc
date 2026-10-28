@@ -93,8 +93,8 @@ consultado a cada chamada. Fora disso, *"um controlador comum é melhor"*.
 **Você já usou uma.** Na 1.5 a `PlanPolicy` da parte {p-planos} passa a ser
 uma extensão escrita com este SDK: ela lê o plano da identidade que a
 `AuthPolicy` resolveu e manda o limite ao Limitador por data binding. O
-mesmo desenho desta página, embalado pelo produto -- e, na 1.5, também em
-Technology Preview.
+mesmo desenho desta página, embalado pelo produto -- em Technology Preview na
+1.5, como já é na 1.4.
 ====
 
 == O caso: uma janela de manutenção

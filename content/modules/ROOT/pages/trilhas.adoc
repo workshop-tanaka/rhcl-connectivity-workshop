@@ -57,11 +57,11 @@ completo da sessão fica em link:/[Todas as páginas,window=_top].
 | link:/basico/[abrir,window=_top]
 | **Intermediário** · ~2h45 | quem vai operar a esteira e a borda no dia a dia
 | link:/intermediario/[abrir,window=_top]
-| **Avançado** · ~6h31 | a sessão inteira, com os Extras
+| **Avançado** · ~6h39 | a sessão inteira, com os Extras
 | link:/avancado/[abrir,window=_top]
 | **Infra** · ~2h06 | quem opera a plataforma: instalação, borda, certificado, DNS, alerta
 | link:/infra/[abrir,window=_top]
-| **Desenvolvedor** · ~3h16 | quem publica a API: rota, policy, planos, versões, esteira
+| **Desenvolvedor** · ~3h24 | quem publica a API: rota, policy, planos, versões, esteira
 | link:/desenvolvedor/[abrir,window=_top]
 | **Operações** · ~1h38 | quem responde pela borda: número, diagnóstico, alerta, auditoria
 | link:/operacoes/[abrir,window=_top]
@@ -94,7 +94,7 @@ endif::[]
 
 | <<avancado,**Avançado**>>
 | quem quer a sessão inteira, com a Fase 7 e os Extras
-| ~6h31
+| ~6h39
 
 | <<infra,**Infra**>>
 | o time de plataforma: como ela foi instalada, a borda inteira, o DNS, a
@@ -104,7 +104,7 @@ endif::[]
 | <<desenvolvedor,**Desenvolvedor**>>
 | o time da aplicação: publicar a API, dar identidade ao consumidor, o produto
   inteiro, a esteira, gRPC e Postman
-| ~3h16
+| ~3h24
 
 | <<operacoes,**Operações**>>
 | quem responde pela borda no dia a dia: o número de negócio, a Fase 6 inteira,
@@ -198,7 +198,7 @@ são o maior bloco desta trilha: quem estiver sem tempo pode pular para a
 {p-fonte} e fica dentro de ~2h15.
 
 [[avancado]]
-== Avançado -- ~6h31
+== Avançado -- ~6h39
 
 **Para quem:** quem quer a sessão inteira, na ordem em que o menu a conta: da
 plataforma instalada ao que vem depois, com os Extras.
@@ -253,12 +253,13 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:extra-postman.adoc[Testar a API no Postman] · ~10 min
 . xref:esteira-bateria.adoc[A bateria da borda] · ~10 min
 . xref:extra-parceiro-certificado.adoc[Parceiro com certificado] · ~6 min
+. xref:extra-cors.adoc[CORS: a API chamada do navegador] · ~8 min
 . xref:extra-tokens-ia.adoc[Limite por token (IA)] · ~6 min
 . xref:ambiente-atalhos.adoc[O que aqui é atalho de laboratório] · ~4 min*
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 . xref:referencias.adoc[Materiais de referência] · ~3 min*
 
-**Soma:** ~391 min (6h31), sem contar as três páginas de ambiente
+**Soma:** ~399 min (6h39), sem contar as três páginas de ambiente
 (xref:ambiente-conferir.adoc[Conferir], xref:se-algo-nao-responder.adoc[Se algo
 não responder], xref:ambiente-recomecar.adoc[Recomeçar]), que se consultam
 quando precisar.
@@ -307,7 +308,7 @@ laboratório de DNS sobe o próprio projeto e a própria rota --, e o da
 próprias rajadas. Nenhuma das duas depende de estado deixado por outra parte.
 
 [[desenvolvedor]]
-== Desenvolvedor -- ~3h16
+== Desenvolvedor -- ~3h24
 
 **Para quem:** o time da aplicação -- quem publica a API, escolhe como o
 consumidor se identifica, transforma a API em produto e propõe a mudança pela
@@ -334,9 +335,10 @@ esteira.
 . xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo] · ~9 min
 . xref:extra-postman.adoc[Testar a API no Postman] · ~10 min
 . xref:esteira-bateria.adoc[A bateria da borda] · ~10 min
+. xref:extra-cors.adoc[CORS: a API chamada do navegador] · ~8 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 
-**Soma:** ~196 min (3h16).
+**Soma:** ~204 min (3h24).
 
 **O que fica de fora, e por quê:** a Fase 1 (a plataforma é do outro time; o
 Mapa dá o vocabulário), os papéis, o certificado e o DNS (trilha Infra), a Fase

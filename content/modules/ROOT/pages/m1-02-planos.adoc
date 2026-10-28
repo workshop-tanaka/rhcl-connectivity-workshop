@@ -26,6 +26,17 @@ aquecimento) nos 15 min anteriores, o painel da parte {p-negocio} sai vazio.
 Mesma rota, mesma aplicação, mesmo path. Três chaves diferentes, três
 resultados.
 
+[NOTE]
+.Technology Preview na 1.4
+====
+**A `PlanPolicy`** está em *Technology Preview* na versão deste ambiente,
+segundo o capítulo dela na
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html-single/deploy_red_hat_connectivity_link/index[documentação de instalação da 1.4^]:
+funciona como esta página mostra, mas não é coberta pelo suporte de produção
+e pode mudar. Na 1.5 ela continua nessa categoria, como extensão do SDK. A
+leitura {p-previas}reúne tudo o que está nela.
+====
+
 == Terminal
 
 ifndef::foco_rhcl[]

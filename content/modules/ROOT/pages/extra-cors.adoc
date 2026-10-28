@@ -1,0 +1,225 @@
+include::partial$numeros.adoc[]
+= CORS: a API chamada do navegador
+:navtitle: CORS: a API chamada do navegador
+:page-trilhas: Avançado · Desenvolvedor
+
+**~8 min · muda a rota e a policy da API, e desfaz no fim**
+
+include::partial$trilha.adoc[]
+
+**Para quem:** Desenvolvedor e Plataforma -- quem vai receber o pedido "a nossa
+página web precisa chamar a API direto".
+
+[NOTE.antes]
+====
+**Antes:** a parte xref:m1-01-fechada.adoc[{p-fechada}]. Este Extra parte da
+rota e da `AuthPolicy` como a Fase 2 as deixou -- uma regra na rota, sem
+filtros -- e as devolve assim no último passo.
+====
+
+Os três portais de parceiro deste workshop chamam a API pelo **servidor** de
+cada um, e por isso nunca precisaram de CORS: o navegador só fala com a
+origem do próprio portal. Mas a pergunta chega em todo projeto: *"e se a
+página chamar a API direto do navegador?"* Aí o navegador faz uma pergunta
+antes -- o *preflight*, um `OPTIONS` sem credencial -- e só chama a API se a
+resposta vier com os cabeçalhos `Access-Control-*` e um código `2xx`.
+
+Hoje a borda responde a esse `OPTIONS` como a qualquer chamada sem chave:
+
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
+----
+curl -sk -o /dev/null -D - -X OPTIONS "https://{api_host}/travels" \
+  -H 'Origin: https://app.rotaviagens.exemplo' -H 'Access-Control-Request-Method: GET' \
+  | grep -i -E '^HTTP|access-control'
+----
+
+[source,text]
+----
+HTTP/2 401
+----
+
+`401`, e nenhum `Access-Control-*`. Para o navegador, a API não existe. O
+Gateway API tem um filtro `CORS` para isso, mas ele está no canal
+*experimental* e não neste cluster; a receita abaixo usa só o que o produto
+tem hoje, e são três peças.
+
+== Passo 1 -- a plataforma autoriza o atalho (Infra)
+
+O `OPTIONS` precisa de uma resposta `2xx`, e a aplicação de viagens responde
+`405` a ele. A rota vai mandar o *preflight* para um serviço que responde
+`200` a qualquer método -- o `echo-api`, que já existe no seu ambiente, em
+outro projeto. Rota apontando para serviço de outro projeto pede um
+`ReferenceGrant` **do lado de quem é apontado**, e esse projeto é da
+plataforma:
+
+[source,bash,role="execute"]
+----
+NS=$(oc get httproute -n travel-agency -o jsonpath='{.items[0].metadata.namespace}')
+cat <<EOF | oc apply -f -
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: cors-preflight-da-api-de-viagens
+  namespace: echo-api
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    namespace: $NS
+  to:
+  - group: ""
+    kind: Service
+    name: echo-api
+EOF
+----
+
+**O que isso diz:** o dono do `echo-api` disse "a rota da API de viagens pode
+me usar como destino". Sem isso, a regra do passo 3 ficaria com
+`ResolvedRefs=False` e o Gateway responderia `500`. É a mesma separação de
+donos da parte {p-papeis}: o time da aplicação não escreve no projeto do
+outro.
+
+== Passo 2 -- a policy deixa o `OPTIONS` passar sem chave (Dev)
+
+A `AuthPolicy` exige chave em tudo. O *preflight* não carrega credencial por
+definição, então ele ganha um método de autenticação próprio -- anônimo, só
+para `OPTIONS` -- e a chave continua obrigatória para o resto:
+
+[source,bash,role="execute perfil-dev"]
+----
+AP=$(oc get authpolicy -n travel-agency -o jsonpath='{.items[?(@.spec.targetRef.kind=="HTTPRoute")].metadata.name}')
+oc patch authpolicy "$AP" -n travel-agency --type=json -p '[
+ {"op":"add","path":"/spec/rules/authentication/api-key-authn/when","value":[{"predicate":"request.method != '"'"'OPTIONS'"'"'"}]},
+ {"op":"add","path":"/spec/rules/authentication/preflight","value":{"anonymous":{},"when":[{"predicate":"request.method == '"'"'OPTIONS'"'"'"}]}}
+]'
+sleep 8; oc get authpolicy "$AP" -n travel-agency -o jsonpath='{range .status.conditions[*]}{.type}={.status}{"\n"}{end}'
+----
+
+[source,text]
+----
+Accepted=True
+Enforced=True
+----
+
+**O que isso diz:** dois métodos de autenticação, cada um com o seu `when`. O
+`OPTIONS` entra como anônimo; qualquer outro método continua pedindo
+`APIKEY`. A policy decide **por requisição**, e o predicado é CEL, o mesmo das
+partes {p-contextos}e {p-listas}.
+
+== Passo 3 -- a rota responde o preflight e carimba a origem (Dev)
+
+Duas mudanças na rota, num patch só: a regra que já existe ganha um filtro
+que acrescenta `Access-Control-Allow-Origin` a toda resposta; e uma regra
+nova, só para `OPTIONS`, manda o *preflight* ao `echo-api` com os cabeçalhos
+completos.
+
+[source,bash,role="execute perfil-dev"]
+----
+R=$(oc get httproute -n travel-agency -o jsonpath='{.items[0].metadata.name}')
+oc patch httproute "$R" -n travel-agency --type=json -p '[
+ {"op":"add","path":"/spec/rules/0/filters","value":[
+   {"type":"ResponseHeaderModifier","responseHeaderModifier":{"add":[
+     {"name":"Access-Control-Allow-Origin","value":"https://app.rotaviagens.exemplo"}]}}]},
+ {"op":"add","path":"/spec/rules/0","value":{
+   "matches":[{"method":"OPTIONS","path":{"type":"PathPrefix","value":"/"}}],
+   "filters":[{"type":"ResponseHeaderModifier","responseHeaderModifier":{"add":[
+     {"name":"Access-Control-Allow-Origin","value":"https://app.rotaviagens.exemplo"},
+     {"name":"Access-Control-Allow-Methods","value":"GET, OPTIONS"},
+     {"name":"Access-Control-Allow-Headers","value":"Authorization, Content-Type"},
+     {"name":"Access-Control-Max-Age","value":"600"}]}}],
+   "backendRefs":[{"name":"echo-api","namespace":"echo-api","port":8080}]}}
+]'
+sleep 10; oc get httproute "$R" -n travel-agency -o jsonpath='{range .status.parents[0].conditions[*]}{.type}={.status}{"\n"}{end}'
+----
+
+[source,text]
+----
+Accepted=True
+ResolvedRefs=True
+----
+
+**O que isso diz:** `ResolvedRefs=True` é o `ReferenceGrant` do passo 1
+funcionando. A regra do `OPTIONS` vem primeiro porque é a mais específica;
+a de sempre continua levando o tráfego à aplicação.
+
+== Passo 4 -- o navegador, visto do terminal
+
+O mesmo *preflight* do começo, e depois a chamada de verdade, com a chave e
+a origem:
+
+[source,bash,role="execute perfil-qualquer",subs="attributes+"]
+----
+curl -sk -o /dev/null -D - -X OPTIONS "https://{api_host}/travels" \
+  -H 'Origin: https://app.rotaviagens.exemplo' -H 'Access-Control-Request-Method: GET' \
+  | grep -i -E '^HTTP|access-control'
+echo ---
+curl -sk -o /dev/null -D - "https://{api_host}/travels" \
+  -H 'Origin: https://app.rotaviagens.exemplo' -H 'Authorization: APIKEY {api_key_gold}' \
+  | grep -i -E '^HTTP|access-control'
+echo ---
+curl -sk -o /dev/null -w 'sem chave: %{http_code}\n' "https://{api_host}/travels" -H 'Origin: https://app.rotaviagens.exemplo'
+----
+
+[source,text]
+----
+HTTP/2 200
+access-control-allow-headers: Authorization, Content-Type
+access-control-allow-methods: GET, OPTIONS
+access-control-allow-origin: https://app.rotaviagens.exemplo
+access-control-max-age: 600
+---
+HTTP/2 200
+access-control-allow-origin: https://app.rotaviagens.exemplo
+---
+sem chave: 401
+----
+
+**O que isso diz:** o *preflight* recebe `200` com os quatro cabeçalhos -- o
+navegador segue; a chamada com chave recebe os dados e o `Allow-Origin`; a
+chamada sem chave continua `401`. A borda abriu exatamente o `OPTIONS`, e mais
+nada.
+
+== Passo 5 -- desfazer
+
+Na ordem inversa: a rota e a policy voltam ao que eram (Dev), e a
+autorização do outro projeto sai (Infra).
+
+[source,bash,role="execute perfil-dev"]
+----
+R=$(oc get httproute -n travel-agency -o jsonpath='{.items[0].metadata.name}')
+AP=$(oc get authpolicy -n travel-agency -o jsonpath='{.items[?(@.spec.targetRef.kind=="HTTPRoute")].metadata.name}')
+oc patch httproute "$R" -n travel-agency --type=json -p '[{"op":"remove","path":"/spec/rules/0"},{"op":"remove","path":"/spec/rules/0/filters"}]'
+oc patch authpolicy "$AP" -n travel-agency --type=json -p '[{"op":"remove","path":"/spec/rules/authentication/preflight"},{"op":"remove","path":"/spec/rules/authentication/api-key-authn/when"}]'
+----
+
+[source,bash,role="execute"]
+----
+oc delete referencegrant cors-preflight-da-api-de-viagens -n echo-api
+----
+
+== O que isso prova
+
+**CORS é decisão da borda, e se escreve nos mesmos objetos de sempre.** Quem
+pode chamar de onde (`Allow-Origin`), com quais métodos e cabeçalhos, é
+configuração da rota e da policy -- não da aplicação, que não mudou. O
+custo apareceu: sem o filtro `CORS` do Gateway API, que ainda é experimental,
+o `OPTIONS` precisa de um destino que responda `2xx`, e isso pediu um
+`ReferenceGrant` de outro dono.
+
+.Mais detalhes: por que não um filtro `CORS`, e o que muda quando ele chegar
+[%collapsible]
+====
+A Gateway API define um filtro `CORS` para a `HTTPRoute`, que responderia o
+*preflight* sozinho, sem backend. Ele está no canal *experimental* da
+especificação; este cluster instala o canal *standard* (v1.4.1), e o filtro
+não existe aqui -- `oc explain httproute.spec.rules.filters.cors` não o
+conhece. Quando o filtro chegar ao canal *standard* e ao provedor, os passos
+1 e a regra do `OPTIONS` do passo 3 desaparecem; o passo 2 continua, porque
+o *preflight* sem credencial tem de passar pela `AuthPolicy` de qualquer
+jeito.
+
+O `Access-Control-Allow-Origin` fixo é de propósito: `*` com credencial é
+proibido pelo navegador, e uma lista de origens pede um predicado sobre o
+cabeçalho `Origin` -- que a `AuthPolicy` sabe escrever (parte
+{p-listas}), mas o `ResponseHeaderModifier` não.
+====

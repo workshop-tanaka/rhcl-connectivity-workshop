@@ -37,9 +37,16 @@ cada uma, e as notas da versão que você for usar.
 | **MCP gateway 0.7**, para servidores de ferramentas de IA
 | não usa; é outro público. A leitura {p-parceiros}diz onde ele entraria
 | **GA**
+
+| **`PlanPolicy`**, os planos comerciais
+| a parte {p-planos}, e tudo o que lê o plano depois dela ({p-negocio}, a
+  esteira, a 6.3)
+| continua Technology Preview, agora como extensão do SDK
 |===
 
-São as duas únicas funcionalidades que as notas da 1.4 põem nessa categoria.
+As notas da 1.4 põem nessa categoria o `GRPCRoute` e o MCP gateway; a
+`PlanPolicy` está marcada no capítulo dela da
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html-single/deploy_red_hat_connectivity_link/index[documentação de instalação^].
 O plugin de console do Connectivity Link (*Policy Topology*, *API Products*,
 *API Keys*), que o guia usa desde a {p-precedencia}, é **GA na 1.4**.
 
@@ -95,9 +102,9 @@ O plugin de console do Connectivity Link (*Policy Topology*, *API Products*,
   existe] mostra o que é e desenha uma policy própria para a Rota Viagens
 
 | **`PlanPolicy` como extensão do SDK**
-| Technology Preview
-| a `PlanPolicy` da parte {p-planos} continua existindo; na 1.5 ela é uma
-  extensão, com a categoria do SDK
+| Technology Preview (como na 1.4)
+| a `PlanPolicy` da parte {p-planos} continua existindo; na 1.5 ela passa a
+  ser uma extensão, com a categoria do SDK
 
 | **MCP gateway na console**
 | Developer Preview

@@ -43,6 +43,12 @@ ifndef::foco_rhcl[]
   chave. Inclui o que **não** funciona nesta versão, e o contorno que funciona
 | {p-identidade}
 
+| xref:extra-cors.adoc[CORS: a API chamada do navegador]
+| uma página web chamando a API direto do navegador: o *preflight* `OPTIONS`
+  que a borda recusa, e a receita com o que o produto tem hoje -- sem filtro
+  CORS, que ainda é experimental na Gateway API
+| {p-fechada}
+
 | xref:extra-tokens-ia.adoc[Limite por token (IA)]
 | expor modelos de IA, onde o que custa é o **token** e não a requisição. O
   backend do exercício é um mock, e a página diz isso na primeira tela
