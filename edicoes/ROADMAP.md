@@ -19,6 +19,7 @@ promessa: cada item entra quando for medido num cluster e revisado.
 | series criadas pela dimensao por parceiro com centenas de parceiros | gerar N chaves e medir cardinalidade no Prometheus | 1.2 | 4.2 e 8.3 (D9/D10) |
 | dois clusters na borda: limite global e DNS comum | segundo cluster no pedido do RHDP; store compartilhado; DNSPolicy nos dois | 1.3 | Fase 7 |
 | se o no infra admite esses componentes | confirmar com a Red Hat (regra de subscription); nao e medida de cluster | 1.1 (leitura) | 8.2 |
+| CORS na borda | uma pagina que chama a API direto do navegador: o preflight OPTIONS hoje leva 401 da AuthPolicy; o filtro CORS do Gateway API e experimental (fora do canal standard do cluster). Medir a receita suportada (AuthPolicy para OPTIONS + ResponseHeaderModifier, ou o que a doc da versao indicar) | 1.1 (Extra, medido) | 4.1 (nota), Extra novo |
 
 Itens que saem da lista quando medidos: a 8.1 e este arquivo mudam juntos, na
 mesma onda.
