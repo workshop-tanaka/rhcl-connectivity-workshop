@@ -124,6 +124,17 @@ Na tela, o serviço é `wasm-shim`, e a busca por `hostname` com o endereço da
 sua API traz só as suas chamadas. Abra um trace de `200` e um de `429` lado a
 lado: a diferença é um span.
 
+ifdef::perfis[]
+[NOTE]
+====
+**A tela é da turma, como o Grafana.** O Authorino e o Limitador são um só
+para todos, e os traces ficam num tenant que qualquer login do cluster lê: o
+`trace.sh` filtra pelo hostname da sua API, mas a tela mostra também as
+chamadas dos colegas. O que há num span é hostname, `x-request-id`, nomes de
+policy e a decisão -- nunca a chave.
+====
+endif::[]
+
 == O que isso prova
 
 **A plataforma de API explica o próprio custo, por etapa, sem instrumentar a
