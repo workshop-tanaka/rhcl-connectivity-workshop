@@ -64,6 +64,7 @@ endif::[]
 
 == O ponto de partida: um formulário
 
+ifndef::foco_rhcl[]
 No Developer Hub, o desenvolvedor abre **Create** e escolhe o template
 **1. API como produto — projeto, Service Mesh e Connectivity Link**.
 
@@ -111,6 +112,79 @@ decisões de produto disfarçadas de campo de formulário:
 | **só o Gateway** pode chamar este serviço. Nenhum outro pod do cluster
   consegue, nem por engano
 |===
+endif::[]
+ifdef::foco_rhcl[]
+No Developer Hub, o desenvolvedor abre **Create** e escolhe o template
+**1. API como produto**. O template não está embutido no portal: ele é lido
+de um repositório git -- template também é código, e também tem histórico.
+
+O formulário é o que você vê abaixo, seção por seção, com o que cada campo
+vira. Parece muito; **só três campos exigem decisão de quem preenche** (em
+negrito). O resto já vem preenchido com a escolha da plataforma.
+
+[cols="1,1,2,2",options="header"]
+|===
+| seção | campo | o que se coloca | o que vira
+
+.3+| **Identidade do serviço**
+| **`name`**
+| um nome curto, minúsculo: `echo-pavimentado`
+| o namespace, o nome do Deployment, do Service, da `HTTPRoute` e o primeiro
+  rótulo do hostname
+
+| `description`
+| uma frase
+| a descrição no catálogo e no `APIProduct`
+
+| `owner`
+| o time, escolhido do catálogo
+| o dono no catálogo: quem aprova chave e recebe o alerta
+
+.4+| **Exposição no gateway**
+| **`appsDomain`**
+| o domínio de apps do cluster
+| o hostname `<name>.<domínio>`, no listener do Gateway `prod-web`
+
+| `image` e `port`
+| já preenchidos com um serviço de eco
+| o Deployment e o Service
+
+| `namespace`
+| vazio = o nome do serviço
+| o `00-namespace.yaml`
+
+| `replicas`
+| 1
+| o Deployment
+
+.4+| **O produto (Connectivity Link)**
+| `planPreset`
+| três planos, ou plano único
+| o `31-planpolicy.yaml`: `free`, `silver` e `gold`, como na {p-planos}
+
+| `approvalMode`
+| manual (o dono aprova no portal) ou automática
+| o `40-apiproduct.yaml`: a chave cai em *API Key Approvals*, ou sai sozinha
+
+| `planReading`
+| defensivo (recomendado) ou simples
+| a expressão que lê o plano da chave na `PlanPolicy`: a forma defensiva
+  aceita a chave que o portal emite; a simples falha **aberto** com ela
+
+| `apiKeyGroup`
+| `partner`
+| o rótulo que a `AuthPolicy` procura nas chaves
+
+| **Destino**
+| **`repoUrl`**
+| só o nome do projeto
+| o repositório novo, num subgrupo que o GitOps observa
+|===
+
+Uma quinta seção, *Service Mesh*, gera mais quatro arquivos; esta sessão não
+o tem, e a leitura xref:papel-ossm.adoc[{p-papel-ossm}o papel do Service Mesh]
+diz o que ela faria.
+endif::[]
 
 == O que acontece ao clicar em Create
 
@@ -131,12 +205,42 @@ configuração vai para o git, e é o GitOps que a traz para o cluster: um
 `ApplicationSet` varre o subgrupo e adota todo repositório que tenha um
 diretório `manifests/`.
 
+ifdef::foco_rhcl[]
+E cada decisão do formulário tem um arquivo com o nome dela do outro lado:
+
+[mermaid]
+....
+flowchart LR
+  subgraph F["o formulario"]
+    n["name"]
+    d["appsDomain"]
+    p["planPreset"]
+    a["approvalMode"]
+    g["apiKeyGroup"]
+  end
+  subgraph R["o repositorio que nasce"]
+    ns["00-namespace.yaml"]
+    hr["20-httproute.yaml<br/>hostname = name.appsDomain"]
+    pp["31-planpolicy.yaml<br/>free / silver / gold"]
+    ap["40-apiproduct.yaml<br/>aprovacao manual"]
+    au["30-authpolicy.yaml<br/>app: partner"]
+  end
+  n --> ns
+  n --> hr
+  d --> hr
+  p --> pp
+  a --> ap
+  g --> au
+....
+endif::[]
+
 A condição de adoção é o **subgrupo**, não um rótulo. Não há passo a lembrar:
 o formulário já travava o destino lá, e por isso aquele campo não oferecia
 escolha.
 
 == O repositório que nasce
 
+ifndef::foco_rhcl[]
 Na parte {p-exposta} foram **{n-exposta} arquivos**. O template gera **vinte e
 três**. Este é o repositório inteiro, como ele nasce:
 
@@ -167,6 +271,39 @@ echo-pavimentado/
 ├── verify.sh                         o preflight deste serviço
 └── README.md
 ----
+endif::[]
+ifdef::foco_rhcl[]
+Na parte {p-exposta} foram **{n-exposta} arquivos**, aplicados um a um. O
+template gera o repositório inteiro de uma vez -- e é o mesmo desenho da
+pasta `esteira/` que você usou nesta fase, só que completo desde o primeiro
+commit:
+
+[source,text,subs="attributes+"]
+----
+echo-pavimentado/
+├── manifests/
+│   ├── 00-namespace.yaml             o namespace
+│   ├── 01-podmonitor.yaml            telemetria: a métrica por plano desde o dia 1
+│   ├── 10-serviceaccount.yaml        identidade própria do serviço
+│   ├── 11-deployment.yaml
+│   ├── 12-service.yaml
+│   ├── 20-httproute.yaml             a rota no Gateway        ← {p-exposta}
+│   ├── 21-route.yaml                 a publicação no router
+│   ├── 30-authpolicy.yaml            quem entra               ← {p-fechada}
+│   ├── 31-planpolicy.yaml            quanto passa, por plano  ← {p-planos}
+│   ├── 40-apiproduct.yaml            a API como produto       ← {p-planos}, o portal
+│   └── kustomization.yaml            o que o Argo CD aplica   ← {p-fonte}
+├── catalog-info.yaml                 a entidade no catálogo do Developer Hub
+├── openapi.yaml                      o contrato, publicado no portal
+├── docs/index.md + mkdocs.yml        documentação junto do código
+├── consumers/                        uma assinatura de cliente por merge request
+├── gitops/application.yaml           o Application do Argo    ← {p-fonte}
+├── verify.sh                         o preflight deste serviço
+└── README.md
+----
+
+As setas são as partes em que você escreveu cada um desses arquivos à mão.
+endif::[]
 
 ifndef::foco_rhcl[]
 Compare com o checklist que fechou a parte {p-exposta}. Cada item que lá aparecia
@@ -177,13 +314,12 @@ endif::[]
 ifdef::foco_rhcl[]
 Compare com o checklist que fechou a parte {p-exposta}: a telemetria é o `01`,
 a identidade própria do serviço é o `10`, o catálogo são o `40` e o
-`catalog-info.yaml`. Os arquivos `50` a `53` são do Service Mesh, que esta
-sessão não tem: o template os gera para o dia em que ele entrar (ver a leitura
-xref:papel-ossm.adoc[{p-papel-ossm}o papel do Service Mesh]).
+`catalog-info.yaml`. Nada ficou para "ligar depois".
 endif::[]
 
 == Um campo do formulário, lido no arquivo
 
+ifndef::foco_rhcl[]
 Vale seguir uma decisão do formulário até o arquivo que ela produz. O campo
 `allowedCallers` veio preenchido com `ingress-gateway/prod-web-istio`. Este é
 o `51-authorizationpolicy.yaml` que sai dele:
@@ -241,6 +377,60 @@ exercita -- só que aqui ninguém precisou lembrar de escrevê-la.
 O `mtlsStrict` faz o mesmo com o `50-peerauthentication.yaml`: `true` no
 formulário vira `mode: STRICT` no arquivo. E o `planPreset` decide se o
 `31-planpolicy.yaml` nasce com os tiers `gold`, `silver` e `free`.
+
+endif::[]
+ifdef::foco_rhcl[]
+Vale seguir uma decisão do formulário até o arquivo que ela produz. O campo
+`planPreset` veio preenchido com *três planos*. Este é o `31-planpolicy.yaml`
+que sai dele -- o mesmo objeto que a {p-planos}aplicou à mão e que a
+{p-mr}mudou por merge request:
+
+[source,yaml]
+----
+apiVersion: extensions.kuadrant.io/v1alpha1
+kind: PlanPolicy
+metadata:
+  name: echo-pavimentado-plans
+  namespace: echo-pavimentado
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: echo-pavimentado                                    # <1>
+  plans:
+    - tier: gold                                              # <2>
+      predicate: '<o plano lido da chave> == "gold"'
+      limits: {daily: 100000, custom: [{limit: 30, window: 10s}]}
+    - tier: silver
+      predicate: '<o plano lido da chave> == "silver"'
+      limits: {daily: 10000, custom: [{limit: 10, window: 10s}]}
+    - tier: free
+      predicate: '<o plano lido da chave> == "free"'
+      limits: {daily: 1000, custom: [{limit: 3, window: 10s}]}
+    - tier: unclassified                                      # <3>
+      predicate: 'true'
+      limits: {custom: [{limit: 1, window: 60s}]}
+----
+<1> **A rota do serviço novo**, pelo nome que veio do campo `name`.
+<2> **Os três planos**, com os mesmos limites da {p-planos}: o formulário não
+    pergunta os números, porque o catálogo é da plataforma, não de cada API.
+<3> **O catch-all**: chave sem plano reconhecido cai aqui, em 1 por minuto. É
+    o que fecha a porta quando a leitura do plano não casa.
+
+Onde está escrito `<o plano lido da chave>`, o arquivo real traz a expressão
+que o campo `planReading` escolheu. Na forma *defensiva*, ela confere se o
+rótulo existe antes de lê-lo e aceita também a anotação que o portal grava ao
+aprovar uma chave; na forma *simples*, ela lê o rótulo direto -- e uma chave
+sem ele faz a expressão errar e a chamada passar **sem limite**. É a mesma
+armadilha da {p-planos}, e é por isso que o default do formulário é o
+defensivo.
+
+O `approvalMode` faz o mesmo com o `40-apiproduct.yaml`: *manual* no
+formulário vira a fila de *API Key Approvals* que você viu na {p-planos}.
+E o `apiKeyGroup` vira o rótulo `app: partner` que a `AuthPolicy` procura
+nas chaves -- junto com o rótulo do produto, que impede a chave de uma API
+abrir outra.
+endif::[]
 
 == O que isso prova
 

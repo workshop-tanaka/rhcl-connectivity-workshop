@@ -269,3 +269,8 @@ encontra no caminho é cada merge request.
   Infra, *Maintainer* -- e nenhum dos dois muda essas configurações;
 * no `esteira-ci-{user}` você **vê** as execuções e não muda nada.
 ====
+
+== Para ir além
+
+* xref:esteira-bateria.adoc[A bateria da borda] -- o par desta conferência: o
+  teste que diz, depois do merge, se a borda continua como o contrato promete.

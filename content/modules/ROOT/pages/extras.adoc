@@ -33,6 +33,11 @@ ifndef::foco_rhcl[]
   que muda quando o cliente é uma ferramenta, não um script
 | {p-planos}
 
+| xref:esteira-bateria.adoc[A bateria da borda]
+| a mesma coleção como teste do contrato, do terminal e sem Postman: vinte
+  cláusulas, e a reprovação pelo nome da que quebrou
+| {p-confere}
+
 | xref:extra-parceiro-certificado.adoc[Parceiro com certificado]
 | integração B2B em que o parceiro se identifica por **certificado**, e não por
   chave. Inclui o que **não** funciona nesta versão, e o contorno que funciona
@@ -111,6 +116,11 @@ ifdef::foco_rhcl[]
 | entregar a API a quem vai consumi-la, com coleção e ambiente prontos
 | os três planos e as recusas da borda aparecem iguais numa ferramenta de
   cliente, sem script
+
+| xref:esteira-bateria.adoc[A bateria da borda]
+| a coleção como teste: o contrato, a borda fechada e os planos em vinte
+  asserções, rodando num pod sem Node
+| a conferência garante a sintaxe; a bateria garante o contrato
 | qualquer, e o seu computador
 | {p-planos} e {p-negado}
 

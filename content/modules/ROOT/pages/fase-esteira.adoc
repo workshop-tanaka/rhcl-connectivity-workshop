@@ -105,12 +105,6 @@ aparece.
   anterior com um revert
 | o Git manda, e voltar atrás é um commit
 
-| xref:esteira-bateria.adoc[{p-bateria}A bateria da borda]
-| a coleção do Postman como teste: o contrato, a borda fechada e os planos
-  afirmados em vinte asserções; quebre o contrato à mão e veja o teste
-  reprovar pelo nome da cláusula
-| a conferência garante a sintaxe; a bateria garante o comportamento
-
 | xref:m5-01-colheita.adoc[{p-colheita} Leitura: do repositório ao formulário]
 | lê como os mesmos arquivos nascem de um formulário, em vez de escritos à mão
 | um serviço não consegue nascer sem as policies da plataforma

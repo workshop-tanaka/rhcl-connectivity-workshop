@@ -1,16 +1,18 @@
 include::partial$numeros.adoc[]
 = {p-bateria}A bateria da borda: o contrato em teste
 :navtitle: {p-bateria}A bateria da borda
-:page-trilhas: Intermediário · Avançado · Desenvolvedor
+:page-trilhas: Avançado · Desenvolvedor
 
-**Para quem:** Desenvolvedor da API e Operação. · **10 min** · **muda estado por dois minutos, e devolve**
+**Opcional · ~10 min · muda estado por dois minutos, e devolve**
+
+**Para quem:** Desenvolvedor da API e Operação -- quem quer o "testa depois" ao lado do "confere antes" da fase 5.
 
 include::partial$trilha.adoc[]
 
 [NOTE.antes]
 ====
 **Antes:** a parte {p-confere}, que recusa o merge request errado **antes** do
-merge, e a {p-desvio}, que mostra a edição à mão como desvio. Esta parte é o
+merge, e a {p-desvio}, que mostra a edição à mão como desvio. Este Extra é o
 par das duas: o teste que diz, **depois**, se a borda continua como o contrato
 promete.
 ====
