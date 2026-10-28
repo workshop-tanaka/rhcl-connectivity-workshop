@@ -63,7 +63,7 @@ bash scripts/testa-borda.sh
 == 1. environment e dados por plano (deste cluster) ==
     escrito: postman/rhcl-demo.local.postman_environment.json
     escrito: postman/rhcl-demo-planos.local.csv (plano, chave, limite -- limites de esteira/planos.yaml)
-== 2. ConfigMap testa-borda em travel-agency ==
+== 2. Secret testa-borda em travel-agency (apagado no fim) ==
 == 3. newman num pod descartavel ==
   ✓  contrato: lista de {city, lat, lng}
   ✓  401 sem credencial
@@ -165,7 +165,8 @@ fala em homologar cada versão.
   carregam chave viva e nunca vão para o Git.
 * **O runner** é o `newman`, a linha de comando oficial da coleção. O terminal
   não tem Node, então ele roda num pod descartável no seu namespace, com os
-  três arquivos montados de um `ConfigMap`. O código de saída do pod é o do
+  três arquivos montados de um `Secret` -- dois deles carregam chave viva --
+  que é apagado junto com o pod ao fim. O código de saída do pod é o do
   `newman`.
 * **A pasta por dados** roda numa chamada à parte: o runner aplica o arquivo
   de dados à corrida inteira, e sem separar as pastas fixas rodariam uma vez
