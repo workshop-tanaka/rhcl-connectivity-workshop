@@ -30,7 +30,10 @@ opera a plataforma (usuario_console_plataforma no env) para telas do cluster
 inteiro, como a Policy Topology. `viewport` e `clicar` por captura servem
 para caber a tabela e esconder um grafico.
 
-Nove figuras com a do Argo (5.1, a Application Synced): o Argo precisa de
+Doze figuras com a do Argo (5.1, a Application Synced) e tres do GitLab
+(5.1 commits da esteira, 5.2 o merge request pronto, 5.3 a aba Pipelines do
+merge request; os numeros de merge request na especificacao sao os do
+ambiente em que se capturou): o Argo precisa de
 `pausa` longa (20 s) depois do login -- a primeira carga da UI falha com
 'Failed to load data' se fotografada cedo. Ainda nao sai: a Policy Topology
 util (com o login da plataforma ela abre, mas desenha a turma inteira,

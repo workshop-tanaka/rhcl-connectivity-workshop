@@ -179,5 +179,64 @@
    }
   ],
   "esperar": []
+ },
+ {
+  "arquivo": "5-3-gitlab-mr-pipelines.png",
+  "url": "${repo_no_ambiente}/-/merge_requests/26/pipelines",
+  "pausa": 8000,
+  "recorte": "body",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "Pipelines",
+    "n": 1,
+    "dentro": true
+   }
+  ],
+  "login": "gitlab"
+ },
+ {
+  "arquivo": "5-2-gitlab-mr.png",
+  "url": "${repo_no_ambiente}/-/merge_requests/25",
+  "login": "gitlab",
+  "pausa": 8000,
+  "recorte": "body",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "Changes",
+    "n": 1,
+    "dentro": true
+   },
+   {
+    "texto": "Merge",
+    "n": 2,
+    "dentro": true
+   }
+  ]
+ },
+ {
+  "arquivo": "5-1-gitlab-commits-esteira.png",
+  "url": "${repo_no_ambiente}/-/commits/main/esteira",
+  "login": "gitlab",
+  "pausa": 6000,
+  "recorte": "body",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "esteira",
+    "n": 1,
+    "dentro": true
+   }
+  ]
  }
 ]

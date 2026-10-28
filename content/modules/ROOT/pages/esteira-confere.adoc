@@ -97,6 +97,9 @@ confere-...     25 seconds ago   8s         Failed
 Abra o endereço do merge request. O status **Pipelines as Code CI /
 confere** está vermelho e o merge, bloqueado.
 
+.Figura: a aba ① *Pipelines* do merge request: um *Failed* por push sem policy e um *Passed* depois da correção -- edição 1.0; clique para ampliar
+image::capturas/5-3-gitlab-mr-pipelines.png[A aba Pipelines do merge request no GitLab com Failed e Passed por push,360,link=self,window=_blank]
+
 **Ou pela console web, no lugar do terminal:** o mesmo `PipelineRun`, na console do OpenShift -- os
 PipelineRuns de {openshift_console_url}/k8s/ns/esteira-ci-{user}/tekton.dev{tilde}v1{tilde}PipelineRun[`esteira-ci-{user}`^]
 (abre em aba nova), com o login Infra ou Dev: os dois leem, nenhum muda.

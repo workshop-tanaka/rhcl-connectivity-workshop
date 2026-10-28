@@ -102,6 +102,9 @@ ifeval::["{repo_no_ambiente}" != ""]
 os commits da pasta {repo_no_ambiente}/-/commits/main/esteira[`esteira`^]
 (abre em aba nova), cada um com autor, data e o diff de cada arquivo.
 
+.Figura: os commits da pasta ① `esteira` no GitLab: cada mudança com autor e data, inclusive os reverts -- edição 1.0; clique para ampliar
+image::capturas/5-1-gitlab-commits-esteira.png[A lista de commits da pasta esteira no GitLab,360,link=self,window=_blank]
+
 .Navegando, passo a passo
 [%collapsible]
 ====
