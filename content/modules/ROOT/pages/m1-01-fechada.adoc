@@ -217,7 +217,7 @@ Não é um link para documentação: é a configuração que está no ar, lida d
 cluster.
 
 ifeval::["{openshift_console_url}" != ""]
-**Na console web:** as mesmas duas policies, na console do OpenShift --
+**Ou pela console web, no lugar do terminal:** as mesmas duas policies, na console do OpenShift --
 a {openshift_console_url}/k8s/ns/travel-agency/kuadrant.io{tilde}v1{tilde}AuthPolicy/travel-agency-authpolicy/yaml[`travel-agency-authpolicy`^]
 e
 a {openshift_console_url}/k8s/ns/ingress-gateway/kuadrant.io{tilde}v1{tilde}AuthPolicy/prod-web-deny-all/yaml[`prod-web-deny-all`^]

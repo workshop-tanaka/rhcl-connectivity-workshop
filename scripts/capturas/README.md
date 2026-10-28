@@ -30,7 +30,8 @@ opera a plataforma (usuario_console_plataforma no env) para telas do cluster
 inteiro, como a Policy Topology. `viewport` e `clicar` por captura servem
 para caber a tabela e esconder um grafico.
 
-Ainda nao sai: a Policy Topology util (com o login da plataforma ela abre,
-mas desenha a turma inteira, ilegivel; falta filtrar o namespace pela UI) e
-o Argo (o participante nao enxerga a aplicacao na UI do Argo; o guia tambem
-nao a abre).
+Nove figuras com a do Argo (5.1, a Application Synced): o Argo precisa de
+`pausa` longa (20 s) depois do login -- a primeira carga da UI falha com
+'Failed to load data' se fotografada cedo. Ainda nao sai: a Policy Topology
+util (com o login da plataforma ela abre, mas desenha a turma inteira,
+ilegivel; falta filtrar o namespace pela UI).

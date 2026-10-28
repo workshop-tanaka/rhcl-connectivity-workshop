@@ -461,7 +461,7 @@ do Gateway na parte xref:m1-03-precedencia.adoc[{p-precedencia}].
 ====
 
 ifeval::["{openshift_console_url}" != ""]
-**Na console web:** as duas policies que você criou, numa tela só --
+**Ou pela console web, no lugar do terminal:** as duas policies que você criou, numa tela só --
 Connectivity Link → Policies, no projeto {openshift_console_url}/kuadrant/policies/ns/echo-exposta[`echo-exposta`^]
 (abre em aba nova): a `AuthPolicy` e a `PlanPolicy`, cada uma com o estado que
 o `oc wait` esperou.

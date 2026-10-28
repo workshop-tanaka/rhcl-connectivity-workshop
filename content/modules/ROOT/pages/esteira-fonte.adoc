@@ -39,10 +39,13 @@ está no cluster é o que está no Git. Os seus identificadores de commit são
 outros.
 
 ifeval::["{argocd_url}" != ""]
-**Na console web:** a mesma resposta, na tela do Argo CD --
+**Ou pela console web, no lugar do terminal:** a mesma resposta, na tela do Argo CD --
 a sua Application {argocd_url}/applications/openshift-gitops/esteira-{user}[`esteira-{user}`^]
 (abre em aba nova). A tela mostra só a sua esteira, e só para ler:
 sincronizar continua sendo pelo Git.
+
+.Figura: a sua Application no Argo CD, com ① *Synced*: o cluster bate com o Git, e as duas policies da esteira penduradas nela -- edição 1.0; clique para ampliar
+image::capturas/5-1-argo-synced.png[A Application esteira no Argo CD com o status Synced marcado,360,link=self,window=_blank]
 
 .Navegando, passo a passo
 [%collapsible]
@@ -95,7 +98,7 @@ segunda saída é o histórico da pasta: cada linha é uma mudança, com autor e
 data.
 
 ifeval::["{repo_no_ambiente}" != ""]
-**Na console web:** o mesmo histórico, no GitLab --
+**Ou pela console web, no lugar do terminal:** o mesmo histórico, no GitLab --
 os commits da pasta {repo_no_ambiente}/-/commits/main/esteira[`esteira`^]
 (abre em aba nova), cada um com autor, data e o diff de cada arquivo.
 

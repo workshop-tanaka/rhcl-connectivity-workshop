@@ -378,7 +378,7 @@ o listener do Gateway e pediu o que ele precisa. O dono do certificado é a
 `TLSPolicy`, e o Gateway passou a `Programmed=True`.
 
 ifeval::["{openshift_console_url}" != ""]
-**Na console web:** o certificado que a policy criou --
+**Ou pela console web, no lugar do terminal:** o certificado que a policy criou --
 o `Certificate` {openshift_console_url}/k8s/ns/tls-lab/cert-manager.io{tilde}v1{tilde}Certificate/lab-https[`lab-https`^]
 (abre em aba nova), com o dono e a data de renovação que o terminal listou.
 

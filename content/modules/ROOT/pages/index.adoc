@@ -178,6 +178,19 @@ ifdef::foco_rhcl[]
 include::partial$percurso-rhcl.adoc[]
 
 endif::[]
+== Terminal ou console: escolha um caminho
+
+Vários passos têm dois caminhos para a mesma ação: o bloco de comando, no
+terminal, e logo abaixo um "ou pela console web", com o endereço e, em alguns,
+um *Navegando, passo a passo* e uma figura. **São alternativas, não etapas.**
+Quem segue pelo terminal não vai ver a tela nem precisa dela; quem segue pela
+console não roda o comando daquele passo. O resultado é o mesmo, e o texto
+"o que isso diz" vale para os dois. Misturar os dois no mesmo passo é o que
+produz a sensação de que algo foi pulado.
+
+As figuras do guia mostram o caminho da console; quem está no terminal pode
+usá-las só para conferir o que a tela mostraria naquele ponto.
+
 == O ambiente
 
 Este cluster foi criado do zero para você. Tudo que o conteúdo cita -- hosts,

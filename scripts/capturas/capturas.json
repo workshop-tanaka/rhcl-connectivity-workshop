@@ -160,5 +160,24 @@
     "dentro": true
    }
   ]
+ },
+ {
+  "arquivo": "5-1-argo-synced.png",
+  "url": "${argocd_url}/applications/openshift-gitops/esteira-${guid}",
+  "login": "argo",
+  "pausa": 20000,
+  "recorte": "body",
+  "viewport": {
+   "width": 1440,
+   "height": 900
+  },
+  "marcar": [
+   {
+    "texto": "Synced",
+    "n": 1,
+    "dentro": true
+   }
+  ],
+  "esperar": []
  }
 ]

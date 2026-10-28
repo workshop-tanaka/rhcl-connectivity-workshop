@@ -99,7 +99,7 @@ remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/1
 ----
 
 ifeval::["{repo_no_ambiente}" != ""]
-**Na console web:** o merge request que o push abriu --
+**Ou pela console web, no lugar do terminal:** o merge request que o push abriu --
 {repo_no_ambiente}/-/merge_requests[os merge requests do seu projeto^]
 (abre em aba nova). O que conferir e quem aceita está no quadro do perfil
 Infra, logo abaixo.
