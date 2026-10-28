@@ -91,14 +91,17 @@ que o workshop não fez.
 | xref:leitura-instalacao.adoc[Fase 1, "e se eu quiser fixar a versão?"] e o aviso de versões da xref:index.adoc[abertura]
 |===
 
-== O que o workshop não mediu
+== O que esta edição ainda não mediu
 
-Cada linha abaixo é uma afirmação que **não** pode sair deste workshop como
-fato. Onde ela importar para a sua decisão, é algo a medir no seu ambiente.
+Cada linha abaixo é uma afirmação que **não** pode sair desta edição como
+fato. Nenhuma delas é lacuna esquecida: estão mapeadas e fazem parte do
+roteiro das próximas edições do workshop, que as transformam em medida no
+mesmo formato das partes anteriores. Até lá, onde uma delas importar para a
+sua decisão, é algo a medir no seu ambiente.
 
 [cols="2,3",options="header"]
 |===
-| não medido | por que importa
+| ainda não medido (no roteiro das próximas edições) | por que importa
 
 | **capacidade por réplica** do Gateway, do Authorino e do Limitador
 | depende do pico, da credencial, do caminho de entrada, do tracing e de onde
@@ -136,6 +139,8 @@ fato. Onde ela importar para a sua decisão, é algo a medir no seu ambiente.
 | não tem fonte neste material; confirmar com a Red Hat
 |===
 
-O que vale como fonte para o que não está aqui é a
+O roteiro das edições, com o que cada uma pretende medir, acompanha o
+repositório do workshop; a edição em que você está é a do título do guia. O
+que vale como fonte para o que ainda não está aqui é a
 https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação da versão em uso^].
 Artigo e blog são pista, não fonte.
