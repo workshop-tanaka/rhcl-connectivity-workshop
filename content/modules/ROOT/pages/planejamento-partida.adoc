@@ -1,232 +1,164 @@
 include::partial$numeros.adoc[]
-= {p-partida}O ponto de partida
-:navtitle: {p-partida}O ponto de partida
+= {p-conhecer}O que precisa ser conhecido
+:navtitle: {p-conhecer}O que precisa ser conhecido
 
-**Exercício · ~12 min · escreve no seu repositório**
+**Leitura · ~10 min**
 
-**Momento do projeto:** o início do planejamento · **Quem faz:** plataforma e operação levantam; aplicação e produto conferem
+**Momento do projeto:** a avaliação · **Quem lê:** plataforma e operação levantam; aplicação e produto conferem
 
-[NOTE.antes]
-====
-**Antes:** a xref:planejamento-intro.adoc[abertura da fase], que cria o branch
-`planejamento`. Esta parte grava o primeiro arquivo nele.
-====
+Ninguém avalia uma plataforma de API a partir do zero. Há APIs no ar, com
+`Route`, `Ingress` ou um gateway de outro fornecedor; há consumidores que já
+as chamam de um jeito; há limites, ainda que informais; e há alguém que atende
+quando algo quebra. As perguntas desta parte são o inventário do que existe
+-- e, na segunda tabela, as variáveis de que qualquer estimativa de tamanho
+depende. O que não tiver resposta hoje fica como "não sabemos": é resposta
+válida, e vale mais do que uma estimativa disfarçada de número.
 
-Ninguém que decidiu pelo Connectivity Link começa do zero. Há APIs no ar, com
-`Route`, `Ingress` ou um gateway de outro fornecedor; há parceiros que já
-chamam essas APIs de um jeito; há limites, ainda que informais; e há alguém
-que atende quando algo quebra. Tudo isso vai conviver com a plataforma nova
-por meses, e parte disso vai migrar. O levantamento é o inventário do que
-existe, escrito antes de qualquer decisão -- porque cada decisão das partes
-{p-fixas}e {p-parceiro-dec}vai apontar para uma linha dele.
+== O que existe hoje
 
-== As perguntas, e por que cada uma importa
-
-[cols="2,3",options="header"]
+[cols="2,2,2,1",options="header"]
 |===
-| pergunta | o que ela decide, nas partes seguintes
+| pergunta | o que o workshop mostrou | o que ver no seu ambiente | quem responde
 
 | **Como cada API é publicada hoje?** `Route`, `Ingress`, gateway de outro
-  fornecedor, ou direto por `LoadBalancer`
-| a ordem da migração ({p-plano}desta fase) e se o caminho antigo e o novo podem
-  conviver no mesmo cluster. A
-  xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] mostra
-  as três gerações no ar ao mesmo tempo, neste cluster
+  fornecedor, `LoadBalancer` direto
+| as três gerações convivem no mesmo cluster
+  (xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API]);
+  a API nova nasce no Gateway e a antiga fica, sem obrigar ninguém a mudar no
+  mesmo dia
+| a lista das APIs e de como cada uma chega ao cliente; onde o TLS termina; os
+  hostnames que os consumidores já usam
+| plataforma
 
 | **Quem consome cada API?** times internos, parceiros externos, pessoas
-| quantos Gateways ({p-fixas}desta fase) e qual API vai primeiro ({p-plano}desta fase)
+| o parceiro aparece como dimensão da métrica desde a primeira chamada
+  (parte {p-negocio}); pessoa e sistema podem entrar pela mesma porta (parte
+  {p-identidade})
+| quantos consumidores de cada tipo, e quais não podem mudar de endereço ou de
+  credencial
+| produto, aplicação
 
 | **Como o consumidor se autentica hoje?** chave, token, certificado, lista de
   IP, nada
-| a identidade do consumidor ({p-fixas}desta fase), e o que o parceiro vai sentir na
-  migração
+| chave de API e token OIDC lado a lado (parte {p-identidade}); certificado de
+  cliente com ressalva (Extra xref:extra-parceiro-certificado.adoc[Parceiro com certificado])
+| o que cada consumidor vai sentir na troca; se existe um provedor de
+  identidade em que os parceiros possam existir
+| plataforma, aplicação
 
 | **Que limites existem, e onde estão escritos?**
-| o catálogo de planos ({p-parceiro-dec}desta fase) e os contadores do Limitador ({p-sizing}desta fase)
+| o limite vira plano com nome, no mesmo endereço (parte {p-planos}); o teto
+  do Gateway protege quem não tem plano (parte {p-fechada})
+| limites de hoje, por API e por consumidor; onde estão (console, código,
+  contrato); quem decide um limite
+| produto
 
 | **Quem cuida de cada API, e quem é chamado quando ela cai?**
-| os papéis do dia 2 ({p-papeis-dia}desta fase) e o dono de cada decisão
-
-| **Os números:** pico e média por API, duração do pico, crescimento em 12
-  meses, orçamento de latência na borda, SLA, zonas, segundo cluster
-| as variáveis do dimensionamento ({p-sizing}desta fase), e o que a primeira API
-  precisa medir para provar que deu certo ({p-plano}desta fase)
+| no produto a fronteira é namespace e RBAC (parte {p-papeis}); com o
+  Limitador fora a API continua respondendo (parte {p-degrada}) -- alguém
+  precisa receber o alerta
+| dono de cada API; quem opera o cluster; quem está de plantão; se algum
+  alerta hoje é da API
+| operação
 |===
 
-O que não tiver resposta hoje fica como "não sabemos", e não como estimativa:
-na parte {p-sizing}desta fase, uma linha "não sabemos" vira um item da lista do que
-medir; uma estimativa disfarçada de número vira uma plataforma do tamanho
-errado.
+== As variáveis de que qualquer estimativa depende
 
-== O caso do workshop: a Trajeto
+Nenhum número de fora responde "isso aguenta a nossa segunda-feira de manhã":
+a capacidade depende de variáveis que mudam de um ambiente para outro. A
+tabela lista o que precisa ser conhecido para a estimativa existir; a medida
+se faz em homologação, com carga em degraus, até ver qual componente satura
+primeiro.
 
-A Trajeto é uma agência de viagens corporativa fictícia. Ela vende reservas e
-gestão de viagens para empresas, e expõe APIs para os próprios canais (portal,
-aplicativo) e para parceiros -- agências menores que revendem o serviço e dois
-fornecedores de conteúdo.
-
-[cols="2,4",options="header"]
+[cols="2,2,2,1",options="header"]
 |===
-| o que existe | como está
+| variável | por que pesa | o que ver no seu ambiente | quem responde
 
-| 6 APIs publicadas por `Route` no OpenShift
-| `reservas`, `tarifas`, `viajantes`, `politicas`, `faturamento`, `relatorios`.
-  TLS termina no router. Consumidas pelos canais internos (portal web,
-  aplicativo, financeiro); `tarifas` e `reservas` também por 6 agências
-  parceiras, liberadas por lista de IP na própria aplicação
+| **pico** de requisições por segundo, por API -- não a média
+| o que satura é o pico; dimensionar pela média deixa a borda saturando toda
+  semana no mesmo horário
+| o pico de hoje, a duração e o horário; quais APIs o concentram
+| produto, operação
 
-| 2 APIs num gateway de outro fornecedor
-| `busca-voos` e `busca-hoteis`, consumidas pelos 2 fornecedores de conteúdo e
-  por 6 agências parceiras. Chave de API emitida à mão pelo time de plataforma,
-  limite único de 100 chamadas por minuto para todo parceiro, igual para todos
+| **crescimento** previsto e o próximo consumidor grande
+| cada consumidor grande refaz a conta
+| a previsão de 12 meses e o que está em negociação
+| produto
 
-| ~14 parceiros externos
-| 12 agências parceiras (6 nas `Route`, 6 no gateway legado) e 2 fornecedores
-  de conteúdo. Nenhum contrato diferencia um do outro hoje
+| **tipo de credencial**
+| chave de API e JWT validado localmente custam pouco ao Authorino;
+  introspecção e metadados externos fazem cada requisição esperar outro serviço
+| que credencial cada tipo de consumidor usaria
+| plataforma
 
-| 3 consumidores internos
-| portal web, aplicativo e o sistema financeiro. Sem autenticação entre eles e
-  as APIs: a rede interna é a fronteira
+| **contadores ativos**: chaves × planos × janelas
+| memória do Limitador; e o volume de operações no store, se houver mais de
+  uma réplica
+| quantos consumidores, quantos planos, quantas janelas de limite
+| produto, plataforma
 
-| identidade que já existe
-| um Keycloak para funcionários (OIDC). Nenhum parceiro está nele
+| **orçamento de latência** que a borda pode somar (p99)
+| decide quanto tracing, quantos saltos e que caminho de entrada cabem
+| o contrato com os canais e o que sobra para a borda
+| aplicação
 
-| quem cuida
-| um time de plataforma de 3 pessoas opera o cluster e o gateway legado; 4
-  squads de desenvolvimento são donos das APIs; a operação de plantão é a mesma
-  do cluster
+| **disponibilidade**: SLA, zonas, N+1
+| quantas réplicas no mínimo e como espalhar; mais de uma réplica de
+  Limitador pede um store compartilhado (D11/D12)
+| o SLA de cada API e a topologia do cluster
+| operação
 
-| **pico** 120 req/s somados, **média** 35 req/s
-| horário comercial (9h às 18h), pico de segunda-feira de manhã por ~40 min;
-  `tarifas` e `busca-voos` concentram metade do pico
+| **caminho de entrada**: router do OpenShift na frente do Gateway, ou
+  `LoadBalancer` direto
+| um proxy a mais entra na latência e na capacidade; neste laboratório o
+  router está na frente
+| o que a nuvem ou o datacenter oferece, e a diferença medida entre os dois
+| plataforma
 
-| crescimento em 12 meses
-| +50% -- um parceiro grande em negociação, e os dois fornecedores dobrando o
-  volume
+| **nível de tracing e amostragem**
+| tracing produz a cauda de latência e consome CPU do Gateway e do Authorino
+| o nível que a operação precisa, medido com amostragem
+| operação
 
-| latência que a borda pode somar
-| até 50 ms no p99 (o contrato com os canais é de 300 ms ponta a ponta)
+| **onde os pods rodam**: pool próprio, nó `infra`, zonas, `taints`
+| disputa de CPU com o control plane; sem rótulo de zona não há como
+  espalhar; um dreno de nó leva a única réplica junto
+| se há pool para a borda; se o nó `infra` admite esses componentes
+  (confirmar com a Red Hat)
+| plataforma
 
-| SLA
-| 99,9% em horário comercial; fora dele, melhor esforço
+| **QoS do caminho de dados**: `requests` e `limits`
+| sem `requests`, o Authorino é o primeiro despejado num nó apertado, e o
+  efeito é `500` em toda API (parte {p-degrada}); Limitador caído é API sem
+  limite
+| os números medidos em homologação, não os de fábrica
+| plataforma
 
-| cluster
-| um OpenShift 4.21 em nuvem, 3 workers em 3 zonas, `LoadBalancer`
-  disponível, sem nó `infra`; um segundo cluster planejado para o segundo
-  semestre, em outra região
+| **número de consumidores e de policies**
+| cada chave é um `Secret` observado; cada policy é objeto reconciliado;
+  `etcd`, `apiserver` e a memória do operador crescem com isso (leitura
+  {p-parceiros}Muitos parceiros, muitas APIs)
+| a ordem de grandeza: dezenas, centenas, milhares
+| produto, plataforma
 
-| em seis meses, a Trajeto quer
-| as 8 APIs no Gateway, parceiros em planos com nome, o gateway legado
-  desligado, e o segundo cluster no desenho
+| **o religamento**: dreno de nó, upgrade do OpenShift, reinício do Gateway
+| o filtro do Gateway é baixado de novo depois de um reinício; já medido neste
+  projeto, `503` até um `rollout restart`
+| um teste de dreno e de religamento em homologação
+| operação
 |===
 
-== Passo 1 -- grave o levantamento
-
-O comando cria `planejamento/levantamento.md` com a coluna da Trajeto
-preenchida e a sua em branco. Se o seu caso for o seu, preencha a terceira
-coluna no editor depois do commit -- o arquivo é seu.
-
-[source,bash,role="execute perfil-dev"]
-----
-mkdir -p planejamento && cat > planejamento/levantamento.md <<'EOF'
-# Levantamento: de onde o projeto parte
-
-Inventário do que existe antes de qualquer decisão. "Não sabemos" é resposta
-válida e vira item da lista do que medir (dimensionamento.md).
-
-## 1. Como as APIs são publicadas hoje
-
-| pergunta | caso do workshop (Trajeto) | o seu caso |
-| --- | --- | --- |
-| APIs por `Route` | 6: reservas, tarifas, viajantes, politicas, faturamento, relatorios | |
-| APIs por `Ingress` | 0 | |
-| APIs em gateway de outro fornecedor | 2: busca-voos, busca-hoteis | |
-| onde o TLS termina | no router (Routes); no gateway legado | |
-| nomes (hostnames) hoje | api.trajeto.exemplo/<api> nas Routes; parceiros.trajeto.exemplo no legado | |
-
-## 2. Quem consome, e como se autentica
-
-| pergunta | caso do workshop (Trajeto) | o seu caso |
-| --- | --- | --- |
-| consumidores internos | 3: portal web, aplicativo, financeiro -- sem autenticação, rede interna | |
-| parceiros externos | 14: 12 agências parceiras, 2 fornecedores de conteúdo | |
-| autenticação dos parceiros | lista de IP na aplicação (6 agências); chave de API no legado (6 agências + 2 fornecedores) | |
-| provedor de identidade existente | Keycloak (OIDC), só funcionários | |
-| pessoas chamando API diretamente | não | |
-
-## 3. Limites e contratos
-
-| pergunta | caso do workshop (Trajeto) | o seu caso |
-| --- | --- | --- |
-| limites hoje | só no legado: 100/min por parceiro, igual para todos | |
-| onde estão escritos | na console do gateway legado; sem repositório | |
-| planos ou contratos diferenciados | nenhum | |
-| quem decide um limite | o time de plataforma, por pedido informal | |
-
-## 4. Quem cuida
-
-| pergunta | caso do workshop (Trajeto) | o seu caso |
-| --- | --- | --- |
-| opera o cluster | time de plataforma, 3 pessoas | |
-| opera o gateway legado | o mesmo time | |
-| dono de cada API | 4 squads de desenvolvimento | |
-| plantão | o do cluster; nenhum alerta é da API | |
-
-## 5. Os números
-
-| pergunta | caso do workshop (Trajeto) | o seu caso |
-| --- | --- | --- |
-| pico (req/s, somado) | 120 | |
-| média (req/s) | 35 | |
-| duração do pico | ~40 min, segunda de manhã | |
-| APIs que concentram o pico | tarifas e busca-voos (metade) | |
-| crescimento em 12 meses | +50% | |
-| latência que a borda pode somar (p99) | 50 ms | |
-| SLA | 99,9% em horário comercial | |
-| zonas | 3 | |
-| segundo cluster | planejado, outra região, segundo semestre | |
-| ambiente de homologação para carga | sim, menor que produção | |
-
-## 6. O que a empresa quer em seis meses
-
-| caso do workshop (Trajeto) | o seu caso |
-| --- | --- |
-| 8 APIs no Gateway; parceiros em planos; legado desligado; segundo cluster no desenho | |
-EOF
-git add planejamento && git commit -q -m "planejamento: levantamento" && echo ok
-----
-
-[source,text]
-----
-ok
-----
-
-**O que isso diz:** o inventário tem autor e data, e cada decisão das partes
-seguintes vai citar uma linha dele. Quando um número mudar -- e o pico vai
-mudar --, muda aqui primeiro, por merge request, e o dimensionamento é refeito a partir
-daqui.
-
-.Outro caso de uso: só tenho 5 minutos para esta parte
+.Mais detalhes: por que o pico, e não requisições por dia
 [%collapsible]
 ====
-Fique com o caso do workshop e leia a tabela da Trajeto em vez de
-preenchê-la: o arquivo já sai completo do comando acima. Marque, na coluna "o
-seu caso", só as três linhas em que a sua empresa é muito diferente da
-Trajeto -- costumam ser o número de parceiros, a autenticação atual e o pico.
-São essas três que mais mudam as decisões das partes {p-fixas}e {p-sizing}desta fase.
-====
+Tabelas por requisições por dia (menos de 1 milhão, de 1 a 10, mais de 10)
+aparecem em material de terceiros e enganam no eixo: 10 milhões por dia são
+~116 req/s de **média**, e o que satura a borda é o pico. Uma API com pico
+três vezes maior que a média, concentrado em quarenta minutos, dimensionada
+pela média, satura toda semana no mesmo horário -- com o alerta de CPU
+disparando depois do pico passar.
 
-.Mais detalhes: por que "não sabemos" vale mais que uma estimativa
-[%collapsible]
-====
-A parte {p-sizing}lista as variáveis de que a estimativa depende, e a
-primeira delas é o pico: a capacidade por réplica se mede em homologação, com
-a credencial e o caminho de entrada do seu ambiente, e a conta divide o pico
-por ela. Se o pico do levantamento for um palpite, o resultado herda o palpite
-e esconde isso atrás de um número com três algarismos.
-
-Um "não sabemos" no pico, ao contrário, aparece na lista do que medir, e a
-primeira API ({p-plano}desta fase) é o lugar natural para medi-lo: ela sai com a
-métrica por plano ligada desde o dia 1, e o primeiro mês dela responde a
-pergunta com dado, não com memória.
+E a duração do pico diz se o HPA do Gateway chega a tempo: dezenas de minutos
+dão tempo; um pico de dois minutos não dá, e aí o mínimo do HPA é que precisa
+aguentar o pico sozinho.
 ====

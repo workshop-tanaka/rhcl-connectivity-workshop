@@ -1,150 +1,82 @@
 include::partial$numeros.adoc[]
-= Fase 8 — Planejar a adoção
+= Fase 8 — Antes de decidir
 :navtitle: O que muda nesta fase
 
-**Exercício · ~3 min · escreve no seu repositório**
+**Leitura · ~5 min · nada roda no terminal**
 
-**Momento do projeto:** o planejamento · **Quem faz:** o time do projeto inteiro -- plataforma, aplicação, produto e operação, na mesma mesa
+**Momento do projeto:** a avaliação, antes da escolha por adotar o Connectivity Link · **Quem lê:** plataforma, aplicação, produto e operação
 
 == Por que neste ponto
 
 As fases 1 a 7 mostraram, com medida, o que a plataforma faz: a API fechada
 por padrão, o plano no mesmo endereço, a mudança por merge request, o alerta
-que a plataforma dá sobre si mesma. Esta fase transforma essas medidas em
-plano: **de onde o projeto parte**, **quais decisões** precisam ser tomadas e
-em que ordem, **quanto custa errar** cada uma, **de que tamanho** a plataforma
-precisa ser, e **quem faz o quê**.
-
-Esta fase não é leitura. Cada parte termina com um arquivo escrito no seu
-repositório, e a última abre um merge request com a pasta inteira: o plano,
-com a premissa ao lado de cada número e o dono ao lado de cada decisão.
+que a plataforma dá sobre si mesma. Esta fase não acrescenta nada ao cluster
+nem ao repositório. Ela organiza o que o workshop mostrou em **perguntas que o
+seu time precisa responder para decidir** -- e separa o que já tem resposta
+medida do que só o seu ambiente responde.
 
 == O que esta fase não é
 
-Não é um cronograma: a ordem aqui é a das decisões, e as datas são do seu
-projeto. Não é consultoria: o guia dá o método e o preço de cada escolha, e a
-decisão é do seu time, com o seu nome e a sua data em cada registro. E não
-substitui medir no seu ambiente: as partes {p-sizing}e {p-plano}terminam com
-a lista do que medir lá, e por quê.
+Não é um plano de adoção: a decisão ainda não foi tomada, e nada aqui a
+pressupõe. Não é um exercício: não há arquivo a escrever, branch a abrir ou
+merge request a aceitar. Não é um dimensionamento: nenhuma página crava
+réplica, capacidade ou prazo. E não é consultoria: cada pergunta vem com o
+que o workshop mediu e com o que falta ver no seu ambiente; a resposta é do
+seu time.
 
-== O caso
+== Como ler
 
-Você escolhe agora, e mantém a escolha nas seis partes:
+Cada parte é uma tabela de perguntas com três colunas:
 
-[cols="1,3,3",options="header"]
+[cols="1,3",options="header"]
 |===
-| caso | o que é | para quem
+| coluna | o que traz
 
-| **o caso do workshop** (padrão)
-| uma agência de viagens corporativa fictícia, a **Trajeto**, que planeja
-  levar as APIs dela para o Connectivity Link. Hoje: 6 APIs publicadas por
-  `Route`, 2 num gateway de outro fornecedor, cerca de 14 parceiros, pico de
-  120 requisições por segundo, SLA de 99,9% em horário comercial, um cluster e
-  um segundo planejado. Cada arquivo já vem com a coluna dela preenchida
-| quem quer um exemplo resolvido, ou não pode falar do próprio projeto
+| **o que o workshop mostrou**
+| a medida que sustenta a pergunta, com o link para a parte onde aconteceu.
+  Onde o workshop **não** mediu, está escrito assim
 
-| **o seu caso**
-| as mesmas perguntas, com os números da sua empresa, na coluna que vem em
-  branco
-| quem voltou com o time do projeto
+| **o que ver no seu ambiente**
+| o que o time precisa levantar ou testar antes de responder; sem número
+  prometido
+
+| **quem responde**
+| o papel -- plataforma, aplicação, produto, operação -- e não um nome
 |===
 
-Os números da Trajeto são modestos de propósito e coerentes com o que o
-workshop mediu; eles não são uma recomendação de tamanho para ninguém.
-
-== O que muda no seu repositório
-
-ifeval::["{repo_no_ambiente}" != ""]
-O seu repositório ({repo_no_ambiente}[abrir^]) ganha uma pasta,
-`planejamento/`, num branch de mesmo nome.
-endif::[]
-ifeval::["{repo_no_ambiente}" == ""]
-O repositório do terminal, em `/home/lab-user/rhcl-connectivity-demo`, ganha
-uma pasta, `planejamento/`, num branch de mesmo nome.
-endif::[]
-Nada do que você escrever ali chega ao cluster: o Argo CD da
-xref:fase-esteira.adoc[fase 5] lê só a pasta `esteira/`. O que a pasta
-`planejamento/` ganha é o que a `esteira/` já tinha -- autor, histórico,
-revisão e um merge request para alguém aceitar.
-
-[NOTE]
-====
-**A conferência da fase 5 foi ampliada.** O pipeline que recusa merge request
-mexendo fora de `esteira/` passou a aceitar também a pasta `planejamento/`.
-Qualquer outro caminho continua recusado, pelo mesmo motivo da parte
-xref:esteira-confere.adoc[{p-confere}A esteira confere antes].
-====
-
-ifdef::perfis[]
-Os comandos desta fase rodam na aba `Terminal Dev`, como na fase 5: quem
-propõe o plano é o perfil Dev, e quem aceita o merge request é o Infra.
-endif::[]
+Nada é gravado. O que o participante leva é a lista de perguntas, reunida na
+última parte.
 
 == As partes
 
-[cols="1,3,2,1",options="header"]
+[cols="1,3,1",options="header"]
 |===
-| parte | o que você faz | sai com | tempo
+| parte | o que responde | tempo
 
-| xref:planejamento-partida.adoc[{p-partida}O ponto de partida]
-| descreve o que existe -- como as APIs são publicadas, quem as consome, como
-  se autenticam, que limites valem, quem cuida -- e os números
-| `levantamento.md`
-| ~12 min
-
-| xref:planejamento-fixas.adoc[{p-fixas}As decisões que não se desfazem]
-| quantos Gateways e de quem, uma plataforma por cluster, identidade do
-  consumidor, esquema de versão -- com o preço de cada opção à vista
-| 4 registros em `decisoes.md`
-| ~15 min
-
-| xref:planejamento-parceiro.adoc[{p-parceiro-dec}As decisões antes do primeiro parceiro]
-| provedor do Gateway, onde moram as chaves, mTLS interno, catálogo de planos,
-  storage do Limitador e falha, certificado e nome, o que vai para o Git
-| mais 7 registros, e a lista "pode evoluir"
-| ~15 min
-
-| xref:planejamento-sizing.adoc[{p-sizing}O que levantar para dimensionar]
-| lista as variáveis que a estimativa exige -- pico, credencial, contadores,
-  caminho de entrada, onde roda -- e o que medir em homologação; sem número
-  de réplica
-| `dimensionamento.md`
-| ~10 min
-
-| xref:planejamento-papeis.adoc[{p-papeis-dia}Quem faz o quê, do dia 0 ao dia 2]
-| distribui os papéis que o workshop praticou e o que cada um precisa aprender;
-  ambientes, upgrade e suporte
-| `papeis.md`
+| xref:planejamento-provas.adoc[{p-provas}O que o workshop provou, e o que não provou]
+| a base de evidência: o que foi medido nas fases 1 a 7, e a lista honesta do
+  que ficou sem medida
 | ~8 min
 
-| xref:planejamento-plano.adoc[{p-plano}O plano, no repositório]
-| ordena as decisões pelos momentos do projeto, escolhe a primeira API e lista
-  o que medir antes de cada momento; abre o merge request
-| `plano.md` e o merge request
+| xref:planejamento-partida.adoc[{p-conhecer}O que precisa ser conhecido]
+| o que existe hoje -- publicação, consumidores, autenticação, limites, quem
+  cuida -- e as variáveis de que qualquer estimativa de tamanho depende
 | ~10 min
+
+| xref:planejamento-decisoes.adoc[{p-decisoes}As decisões que a adoção vai pedir]
+| as perguntas que um projeto de Connectivity Link obriga a responder, com o
+  preço de cada opção e o sinal de que a escolha estaria errada
+| ~12 min
+
+| xref:planejamento-papeis.adoc[{p-papeis-dia}Papéis e responsabilidades]
+| os quatro papéis que o workshop praticou, o que cada um teria de assumir e
+  o que ainda não sabe fazer
+| ~6 min
+
+| xref:planejamento-levar.adoc[{p-levar}Para levar]
+| as perguntas das quatro partes numa lista só
+| ~2 min
 |===
 
-Cerca de 70 minutos. Para caber em menos, o caso do workshop já vem com a
-{p-partida}preenchida: você só revisa e segue.
-
-== Passo único -- abra o branch
-
-O comando volta ao `main`, cria o branch `planejamento` (ou o recria, se
-sobrou de uma rodada anterior) e a pasta vazia.
-
-[source,bash,role="execute perfil-dev"]
-----
-git checkout -q main && git pull -q
-git checkout -q -B planejamento
-mkdir -p planejamento && git branch --show-current && ls -d planejamento
-----
-
-[source,text]
-----
-planejamento
-planejamento
-----
-
-**O que isso diz:** você está no branch `planejamento`, e a pasta existe. Cada
-parte a seguir acrescenta um arquivo e um commit; a {p-plano}empurra o branch
-e abre o merge request.
+Cerca de 40 minutos de leitura. As partes são independentes: quem tem menos
+tempo lê a {p-provas}e a {p-levar}.

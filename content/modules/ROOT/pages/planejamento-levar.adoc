@@ -1,0 +1,63 @@
+include::partial$numeros.adoc[]
+= {p-levar}Para levar
+:navtitle: {p-levar}Para levar
+
+**Leitura · ~2 min · a lista das quatro partes, para imprimir**
+
+As perguntas da Fase 8 numa lista só. Nenhuma precisa de resposta hoje; a
+decisão por adotar o Connectivity Link começa quando o time souber quais
+delas já consegue responder, e quais só o seu ambiente responde.
+
+== Sobre a evidência ({p-provas}O que o workshop provou)
+
+* Quais das medidas das fases 1 a 7 importam para o nosso caso, e quais não?
+* Qual item da lista "não medido" pesa na nossa decisão, e como o mediríamos?
+
+== Sobre o que existe hoje ({p-conhecer}O que precisa ser conhecido)
+
+* Como cada API é publicada hoje, e onde o TLS termina?
+* Quem consome cada API, e quais consumidores não podem mudar de endereço ou
+  de credencial?
+* Como cada consumidor se autentica hoje? Existe um provedor de identidade em
+  que os parceiros possam existir?
+* Que limites existem, onde estão escritos, e quem decide um limite?
+* Quem é dono de cada API, quem opera o cluster, quem está de plantão?
+* Qual é o pico, por API, e quanto dura? Qual é o crescimento previsto?
+* Que credencial cada tipo de consumidor usaria?
+* Quantos consumidores, planos e janelas de limite teríamos?
+* Quanta latência a borda pode somar?
+* Qual SLA, quantas zonas, e o que isso pede de réplicas e de store?
+* O Gateway ficaria atrás do router ou com `LoadBalancer` direto?
+* Que nível de tracing a operação precisa, e com que amostragem?
+* Onde os pods rodariam, e o nó `infra` os admite?
+* Já há um ambiente de homologação em que a carga em degraus rodaria?
+
+== Sobre as decisões ({p-decisoes}As decisões que a adoção vai pedir)
+
+* Quantos Gateways, e de quem?
+* Uma plataforma por cluster, ou um cluster por domínio?
+* Como o consumidor se identifica: chave, token ou certificado?
+* Como uma versão nasce e como morre, e quem decide o fim?
+* Qual provedor atende o Gateway: o nativo ou o Service Mesh?
+* Onde moram as chaves de API?
+* O salto interno até o Authorino e o Limitador precisa ser cifrado?
+* Quantos planos, e o que fazemos com o consumidor que quer um limite só dele?
+* Se o Limitador cair, a API para ou fica sem limite? Quantas réplicas, e com
+  que store?
+* Quem é dono do certificado e do nome?
+* Como a mudança chega, e quem aprova?
+* Que padrões do produto aceitamos até um sinal aparecer: borda fechada,
+  padrão × trava, o que se mede desde o dia 1, cadência de upgrade, quando
+  entram Service Mesh, Service Interconnect e WAF, um ou vários clusters?
+
+== Sobre as pessoas ({p-papeis-dia}Papéis e responsabilidades)
+
+* Há alguém para cada um dos quatro papéis: plataforma, aplicação, produto,
+  operação?
+* O que cada papel ainda não fez com as próprias mãos?
+* Quantos ambientes, e como uma policy seria promovida?
+* Com que cadência o operador subiria de versão, e quem homologa?
+* Quem abre o chamado, e com o quê?
+
+O que vale como fonte para o que não está neste material é a
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação da versão em uso^].

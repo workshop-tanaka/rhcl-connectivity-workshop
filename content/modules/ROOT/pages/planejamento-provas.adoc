@@ -1,0 +1,141 @@
+include::partial$numeros.adoc[]
+= {p-provas}O que o workshop provou, e o que não provou
+:navtitle: {p-provas}O que o workshop provou
+
+**Leitura · ~8 min**
+
+**Momento do projeto:** a avaliação · **Quem lê:** quem vai defender ou questionar a adoção
+
+Uma decisão sobre plataforma se apoia em evidência, e a evidência deste
+workshop é o que você executou nas fases 1 a 7. Esta parte a reúne em duas
+listas: o que foi **observado** no cluster, com a parte em que aconteceu, e o
+que o material **não mediu** -- para que ninguém saia daqui com uma promessa
+que o workshop não fez.
+
+== O que foi observado
+
+[cols="2,3,2",options="header"]
+|===
+| o que o workshop mostrou | como se viu | onde
+
+| **a API nasce fechada por padrão**
+| chamada sem credencial responde `401`; uma rota nova do mesmo time nasce
+  negada pelo teto do Gateway, sem ninguém escrever uma regra para ela
+| xref:m1-01-fechada.adoc[{p-fechada} A API está fechada por padrão]
+
+| **a precedência entre o teto e a policy da rota é explícita**
+| o status da policy diz quem a sobrepõe, pelo nome; não há regra escondida
+| xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies]
+
+| **o plano vale no mesmo endereço**
+| duas chaves de planos diferentes, mesma URL, limites diferentes; trocar o
+  plano de um consumidor é trocar a credencial, não a policy. E a ressalva
+  medida: trocar só o rótulo da chave **não** muda o limite; recriar a chave
+  muda em segundos
+| xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual]
+
+| **o consumo vira número por plano e por parceiro**
+| o painel mostra chamadas aceitas e cortadas por plano desde a primeira
+  chamada; o parceiro aparece como dimensão da métrica do Gateway
+| xref:m1-05-negocio.adoc[{p-negocio} Isso vira número de negócio]
+
+| **uma pessoa e um sistema podem entrar pela mesma porta**
+| chave de API e token OIDC lado a lado, na mesma rota
+| xref:m1-07-identidade.adoc[{p-identidade} E quando quem consome é uma pessoa?]
+
+| **o certificado pode ter dono**
+| o curinga do cluster não tem; a `TLSPolicy` dá dono, renovação e revogação
+| xref:m1-08-certificado.adoc[{p-certificado} O certificado tem dono?]
+
+| **a v2 nasce ao lado da v1, e o painel diz quem ainda depende da v1**
+| duas versões na mesma rota, a antiga com aviso de depreciação
+| xref:versoes.adoc[{p-versoes}Uma API, duas versões]
+
+| **a mudança chega por merge request, com autor, aprovador e data**
+| o limite de um plano muda sem ninguém rodar `oc apply`
+| xref:esteira-mr.adoc[{p-mr}Mudança por merge request]
+
+| **a esteira recusa rota sem policy**
+| um merge request com `HTTPRoute` sem `AuthPolicy` não passa
+| xref:esteira-confere.adoc[{p-confere}A esteira confere antes]
+
+| **a edição à mão aparece como desvio, e a reversão é um revert**
+| o `OutOfSync` nomeia o que divergiu; o Git é a fonte
+| xref:esteira-desvio.adoc[{p-desvio}Desvio e reversão]
+
+| **quando a requisição morre, dá para saber onde**
+| o trace mostra o salto em que o `401` ou o `429` nasceu
+| xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu]
+
+| **com o Limitador fora, a API passa sem limite e com status verde**
+| `failureMode: allow` é o padrão; Authorino fora, a API nega
+| xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai]
+
+| **a plataforma avisa sobre si mesma**
+| o alerta de Limitador fora dispara e chega a alguém
+| xref:m3-05-alerta.adoc[{p-alerta} O alerta]
+
+| **réplica de Limitador sem store compartilhado multiplica o limite**
+| duas réplicas em memória deixaram passar o dobro; com o store, o limite
+  voltou a valer
+| D11/D12, na parte xref:planejamento-decisoes.adoc[{p-decisoes}]
+
+| **a plataforma é compartilhada por desenho**
+| instalação em todos os namespaces; não existe "tenant" no produto; o que
+  separa é namespace e RBAC
+| xref:leitura-multitenancy.adoc[{p-multitenancy}multi-tenancy]
+
+| **a precedência de limite mudou entre versões do produto**
+| entre a 1.2 e a 1.4 deste material, o `PlanPolicy` e a `RateLimitPolicy`
+  plana trocaram de ordem, com tudo respondendo `200`
+| xref:leitura-instalacao.adoc[Fase 1, "e se eu quiser fixar a versão?"] e o aviso de versões da xref:index.adoc[abertura]
+|===
+
+== O que o workshop não mediu
+
+Cada linha abaixo é uma afirmação que **não** pode sair deste workshop como
+fato. Onde ela importar para a sua decisão, é algo a medir no seu ambiente.
+
+[cols="2,3",options="header"]
+|===
+| não medido | por que importa
+
+| **capacidade por réplica** do Gateway, do Authorino e do Limitador
+| depende do pico, da credencial, do caminho de entrada, do tracing e de onde
+  os pods rodam; este material não entrega número
+
+| **o corte de tráfego ao trocar a classe do Gateway** (nativo ↔ Service Mesh)
+| decide se a escolha do provedor pode mudar depois sem janela
+
+| **mover uma rota de um Gateway para outro**
+| hostname, certificado e status das policies do lado do consumidor; decide
+  quantos Gateways nascer
+
+| **a troca de rota com o mesmo hostname** da API antiga
+| para parceiros que não podem mudar de endereço na migração
+
+| **mTLS no salto interno sem Service Mesh**
+| a credencial atravessa o cluster em claro no provedor nativo
+
+| **parceiro como sistema entrando por OIDC**, com o plano vindo do token
+| o token exercitado foi de pessoa
+
+| **tracing com amostragem**: p99 e CPU
+| o nível de produção não foi medido; só `debug` e padrão
+
+| **memória do Limitador por contador ativo**, e a alta disponibilidade do store
+| decide o tamanho e o desenho do store
+
+| **quantas séries a dimensão por parceiro cria** com centenas de parceiros
+| decide até onde "medir por parceiro" vai sem log ou trace
+
+| **dois clusters na borda**: limite global com store compartilhado, DNS comum
+| o segundo cluster deste material não foi exercitado
+
+| **se o nó `infra` admite esses componentes** na regra de subscription
+| não tem fonte neste material; confirmar com a Red Hat
+|===
+
+O que vale como fonte para o que não está aqui é a
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação da versão em uso^].
+Artigo e blog são pista, não fonte.
