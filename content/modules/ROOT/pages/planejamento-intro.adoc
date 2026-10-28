@@ -104,11 +104,12 @@ endif::[]
 | mais 7 registros, e a lista "pode evoluir"
 | ~15 min
 
-| xref:planejamento-sizing.adoc[{p-sizing}Quanto a plataforma vai precisar]
-| aplica o método aos números da {p-partida}desta fase, com a capacidade por réplica
-  medida no workshop como referência
-| `sizing.md`
-| ~12 min
+| xref:planejamento-sizing.adoc[{p-sizing}O que levantar para dimensionar]
+| lista as variáveis que a estimativa exige -- pico, credencial, contadores,
+  caminho de entrada, onde roda -- e o que medir em homologação; sem número
+  de réplica
+| `dimensionamento.md`
+| ~10 min
 
 | xref:planejamento-papeis.adoc[{p-papeis-dia}Quem faz o quê, do dia 0 ao dia 2]
 | distribui os papéis que o workshop praticou e o que cada um precisa aprender;

@@ -32,10 +32,11 @@ publicar o primeiro serviço, operar o que está no ar.
 | **plataforma** (Gateway, teto, certificado, nome)
 | instala o operador e o CR `Kuadrant` (Fase 1); cria os Gateways (D2) com
   `deny-all` e o teto (D4); `TLSPolicy` e `DNSPolicy` (D16); o pool de nós e
-  as réplicas da {p-sizing}desta fase; a esteira e a conferência (D13)
+  o pool de nós e a QoS do levantamento da {p-sizing}desta fase; a esteira e a
+  conferência (D13)
 | aprova o merge request do Gateway e do teto; emite a chave do parceiro pelo
   portal (D7); confere que a rota nova nasceu negada
-| upgrade do operador (D18); revisão do sizing a cada parceiro grande; o
+| upgrade do operador (D18); revisão do dimensionamento a cada parceiro grande; o
   segundo cluster
 
 | **aplicação** (rota, policy da rota)
@@ -53,7 +54,7 @@ publicar o primeiro serviço, operar o que está no ar.
 | negocia o plano com o número; decide o fim da v1 pelo painel (D14)
 
 | **operação** (alertas, diagnóstico, auditoria)
-| instala o alerta de Limitador fora e os de saturação ({p-sizing}desta fase, seção 6);
+| instala o alerta de Limitador fora e os de saturação ({p-sizing}desta fase, seção 5);
   decide a falha (D11)
 | recebe o alerta em teste antes do parceiro entrar; mede o p99 da borda na
   primeira API
@@ -154,7 +155,7 @@ Um papel pode ser uma pessoa em dois chapéus. Nenhum papel pode ficar vazio.
 
 | papel | dia 0: plataforma no ar | dia 1: primeira API e primeiro parceiro | dia 2: operação |
 | --- | --- | --- | --- |
-| plataforma | operador, CR Kuadrant, Gateways com deny-all e teto, TLSPolicy/DNSPolicy, pool de nós, esteira | aprova MR de Gateway e teto; emite chave pelo portal | upgrade do operador; revisão do sizing; segundo cluster |
+| plataforma | operador, CR Kuadrant, Gateways com deny-all e teto, TLSPolicy/DNSPolicy, pool de nós, esteira | aprova MR de Gateway e teto; emite chave pelo portal | upgrade do operador; revisão do dimensionamento; segundo cluster |
 | aplicação | lê a Fase 1 e a 3.1 | HTTPRoute + AuthPolicy no mesmo commit; PlanPolicy; v2 ao lado da v1 | MR de cada mudança; lê o trace quando a requisição morre |
 | produto | escreve o catálogo de planos | põe o parceiro num plano; lê o painel desde o dia 1 | negocia plano com número; decide o fim da v1 pelo painel |
 | operação | alertas (Limitador fora, saturação, p99); decide a falha | recebe o alerta em teste; mede o p99 na primeira API | plantão; as quatro perguntas de auditoria; trata OutOfSync |
@@ -196,9 +197,9 @@ praticar. É a diferença entre "o time de plataforma cuida" e um plano.
 Três coisas deste material só se descobrem com carga ou com upgrade, e as
 duas não se fazem em produção:
 
-* a **capacidade por réplica** ({p-sizing}desta fase): sem homologação, a conta usa a
-  referência do workshop em vez do número do cliente, e a referência foi
-  medida com chave de API, num cluster que não é o dele;
+* a **capacidade por réplica** ({p-sizing}desta fase): este material não a
+  entrega como número, e sem homologação a conta fica sem o único número que
+  importa -- o medido com a credencial e o caminho de entrada do cliente;
 * a **mudança de precedência entre versões** (D18): o `PlanPolicy` e a
   `RateLimitPolicy` plana trocaram de ordem entre a 1.2 e a 1.4, e tudo
   respondeu `200` sem erro; só um teste de rajada por plano pega isso;

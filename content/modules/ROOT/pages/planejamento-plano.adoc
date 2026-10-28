@@ -45,10 +45,11 @@ merge request, como tudo desde a fase 5.
 
 | **o primeiro parceiro externo**
 | D6 identidade, D7 chaves, D8 mTLS interno, D11/D12 falha e Redis, D16
-  certificado e nome; a conta da {p-sizing}
+  certificado e nome; o levantamento da {p-sizing}, com a carga em homologação
+  feita
 | o parceiro chama pelo nome e certificado definitivos, com a chave do portal,
-  no plano dele; o limite do plano vale com duas réplicas do Limitador; o
-  painel mostra o consumo dele
+  no plano dele; o limite do plano vale com mais de uma réplica do Limitador;
+  o painel mostra o consumo dele
 | o parceiro entrar antes do Redis (o limite dobra em silêncio) ou antes do
   certificado com dono (reemitir depois muda a autoridade que ele confia)
 
@@ -68,10 +69,10 @@ merge request, como tudo desde a fase 5.
 | trocar o hostname "por baixo" sem medir: ver a seção sobre a migração
 
 | **a operação**
-| D17 o que se mede, D18 upgrade; a revisão do sizing; `selfHeal` ligado (D13)
+| D17 o que se mede, D18 upgrade; a revisão do dimensionamento; `selfHeal` ligado (D13)
 | o primeiro upgrade de *minor* passou por homologação com o teste de rajada
   por plano; o plantão respondeu às quatro perguntas de auditoria num
-  incidente real; o sizing foi refeito com os números do painel
+  incidente real; o dimensionamento foi refeito com os números do painel
 | o upgrade in-place sem homologação (os planos somem com tudo em `200`)
 |===
 
@@ -240,10 +241,10 @@ a ordem é a das decisões; as datas são do projeto.
 | --- | --- | --- | --- | --- |
 | a plataforma no ar | D1 D2 D3 D4 D13 D14 | Gateways respondem 401 sem policy; alerta chega a uma pessoa; conferência recusa rota sem AuthPolicy | montar sem alerta e sem conferência | |
 | a primeira API | a escolha abaixo; D9 | as 5 provas observadas; pico real por plano; p99 no orçamento | tratá-la como produção antes das decisões fixas | |
-| o primeiro parceiro externo | D6 D7 D8 D11 D12 D16; sizing.md | nome e certificado definitivos; chave do portal; limite vale com 2 réplicas; consumo no painel | parceiro antes do Redis ou do certificado com dono | |
+| o primeiro parceiro externo | D6 D7 D8 D11 D12 D16; dimensionamento.md | nome e certificado definitivos; chave do portal; limite vale com mais de uma réplica; consumo no painel | parceiro antes do Redis ou do certificado com dono | |
 | a segunda API na esteira | D13 D5 | nasce por MR, rota e policy no mesmo commit, sem oc apply da plataforma | a plataforma "ajudar" à mão | |
 | a migração do que existe | D14 D20 | cada API antiga tem a nova; zero chamadas no caminho antigo por 30 dias; legado desligado por decisão de produto | trocar hostname sem medir | |
-| a operação | D17 D18; revisão do sizing; selfHeal ligado | primeiro upgrade de minor via homologação com teste de rajada; auditoria num incidente real; sizing refeito com o painel | upgrade in-place sem homologação | |
+| a operação | D17 D18; revisão do dimensionamento; selfHeal ligado | primeiro upgrade de minor via homologação com teste de rajada; auditoria num incidente real; dimensionamento refeito com o painel | upgrade in-place sem homologação | |
 
 ## A primeira API
 
@@ -287,7 +288,7 @@ medida no workshop: medir em homologação antes de prometer.
 | a plataforma no ar | o corte ao trocar a classe de um Gateway (D1) | não medido no workshop |
 | a plataforma no ar | a janela entre a rota nascer e o teto a alcançar, no nosso provedor (D4) | "alguns segundos" aqui; pode ser mais lá |
 | a primeira API | o pico real por plano e o p99 que a borda soma | o levantamento tem 30 req/s de memória; o painel dá o número |
-| o primeiro parceiro | capacidade por réplica do Authorino com a nossa credencial (sizing.md, seção 5) | a referência é de outro ambiente |
+| o primeiro parceiro | carga em degraus com a nossa credencial: qual componente satura primeiro (dimensionamento.md, seção 4) | o material não entrega capacidade por réplica |
 | o primeiro parceiro | mTLS interno sem Service Mesh, se D8 mudar | não medido no workshop |
 | o primeiro parceiro | memória do Limitador por contador; HA do Redis | não medido no workshop |
 | a migração | troca de rota com o mesmo hostname: corte, DNS, certificado | não medido no workshop |
@@ -302,7 +303,7 @@ git add planejamento && git commit -q -m "planejamento: o plano" && git log --on
 ----
 ... planejamento: o plano
 ... planejamento: papeis
-... planejamento: sizing
+... planejamento: dimensionamento
 ... planejamento: decisoes antes do primeiro parceiro
 ... planejamento: decisoes que nao se desfazem
 ... planejamento: levantamento
@@ -363,7 +364,7 @@ git checkout -q main && git pull -q && ls planejamento && git log --oneline -1 -
 
 [source,text]
 ----
-decisoes.md  levantamento.md  papeis.md  plano.md  sizing.md
+decisoes.md  dimensionamento.md  levantamento.md  papeis.md  plano.md
 ... Merge branch 'planejamento' into 'main'
 ----
 

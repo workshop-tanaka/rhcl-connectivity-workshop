@@ -42,15 +42,15 @@ existe, escrito antes de qualquer decisão -- porque cada decisão das partes
   migração
 
 | **Que limites existem, e onde estão escritos?**
-| o catálogo de planos ({p-parceiro-dec}desta fase) e a dimensão do Limitador ({p-sizing}desta fase)
+| o catálogo de planos ({p-parceiro-dec}desta fase) e os contadores do Limitador ({p-sizing}desta fase)
 
 | **Quem cuida de cada API, e quem é chamado quando ela cai?**
 | os papéis do dia 2 ({p-papeis-dia}desta fase) e o dono de cada decisão
 
 | **Os números:** pico e média por API, duração do pico, crescimento em 12
   meses, orçamento de latência na borda, SLA, zonas, segundo cluster
-| o sizing inteiro ({p-sizing}desta fase), e o que a primeira API precisa medir para
-  provar que deu certo ({p-plano}desta fase)
+| as variáveis do dimensionamento ({p-sizing}desta fase), e o que a primeira API
+  precisa medir para provar que deu certo ({p-plano}desta fase)
 |===
 
 O que não tiver resposta hoje fica como "não sabemos", e não como estimativa:
@@ -132,7 +132,7 @@ mkdir -p planejamento && cat > planejamento/levantamento.md <<'EOF'
 # Levantamento: de onde o projeto parte
 
 Inventário do que existe antes de qualquer decisão. "Não sabemos" é resposta
-válida e vira item da lista do que medir (sizing.md).
+válida e vira item da lista do que medir (dimensionamento.md).
 
 ## 1. Como as APIs são publicadas hoje
 
@@ -203,7 +203,7 @@ ok
 
 **O que isso diz:** o inventário tem autor e data, e cada decisão das partes
 seguintes vai citar uma linha dele. Quando um número mudar -- e o pico vai
-mudar --, muda aqui primeiro, por merge request, e o sizing é refeito a partir
+mudar --, muda aqui primeiro, por merge request, e o dimensionamento é refeito a partir
 daqui.
 
 .Outro caso de uso: só tenho 5 minutos para esta parte
@@ -219,12 +219,11 @@ São essas três que mais mudam as decisões das partes {p-fixas}e {p-sizing}des
 .Mais detalhes: por que "não sabemos" vale mais que uma estimativa
 [%collapsible]
 ====
-A parte {p-sizing}aplica uma conta simples -- réplicas = pico × folga ÷
-capacidade por réplica -- e a conta é tão boa quanto o pico que entra nela.
-Neste workshop, a capacidade por réplica foi **medida** (uma réplica do
-Authorino aguenta ~400 a 500 req/s limpos neste ambiente). Se o pico do
-levantamento for um palpite, o resultado herda o palpite e esconde isso atrás
-de um número com três algarismos.
+A parte {p-sizing}lista as variáveis de que a estimativa depende, e a
+primeira delas é o pico: a capacidade por réplica se mede em homologação, com
+a credencial e o caminho de entrada do seu ambiente, e a conta divide o pico
+por ela. Se o pico do levantamento for um palpite, o resultado herda o palpite
+e esconde isso atrás de um número com três algarismos.
 
 Um "não sabemos" no pico, ao contrário, aparece na lista do que medir, e a
 primeira API ({p-plano}desta fase) é o lugar natural para medi-lo: ela sai com a
