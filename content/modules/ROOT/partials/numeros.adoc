@@ -38,12 +38,11 @@ ifndef::foco_rhcl[]
 :p-papel-rhdh:
 :p-waf:
 :p-partida:
-:p-piloto:
 :p-fixas:
 :p-parceiro-dec:
 :p-sizing:
 :p-papeis-dia:
-:p-roteiro:
+:p-plano:
 // quantos arquivos a parte {p-exposta} aplica: os seis de passos/exposta/,
 // nas duas sessoes desde a v0.81
 :n-exposta: seis
@@ -93,12 +92,11 @@ ifdef::foco_rhcl[]
 :p-waf: 7.6{sp}
 // Fase 8 (planejamento), sob ifdef::fase8 no nav
 :p-partida: 8.1{sp}
-:p-piloto: 8.2{sp}
-:p-fixas: 8.3{sp}
-:p-parceiro-dec: 8.4{sp}
-:p-sizing: 8.5{sp}
-:p-papeis-dia: 8.6{sp}
-:p-roteiro: 8.7{sp}
+:p-fixas: 8.2{sp}
+:p-parceiro-dec: 8.3{sp}
+:p-sizing: 8.4{sp}
+:p-papeis-dia: 8.5{sp}
+:p-plano: 8.6{sp}
 :n-exposta: seis
 // Na sessao de Connectivity Link nao ha modulos, ha fases. Onde a pagina dizia
 // 'Modulo N', sai o nome do trecho correspondente -- todos no masculino, para

@@ -4,7 +4,7 @@ include::partial$numeros.adoc[]
 
 **Exercício · ~15 min · escreve no seu repositório**
 
-**Momento do projeto:** entre o piloto e o primeiro parceiro externo · **Quem faz:** plataforma decide a maioria; produto, o catálogo; operação, a falha
+**Momento do projeto:** antes do primeiro parceiro externo · **Quem faz:** plataforma decide a maioria; produto, o catálogo; operação, a falha
 
 [NOTE.antes]
 ====
@@ -327,7 +327,7 @@ segunda API, não há como voltar ao `oc apply` sem perder o histórico.
 **O sinal de que está errada.** Um `OutOfSync` que ninguém trata em uma semana;
 ou um limite que mudou e ninguém sabe quem mudou.
 
-**No seu arquivo.** A Trajeto: repositório desde o piloto, `selfHeal`
+**No seu arquivo.** A Trajeto: repositório desde a primeira API, `selfHeal`
 desligado durante a migração (o legado vai pedir edição ao vivo) e ligado
 depois do marco *operação*; chaves fora do Git, no portal. Quem aprova: o time
 de plataforma, para Gateway e teto; o dono da API, para a rota dela.
@@ -410,12 +410,12 @@ cat >> planejamento/decisoes.md <<'EOF'
 
 | campo | caso do workshop (Trajeto) | o seu caso |
 | --- | --- | --- |
-| escolha | repositório desde o piloto; selfHeal desligado na migração, ligado depois; chaves fora do Git | |
+| escolha | repositório desde a primeira API; selfHeal desligado na migração, ligado depois; chaves fora do Git | |
 | preço aceito | alguém mantém a conferência; OutOfSync precisa de dono | |
 | como desfazer | baixo: um campo e uma regra | |
 | quando rever | um OutOfSync sem tratamento por uma semana | |
 | dono | plataforma aprova Gateway e teto; o dono da API aprova a rota | |
-| data | no piloto | |
+| data | antes da primeira API | |
 
 ## Pode evoluir -- baixo custo de desfazer
 

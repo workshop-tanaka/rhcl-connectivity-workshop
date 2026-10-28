@@ -8,16 +8,15 @@ include::partial$numeros.adoc[]
 
 [NOTE.antes]
 ====
-**Antes:** as partes xref:planejamento-partida.adoc[{p-partida}O ponto de partida]
-e xref:planejamento-piloto.adoc[{p-piloto}O piloto]. Cada decisão abaixo cita
-uma linha do levantamento.
+**Antes:** a parte xref:planejamento-partida.adoc[{p-partida}O ponto de partida].
+Cada decisão abaixo cita uma linha do levantamento.
 ====
 
 Das vinte decisões que um projeto de Connectivity Link toma, quatro são caras
 de desfazer: mudá-las depois muda o endereço, o certificado ou a credencial
 que um parceiro já usa. São estas que o time precisa fechar antes do primeiro
-Gateway de produção -- não antes do piloto, que por isso tem Gateway próprio
-(parte {p-piloto}desta fase).
+Gateway de produção; a primeira API, que vem antes dele, ganha por isso um
+Gateway próprio (parte {p-plano}desta fase).
 
 [IMPORTANT]
 ====
@@ -75,7 +74,7 @@ painel em que aparece. **Não medido neste workshop** -- é a avaliação deste
 material; medir antes de decidir, movendo a `parentRef` de uma rota de
 laboratório e observando hostname, certificado e status das policies.
 
-**Quando decidir.** Antes do marco *plataforma no ar* da {p-roteiro}desta fase: o
+**Quando decidir.** Antes do marco *plataforma no ar* da {p-plano}desta fase: o
 primeiro Gateway de produção já é um público.
 
 **O sinal de que está errada.** Um time pede exceção ao teto que só vale para
@@ -275,7 +274,7 @@ avaliação do material do workshop, não uma medida; o que foi medido diz onde.
 | como desfazer | criar um terceiro público é barato; juntar os dois é mover rotas -- não medido, medir antes | |
 | quando rever | um time pedir exceção ao teto só para ele | |
 | dono | time de plataforma | |
-| data | kickoff | |
+| data | no planejamento | |
 
 ### D3. Uma plataforma por cluster, ou um cluster por domínio?
 
@@ -286,7 +285,7 @@ avaliação do material do workshop, não uma medida; o que foi medido diz onde.
 | como desfazer | separar depois é migrar Gateways, nomes e chaves | |
 | quando rever | um time precisar de janela ou versão de operador própria; antes do segundo cluster | |
 | dono | time de plataforma | |
-| data | kickoff | |
+| data | no planejamento | |
 
 ### D6. Como o consumidor se identifica?
 
@@ -308,7 +307,7 @@ avaliação do material do workshop, não uma medida; o que foi medido diz onde.
 | como desfazer | não se desfaz sem quebrar cliente; só se evolui | |
 | quando rever | a primeira v2 que precisar de hostname próprio | |
 | dono | produto; a medição é da operação | |
-| data | kickoff | |
+| data | no planejamento | |
 EOF
 git add planejamento && git commit -q -m "planejamento: decisoes que nao se desfazem" && echo ok
 ----

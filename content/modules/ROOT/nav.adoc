@@ -1,4 +1,4 @@
-// Com uma trilha ligada, o menu e SO a trilha (mais a Fase 8, se ligada):
+// Com uma trilha ligada, o menu e SO a trilha (com a Fase 8 antes dos Extras, se ligada):
 // o bloco comum e as secoes finais ficam fora.
 .A solução de conectividade
 * xref:index.adoc[Sobre este workshop]
@@ -48,6 +48,8 @@ ifdef::trilha_degustacao[]
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
 
+include::partial$nav-fase8.adoc[]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
@@ -76,6 +78,8 @@ ifdef::trilha_basico[]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
+
+include::partial$nav-fase8.adoc[]
 
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
@@ -112,6 +116,8 @@ ifdef::trilha_intermediario[]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
+
+include::partial$nav-fase8.adoc[]
 
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
@@ -165,6 +171,8 @@ ifdef::trilha_avancado[]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
 
+include::partial$nav-fase8.adoc[]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
@@ -204,6 +212,8 @@ ifdef::trilha_infra[]
 * xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
 * xref:papel-ossm.adoc[7.3 O papel do Service Mesh]
 
+include::partial$nav-fase8.adoc[]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
 endif::[]
@@ -240,6 +250,8 @@ ifdef::trilha_desenvolvedor[]
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
 
+include::partial$nav-fase8.adoc[]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 * xref:extra-postman.adoc[Testar a API no Postman]
@@ -271,6 +283,8 @@ ifdef::trilha_operacoes[]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
+
+include::partial$nav-fase8.adoc[]
 
 .Extras — opcionais, em qualquer ordem
 * xref:extras-resumo.adoc[O que há nesta fase]
@@ -324,6 +338,8 @@ ifdef::foco_rhcl[]
 * xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
+
+include::partial$nav-fase8.adoc[]
 
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
@@ -388,6 +404,8 @@ ifndef::foco_ossm,foco_rhsi[]
 endif::[]
 
 ifndef::foco_ossm,foco_rhsi[]
+include::partial$nav-fase8.adoc[]
+
 .Extras — opcionais, em qualquer ordem
 * xref:extras.adoc[Extras: qual escolher]
 * xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
@@ -420,20 +438,6 @@ ifndef::foco_rhsi[]
 * xref:leitura-instalacao.adoc[Leitura: instalação e configuração]
 * xref:arquitetura.adoc[Leitura: a arquitetura]
 endif::[]
-endif::[]
-
-// A Fase 8, DEPOIS da Fase 7 e dos Extras, e fora do ifndef das trilhas: com
-// uma trilha ligada ela continua no menu, como exercicio a parte.
-ifdef::fase8[]
-.Fase 8 — Decidimos pelo Connectivity Link. E agora?
-* xref:planejamento-intro.adoc[O que muda nesta fase]
-* xref:planejamento-partida.adoc[8.1 O ponto de partida]
-* xref:planejamento-piloto.adoc[8.2 O piloto]
-* xref:planejamento-fixas.adoc[8.3 As decisões que não se desfazem]
-* xref:planejamento-parceiro.adoc[8.4 As decisões antes do primeiro parceiro]
-* xref:planejamento-sizing.adoc[8.5 Quanto a plataforma vai precisar]
-* xref:planejamento-papeis.adoc[8.6 Quem faz o quê, do dia 0 ao dia 2]
-* xref:planejamento-roteiro.adoc[8.7 O roteiro: do piloto à produção]
 endif::[]
 
 .Ambiente — conferir, consertar, recomeçar

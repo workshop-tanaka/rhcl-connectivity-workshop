@@ -1,0 +1,385 @@
+include::partial$numeros.adoc[]
+= {p-plano}O plano, no repositório
+:navtitle: {p-plano}O plano, no repositório
+
+**Exercício · ~10 min · escreve no seu repositório e abre o merge request**
+
+**Momento do projeto:** o fim do planejamento · **Quem faz:** o time do projeto inteiro; o perfil Dev empurra, o perfil Infra aceita
+
+[NOTE.antes]
+====
+**Antes:** as cinco partes anteriores: o `plano.md` só ordena o que elas
+decidiram.
+====
+
+Tudo o que a fase escreveu até aqui é o quê e o porquê. Esta parte é a
+**ordem**: seis momentos, do primeiro Gateway ao legado desligado, cada um
+com as decisões que precisa ter tomadas (das partes {p-fixas}e
+{p-parceiro-dec}desta fase), o critério de pronto -- observável, como tudo o que o
+workshop mediu -- e o risco de pular. Sem datas: a ordem é a das decisões, e
+as datas são do seu projeto. No fim, a pasta `planejamento/` inteira vai por
+merge request, como tudo desde a fase 5.
+
+== Os momentos, e o que cada um exige
+
+[cols="1,2,2,2",options="header"]
+|===
+| momento | decisões que ele exige | critério de pronto | risco de pular
+
+| **a plataforma no ar**
+| D2 Gateways, D3 plataforma por cluster, D14 esquema de versão, D1 provedor;
+  D4 fechada por padrão, D13 esteira
+| os Gateways de cada público respondem `401` a uma rota de teste sem policy;
+  o alerta de Limitador fora dispara em teste e chega a uma pessoa; a
+  conferência recusa um merge request com rota sem `AuthPolicy`
+| montar sem o alerta e sem a conferência "para ganhar tempo": são as duas
+  peças que o dia 2 não consegue acrescentar sem janela
+
+| **a primeira API**
+| a escolha da seção seguinte; D9 catálogo (os planos dela já são os
+  definitivos)
+| as cinco provas da seção "O que a primeira API prova", observadas; o pico
+  real da API medido por plano; o p99 da borda dentro do orçamento
+| tratá-la como a API de produção antes das decisões da {p-fixas}estarem
+  tomadas: o Gateway dela tem decisões provisórias
+
+| **o primeiro parceiro externo**
+| D6 identidade, D7 chaves, D8 mTLS interno, D11/D12 falha e Redis, D16
+  certificado e nome; a conta da {p-sizing}
+| o parceiro chama pelo nome e certificado definitivos, com a chave do portal,
+  no plano dele; o limite do plano vale com duas réplicas do Limitador; o
+  painel mostra o consumo dele
+| o parceiro entrar antes do Redis (o limite dobra em silêncio) ou antes do
+  certificado com dono (reemitir depois muda a autoridade que ele confia)
+
+| **a segunda API na esteira**
+| D13 inteira (quem aprova o quê); D5 padrão × trava
+| a segunda API nasce por merge request, com rota e policy no mesmo commit,
+  sem ninguém do time de plataforma rodar `oc apply`; a precedência entre o
+  teto e a policy dela aparece no status
+| o time de plataforma "ajudar" aplicando à mão: o modelo de donos nasce
+  errado e a edição aparece como `OutOfSync`
+
+| **a migração do que existe**
+| D14 (a versão antiga é uma v1); D20 (WAF, se o legado tinha um)
+| cada API antiga tem a nova no Gateway com o mesmo contrato; o painel mostra
+  zero chamadas no caminho antigo pelo período que produto definiu; o legado
+  desligado por decisão de produto, com o número
+| trocar o hostname "por baixo" sem medir: ver a seção sobre a migração
+
+| **a operação**
+| D17 o que se mede, D18 upgrade; a revisão do sizing; `selfHeal` ligado (D13)
+| o primeiro upgrade de *minor* passou por homologação com o teste de rajada
+  por plano; o plantão respondeu às quatro perguntas de auditoria num
+  incidente real; o sizing foi refeito com os números do painel
+| o upgrade in-place sem homologação (os planos somem com tudo em `200`)
+|===
+
+== Por onde começar: a primeira API
+
+A primeira API no Gateway não é a mais importante nem a mais chamada. É a
+que prova, com dado, que a plataforma faz o que o workshop mostrou -- e que o
+time consegue operá-la. Escolher mal custa meses: a API errada traz uma
+dependência que a plataforma ainda não tem (um provedor de identidade novo,
+um parceiro que não pode trocar de endereço) e o projeto para esperando por
+ela.
+
+[cols="2,3,3",options="header"]
+|===
+| critério | por quê | o que exclui
+
+| **consumidor interno, ou um parceiro amigo**
+| a primeira API vai mudar como o consumidor se autentica e por onde entra;
+  isso pede alguém que aceite a mudança e avise quando algo quebrar
+| a API que 14 parceiros chamam, todos de uma vez
+
+| **tráfego mensurável, e não o maior**
+| as provas são medidas no painel da parte {p-negocio}; sem tráfego não há o
+  que medir, e com o pico inteiro o erro custa caro
+| a API quase sem chamadas, e a que concentra o pico
+
+| **um dono disposto**
+| a rota e a policy da rota são do time da API (parte {p-papeis}); se o time
+  não quer, a plataforma acaba fazendo por ele e o modelo de donos nasce errado
+| a API que ninguém quer mexer
+
+| **sem dependência de identidade nova**
+| chave de API é o caminho curto e já está no produto; um parceiro como
+  cliente OIDC pede um provedor em que ele exista, e isso é a parte {p-fixas}
+| a API cujo primeiro consumidor exige token
+
+| **um caminho de migração visível**
+| a API nova nasce no Gateway e a antiga fica; a primeira tem de ter um
+  "antigo" para desligar depois, senão não prova a convivência que a migração
+  planeja
+| uma API que nasce agora, sem versão anterior
+|===
+
+Das oito APIs da Trajeto, a tabela abaixo é como o time dela pontuou as
+candidatas. Não há conta certa: o que importa é que a escolha fique escrita
+com o motivo.
+
+[cols="1,1,1,1,1,2",options="header"]
+|===
+| API | consumidor amigo | tráfego mensurável | dono disposto | sem identidade nova | o que pesou
+
+| `tarifas` | sim: o portal web, e 1 agência parceira que já pediu planos | sim: ~30 req/s no pico | sim | sim: chave de API | **escolhida**
+| `reservas` | não: todos os canais | sim | sim | sim | o canal de receita, não vai primeiro
+| `busca-voos` | não: 8 parceiros no legado | sim: metade do pico | parcial | sim | mover 8 parceiros é a migração, não o começo
+| `viajantes` | sim: só interno | pouco | sim | **não**: dado pessoal, o time quer token de pessoa | depende de identidade que a plataforma ainda não tem
+| `relatorios` | sim: financeiro | quase nenhum | não | sim | sem tráfego para medir
+|===
+
+A primeira API da Trajeto: `tarifas`, no Gateway novo, com dois consumidores
+-- o portal web (interno, plano gold) e a agência parceira que pediu planos
+(plano silver). A `Route` atual de `tarifas` continua no ar para os outros
+consumidores até o painel mostrar que todos trocaram. Em seguida, `relatorios`
+entra na esteira como a segunda API.
+
+.Mais detalhes: por que a primeira API não começa no Gateway de produção da plataforma
+[%collapsible]
+====
+O Gateway é a unidade em que a plataforma escreve o teto, o certificado e o
+nome (parte xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê]). Uma primeira
+API no Gateway que depois vai ser "o de parceiros" herda as decisões da parte
+{p-fixas}antes de elas estarem tomadas. Dois caminhos:
+
+* **um Gateway da primeira API**, com o próprio nome, que sai de cena quando
+  ela migra para o definitivo -- o que custa é um pod de proxy a mais (neste
+  ambiente, entre 300 e 370 MiB) e uma troca de endereço para os dois
+  consumidores;
+* **já o Gateway definitivo do público dela** -- só se as quatro decisões da
+  {p-fixas}já estiverem tomadas para esse público.
+
+A Trajeto escolheu o primeiro: a primeira API não deve esperar a {p-fixas}, e
+os dois consumidores aceitaram trocar de endereço uma vez. **Não medido neste
+workshop:** o que o consumidor sente ao mover a rota de um Gateway para outro
+(hostname, certificado, status das policies); medir antes de prometer a troca
+indolor.
+====
+
+== O que a primeira API prova
+
+A primeira API cumpriu o papel quando cinco coisas são **observadas**, não
+declaradas. Todas foram medidas neste workshop, e a tabela diz onde:
+
+[cols="2,3,2",options="header"]
+|===
+| o que provar | como se vê | onde o workshop mediu
+
+| a API está **fechada por padrão**
+| chamada sem credencial responde `401`; uma rota nova do mesmo time nasce
+  negada pelo teto do Gateway
+| xref:m1-01-fechada.adoc[{p-fechada} A API está fechada por padrão]
+
+| **o plano vale no mesmo endereço**
+| duas chaves de planos diferentes, mesma URL, limites diferentes; trocar o
+  plano de um consumidor é trocar a credencial, não a policy
+| xref:m1-02-planos.adoc[{p-planos} Nem todo cliente é igual]
+
+| **o consumo aparece em painel**, por plano
+| o Grafana mostra chamadas aceitas e cortadas por plano, desde o primeiro dia
+| xref:m1-05-negocio.adoc[{p-negocio} Isso vira número de negócio]
+
+| **a mudança chega por merge request**
+| o limite de um plano muda sem ninguém rodar `oc apply`, com autor, aprovador
+  e data
+| xref:esteira-mr.adoc[{p-mr}Mudança por merge request]
+
+| **a plataforma avisa sobre si mesma**
+| o alerta de Limitador fora do ar dispara no ambiente da primeira API, e
+  alguém o recebe
+| xref:m3-05-alerta.adoc[{p-alerta} A plataforma avisando sobre si mesma]
+|===
+
+A quinta linha é a que os times esquecem, e é a que o workshop mediu como a
+mais perigosa: com o Limitador fora, a API continua respondendo `200` **sem
+limite** e com status verde (parte xref:m3-04-degrada.adoc[{p-degrada}]). Uma
+primeira API sem esse alerta recebido por uma pessoa não provou nada ainda.
+
+== A migração do que existe
+
+Quem planeja raramente começa do zero; a Trajeto tem seis `Route` e um
+gateway legado. A xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API]
+mostra as três gerações convivendo no mesmo cluster; o plano transforma isso
+em três passos, API por API:
+
+. **Convivência.** A API nova nasce no Gateway, com nome novo, fechada e com
+  plano; a antiga fica como está. Nenhum consumidor é obrigado a mudar no
+  mesmo dia. Medido neste workshop: é o que o cluster do laboratório faz hoje.
+. **Troca, consumidor a consumidor.** Cada consumidor passa a chamar o nome
+  novo com a credencial nova; o painel por parceiro (parte {p-negocio}) diz
+  quem já mudou e quem não. Para parceiros que **não podem** mudar de
+  endereço, a alternativa é a rota nova assumir o **mesmo hostname** da
+  antiga -- e isso **não foi medido neste workshop**: o corte no instante da
+  troca, o DNS e o certificado que o parceiro já conhece precisam ser
+  medidos em homologação antes de virar promessa.
+. **Desligar.** O caminho antigo sai quando o painel mostrar zero chamadas por
+  um período que produto define (a Trajeto: 30 dias), e não quando o
+  cronograma mandar. É a mesma regra que a parte {p-versoes}usa para a v1.
+
+A ordem das APIs da Trajeto, pelo critério de "quem tem menos consumidores a
+mover primeiro": `tarifas` (a primeira) → `relatorios` (a segunda, na
+esteira) → as quatro `Route` restantes → `busca-hoteis` e `busca-voos` (os 8
+parceiros do legado, um a um) → o gateway legado desligado.
+
+== Passo 1 -- grave o plano
+
+[source,bash,role="execute perfil-dev"]
+----
+mkdir -p planejamento && cat > planejamento/plano.md <<'EOF'
+# Plano: a ordem das decisões
+
+Os momentos do projeto em ordem, cada um com as decisões que exige
+(decisoes.md), o critério de pronto observável e o risco de pular. Sem datas:
+a ordem é a das decisões; as datas são do projeto.
+
+## Os momentos
+
+| momento | decisões exigidas | critério de pronto | risco de pular | o seu caso |
+| --- | --- | --- | --- | --- |
+| a plataforma no ar | D1 D2 D3 D4 D13 D14 | Gateways respondem 401 sem policy; alerta chega a uma pessoa; conferência recusa rota sem AuthPolicy | montar sem alerta e sem conferência | |
+| a primeira API | a escolha abaixo; D9 | as 5 provas observadas; pico real por plano; p99 no orçamento | tratá-la como produção antes das decisões fixas | |
+| o primeiro parceiro externo | D6 D7 D8 D11 D12 D16; sizing.md | nome e certificado definitivos; chave do portal; limite vale com 2 réplicas; consumo no painel | parceiro antes do Redis ou do certificado com dono | |
+| a segunda API na esteira | D13 D5 | nasce por MR, rota e policy no mesmo commit, sem oc apply da plataforma | a plataforma "ajudar" à mão | |
+| a migração do que existe | D14 D20 | cada API antiga tem a nova; zero chamadas no caminho antigo por 30 dias; legado desligado por decisão de produto | trocar hostname sem medir | |
+| a operação | D17 D18; revisão do sizing; selfHeal ligado | primeiro upgrade de minor via homologação com teste de rajada; auditoria num incidente real; sizing refeito com o painel | upgrade in-place sem homologação | |
+
+## A primeira API
+
+| | caso do workshop (Trajeto) | o seu caso |
+| --- | --- | --- |
+| API | tarifas | |
+| por quê | consumidor interno + 1 parceiro amigo; ~30 req/s mensuráveis; dono disposto; chave de API basta; a Route antiga fica no ar para os demais | |
+| consumidores | portal web (gold), 1 agência parceira (silver) | |
+| o que fica fora, e por quê | reservas (receita), busca-voos (8 parceiros no legado), viajantes (pede token de pessoa) | |
+| dono da API | squad de precificação | |
+| dono da plataforma | time de plataforma | |
+
+## O que a primeira API prova -- observado, não declarado
+
+| o que provar | como medir | onde o workshop mediu | atingido em |
+| --- | --- | --- | --- |
+| fechada por padrão | 401 sem credencial; rota nova nasce negada | 2.1 | |
+| plano no mesmo endereço | duas chaves, mesma URL, limites diferentes | 4.1 | |
+| consumo em painel, por plano | Grafana desde o dia 1 | 4.2 | |
+| mudança por merge request | limite muda sem oc apply, com autor e aprovador | 5.2 | |
+| a plataforma avisa sobre si mesma | alerta de Limitador fora recebido por uma pessoa | 6.3 | |
+
+## A migração, API por API
+
+| ordem | API | de onde | consumidores a mover | momento | o seu caso |
+| --- | --- | --- | --- | --- | --- |
+| 1 | tarifas | Route | portal, 1 agência; depois os demais | a primeira API | |
+| 2 | relatorios | Route | financeiro | a segunda API na esteira | |
+| 3 | reservas, viajantes, politicas, faturamento | Route | canais internos; 6 agências em reservas | a migração | |
+| 4 | busca-hoteis, busca-voos | gateway legado | 2 fornecedores, 6 agências | a migração | |
+| 5 | gateway legado | -- | nenhum | fim da migração | |
+
+Regra: convivência primeiro; troca consumidor a consumidor pelo painel;
+desligar com zero chamadas por 30 dias. A troca com o MESMO hostname não foi
+medida no workshop: medir em homologação antes de prometer.
+
+## O que medimos no nosso ambiente antes de cada momento
+
+| antes de | medir | por quê |
+| --- | --- | --- |
+| a plataforma no ar | o corte ao trocar a classe de um Gateway (D1) | não medido no workshop |
+| a plataforma no ar | a janela entre a rota nascer e o teto a alcançar, no nosso provedor (D4) | "alguns segundos" aqui; pode ser mais lá |
+| a primeira API | o pico real por plano e o p99 que a borda soma | o levantamento tem 30 req/s de memória; o painel dá o número |
+| o primeiro parceiro | capacidade por réplica do Authorino com a nossa credencial (sizing.md, seção 5) | a referência é de outro ambiente |
+| o primeiro parceiro | mTLS interno sem Service Mesh, se D8 mudar | não medido no workshop |
+| o primeiro parceiro | memória do Limitador por contador; HA do Redis | não medido no workshop |
+| a migração | troca de rota com o mesmo hostname: corte, DNS, certificado | não medido no workshop |
+| a migração | o que o parceiro sente ao mover uma rota de Gateway (D2) | não medido no workshop |
+| a operação | tracing com amostragem: p99 e CPU | não medido no workshop |
+| segundo cluster | limite global com store compartilhado; DNS comum (D21) | não medido no workshop |
+EOF
+git add planejamento && git commit -q -m "planejamento: o plano" && git log --oneline main..planejamento
+----
+
+[source,text]
+----
+... planejamento: o plano
+... planejamento: papeis
+... planejamento: sizing
+... planejamento: decisoes antes do primeiro parceiro
+... planejamento: decisoes que nao se desfazem
+... planejamento: levantamento
+----
+
+**O que isso diz:** seis commits, um por parte, todos no branch
+`planejamento` e nenhum no `main`. É a pasta inteira, com histórico, pronta
+para revisão.
+
+== Passo 2 -- abra o merge request
+
+O mesmo caminho da parte xref:esteira-mr.adoc[{p-mr}Mudança por merge request]:
+o push abre o merge request, e quem aceita é outra pessoa.
+
+[source,bash,role="execute perfil-dev"]
+----
+git push -f -u -o merge_request.create -o merge_request.title='planejamento: o plano' origin planejamento 2>&1 | grep -E 'merge_requests|new branch'
+----
+
+[source,text]
+----
+remote:   https://.../workshop/participantes/.../ambiente/-/merge_requests/4
+ * [new branch]      planejamento -> planejamento
+----
+
+[NOTE]
+====
+**A conferência da fase 5 foi ampliada para esta pasta.** O pipeline que
+recusa merge request mexendo fora de `esteira/` aceita também `planejamento/`
+(e só ela): a conferência *Pipelines as Code CI / confere* fica verde porque
+nenhum arquivo está fora das duas pastas. Um merge request que mexesse num
+arquivo da raiz continuaria recusado, pela regra da parte {p-confere}A esteira confere antes.
+====
+
+ifeval::["{repo_no_ambiente}" != ""]
+**Na console web:** {repo_no_ambiente}/-/merge_requests[os merge requests do seu projeto^]
+(abre em aba nova). Na aba **Changes** estão os cinco arquivos da pasta -- é
+isso que quem aprova lê.
+endif::[]
+
+[IMPORTANT]
+.Perfil Infra -- no GitLab, como `{usuario_console}`
+====
+Quem aceita é o **perfil Infra**, *Maintainer* do projeto. Abra o merge
+request, leia os cinco arquivos na aba **Changes**, espere a conferência
+**Pipelines as Code CI / confere** ficar verde e clique em **Merge**. Nada
+chega ao cluster com isso: o Argo CD lê só a pasta `esteira/`. O que o merge
+dá à pasta `planejamento/` é autor, revisor e data -- e um lugar para o
+próximo merge request mudar um número.
+====
+
+== Passo 3 -- confira o que ficou
+
+[source,bash,role="execute perfil-dev"]
+----
+git checkout -q main && git pull -q && ls planejamento && git log --oneline -1 -- planejamento
+----
+
+[source,text]
+----
+decisoes.md  levantamento.md  papeis.md  plano.md  sizing.md
+... Merge branch 'planejamento' into 'main'
+----
+
+**O que isso diz:** o plano está no `main` do seu repositório, com o merge de
+quem o aceitou. O ambiente é efêmero (xref:99-encerramento.adoc[Encerramento],
+"Leve o seu trabalho"): baixe o repositório antes de devolvê-lo -- a pasta
+`planejamento/` sai junto com a `esteira/`.
+
+== O que isso prova
+
+**O plano tem o mesmo tratamento que a configuração.** Cinco arquivos, cada
+decisão com dono, data e o sinal que manda revê-la, cada número com a
+premissa ao lado -- e cada mudança futura por merge request, com quem a
+aceitou. O que o time leva do workshop não é um "entendi": é uma pasta.
+
+E o que o plano **não** tem, de propósito: nenhum número que o workshop não
+mediu virou promessa. O que ficou como "não medido" está na última tabela do
+`plano.md`, com o momento antes do qual precisa ser medido -- no seu ambiente,
+com os seus números.

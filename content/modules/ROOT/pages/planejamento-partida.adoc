@@ -4,7 +4,7 @@ include::partial$numeros.adoc[]
 
 **Exercício · ~12 min · escreve no seu repositório**
 
-**Momento do projeto:** antes do kickoff · **Quem faz:** plataforma e operação levantam; aplicação e produto conferem
+**Momento do projeto:** o início do planejamento · **Quem faz:** plataforma e operação levantam; aplicação e produto conferem
 
 [NOTE.antes]
 ====
@@ -28,13 +28,13 @@ existe, escrito antes de qualquer decisão -- porque cada decisão das partes
 
 | **Como cada API é publicada hoje?** `Route`, `Ingress`, gateway de outro
   fornecedor, ou direto por `LoadBalancer`
-| a ordem da migração ({p-roteiro}desta fase) e se o caminho antigo e o novo podem
+| a ordem da migração ({p-plano}desta fase) e se o caminho antigo e o novo podem
   conviver no mesmo cluster. A
   xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API] mostra
   as três gerações no ar ao mesmo tempo, neste cluster
 
 | **Quem consome cada API?** times internos, parceiros externos, pessoas
-| quantos Gateways ({p-fixas}desta fase) e qual API vai primeiro ({p-piloto}desta fase)
+| quantos Gateways ({p-fixas}desta fase) e qual API vai primeiro ({p-plano}desta fase)
 
 | **Como o consumidor se autentica hoje?** chave, token, certificado, lista de
   IP, nada
@@ -49,8 +49,8 @@ existe, escrito antes de qualquer decisão -- porque cada decisão das partes
 
 | **Os números:** pico e média por API, duração do pico, crescimento em 12
   meses, orçamento de latência na borda, SLA, zonas, segundo cluster
-| o sizing inteiro ({p-sizing}desta fase), e o que o piloto precisa medir para provar
-  que deu certo ({p-piloto}desta fase)
+| o sizing inteiro ({p-sizing}desta fase), e o que a primeira API precisa medir para
+  provar que deu certo ({p-plano}desta fase)
 |===
 
 O que não tiver resposta hoje fica como "não sabemos", e não como estimativa:
@@ -226,8 +226,8 @@ Authorino aguenta ~400 a 500 req/s limpos neste ambiente). Se o pico do
 levantamento for um palpite, o resultado herda o palpite e esconde isso atrás
 de um número com três algarismos.
 
-Um "não sabemos" no pico, ao contrário, aparece na lista do que medir, e o
-piloto ({p-piloto}desta fase) é o lugar natural para medi-lo: a API do piloto sai com a
+Um "não sabemos" no pico, ao contrário, aparece na lista do que medir, e a
+primeira API ({p-plano}desta fase) é o lugar natural para medi-lo: ela sai com a
 métrica por plano ligada desde o dia 1, e o primeiro mês dela responde a
 pergunta com dado, não com memória.
 ====
