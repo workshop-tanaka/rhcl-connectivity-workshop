@@ -88,11 +88,11 @@ bash scripts/testa-borda.sh
 [OK] a borda esta como o contrato diz (newman rc=0).
 ----
 
-**O que isso diz:** vinte afirmações sobre a sua borda, todas verdadeiras agora.
-Cada uma tem nome, e o nome é a promessa: "a requisição 4 em 10 s leva 429"
-é o plano free do catálogo, escrito como teste.
+**O que isso diz:** vinte cláusulas do contrato da sua borda, todas
+verdadeiras agora. Cada uma tem nome: "a requisição 4 em 10 s leva 429" é o
+plano free do catálogo, escrito como teste.
 
-== Passo 2 -- quebre uma promessa
+== Passo 2 -- quebre o contrato
 
 O mesmo gesto da {p-desvio}: alguém "só ajusta" o free à mão, de 3 para 9.
 Nada reclama -- o cluster aceita, e a API continua respondendo `200`.
@@ -127,10 +127,10 @@ bash scripts/testa-borda.sh
  2.  AssertionError  o 429 nasce na borda: corpo curto, sem JSON da aplicacao
      iteration: 1    expected '{"city":"Rome",...' to include 'Too Many Requests'
 
-[X] a bateria reprovou (newman rc=1): a borda nao esta como o contrato diz -- a assercao com nome acima e a promessa quebrada.
+[X] a bateria reprovou (newman rc=1): a borda nao esta como o contrato diz -- a assercao com nome acima e a clausula que quebrou.
 ----
 
-**O que isso diz:** o teste reprovou **pelo nome da promessa quebrada**. Não é
+**O que isso diz:** o teste reprovou **pelo nome da cláusula que quebrou**. Não é
 "a API caiu": é "o free deixou de cortar no quarto" -- e a segunda asserção
 conta o mesmo fato por outro lado: a quarta chamada trouxe o JSON da
 aplicação, que não deveria ter sido acordada. O código de saída é 1, e é
@@ -158,7 +158,7 @@ planpolicy.kuadrant.io/travels-plans patched
 
 == O que isso prova
 
-**A conferência garante a sintaxe; a bateria garante a promessa.** Uma lê o
+**A conferência garante a sintaxe; a bateria garante o contrato.** Uma lê o
 repositório antes do merge, a outra lê a borda depois. Com as duas, "mudança
 por merge request" passa a valer para comportamento, e um upgrade do
 operador tem um teste de regressão pronto -- é o que a Fase 8 pede quando

@@ -107,8 +107,8 @@ aparece.
 
 | xref:esteira-bateria.adoc[{p-bateria}A bateria da borda]
 | a coleção do Postman como teste: o contrato, a borda fechada e os planos
-  afirmados em vinte asserções; quebre um plano à mão e veja o teste reprovar
-  pelo nome da promessa
+  afirmados em vinte asserções; quebre o contrato à mão e veja o teste
+  reprovar pelo nome da cláusula
 | a conferência garante a sintaxe; a bateria garante o comportamento
 
 | xref:m5-01-colheita.adoc[{p-colheita} Leitura: do repositório ao formulário]
