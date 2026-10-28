@@ -83,6 +83,14 @@ vai achar -- e o motivo é esse, não um defeito de coleta.
 Aqui a tela **é** a evidência. Para o consumo por parceiro, onde o tráfego de
 teste aparece isolado: {grafana_url}/d/rhcl-negocio-parceiros[Consumo por parceiro^].
 
+.Figura: a tabela *Consumo na janela* desse dashboard, com ① o tráfego de teste numa linha só dele -- edição 1.1; clique para ampliar
+image::capturas/4-2-grafana-parceiros.png[A tabela de consumo por parceiro com a linha do trafego de teste marcada,360,link=self,window=_blank]
+
+Cada linha é um parceiro, e o nome vem da chave que ele usou: o que sai do
+terminal entra como `sistema-teste`, e cada portal entra com a chave dele. Se
+houver outros ambientes no mesmo cluster, os parceiros deles aparecem na mesma
+tabela, com zero -- a tabela é da plataforma, não do seu projeto.
+
 .E quanto essa camada custa?
 [%collapsible]
 ====

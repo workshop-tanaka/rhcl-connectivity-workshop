@@ -179,14 +179,20 @@ ifndef::perfis[]
 *Alerts*.
 endif::[]
 ifdef::perfis[]
-{openshift_console_url}/dev-monitoring/ns/ingress-gateway/alerts[Observe → Alerts, no projeto do Gateway^]
--- como `{usuario_console}` (perfil Infra). Na aba **Alerting rules** está a
-**sua** regra, `rhcl-parceiros` -- no projeto do Gateway, porque é lá que o
-`401` e o `429` acontecem: eles não chegam à aplicação --, com os dois alertas dela
-(`ParceiroBatendoNoLimite` e `ParceiroSendoRecusado`) -- se a lista vier
-vazia, clique em **Clear all filters**: a tela abre filtrando por estado, e as
-duas estão `inactive` enquanto a condição não acontece. Em **Alerts**, o que
-estiver aceso.
+{openshift_console_url}/dev-monitoring/ns/ingress-gateway/alertrules?alert-source=user[Observe → Alerting rules, no projeto do Gateway^]
+-- como `{usuario_console}` (perfil Infra). Ali está a **sua** regra,
+`rhcl-parceiros` -- no projeto do Gateway, porque é lá que o `401` e o `429`
+acontecem: eles não chegam à aplicação --, com os dois alertas dela
+(`ParceiroBatendoNoLimite` e `ParceiroSendoRecusado`). A aba abre com o filtro
+*Source: Platform*, que esconde a sua; o link acima já o troca por *User*.
+Enquanto a condição não acontece, as duas ficam sem estado. Na aba **Alerts**,
+o que estiver aceso -- ela abre filtrando por *Firing*.
+
+.Figura: a aba Alerting rules do projeto do Gateway, com ① `ParceiroBatendoNoLimite` acesa -- aqui depois de uma rajada acima da cota do plano gratuito -- e ② `ParceiroSendoRecusado` quieta -- edição 1.1; clique para ampliar
+image::capturas/6-4-console-alertrules.png[A aba Alerting rules com as duas regras do participante marcadas,360,link=self,window=_blank]
+
+.Figura: a aba Alerts, com ① o alerta e ② o estado Firing -- edição 1.1; clique para ampliar
+image::capturas/6-4-console-alerts.png[A aba Alerts com o alerta aceso e o estado Firing marcados,360,link=self,window=_blank]
 
 [NOTE]
 ====

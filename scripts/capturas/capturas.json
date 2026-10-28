@@ -294,5 +294,82 @@
         "n": 2
       }
     ]
+  },
+  {
+    "arquivo": "4-2-grafana-parceiros.png",
+    "url": "${grafana_url}/d/rhcl-negocio-parceiros/consumo-por-parceiro?orgId=1&from=now-15m&to=now&kiosk",
+    "esperar": [
+      "section[data-testid=\"data-testid Panel header Consumo na janela\"]"
+    ],
+    "pausa": 3000,
+    "recorte": "section[data-testid=\"data-testid Panel header Consumo na janela\"]",
+    "marcar": [
+      {
+        "texto": "sistema-teste",
+        "n": 1,
+        "dentro": true,
+        "ate": "[role=\"gridcell\"]",
+        "interna": true
+      }
+    ]
+  },
+  {
+    "arquivo": "6-4-console-alertrules.png",
+    "url": "${openshift_console_url}/dev-monitoring/ns/ingress-gateway-${guid}/alertrules?alert-source=user",
+    "login": "openshift",
+    "pausa": 6000,
+    "esperar": [
+      "text=ParceiroBatendoNoLimite"
+    ],
+    "recorte": "#content, main",
+    "viewport": {
+      "width": 1440,
+      "height": 800
+    },
+    "marcar": [
+      {
+        "texto": "ParceiroBatendoNoLimite",
+        "n": 1,
+        "dentro": true,
+        "ate": "tr",
+        "interna": true
+      },
+      {
+        "texto": "ParceiroSendoRecusado",
+        "n": 2,
+        "dentro": true,
+        "ate": "tr",
+        "interna": true
+      }
+    ]
+  },
+  {
+    "arquivo": "6-4-console-alerts.png",
+    "url": "${openshift_console_url}/dev-monitoring/ns/ingress-gateway-${guid}/alerts",
+    "login": "openshift",
+    "pausa": 6000,
+    "esperar": [
+      "text=ParceiroBatendoNoLimite"
+    ],
+    "recorte": "#content, main",
+    "viewport": {
+      "width": 1440,
+      "height": 800
+    },
+    "marcar": [
+      {
+        "texto": "ParceiroBatendoNoLimite",
+        "n": 1,
+        "dentro": true,
+        "ate": "tr",
+        "interna": true
+      },
+      {
+        "seletor": "tbody tr td:last-child",
+        "n": 2,
+        "dentro": true,
+        "interna": true
+      }
+    ]
   }
 ]

@@ -14,6 +14,7 @@ const subst = s => s.replace(/\$\{(\w+)\}/g, (_, k) => env[k] ?? '')
 
 const MARCA = `
   .cap-marca { outline: 3px solid #e4572e !important; outline-offset: 2px; position: relative; }
+  .cap-marca.cap-interna { outline-offset: -3px; }
   .cap-num { position: absolute; z-index: 99999; background: #e4572e; color: #fff; font: bold 14px/22px sans-serif;
              width: 22px; height: 22px; border-radius: 50%; text-align: center; box-shadow: 0 0 0 2px #fff; pointer-events: none; }
 `
@@ -83,7 +84,9 @@ export default async function run(page) {
         // e a borda nao apareceria
         if (el && it.ate) el = el.closest(it.ate) || el
         if (!el) { r.push({ n: it.n, ok: false }); continue }
-        el.classList.add('cap-marca')
+        // 'interna': a borda desenhada por dentro do elemento -- para a linha
+        // de uma tabela que corta o que sai da propria caixa (overflow)
+        el.classList.add('cap-marca'); if (it.interna) el.classList.add('cap-interna')
         const b = el.getBoundingClientRect()
         const num = document.createElement('div')
         num.className = 'cap-num'; num.textContent = String(it.n)

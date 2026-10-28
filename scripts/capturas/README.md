@@ -44,3 +44,13 @@ ambiente em que se capturou): o Argo precisa de
 'Failed to load data' se fotografada cedo. Ainda nao sai: a Policy Topology
 util (com o login da plataforma ela abre, mas desenha a turma inteira,
 ilegivel; falta filtrar o namespace pela UI).
+
+Dezessete figuras com a 4.2 (a tabela de consumo por parceiro do Grafana) e as
+duas da 6.4 (Observe > Alerting rules e Alerts do projeto do Gateway). `interna`
+num item de `marcar` desenha a borda por dentro do elemento -- para a celula
+de tabela que corta o que sai dela, como a do Grafana. A aba de regras da
+console abre filtrando por `alert-source=platform`, que esconde a regra do
+participante: a URL leva `?alert-source=user`. As duas da 6.4 pedem o alerta
+aceso na hora da foto: `alerta.sh aplica` no terminal do participante modelo e
+uma rajada do plano gratuito repetida por uns 7 minutos (a regra e
+`increase[10m] > 20` por `for: 5m`); `alerta.sh remove` depois.
