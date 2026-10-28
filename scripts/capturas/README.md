@@ -20,6 +20,7 @@ Cada item de `capturas.json`: `arquivo`, `url` (com `${variavel}` do env),
 `esperar` (seletores), `pausa` (ms), `recorte` (seletor fotografado),
 `marcar` (lista de `{texto|seletor, n, dentro}`), `login` (`openshift`).
 
-Estado: as tres figuras do Grafana sao a amostra (2.1 e 4.1). A da console
-(`2-1-console-metrics.png`) ainda nao sai: o login OAuth da console passa
-por uma pagina de escolha de provedor que o script nao trata.
+Estado: quatro figuras -- tres do Grafana (2.1 e 4.1) e a da console (2.1,
+Observe > Metrics). O login da console e o do Keycloak deste ambiente
+(usuario/senha do participante no env); `viewport` e `clicar` por captura
+servem para caber a tabela e esconder o grafico.

@@ -19,20 +19,24 @@ const MARCA = `
 `
 
 async function loginOpenShift(page) {
-  // a console redireciona para o OAuth; o formulario htpasswd tem username/password
-  const user = page.locator('input[name="username"]')
-  if (await user.count() === 0) return false
-  await user.fill(env.usuario_console)
-  await page.locator('input[name="password"]').fill(env.senha_console)
-  await page.locator('button[type="submit"]').first().click()
+  // a console manda para o OAuth; neste ambiente o provedor e o Keycloak
+  // ("Sign in to sso"): campos username/password e o botao Sign In. Espera o
+  // formulario aparecer, preenche, e espera voltar para a console.
+  const user = page.locator('input[name="username"], #username')
+  try { await user.first().waitFor({ timeout: 20000 }) } catch { return false }
+  await user.first().fill(env.usuario_console)
+  await page.locator('input[name="password"], #password').first().fill(env.senha_console)
+  await page.locator('#kc-login, button[type="submit"], input[type="submit"]').first().click()
+  await page.waitForURL(/console-openshift-console/, { timeout: 60000 })
   await page.waitForLoadState('domcontentloaded')
   return true
 }
 
 export default async function run(page) {
-  await page.setViewportSize({ width: 1440, height: 900 })
   const feitos = []
   for (const cap of spec) {
+    // viewport por captura: uma tela com tabela abaixo da dobra pede mais altura
+    await page.setViewportSize(cap.viewport || { width: 1440, height: 900 })
     await page.goto(subst(cap.url), { waitUntil: 'domcontentloaded', timeout: 90000 })
     if (cap.login === 'openshift') {
       await page.waitForTimeout(1500)
@@ -40,6 +44,8 @@ export default async function run(page) {
     }
     for (const sel of cap.esperar ?? []) await page.locator(subst(sel)).first().waitFor({ timeout: 90000 })
     if (cap.pausa) await page.waitForTimeout(cap.pausa)
+    // cliques de arrumacao antes de fotografar (ex.: esconder um grafico)
+    for (const sel of cap.clicar ?? []) { try { await page.locator(subst(sel)).first().click({ timeout: 5000 }); await page.waitForTimeout(500) } catch {} }
     await page.addStyleTag({ content: MARCA })
     // marca: cada item e {texto|seletor, n, dentro?}; 'texto' casa a folha cujo texto e exatamente aquele
     const marcados = await page.evaluate(({ itens, recorte }) => {

@@ -49,11 +49,22 @@ esteira.
 
 == Passo 1 -- rode a bateria
 
+ifdef::perfis[]
+[NOTE]
+====
+**Esta parte roda no perfil Infra** (aba *Terminal*), ao contrário do resto
+da fase: a bateria lê as chaves de teste da plataforma para montar os dados
+por plano, e o perfil Dev não enxerga esses `Secret` -- é a mesma fronteira
+da parte {p-papeis}. Quem opera a borda roda a bateria; quem propõe a mudança
+lê o resultado dela no merge request.
+====
+endif::[]
+
 Ela gera os dados deste cluster, sobe um pod descartável com o runner oficial
 da coleção no seu namespace, e imprime o resultado. Leva cerca de um minuto;
 a maior parte é o pod subindo.
 
-[source,bash,role="execute perfil-dev"]
+[source,bash,role="execute"]
 ----
 bash scripts/testa-borda.sh
 ----
@@ -86,7 +97,7 @@ Cada uma tem nome, e o nome é a promessa: "a requisição 4 em 10 s leva 429"
 O mesmo gesto da {p-desvio}: alguém "só ajusta" o free à mão, de 3 para 9.
 Nada reclama -- o cluster aceita, e a API continua respondendo `200`.
 
-[source,bash,role="execute perfil-dev"]
+[source,bash,role="execute"]
 ----
 oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":9}]'
 ----
@@ -98,7 +109,7 @@ planpolicy.kuadrant.io/travels-plans patched
 
 == Passo 3 -- rode de novo
 
-[source,bash,role="execute perfil-dev"]
+[source,bash,role="execute"]
 ----
 bash scripts/testa-borda.sh
 ----
@@ -132,7 +143,7 @@ porque o arquivo é válido; a bateria não, porque o comportamento mudou.
 Devolva o valor do repositório. Aqui, pelo mesmo caminho curto; no projeto, o
 caminho é o da {p-desvio}: revert por merge request, com autor e data.
 
-[source,bash,role="execute perfil-dev"]
+[source,bash,role="execute"]
 ----
 oc patch planpolicy travels-plans -n travel-agency --type=json -p '[{"op":"replace","path":"/spec/plans/2/limits/custom/0/limit","value":3}]'
 sleep 5
@@ -179,7 +190,7 @@ fala em homologar cada versão.
 A pasta *Versões* só vale com a rota `travels-versoes` no ar. Depois daquela
 parte:
 
-[source,bash,role="execute perfil-dev"]
+[source,bash,role="execute"]
 ----
 bash scripts/testa-borda.sh versoes
 ----

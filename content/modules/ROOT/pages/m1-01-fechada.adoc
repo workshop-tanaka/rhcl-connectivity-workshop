@@ -191,6 +191,9 @@ diz: o `401` nasce na borda, então a evidência mora no namespace da borda.
 ----
 response_code=401, destination_workload=unknown   1
 ----
+
+.Figura: a console no projeto do Gateway, com ① o projeto e ② a linha `unknown` -- edição 1.0; clique para ampliar
+image::capturas/2-1-console-metrics.png[Observe > Metrics da console com o projeto do Gateway e a linha unknown marcados,360,link=self,window=_blank]
 ====
 
 == Configuração
