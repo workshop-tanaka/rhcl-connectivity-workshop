@@ -30,20 +30,18 @@ cada uma, e as notas da versão que você for usar.
 |===
 | funcionalidade | onde o guia a usa | na 1.5
 
-| **Plugin de console** do Connectivity Link: *Policy Topology*, *API
-  Products*, *API Keys*
-| a Policy Topology desde a {p-precedencia}; o portal de parceiros nas partes
-  {p-planos}e {p-negocio}
-| continua no produto; as notas da 1.5 não mudam a categoria
-
 | **Policies sobre `GRPCRoute`** (`AuthPolicy` e `RateLimitPolicy`)
 | o Extra xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
 | **GA**
 
-| **Instalação desconectada** (documentação)
-| não usa; o cluster do laboratório tem saída
+| **MCP gateway 0.7**, para servidores de ferramentas de IA
+| não usa; é outro público. A leitura {p-parceiros}diz onde ele entraria
 | **GA**
 |===
+
+São as duas únicas funcionalidades que as notas da 1.4 põem nessa categoria.
+O plugin de console do Connectivity Link (*Policy Topology*, *API Products*,
+*API Keys*), que o guia usa desde a {p-precedencia}, é **GA na 1.4**.
 
 == O que a 1.4 trouxe e o guia mede
 
@@ -55,6 +53,14 @@ cada uma, e as notas da versão que você for usar.
 | o Extra xref:extra-parceiro-certificado.adoc[Parceiro com certificado] -- com
   a ressalva: no Gateway nativo desta sessão, o `x509` puro não enxerga
   o certificado, e o caminho é o cabeçalho que o Gateway escreve
+
+| **Plugin de console** do Connectivity Link: catálogo de APIs, chaves e
+  *Policy Topology* na console do OpenShift (GA)
+| a Policy Topology desde a {p-precedencia}; o catálogo e as chaves nas partes
+  {p-planos}e {p-negocio}
+
+| **Instalação desconectada** (documentação)
+| não usa; o cluster do laboratório tem saída
 |===
 
 == O que a 1.5 traz, e não está neste ambiente
@@ -64,7 +70,7 @@ cada uma, e as notas da versão que você for usar.
 | funcionalidade | categoria na 1.5 | o que mudaria aqui
 
 | **MCP gateway**
-| GA (na 1.4 estava na versão 0.7)
+| GA (na 1.4, Technology Preview na versão 0.7)
 | nada no roteiro: é outro público, o de agentes de IA. A leitura
   {p-parceiros}diz onde ele entraria
 
