@@ -21,8 +21,10 @@ gRPC -- e a resposta honesta tem **duas metades que não são iguais**.
 [NOTE]
 .O que a 1.5 traz
 ====
-Na 1.5 (https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento da 1.5^]) a `AuthPolicy` e a `RateLimitPolicy` sobre `GRPCRoute` são
-declaradas GA. O que esta página faz na 1.4 não muda; muda o que se pode
+Na 1.4 deste ambiente, policy sobre `GRPCRoute` é *Technology Preview*
+(https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/release_notes[notas da 1.4^]): funciona como esta página mostra, sem
+suporte de produção. Na 1.5 (https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento da 1.5^]) a `AuthPolicy` e a `RateLimitPolicy` sobre `GRPCRoute` são
+declaradas GA; a leitura {p-previas}reúne o resto. O que esta página faz na 1.4 não muda; muda o que se pode
 prometer em produção.
 ====
 

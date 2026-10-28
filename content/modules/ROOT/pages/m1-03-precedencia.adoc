@@ -106,6 +106,15 @@ xref:m1-05-negocio.adoc[{p-negocio}] transforma em painel.
 
 == Navegador
 
+[NOTE]
+.Technology Preview na 1.4
+====
+**O plugin de console do Connectivity Link (Policy Topology, API Products, API Keys)** está em *Technology Preview* na versão deste ambiente, segundo as
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/release_notes[notas de lançamento da 1.4^]:
+funciona como esta página mostra, mas não é coberto pelo suporte de produção
+e pode mudar. A leitura {p-previas}reúne tudo o que está nessa categoria.
+====
+
 {openshift_console_url}/kuadrant/policy-topology/ns/travel-agency[Policy Topology^] -- o listener bifurca para
 as rotas e as policies chegam tracejadas. **Não procure o vencedor aqui**: o
 grafo faz a pergunta, o status do terminal responde.

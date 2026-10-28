@@ -1,0 +1,163 @@
+include::partial$numeros.adoc[]
+= {p-observar} Observar: simular e ver no painel
+:navtitle: {p-observar} Observar: simular e ver no painel
+:page-trilhas: Intermediário · Avançado · Infra · Operações
+
+**Para quem:** Operação e Produto, e quem vai montar o painel da empresa. · **12 min** · **gera tráfego; não muda configuração**
+
+include::partial$trilha.adoc[]
+
+[NOTE.antes]
+====
+**Antes:** a parte {p-negocio}, que ligou a quebra por plano, e a {p-alerta}.
+Esta parte não ensina nada novo sobre a plataforma: ela mostra **onde cada
+número aparece**, e por que há dois níveis de painel.
+====
+
+Até aqui o Grafana apareceu sempre como prova de outro passo: o `401` da
+{p-fechada}, os planos da {p-planos}. Esta parte inverte: você produz uma
+situação conhecida e vai olhá-la em dois lugares diferentes -- os painéis que
+**vêm com o Connectivity Link**, sem ninguém escrever nada, e os painéis que
+**este workshop construiu** por cima deles. Os dois respondem perguntas
+diferentes, e a diferença é o que a parte {p-negocio}configurou.
+
+[cols="2,3,3",options="header"]
+|===
+| nível | responde | não responde
+
+| **de fábrica** (pasta *Kuadrant (de fabrica)* no Grafana): *Platform
+  Engineer*, *App Developer*, *Business User*
+| a plataforma está de pé? quais Gateways e rotas existem? quanto tráfego,
+  quanta latência e quanto erro **por API**?
+| quem consumiu: o plano e o parceiro não são dimensão desses painéis
+
+| **do workshop** (pastas *Negocio*, *Plataforma*, *Ambiente*)
+| quanto cada **plano** serviu e cortou; quanto cada **parceiro** consumiu; a
+  evidência de cada parte
+| nada além do que a 4.2 e a 3.1 ligaram: são as mesmas métricas, com mais
+  rótulos
+|===
+
+== Passo 1 -- produza uma situação conhecida
+
+Quatro chamadas sem credencial, e uma rajada por plano. É o mesmo tráfego da
+{p-fechada}e da {p-planos}, de uma vez, para os painéis terem o que mostrar.
+
+[source,bash,role="execute",subs="attributes+"]
+----
+for i in $(seq 4); do curl -s -o /dev/null -w '%{http_code} ' "https://{api_host}/travels"; done; echo
+bash scripts/traffic.sh tiers
+----
+
+[source,text]
+----
+401 401 401 401
+free           (3/10s)      200 200 200 429 429 429 429 429 429 429 429 429 429 429   -> 3 ok, 11 limitadas
+gold           (30/10s)     200 200 200 200 200 200 200 200 200 200 200 200 200 200   -> 14 ok, 0 limitadas
+silver         (10/10s)     200 200 200 200 200 200 200 200 200 200 429 429 429 429   -> 10 ok, 4 limitadas
+----
+
+**O que isso diz:** quatro `401`, quinze `429` e vinte e sete `200` acabaram de
+acontecer na sua borda, com hora marcada. É esse conjunto que você vai
+procurar nos painéis. Dê um minuto para a coleta: o Prometheus raspa o
+Gateway a cada 30 segundos.
+
+== Passo 2 -- os painéis de fábrica
+
+Os três vêm do operador do Connectivity Link, na pasta *Kuadrant (de fabrica)*.
+Abra cada um já filtrado no seu ambiente:
+
+[cols="1,3",options="header"]
+|===
+| painel | o que procurar
+
+| {grafana_url}/d/djqDaDISk?orgId=1&from=now-15m&to=now&var-gateway_namespace=ingress-gateway&var-api_policy_namespace=travel-agency&var-route_name=travel-agency[Platform Engineer^]
+| a tabela *Gateways* com o seu `prod-web` e o `echo-web` aceitos, os
+  listeners, e as rotas da tabela *APIs/HTTPRoutes*. Embaixo, *Total requests*
+  e *Errors (req/s)*: o `401` e o `429` entram ali como erro, sem dizer de quem
+
+| {grafana_url}/d/J_sdY4-Ik?orgId=1&from=now-15m&to=now&var-api=travel-agency[App Developer^]
+| *request breakdown by code*: três linhas, `200`, `401` e `429`, para a API
+  `travels`; os percentis de latência ao lado. É o painel que o dono da API
+  olha
+
+| {grafana_url}/d/jA3LDk-Iz?orgId=1&from=now-15m&to=now&var-api_namespace=travel-agency&var-route_name=travel-agency[Business User^]
+| *Traffic summary*: o tráfego da rota ao longo do tempo. É o painel de quem
+  não opera nada e quer saber se a API está sendo usada
+|===
+
+**O que isso diz:** a plataforma entregou isso sem nenhum painel escrito. O
+que os três têm em comum é a dimensão: **a API** (a rota, o destino). Procure
+o plano `free` em qualquer um deles -- não está. Os quinze `429` aparecem como
+erro da API `travels`, e nada diz que foram do `free`.
+
+.Mais detalhes: de onde cada painel de fábrica tira o número
+[%collapsible]
+====
+* *Gateways*, *Listeners* e *APIs/HTTPRoutes* vêm de métricas de **estado**
+  (`gatewayapi_gateway_info`, `gatewayapi_httproute_hostname_info`), expostas
+  por um `kube-state-metrics` que o Connectivity Link instala e o
+  monitoramento de workloads do usuário raspa. Elas dizem o que existe, não o
+  que passou.
+* *Total requests*, *breakdown by code* e os percentis vêm de
+  `istio_requests_total` e `istio_request_duration_milliseconds`, exportadas
+  pelo proxy do Gateway, e **cruzadas** com a rota pelo rótulo `service` da
+  `HTTPRoute`: é assim que o painel sabe que `travels` é a sua API.
+* Medido neste ambiente: o filtro por namespace e por rota é o que isola o seu
+  ambiente do da turma; sem ele, os painéis somam todo mundo.
+====
+
+== Passo 3 -- os painéis do workshop
+
+A mesma situação, nos painéis da pasta *Negocio*:
+
+[cols="1,3",options="header"]
+|===
+| painel | o que procurar
+
+| {grafana_url}/d/rhcl-negocio-planos?orgId=1&from=now-15m&to=now[Planos comerciais^]
+| servidas e limitadas **por plano**: `free` com 3 e 11, `silver` com 10 e 4,
+  `gold` com 14 e 0. Os mesmos quinze `429` do passo anterior, agora com dono
+
+| {grafana_url}/d/rhcl-negocio-parceiros?orgId=1&from=now-15m&to=now[Consumo por parceiro^]
+| uma linha por chave: o consumo de cada parceiro, inclusive o que foi cortado
+
+| {grafana_url}/d/rhcl-evidencia?orgId=1&from=now-15m&to=now[Evidência das partes^]
+| os painéis que você já viu nas partes anteriores, agora todos com número ao
+  mesmo tempo: o `401` com destino `unknown`, as recusas por código, os planos
+|===
+
+**O que isso diz:** são as **mesmas métricas** do passo 2, com um rótulo a
+mais. O `plan` chega pelo `TelemetryPolicy` que a parte {p-negocio}aplicou; o
+parceiro, pela dimensão de parceiro que a mesma parte ligou no Gateway. Sem
+esses dois, o painel de fábrica é tudo o que existe -- e ele é suficiente para
+operar, mas não para cobrar.
+
+== O que isso prova
+
+**Observar tem dois níveis, e a plataforma dá o primeiro de graça.** Saúde da
+borda, tráfego, latência e erro por API vêm com o produto. O que vira número
+de negócio -- plano, parceiro -- é uma decisão sua, tomada na {p-negocio}, e
+custa uma policy. A pergunta para o seu projeto não é "qual painel usar", é
+**que rótulo precisa existir desde o primeiro dia**, porque dado retroativo
+não existe: o que não se mediu no lançamento não volta.
+
+.Outro caso de uso: montar o seu próprio painel
+[%collapsible]
+====
+O Grafana deste ambiente abre com papel de Admin, então você pode editar
+qualquer painel ou criar um novo em *Dashboards → New*. O caminho mais curto:
+abra um painel do workshop, clique em *Edit* e leia a consulta -- a da
+{p-fechada}, por exemplo, está explicada ali na seção *Evidência*. Troque o
+rótulo do `sum by` e veja o painel mudar de pergunta. Nada do que você fizer
+no Grafana altera o cluster; o painel do workshop volta ao original na próxima
+publicação do ambiente.
+====
+
+.Outro caso de uso: sem Grafana
+[%collapsible]
+====
+A console do OpenShift mostra as mesmas métricas em *Observe → Metrics*, no
+projeto do Gateway, como a {p-fechada}mostra para o `401`. O que ela não tem
+são os painéis prontos: cada pergunta é uma consulta digitada.
+====

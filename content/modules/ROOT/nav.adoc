@@ -113,6 +113,7 @@ ifdef::trilha_intermediario[]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
+* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:fase-7-resumo.adoc[O que há nesta fase]
@@ -161,7 +162,8 @@ ifdef::trilha_avancado[]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
+* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
+* xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
@@ -170,6 +172,7 @@ ifdef::trilha_avancado[]
 * xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
+* xref:leitura-previas.adoc[7.7 Prévias e o que vem na 1.5]
 
 include::partial$nav-fase8.adoc[]
 
@@ -207,6 +210,7 @@ ifdef::trilha_infra[]
 .Fase 6 — Operação
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
+* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-multitenancy.adoc[7.2 Multi-tenancy]
@@ -279,7 +283,8 @@ ifdef::trilha_operacoes[]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
+* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
+* xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
@@ -329,7 +334,8 @@ ifdef::foco_rhcl[]
 * xref:m3-03-negado.adoc[6.1 Onde a requisição morreu]
 * xref:m3-04-degrada.adoc[6.2 Quando a policy cai]
 * xref:m3-05-alerta.adoc[6.3 O alerta]
-* xref:m3-06-auditoria.adoc[6.4 Quatro perguntas, quatro fontes (opcional)]
+* xref:m3-07-observar.adoc[6.4 Observar: simular e ver no painel]
+* xref:m3-06-auditoria.adoc[6.5 Quatro perguntas, quatro fontes (opcional)]
 
 .Fase 7 — Escala, e o que vem depois (só leitura)
 * xref:leitura-parceiros.adoc[7.1 Muitos parceiros, muitas APIs]
@@ -338,6 +344,7 @@ ifdef::foco_rhcl[]
 * xref:papel-rhsi.adoc[7.4 O papel do Service Interconnect]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
+* xref:leitura-previas.adoc[7.7 Prévias e o que vem na 1.5]
 
 include::partial$nav-fase8.adoc[]
 
@@ -390,6 +397,7 @@ ifndef::foco_ossm,foco_rhsi[]
 * xref:m3-04-degrada.adoc[3.4 Quando a policy cai]
 * xref:m3-05-alerta.adoc[3.5 O alerta]
 * xref:m3-06-auditoria.adoc[3.6 Quatro perguntas, quatro fontes]
+* xref:m3-07-observar.adoc[3.7 Observar: simular e ver no painel]
 endif::[]
 
 ifndef::foco_rhcl,foco_ossm[]
@@ -416,6 +424,7 @@ include::partial$nav-fase8.adoc[]
 * xref:extra-contextos.adoc[Uma API, vários contextos]
 * xref:extra-listas.adoc[Listas de permissão e bloqueio]
 * xref:leitura-waf.adoc[Leitura: onde entra o WAF]
+* xref:leitura-previas.adoc[Leitura: prévias e o que vem na 1.5]
 * xref:leitura-websocket.adoc[Leitura: WebSocket]
 endif::[]
 ifndef::foco_rhcl,foco_ossm,foco_rhsi[]

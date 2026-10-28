@@ -35,6 +35,15 @@ init provider factory  providers: ["coredns","endpoint","aws","azure","google"]
 
 Com o provedor `coredns`, o exercício inteiro cabe num namespace.
 
+[NOTE]
+.O que a 1.5 traz
+====
+Na 1.5 a `DNSPolicy` ganha **failover com grupos**. Está em *Technology Preview* na 1.5
+(https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento^])
+e **não está neste ambiente**, que roda a 1.4. A leitura {p-previas}reúne o que
+vem na 1.5.
+====
+
 == Terminal
 
 ifndef::foco_rhcl[]

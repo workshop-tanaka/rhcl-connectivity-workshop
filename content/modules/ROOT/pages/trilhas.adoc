@@ -184,6 +184,7 @@ projeto: da borda à esteira, com a degradação e o alerta no fim.
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 
 **Soma:** ~165 min (2h45).
@@ -236,6 +237,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
 . xref:m3-06-auditoria.adoc[{p-auditoria} Quatro perguntas, quatro fontes] · 10 min
 . xref:leitura-parceiros.adoc[{p-parceiros}Muitos parceiros, muitas APIs] · ~9 min
 . xref:leitura-multitenancy.adoc[{p-multitenancy}Multi-tenancy] · ~8 min
@@ -243,6 +245,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:papel-rhsi.adoc[{p-papel-rhsi}O papel do Service Interconnect] · ~4 min
 . xref:papel-rhdh.adoc[{p-papel-rhdh}O papel do Developer Hub] · ~4 min
 . xref:leitura-waf.adoc[{p-waf}Onde entra o WAF] · ~4 min
+. xref:leitura-previas.adoc[{p-previas}Prévias e o que vem na 1.5] · ~6 min
 . xref:extras.adoc[Extras: qual escolher] · ~3 min*
 . xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo] · ~9 min
 . xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa] · ~5 min
@@ -285,6 +288,7 @@ certificado e do nome, e quem responde quando um componente cai.
 . xref:extra-dns.adoc[{p-dns}O nome também é policy (DNS)] · ~8 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
 . xref:leitura-multitenancy.adoc[{p-multitenancy}Multi-tenancy] · ~8 min
 . xref:papel-ossm.adoc[{p-papel-ossm}O papel do Service Mesh] · ~5 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
@@ -356,6 +360,7 @@ avisa, e o que responder à auditoria.
 . xref:m3-03-negado.adoc[{p-negado} Onde a requisição morreu] · 12 min
 . xref:m3-04-degrada.adoc[{p-degrada} Quando a policy cai] · 6 min
 . xref:m3-05-alerta.adoc[{p-alerta} O alerta] · 10 min
+. xref:m3-07-observar.adoc[{p-observar} Observar: simular e ver no painel] · 12 min
 . xref:m3-06-auditoria.adoc[{p-auditoria} Quatro perguntas, quatro fontes] · 10 min
 . xref:leitura-parceiros.adoc[{p-parceiros}Muitos parceiros, muitas APIs] · ~9 min
 . xref:ambiente-conferir.adoc[Conferir o ambiente] · ~4 min*

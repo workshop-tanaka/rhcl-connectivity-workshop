@@ -1,0 +1,104 @@
+include::partial$numeros.adoc[]
+= {p-previas}Prévias na 1.4, e o que a 1.5 traz
+:navtitle: {p-previas}Prévias e o que vem na 1.5
+:page-trilhas: Avançado
+
+**Leitura · ~6 min · não muda estado**
+
+include::partial$trilha.adoc[]
+
+Este ambiente roda o Connectivity Link **1.4**. Parte do que ele mostra está
+em *Technology Preview* nessa versão, e parte do que a 1.5 traz não está aqui.
+Esta leitura reúne os dois, com a fonte: as notas de lançamento da
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/release_notes[1.4^]
+e da
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[1.5^].
+O que está marcado em cada página do guia vem desta tabela.
+
+[IMPORTANT]
+====
+**Technology Preview** e **Developer Preview** são categorias de suporte da Red
+Hat, não de qualidade: uma funcionalidade nessas categorias pode mudar ou sair
+antes de ficar GA, e não é coberta pelo suporte de produção. O que vale é o
+https://access.redhat.com/support/offerings/techpreview[escopo de suporte^] de
+cada uma, e as notas da versão que você for usar.
+====
+
+== O que este ambiente usa em Technology Preview (1.4)
+
+[cols="2,3,2",options="header"]
+|===
+| funcionalidade | onde o guia a usa | na 1.5
+
+| **Plugin de console** do Connectivity Link: *Policy Topology*, *API
+  Products*, *API Keys*
+| a Policy Topology desde a {p-precedencia}; o portal de parceiros nas partes
+  {p-planos}e {p-negocio}
+| continua no produto; as notas da 1.5 não mudam a categoria
+
+| **Policies sobre `GRPCRoute`** (`AuthPolicy` e `RateLimitPolicy`)
+| o Extra xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo]
+| **GA**
+
+| **Instalação desconectada** (documentação)
+| não usa; o cluster do laboratório tem saída
+| **GA**
+|===
+
+== O que a 1.4 trouxe e o guia mede
+
+[cols="2,3",options="header"]
+|===
+| funcionalidade | onde
+
+| **Autenticação por certificado X.509** na `AuthPolicy`
+| o Extra xref:extra-parceiro-certificado.adoc[Parceiro com certificado] -- com
+  a ressalva medida: no Gateway nativo desta sessão, o `x509` puro não enxerga
+  o certificado, e o caminho é o cabeçalho que o Gateway escreve
+|===
+
+== O que a 1.5 traz, e não está neste ambiente
+
+[cols="2,2,3",options="header"]
+|===
+| funcionalidade | categoria na 1.5 | o que mudaria aqui
+
+| **MCP gateway**
+| GA (na 1.4 estava na versão 0.7)
+| nada no roteiro: é outro público, o de agentes de IA. A leitura
+  {p-parceiros}diz onde ele entraria
+
+| **Plugin do Developer Hub**
+| GA
+| a xref:papel-rhdh.adoc[{p-papel-rhdh}leitura sobre o Developer Hub] já o
+  descreve; aqui o catálogo é alimentado pelo golden path
+
+| **Egress Gateway**
+| Technology Preview
+| o Extra xref:extra-saida.adoc[A saída também é borda] faz com o que a 1.4
+  tem; na 1.5 a saída ganha objeto próprio
+
+| **DNS failover com grupos**
+| Technology Preview
+| o Extra xref:extra-dns.adoc[O nome também é policy] usa a `DNSPolicy` da
+  1.4; failover entre grupos é o que a 1.5 acrescenta
+
+| **Extension SDK**
+| Technology Preview
+| nada no guia: é para quem escreve uma policy própria
+
+| **MCP gateway na console**
+| Developer Preview
+| nada no guia
+
+| **Suporte a IBM Z e IBM LinuxONE**
+| GA
+| nada no guia; o laboratório é x86
+|===
+
+A 1.5 também muda o provedor do Gateway recomendado: as notas citam o
+OpenShift Service Mesh 3.4. Esta sessão roda sobre o Gateway API nativo do
+OpenShift, e a xref:leitura-instalacao.adoc[Fase 1] diz como. O que uma
+mudança de versão faria com este material está na
+xref:planejamento-provas.adoc[Fase 8] e no aviso de versões da
+xref:index.adoc[abertura].

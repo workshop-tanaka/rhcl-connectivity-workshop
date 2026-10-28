@@ -16,6 +16,15 @@ O workshop inteiro olha para quem **entra**. A pergunta seguinte é a contrária
 a aplicação chama um parceiro, um provedor de pagamento, uma API pública -- e
 quem conta, limita e autentica essas chamadas?
 
+[NOTE]
+.O que a 1.5 traz
+====
+Na 1.5 a saída ganha objeto próprio: o **Egress Gateway**. Está em *Technology Preview* na 1.5
+(https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html/release_notes[notas de lançamento^])
+e **não está neste ambiente**, que roda a 1.4. A leitura {p-previas}reúne o que
+vem na 1.5.
+====
+
 == Terminal
 
 [source,bash,role="execute"]

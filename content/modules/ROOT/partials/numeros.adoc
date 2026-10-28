@@ -22,6 +22,7 @@ ifndef::foco_rhcl[]
 :p-degrada: 3.4
 :p-alerta: 3.5
 :p-auditoria: 3.6
+:p-observar: 3.7
 :p-colheita: 5.1
 :p-dns:
 :p-contextos:
@@ -37,6 +38,7 @@ ifndef::foco_rhcl[]
 :p-papel-rhsi:
 :p-papel-rhdh:
 :p-waf:
+:p-previas:
 :p-provas:
 :p-conhecer:
 :p-decisoes:
@@ -71,7 +73,8 @@ ifdef::foco_rhcl[]
 :p-negado: 6.1
 :p-degrada: 6.2
 :p-alerta: 6.3
-:p-auditoria: 6.4
+:p-observar: 6.4
+:p-auditoria: 6.5
 :p-colheita: 5.5
 :p-dns: 3.2{sp}
 :p-versoes: 4.3{sp}
@@ -89,6 +92,7 @@ ifdef::foco_rhcl[]
 :p-papel-rhsi: 7.4{sp}
 :p-papel-rhdh: 7.5{sp}
 :p-waf: 7.6{sp}
+:p-previas: 7.7{sp}
 // Fase 8 (planejamento), sob ifdef::fase8 no nav
 :p-provas: 8.1{sp}
 :p-conhecer: 8.2{sp}

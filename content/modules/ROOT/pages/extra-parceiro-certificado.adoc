@@ -20,6 +20,15 @@ token. Esta página traz a terceira credencial: o certificado de cliente.
 a pergunta de toda conversa B2B. A resposta honesta tem três partes, e só a
 terceira funciona.
 
+[NOTE]
+.Novo na 1.4
+====
+A autenticação por certificado X.509 na `AuthPolicy` é novidade da 1.4
+(https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4/html/release_notes[notas de lançamento^]). O que esta página mede
+vale para o Gateway nativo desta sessão; a leitura {p-previas}reúne o que mudou
+de versão.
+====
+
 == Terminal
 
 [source,bash,role="execute"]
