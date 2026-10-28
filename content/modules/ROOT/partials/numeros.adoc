@@ -41,6 +41,7 @@ ifndef::foco_rhcl[]
 :p-papel-rhdh:
 :p-waf:
 :p-previas:
+:p-extensoes:
 :p-provas:
 :p-conhecer:
 :p-decisoes:
@@ -97,6 +98,7 @@ ifdef::foco_rhcl[]
 :p-papel-rhdh: 7.5{sp}
 :p-waf: 7.6{sp}
 :p-previas: 7.7{sp}
+:p-extensoes: 7.8{sp}
 // Fase 8 (planejamento), sob ifdef::fase8 no nav
 :p-provas: 8.1{sp}
 :p-conhecer: 8.2{sp}

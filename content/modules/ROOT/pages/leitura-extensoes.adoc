@@ -1,0 +1,238 @@
+include::partial$numeros.adoc[]
+= {p-extensoes}Leitura: quando a policy que você precisa não existe
+:navtitle: {p-extensoes}Quando a policy não existe: o Extension SDK
+:page-trilhas: Avançado
+
+**Leitura · ~8 min · não muda estado**
+
+include::partial$trilha.adoc[]
+
+[IMPORTANT]
+.Connectivity Link 1.5, em Technology Preview
+====
+O **Extension SDK** chega na 1.5, e lá está em *Technology Preview*: funciona,
+mas não é coberto pelo suporte de produção e pode mudar. Este ambiente roda a
+1.4 e não o tem; esta página é leitura, com a fonte na
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html-single/develop_apis_with_the_web_console/index#con-rhcl-develop-extension-sdk_rhcl-develop-extension-sdk[documentação da 1.5^].
+A leitura {p-previas}diz o que mais está nessa categoria.
+====
+
+Todo projeto chega a uma regra que o produto não escreve. A borda da Rota
+Viagens sabe quem entra, quanto passa e o que isso vira em número -- mas
+"nesta janela de manutenção, responda assim, exceto para estes" não é uma
+`AuthPolicy` nem uma `RateLimitPolicy`. Até a 1.4 a resposta era um
+controlador seu, por fora, mexendo nas policies. A 1.5 dá um caminho para
+isso ser **uma policy nova**, com o mesmo `targetRef` das outras.
+
+== O que uma extensão é
+
+Uma extensão é um **controlador seu**, num pod seu, que cria um Kind de policy
+novo e o anexa a um `Gateway` ou a uma `HTTPRoute` como qualquer policy do
+produto. O que a torna parte do Connectivity Link, e não um operator ao lado,
+é a conversa com o operator por gRPC:
+
+include::partial$diagrama.adoc[]
+
+[mermaid]
+....
+flowchart LR
+  subgraph EXT["o seu pod"]
+    X["extensão<br/>reconcilia o Kind novo"]
+  end
+  subgraph CL["Connectivity Link"]
+    OP["operator<br/>topologia"]
+    AU["Authorino"]
+    LI["Limitador"]
+  end
+  GW["Gateway<br/>(Envoy + filtro)"]
+  X <-->|"gRPC: topologia,<br/>data bindings, ações"| OP
+  OP --> AU
+  OP --> LI
+  OP --> GW
+  X -. "cria e é dona de<br/>AuthPolicy, HTTPRoute..." .-> OP
+....
+
+Na partida, a extensão se conecta ao operator, prova quem é com o token do
+próprio `ServiceAccount` e **reivindica o Kind** que vai reconciliar. Quem
+autoriza é o RBAC do cluster, por `Role` e `ClusterRole`: não há credencial
+nova para distribuir. Daí em diante ela pode fazer quatro coisas, e cada
+extensão usa as que precisa:
+
+[cols="1,3",options="header"]
+|===
+| capacidade | o que é
+
+| **ler a topologia**
+| perguntar ao operator, em CEL, o que ele já sabe: o hostname do listener
+  que a policy mira, as rotas, as policies já anexadas ao mesmo alvo. A
+  extensão não precisa de permissão para ler Gateways; e quando a resposta
+  muda, ela reconcilia de novo
+
+| **criar policies e ser dona delas**
+| uma `AuthPolicy`, uma `HTTPRoute`, um recurso comum do Kubernetes -- com
+  `ownerReference`: apagar a policy nova apaga o que ela criou
+
+| **publicar data bindings**
+| expressões CEL que o Authorino e o Limitador avaliam **a cada requisição**,
+  em vez de valores resolvidos quando a policy foi reconciliada. É o que
+  permite uma decisão que depende de quem chama, ou de que horas são
+
+| **agir no caminho de dados**
+| uma ação na requisição ou na resposta: negar com um código, acrescentar um
+  cabeçalho, registrar um rótulo de métrica -- e, se precisar, chamar um
+  serviço gRPC seu para decidir
+|===
+
+A documentação diz quando vale escrever uma: quando várias policies precisam
+ficar atrás de uma interface só; quando a configuração depende da topologia;
+quando a decisão depende da requisição; quando um serviço seu precisa ser
+consultado a cada chamada. Fora disso, *"um controlador comum é melhor"*.
+
+[NOTE]
+====
+**Você já usou uma.** Na 1.5 a `PlanPolicy` da parte {p-planos} passa a ser
+uma extensão escrita com este SDK: ela lê o plano da identidade que a
+`AuthPolicy` resolveu e manda o limite ao Limitador por data binding. O
+mesmo desenho desta página, embalado pelo produto -- e, na 1.5, também em
+Technology Preview.
+====
+
+== O caso: uma janela de manutenção
+
+A aplicação vai parar para manutenção no sábado, das 02:00 às 04:00. Hoje o
+parceiro descobre pelo erro -- um `503` sem explicação, ou um timeout --,
+abre chamado, e o plano completo, que tem contrato de disponibilidade, é
+tratado igual ao gratuito.
+
+A policy que a operação gostaria de escrever, e que com o SDK existe:
+
+[source,yaml]
+----
+apiVersion: rotaviagens.example/v1alpha1
+kind: JanelaDeManutencaoPolicy
+metadata:
+  name: travels-manutencao
+  namespace: travel-agency
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: travel-agency
+  inicio: "2026-11-07T02:00:00-03:00"
+  fim:    "2026-11-07T04:00:00-03:00"
+  mensagem: "API em manutencao programada; volte as 04:00"
+  exceto:
+    planos: [gold]          # o plano completo continua sendo servido
+----
+
+O que a extensão faz com isso, nos quatro movimentos:
+
+. **Lê a topologia**: acha a rota e a `AuthPolicy` já anexada a ela. É dela
+  que vem o plano do parceiro; a extensão não repete essa configuração.
+. **Cria o que a policy implica**: aqui, nada além do próprio status. É de
+  propósito -- o primeiro exemplo não precisa ser dono de outra policy.
+. **Publica dois data bindings**, avaliados a cada requisição:
+  `em_janela = agora >= inicio && agora < fim` e
+  `isento = auth.identity.plan in exceto.planos`. Nada é reconciliado quando
+  o relógio muda.
+. **Age no tráfego**: se `em_janela && !isento`, responde `503` com
+  `Retry-After` (os segundos até o `fim`) e a `mensagem` no corpo, e grava a
+  métrica `manutencao_recusadas` por plano. Fora da janela, não toca na
+  requisição.
+
+**O que se vê** num ambiente com a 1.5: aplica-se o CR com a janela começando
+agora; a chave free leva `503` com `Retry-After: 7140` e a mensagem; a chave
+gold leva `200`; o painel mostra as recusas por plano; apaga-se o CR, e tudo
+volta.
+
+**O que o exemplo ensina sem dizer.** A decisão é **por requisição** (o
+relógio), e por isso é data binding, não reconciliação. A **exceção por
+identidade** só existe porque a `AuthPolicy` já disse quem é: a extensão
+compõe com o produto, não o substitui. E o `Retry-After` é a diferença entre
+um parceiro que espera e um que abre chamado.
+
+== O segundo caso: o plano vem do contrato
+
+A História deste workshop começa com *"o contrato existe; a plataforma não
+sabe disso"*, e a parte {p-planos} resolve isso com um rótulo na chave. Numa
+renegociação, o rótulo vira um ticket: alguém recria o Secret, e até lá o
+parceiro leva `429`.
+
+Uma `ContratoPolicy` faria o plano vir do sistema de contratos: um data
+binding que, a cada requisição, resolve `plano = contratos(parceiro)` (com
+cache de um minuto), uma `RateLimitPolicy` por plano de que a extensão é
+dona, o rótulo `plano` na métrica com o valor do contrato, e um `X-Plano` na
+resposta `429`. O Secret volta a só identificar; o comercial muda o
+contrato, e a borda obedece em um minuto.
+
+É o caso que a própria documentação dá como exemplo (*tiered billing*), e o
+que tem preço explícito: um serviço seu entrou no caminho de dados. Se o
+serviço de contratos cair, a extensão precisa de um `failureMode` -- contar
+no plano mais baixo? deixar passar? -- a mesma pergunta da parte {p-degrada}.
+
+== Outros casos, em uma linha cada
+
+[cols="1,2,1",options="header"]
+|===
+| policy | o que faria | onde no guia
+
+| `ParceiroPolicy`
+| um CR por parceiro cria e mantém a chave, o plano, o rótulo de telemetria e
+  a entrada no portal; apagar o CR revoga tudo
+| {p-parceiros}
+
+| `DepreciacaoPolicy`
+| na rota da versão antiga, cabeçalhos `Deprecation` e `Sunset`; depois da
+  data, `410 Gone`, exceto para quem tem prazo estendido
+| {p-versoes}
+
+| `RotacaoDeChavePolicy`
+| aceita a chave antiga e a nova por N dias, conta o uso da antiga e avisa
+  com `X-Key-Expires`
+| {p-fechada}
+
+| `ReputacaoPolicy`
+| consulta um serviço de reputação da própria empresa a cada chamada e nega
+  acima de um limiar, gravando a nota na métrica
+| {p-negado}
+
+| `CotaContratualPolicy`
+| cota mensal por parceiro, `X-Quota-Remaining` em toda resposta, alerta aos
+  80%
+| {p-negocio}, {p-alerta}
+
+| `AuditoriaPolicy`
+| envia a um coletor seu, por requisição: parceiro, plano, rota, decisão e
+  `x-request-id`
+| {p-auditoria}
+|===
+
+== O que o SDK não faz
+
+* **Cache, transformação de corpo e roteamento** não são policy: são o
+  `HTTPRoute` e o Envoy.
+* **Substituir o sistema de fora.** A `ContratoPolicy` consulta o sistema de
+  contratos; não o guarda.
+* **Dispensar o controlador.** Uma extensão é código seu, com imagem,
+  release e plantão. A documentação é explícita: se a regra cabe num
+  controlador comum, escreva o controlador.
+
+== O que isso prova
+
+**A plataforma de API tem um lugar para a regra que ela não escreveu.** O
+Kind novo se anexa como os outros, o RBAC decide quem pode criá-lo, a
+topologia já está lá para ser lida, e a decisão por requisição chega ao mesmo
+Authorino e ao mesmo Limitador que o resto do guia usou. O custo é o de
+qualquer código seu -- e a categoria, por enquanto, é Technology Preview.
+
+.Para ir além
+[%collapsible]
+====
+* https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html-single/develop_apis_with_the_web_console/index#con-rhcl-develop-extension-sdk_rhcl-develop-extension-sdk[Build and integrate custom policy extensions^]
+  -- a documentação da 1.5, com o exemplo de residência de dados por região.
+* https://docs.kuadrant.io/1.6.x/kuadrant-operator/doc/extensions/extension-sdk-developer-guide/[Extension SDK developer guide^]
+  e https://github.com/Kuadrant/example-extensions[example-extensions^] --
+  o projeto upstream, Kuadrant, com um exemplo completo em Go.
+* https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.5/html-single/administer/#rhcl-planpolicy[Configure and deploy the PlanPolicy extension^]
+  -- a `PlanPolicy` da 1.5 como extensão.
+====

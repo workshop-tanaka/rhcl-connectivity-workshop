@@ -91,7 +91,13 @@ O plugin de console do Connectivity Link (*Policy Topology*, *API Products*,
 
 | **Extension SDK**
 | Technology Preview
-| nada no guia: é para quem escreve uma policy própria
+| a leitura xref:leitura-extensoes.adoc[{p-extensoes}Quando a policy não
+  existe] mostra o que é e desenha uma policy própria para a Rota Viagens
+
+| **`PlanPolicy` como extensão do SDK**
+| Technology Preview
+| a `PlanPolicy` da parte {p-planos} continua existindo; na 1.5 ela é uma
+  extensão, com a categoria do SDK
 
 | **MCP gateway na console**
 | Developer Preview

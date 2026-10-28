@@ -57,7 +57,7 @@ completo da sessão fica em link:/[Todas as páginas,window=_top].
 | link:/basico/[abrir,window=_top]
 | **Intermediário** · ~2h45 | quem vai operar a esteira e a borda no dia a dia
 | link:/intermediario/[abrir,window=_top]
-| **Avançado** · ~6h23 | a sessão inteira, com os Extras
+| **Avançado** · ~6h31 | a sessão inteira, com os Extras
 | link:/avancado/[abrir,window=_top]
 | **Infra** · ~2h06 | quem opera a plataforma: instalação, borda, certificado, DNS, alerta
 | link:/infra/[abrir,window=_top]
@@ -94,7 +94,7 @@ endif::[]
 
 | <<avancado,**Avançado**>>
 | quem quer a sessão inteira, com a Fase 7 e os Extras
-| ~6h23
+| ~6h31
 
 | <<infra,**Infra**>>
 | o time de plataforma: como ela foi instalada, a borda inteira, o DNS, a
@@ -198,7 +198,7 @@ são o maior bloco desta trilha: quem estiver sem tempo pode pular para a
 {p-fonte} e fica dentro de ~2h15.
 
 [[avancado]]
-== Avançado -- ~6h23
+== Avançado -- ~6h31
 
 **Para quem:** quem quer a sessão inteira, na ordem em que o menu a conta: da
 plataforma instalada ao que vem depois, com os Extras.
@@ -246,6 +246,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:papel-rhdh.adoc[{p-papel-rhdh}O papel do Developer Hub] · ~4 min
 . xref:leitura-waf.adoc[{p-waf}Onde entra o WAF] · ~4 min
 . xref:leitura-previas.adoc[{p-previas}Prévias e o que vem na 1.5] · ~6 min
+. xref:leitura-extensoes.adoc[{p-extensoes}Quando a policy não existe: o Extension SDK] · ~8 min
 . xref:extras.adoc[Extras: qual escolher] · ~3 min*
 . xref:extra-grpc.adoc[gRPC: a mesma policy, outro protocolo] · ~9 min
 . xref:leitura-websocket.adoc[Leitura: WebSocket e conexão longa] · ~5 min
@@ -257,7 +258,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 . xref:referencias.adoc[Materiais de referência] · ~3 min*
 
-**Soma:** ~383 min (6h23), sem contar as três páginas de ambiente
+**Soma:** ~391 min (6h31), sem contar as três páginas de ambiente
 (xref:ambiente-conferir.adoc[Conferir], xref:se-algo-nao-responder.adoc[Se algo
 não responder], xref:ambiente-recomecar.adoc[Recomeçar]), que se consultam
 quando precisar.

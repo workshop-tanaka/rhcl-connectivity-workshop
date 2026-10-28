@@ -60,6 +60,14 @@ válida, e vale mais do que uma estimativa disfarçada de número.
 | dono de cada API; quem opera o cluster; quem está de plantão; se algum
   alerta hoje é da API
 | operação
+
+| **Há regra que o produto não escreve?** uma janela de manutenção, um plano
+  que vem de outro sistema, uma decisão que depende de um serviço da empresa
+| a leitura xref:leitura-extensoes.adoc[{p-extensoes}Quando a policy não
+  existe] mostra o caminho da 1.5 para uma policy própria, e o que custa
+| as regras de hoje que não são "quem entra" nem "quanto passa"; quem as
+  escreveria e manteria
+| plataforma, arquitetura
 |===
 
 == As variáveis de que qualquer estimativa depende

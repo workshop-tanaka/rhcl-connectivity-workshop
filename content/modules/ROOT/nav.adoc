@@ -172,6 +172,7 @@ ifdef::trilha_avancado[]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
 * xref:leitura-previas.adoc[7.7 Prévias e o que vem na 1.5]
+* xref:leitura-extensoes.adoc[7.8 Quando a policy não existe: o Extension SDK]
 
 include::partial$nav-fase8.adoc[]
 
@@ -350,6 +351,7 @@ ifdef::foco_rhcl[]
 * xref:papel-rhdh.adoc[7.5 O papel do Developer Hub]
 * xref:leitura-waf.adoc[7.6 Onde entra o WAF]
 * xref:leitura-previas.adoc[7.7 Prévias e o que vem na 1.5]
+* xref:leitura-extensoes.adoc[7.8 Quando a policy não existe: o Extension SDK]
 
 include::partial$nav-fase8.adoc[]
 
