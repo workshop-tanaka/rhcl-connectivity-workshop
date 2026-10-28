@@ -149,7 +149,13 @@ for f in sorted(pages):
                 ruim += 1
 if not ruim:
     print('  todo xref aponta para pagina existente')
-no_nav = set(re.findall(r'xref:([A-Za-z0-9._-]+\.adoc)', open(nav).read()))
+# o nav pode incluir partials (include::partial$x.adoc[]) -- a Fase 8 e um;
+# segue o include para nao marcar como orfa a pagina que so o partial lista
+texto = open(nav).read()
+partials = os.path.join(os.path.dirname(nav), 'partials')
+for inc in re.findall(r'include::partial\$([A-Za-z0-9._-]+)\[\]', texto):
+    texto += open(os.path.join(partials, inc)).read()
+no_nav = set(re.findall(r'xref:([A-Za-z0-9._-]+\.adoc)', texto))
 falta = sorted(no_nav - pages)
 orfa = sorted(pages - no_nav)
 if falta:
