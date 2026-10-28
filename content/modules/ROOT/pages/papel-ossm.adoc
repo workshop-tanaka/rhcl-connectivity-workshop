@@ -51,13 +51,100 @@ Atrás do `travels`. A API de viagens responde chamando `flights`, `hotels`,
 `cars` e `insurances`; o Service Mesh decide se cada um desses saltos é
 permitido, e os instrumenta.
 
+== Onde um termina e o outro começa
+
+Os dois produtos escrevem no mesmo Envoy, e por isso a pergunta "há
+sobreposição?" é justa. Há -- em três lugares, e só neles:
+
+[cols="2,2,2",options="header"]
+|===
+| a pergunta | Service Mesh | Connectivity Link
+
+| para qual **versão** vai a chamada
+| `VirtualService`, `DestinationRule`
+| —
+
+| **quem fala com quem** dentro do cluster
+| `AuthorizationPolicy` sobre identidade mTLS
+| —
+
+| o canal entre os serviços é cifrado
+| `PeerAuthentication`
+| —
+
+| **quem entra** pela borda
+| `AuthorizationPolicy`, `RequestAuthentication` (JWT)
+| `AuthPolicy`: chave de API, OIDC, e a identidade do **consumidor**
+  ◆ *sobreposição*
+
+| **quanto** cada um pode chamar
+| limite local do Envoy, sem API de produto
+| `RateLimitPolicy` e `PlanPolicy`, por plano comercial ◆ *sobreposição*
+
+| que **métrica** o tráfego gera
+| `Telemetry` do Istio
+| `TelemetryPolicy`, com a dimensão de parceiro ◆ *sobreposição*
+
+| o **certificado** da borda
+| o listener aponta para um Secret
+| `TLSPolicy` cria e renova esse Secret (parte xref:m1-08-certificado.adoc[{p-certificado}])
+
+| o **nome DNS** da borda
+| —
+| `DNSPolicy`
+
+| **plano comercial, chave, portal do consumidor**
+| —
+| `APIProduct`, `APIKey`, e o portal do desenvolvedor
+|===
+
+Nos três pontos marcados, a regra prática é simples: **decida em um lugar
+só**. Uma `AuthorizationPolicy` do Istio e uma `AuthPolicy` do Connectivity
+Link sobre a mesma rota funcionam ao mesmo tempo, e uma recusa passa a ter
+duas origens possíveis -- exatamente o que a parte
+xref:m3-03-negado.adoc[{p-negado}] ensina a separar.
+
+A divisão que este workshop usa: **a borda é do Connectivity Link, o
+leste-oeste é do Service Mesh.**
+
 == O Service Mesh é requisito do Connectivity Link?
 
-Não. O Connectivity Link precisa de um **provedor de Gateway API**, e há mais
-de um. Num ambiente o provedor pode ser o próprio Service Mesh; noutro, o
-Gateway que o OpenShift traz. Ter o Gateway vindo do Service Mesh não quer
-dizer que a aplicação esteja nele: sem o proxy ao lado de cada serviço, não há
-mTLS entre eles nem autorização de salto.
+ifndef::foco_rhcl[]
+**Neste cluster, sim. No produto, não.** O Connectivity Link **não implementa
+Gateway API**: ele não traz `GatewayClass` nenhuma, e precisa de um provedor
+que a implemente. Aqui o provedor é o Service Mesh -- a classe em uso tem como
+controlador `istio.io/gateway-controller`. Quem materializa o pod do gateway é
+o Service Mesh; o Connectivity Link **anexa políticas** a ele.
+endif::[]
+ifdef::foco_rhcl[]
+**Não.** O Connectivity Link **não implementa Gateway API**: precisa de um
+provedor que a implemente, e anexa políticas ao Gateway que esse provedor
+materializa. Aqui o provedor é o Gateway API do próprio OpenShift -- a
+xref:leitura-instalacao.adoc[Fase 1] mostra isso no cluster. Ter o Gateway
+vindo do Service Mesh também não quer dizer que a aplicação esteja nele: sem o
+proxy ao lado de cada serviço, não há mTLS entre eles nem autorização de
+salto.
+endif::[]
+
+Dá para ver isso no nome dos próprios controladores do operador, no log:
+
+[source,text]
+----
+kuadrant-operator.IstioExtensionReconciler.buildWasmConfigs
+kuadrant-operator.AuthorinoIstioIntegrationReconciler
+----
+
+E o veículo das policies é um objeto do Istio, o `EnvoyFilter`. Sem um
+provedor de Gateway API no cluster, as policies do Connectivity Link ficam
+sem onde se anexar.
+
+ifndef::foco_rhcl[]
+NOTE: O contrário não é verdade: o Service Mesh roda sozinho, sem o
+Connectivity Link -- o `bookinfo-gateway` das amostras do Istio é a prova. E a combinação
+suportada de versões dos dois produtos sai da
+https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação
+do Connectivity Link^], não daqui.
+endif::[]
 
 == O que muda quando os dois andam juntos
 
@@ -71,6 +158,6 @@ mTLS entre eles nem autorização de salto.
 == Onde praticar
 
 Na sessão de Service Mesh, ou na completa. A
-xref:sessoes.adoc[página das sessões] diz o que cada uma cobre, e a
+xref:fronteiras.adoc[página das sessões] diz o que cada uma cobre, e a
 xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
 requisição só.

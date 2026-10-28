@@ -1,7 +1,8 @@
 include::partial$numeros.adoc[]
-= A história por trás deste workshop
-:navtitle: A história
-:page-trilhas: Avançado
+= A história e a aplicação
+:navtitle: A história e a aplicação
+:page-aliases: aplicacao.adoc
+:page-trilhas: Avançado · Infra · Desenvolvedor
 
 include::partial$trilha.adoc[]
 
@@ -11,18 +12,14 @@ no meio dessa mudança, descobriu que o produto mais valioso dela não é o site
 
 É a API.
 
-== Onde a Rota Viagens está hoje
+== A aplicação
 
-Os serviços já foram para o OpenShift, e neste ambiente o banco de dados veio
-junto. Na maioria das migrações reais ele fica de fora -- e alcançá-lo sem
-ifndef::foco_rhcl[]
-abrir a rede é o assunto do xref:m4-00-intro.adoc[{m4}], que está a
-caminho.
-endif::[]
-ifdef::foco_rhcl[]
-abrir a rede é o assunto do Service Interconnect, que a
-xref:papel-rhsi.adoc[leitura sobre o papel dele] resume.
-endif::[]
+Os serviços já foram para o OpenShift. A aplicação não foi escrita para este
+workshop: é o demo *Travels* do projeto Kiali
+(https://kiali.io/docs/tutorials/travels/[tutorial do Kiali^]), e foi escolhida
+por um motivo específico: **ela não tem uma linha de código sobre
+autenticação, cotas ou identidade**. O binário é o mesmo de antes de existir
+qualquer policy, e tudo que o workshop faz acontece *ao redor* dela.
 
 include::partial$diagrama.adoc[]
 
@@ -30,66 +27,130 @@ ifndef::foco_rhcl[]
 [mermaid]
 ....
 flowchart LR
-  P["Parceiros<br/>(chave de API)"] -->|HTTPS| G["Gateway"]
-  G --> T["travels<br/><i>v1</i>"]
-  T --> F["flights<br/><i>v1</i>"]
-  T --> H["hotels<br/><i>v1</i>"]
-  T --> C["cars<br/><i>v1</i>"]
-  T --> I["insurances<br/><i>v1</i>"]
-  T -->|"90%"| D1["discounts<br/><b>v1</b>"]
-  T -.->|"10%"| D2["discounts<br/><b>v2</b>"]
-  F & H & C & I --> DB[("banco<br/>mysqldb")]
+  P["Parceiros<br/>(chave de API)"] -->|HTTPS| G["Gateway<br/>Connectivity Link"]
+  subgraph APP["travel-agency · Service Mesh"]
+    G --> T["travels<br/><i>v1</i>"]
+    T --> F["flights<br/><i>v1</i>"]
+    T --> H["hotels<br/><i>v1</i>"]
+    T --> C["cars<br/><i>v1</i>"]
+    T --> I["insurances<br/><i>v1</i>"]
+    T -->|"90%"| D1["discounts<br/><b>v1</b>"]
+    T -.->|"10%"| D2["discounts<br/><b>v2</b>"]
+    F & H & C & I --> DB[("banco<br/>mysqldb")]
+  end
   classDef versaoNova fill:#fff4e0,stroke:#c08a2e,stroke-width:2px
   class D2 versaoNova
 ....
 
 O `travels` é a única porta de entrada: ele recebe a chamada e distribui para
-os outros cinco.
-
-Repare no `discounts`: ele tem **duas versões no ar ao mesmo tempo**, e o
-tráfego se divide entre elas -- 90% para a v1, 10% para a v2. Nenhum outro
-serviço tem isso, e não é acaso: é o par que torna possível promover uma
-versão nova sem trocar a imagem de um Deployment, e é o que a parte {p-canario}
-exercita.
+os outros cinco. Repare no `discounts`: ele tem **duas versões no ar ao mesmo
+tempo**, e o tráfego se divide entre elas -- 90% para a v1, 10% para a v2. É o
+par que torna possível promover uma versão nova sem trocar a imagem de um
+Deployment, e é o que a parte {p-canario} exercita.
 endif::[]
 ifdef::foco_rhcl[]
 [mermaid]
 ....
 flowchart LR
-  P["Parceiros<br/>(chave de API)"] -->|HTTPS| G["Gateway"]
-  G --> T["travels"]
-  T --> F["flights"]
-  T --> H["hotels"]
-  T --> C["cars"]
-  T --> I["insurances"]
-  T --> D["discounts"]
-  F & H & C & I --> DB[("banco<br/>mysqldb")]
+  P["Parceiros<br/>(chave de API)"] -->|HTTPS| G["Gateway<br/>Connectivity Link · esta sessão"]
+  subgraph APP["travel-agency · entre os serviços: Service Mesh, leitura da Fase 7"]
+    G --> T["travels"]
+    T --> F["flights"]
+    T --> H["hotels"]
+    T --> C["cars"]
+    T --> I["insurances"]
+    T --> D["discounts"]
+    F & H & C & I --> DB[("banco<br/>mysqldb")]
+  end
 ....
 
 O `travels` é a única porta de entrada: ele recebe a chamada e distribui para
-os outros cinco. É nele, e só nele, que esta sessão trabalha.
+os outros cinco. É nele, e só nele, que esta sessão trabalha: a borda. O que
+acontece **entre** os serviços, atrás dele, é a fronteira do Service Mesh, e o
+banco que aqui roda no cluster é, nos clientes em que fica fora, a do Service
+Interconnect -- a xref:fronteiras.adoc[página das três fronteiras] mostra as
+três num desenho só.
 endif::[]
 
-Os detalhes de cada serviço estão em xref:aplicacao.adoc[A aplicação e as APIs].
+.Mais detalhes: os sete serviços
+[%collapsible]
+====
+[cols="1,3,1",options="header"]
+|===
+| serviço | o que faz | exposto?
 
-== O que mudou no negócio
+| `travels` | a porta de entrada: recebe a chamada e chama os outros | **sim**, via `HTTPRoute`
+| `flights` | companhias aéreas e preços | não, só interno
+| `hotels` | hospedagem | não
+| `cars` | locação de veículos | não
+| `insurances` | seguro viagem | não
+| `discounts` | descontos aplicáveis
+ifndef::foco_rhcl[]
+-- e o único com **duas versões** no ar
+endif::[]
+| não
+| `mysqldb` | o banco com os destinos | não
+|===
 
-A Rota Viagens passou a vender acesso à própria API. Hoje existem três
-contratos assinados, com direitos diferentes:
+Daquele demo entra só a parte `travel-agency`, sem os portais e sem o
+namespace de controle, com as imagens publicadas por ele
+(`quay.io/kiali/demo_travels_*`).
+====
+
+== A API que você vai chamar
+
+Um `HTTPRoute` publica o `travels` em `\https://{api_host}`. Dois caminhos
+interessam ao workshop:
 
 [cols="1,3",options="header"]
 |===
-| plano | o que o contrato promete
+| caminho | o que responde
 
-| gratuito
-| poucas chamadas, para quem está avaliando
+| `GET /travels`
+| **45 destinos**, direto do banco: `[{"city": "Amsterdam", ...}, ...]`. É a
+  chamada mais usada no guia, porque é barata e fácil de conferir -- se vierem
+  45 itens, a cadeia inteira funcionou
 
-| intermediário
-| volume moderado, para parceiros pequenos
-
-| completo
-| o volume que os grandes parceiros exigem
+| `GET /travels/<cidade>`
+| o **fan-out**: o `travels` chama os outros serviços e junta `flights`,
+  `hotels` e `cars` numa resposta só. É este caminho que faz a aplicação ser
+  mais que um serviço: uma chamada externa vira várias internas
+ifndef::foco_rhcl[]
+  -- e é por isso que o {m3} consegue mostrar um trace com vários saltos, e o
+  {m2} tem o que proteger
+endif::[]
+ifdef::foco_rhcl[]
+  -- e é por isso que uma recusa pode nascer em mais de um lugar, o assunto da
+  fase de operação
+endif::[]
 |===
+
+[NOTE]
+====
+**Abrir esse endereço no navegador dá tela em branco, e é o esperado**: sem
+chave, a borda responde `401`, antes de olhar para onde a chamada vai. E a API
+**não** expõe `/flights` nem `/hotels` na borda: com uma chave válida,
+`\https://{api_host}/flights/Amsterdam` responde `404` -- é desenho, não falta.
+====
+
+== O que mudou no negócio
+
+A Rota Viagens passou a vender acesso à própria API. Três parceiros já
+assinaram, cada um num plano, e cada um tem o **próprio portal** -- uma
+aplicação de terceiro, que consome a API como qualquer cliente externo faria:
+
+[cols="1,3,1",options="header"]
+|===
+| plano | o que o contrato promete | portal
+
+| gratuito | poucas chamadas, para quem está avaliando | Azul
+| intermediário | volume moderado, para parceiros pequenos | Verde
+| completo | o volume que os grandes parceiros exigem | Vermelho
+|===
+
+Os três portais rodam **a mesma aplicação**, com a mesma imagem. A única
+diferença entre eles é a chave de API que cada um carrega. Os endereços, e as
+três chaves, estão em xref:acessos.adoc[Seus acessos].
 
 O contrato existe. **A plataforma não sabe disso.**
 
@@ -98,6 +159,34 @@ O contrato existe. **A plataforma não sabe disso.**
 Todos eles são consequência da mesma coisa: o que foi combinado no papel
 nunca virou configuração.
 
+ifdef::foco_rhcl[]
+[cols="3,1",options="header"]
+|===
+| o problema | quem resolve
+
+| **1. A API não sabe quem está chamando.** Qualquer um com o endereço recebe
+  resposta. Não há como distinguir um parceiro pagante de um robô
+| Fase 2, a borda
+
+| **2. Os planos não existem fora do contrato.** Ninguém consegue provar quanto
+  cada parceiro consumiu, nem impedir que o cliente do plano gratuito use como
+  se fosse do completo
+| Fases 3 e 4, a API e o produto
+
+| **3. Quando um parceiro reclama, ninguém sabe onde parou.** *"Não consigo
+  acessar"* pode ser DNS, endereço não publicado, credencial errada ou cota
+  estourada -- e a investigação começa do zero toda vez
+| Fase 6, a operação
+
+| **4. Cada API nova repete o trabalho inteiro.** E a configuração existe só no
+  cluster: ninguém sabe quem criou, quando, nem por quê
+| Fase 5, a esteira
+|===
+
+O que fica atrás da borda -- um serviço interno recusando outro -- é do Service
+Mesh, que fica fora desta sessão.
+endif::[]
+ifndef::foco_rhcl[]
 **1. A API não sabe quem está chamando.** Qualquer um com o endereço recebe
 resposta. Não há como distinguir um parceiro pagante de um robô.
 
@@ -111,47 +200,19 @@ estourada ou um serviço interno recusando outro -- e a investigação começa d
 zero toda vez.
 
 **4. Cada API nova repete o trabalho inteiro.** E a configuração existe só no
-cluster: ninguém sabe quem criou, quando, nem por quê. Quando a auditoria
-perguntar, metade da resposta não existe.
+cluster: ninguém sabe quem criou, quando, nem por quê.
 
-== O seu papel
-
-Você é a pessoa de plataforma da Rota Viagens. Em alguns momentos assume o
-papel do **desenvolvedor** que publica uma API, e em outros o de quem está
-**de plantão** quando um parceiro abre chamado.
-
-A troca de papel não é enfeite: parte do que o workshop mostra só faz sentido
-quando você sente a recusa do lado de quem **não** tem permissão. A parte {p-papeis}
-faz exatamente isso.
-
-== Como o workshop ataca esses problemas
-
-ifndef::foco_rhcl[]
 Os quatro módulos resolvem os quatro problemas, nessa ordem -- o
 xref:index.adoc[Sobre este workshop] traz a tabela com o que cada um entrega e
-quanto tempo leva.
-
-O caminho curto: o **Módulo 1** resolve os problemas 1, 2 e 4 sozinho. Os
-outros três tratam do que a borda não alcança.
-endif::[]
-ifdef::foco_rhcl[]
-Esta sessão ataca os quatro: o 1 e o 2 nas fases 2 a 4, o 4 na fase 5, e o
-3, até onde a borda enxerga, na fase 6 -- o xref:index.adoc[Sobre este
-workshop] traz as fases, o que cada uma entrega e quanto tempo leva.
-
-O que fica atrás da borda -- um serviço interno recusando outro -- é do
-Service Mesh. As leituras sobre o xref:papel-ossm.adoc[Service Mesh] e o
-xref:papel-rhsi.adoc[Service Interconnect] dizem em que ponto desta mesma
-aplicação cada um entraria.
+quanto tempo leva. O caminho curto: o **Módulo 1** resolve os problemas 1, 2 e
+4 sozinho. Os outros tratam do que a borda não alcança.
 endif::[]
 
 == A tese que o workshop defende
 
-Tudo que você vai fazer acontece **ao redor** da aplicação. O binário do
-`travels` é o mesmo do primeiro ao último exercício -- nenhuma linha de código é
-alterada para autenticar, limitar, medir ou proteger.
-
-Se ao final isso estiver funcionando sem a aplicação ter mudado, a conclusão
+Tudo que você vai fazer acontece **ao redor** da aplicação: o binário do
+`travels` é o mesmo do primeiro ao último exercício. Se ao final a API estiver
+fechada, vendida em planos e observada sem a aplicação ter mudado, a conclusão
 se impõe sozinha: **o Connectivity Link não é um gateway com recursos extras.
 É onde a API vira produto.**
 

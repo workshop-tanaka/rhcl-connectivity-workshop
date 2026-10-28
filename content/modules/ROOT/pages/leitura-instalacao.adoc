@@ -287,6 +287,75 @@ endif::[]
 
 Sem essa classe, um `Gateway` declarado fica sem ninguém para atendê-lo.
 
+=== Os dois provedores, lado a lado
+
+O provedor nativo dispensa instalar o Service Mesh: a partir do OpenShift
+4.19 a plataforma traz a própria implementação de Gateway API, e o
+Connectivity Link 1.4 é suportado sobre ela. O que muda de um provedor para o
+outro é a topologia, não as policies.
+
+[cols="1,2",options="header"]
+|===
+| | provedor nativo (`openshift-default`)
+
+| `GatewayClass`
+| `openshift-default`, com controlador `openshift.io/gateway-controller/v1`
+
+| onde mora o `Gateway`
+| em `openshift-ingress`, junto com os dos outros times -- não num namespace
+  de cada dono, como aqui
+
+| como é publicado
+| o `Service` nasce do tipo `LoadBalancer`. Num cluster sem balanceador de
+  nuvem, isso pede o MetalLB. `ClusterIP` com uma `Route` na frente, que é o
+  desenho deste workshop, não é o caminho suportado ali
+
+| convivência com o Service Mesh 2.x
+| não há. Com uma assinatura do Service Mesh 2.x ativa, a instalação do
+  provedor **falha** quando a `GatewayClass` é criada, e `Gateway` e
+  `HTTPRoute` ficam sem efeito. No 4.19 a falha é silenciosa; do 4.20 em
+  diante o operador `ingress` aparece `Degraded`
+
+| convivência com o Service Mesh 3
+| os dois sobem lado a lado, cada um com o seu `istiod` e a **sua autoridade
+  certificadora**. Um Gateway nativo não fala mTLS com uma carga do
+  Service Mesh enquanto os dois não confiarem na mesma raiz
+|===
+
+ifdef::foco_rhcl[]
+[IMPORTANT]
+====
+**Este ambiente usa o provedor nativo, com duas escolhas de laboratório.** O
+Gateway de cada participante mora no namespace dele, e não em
+`openshift-ingress`; e é publicado por `ClusterIP` com uma `Route` na frente,
+porque o cluster da turma não tem balanceador. As duas funcionam -- é o que
+você usa nesta sessão -- e as duas estão **fora** do desenho que a tabela acima
+descreve como suportado. Num projeto real, siga o da documentação.
+====
+
+endif::[]
+O que **não muda** de um provedor para o outro são as policies: `AuthPolicy`,
+`RateLimitPolicy`, `TLSPolicy` e as demais são do Connectivity Link e se
+escrevem do mesmo jeito. Tudo o que o {m1} mostra vale nos dois.
+
+O que muda é a topologia, e com ela quem pode o quê. A policy só aponta para
+um recurso do **próprio namespace**: com todos os Gateways em
+`openshift-ingress`, as policies de Gateway de todos os times moram juntas, e
+a separação entre quem as edita passa a ser por RBAC, não por namespace.
+
+ifndef::foco_rhcl[]
+NOTE: Este cluster não tem a classe `openshift-default` -- confira com
+`oc get gatewayclass`. A escolha pelo Service Mesh 3 como provedor foi por
+causa do {m2}, que depende dele. Quem precisa só da borda pode ficar com
+o provedor nativo.
+endif::[]
+ifdef::foco_rhcl[]
+NOTE: Este cluster usa o provedor nativo -- confira com `oc get gatewayclass`:
+o controller das duas classes é `openshift.io/gateway-controller/v1`. A
+classe se chama `istio` por escolha deste ambiente, para os manifests valerem
+iguais nas duas formas de instalar.
+endif::[]
+
 == 3. Um objeto liga a plataforma
 
 Com os operators de pé, nada acontece ainda. O que sobe o Authorino e o

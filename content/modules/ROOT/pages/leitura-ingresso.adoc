@@ -15,11 +15,12 @@ parte, a xref:m1-06-exposta.adoc[{p-exposta}], começa justamente publicando uma
 `Route` para depois trocá-la.
 endif::[]
 ifdef::foco_rhcl[]
-Antes de ver como a plataforma foi instalada, vale saber de onde o projeto
-parte: o OpenShift publica com `Route`, o Kubernetes com `Ingress`, e o
-Connectivity Link trabalha sobre `Gateway` e `HTTPRoute`. **Os três convivem
-neste cluster**, e a parte xref:m1-06-exposta.adoc[{p-exposta}] começa
-publicando uma `Route` para depois trocá-la.
+A primeira API deste projeto parte de onde todo projeto parte: o OpenShift
+publica com `Route`, o Kubernetes com `Ingress`, e o Connectivity Link
+trabalha sobre `Gateway` e `HTTPRoute`. **Os três convivem neste cluster**, e a
+parte seguinte, a xref:m1-06-exposta.adoc[{p-exposta}], começa publicando uma
+`Route` para depois trocá-la. Dez minutos de leitura, para saber o que se está
+trocando.
 endif::[]
 
 include::partial$diagrama.adoc[]
@@ -144,273 +145,6 @@ Gateway, não de quem o publica.
 | padrão, e o que o controlador acrescenta são **objetos**, não anotações
 |===
 
-== Um gateway, ou vários?
-
-ifndef::foco_rhcl[]
-O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
-e um Service de Envoy próprios. Neste cluster há três, e eles não são iguais:
-endif::[]
-ifdef::foco_rhcl[]
-O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
-e um Service de Envoy próprios. No seu ambiente há dois, no mesmo projeto:
-endif::[]
-
-[cols="2,2,2",options="header"]
-|===
-| Gateway | namespace | governado pelo Connectivity Link?
-
-| `prod-web`
-| `ingress-gateway`
-| **sim** -- é a borda do workshop
-
-| `echo-web`
-| `ingress-gateway`
-| **sim** -- é a borda da API com OIDC da parte {p-identidade}
-
-ifndef::foco_rhcl[]
-| `bookinfo-gateway`
-| `bookinfo`
-| **não** -- Service Mesh puro, como o upstream do Istio o escreveu
-endif::[]
-|===
-
-ifndef::foco_rhcl[]
-[source,bash,role="execute"]
-----
-oc get gatewayclass
-oc get gateway -A
-oc get envoyfilter -A | grep kuadrant
-----
-
-Os três são da mesma `GatewayClass istio`. Mas os `EnvoyFilter` que o
-Connectivity Link gera existem **só** no namespace dos dois primeiros -- e é
-neles que mora o wasm que chama o Authorino e o Limitador:
-endif::[]
-ifdef::foco_rhcl[]
-[source,bash,role="execute"]
-----
-oc get gateway -n ingress-gateway
-oc get envoyfilter -n ingress-gateway
-----
-
-Os dois são da mesma `GatewayClass istio`, e cada um tem os seus
-`EnvoyFilter` gerados pelo Connectivity Link: é neles que mora o wasm que
-chama o Authorino e o Limitador.
-endif::[]
-
-[source,bash,role="execute"]
-----
-oc exec -n ingress-gateway deploy/prod-web-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
-----
-
-ifdef::foco_rhcl[]
-A resposta é `1`: o filtro está no listener. **Um gateway vira "do
-Connectivity Link" ao receber uma policy**, e não por ser de outro tipo -- um
-Gateway da mesma classe que nunca recebeu policy responderia `0`.
-endif::[]
-ifndef::foco_rhcl[]
-A resposta é `1`: o filtro está no listener. Num Gateway da mesma classe que
-nunca recebeu policy -- o `bookinfo-gateway` das amostras do Istio, onde o
-ambiente as tem -- a mesma pergunta responde `0`:
-
-[source,bash]
-----
-oc exec -n bookinfo deploy/bookinfo-gateway-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
-----
-
-Este segundo comando é para ler, não para rodar: as amostras ficam fora do seu
-ambiente. **Um gateway vira "do Connectivity Link" ao receber uma policy**, e
-não por ser de outro tipo.
-endif::[]
-
-Três consequências práticas:
-
-* **O teto não atravessa gateways.** O `prod-web-deny-all` da parte
-  xref:m1-01-fechada.adoc[{p-fechada}] vale para as rotas anexadas ao `prod-web`, e
-  para mais nenhuma.
-ifndef::foco_rhcl[]
-  Foi por isso que as amostras do Istio subiram com gateway
-  próprio: uma rota delas pendurada no `prod-web` nasceria negada.
-endif::[]
-ifdef::foco_rhcl[]
-  O `echo-web` tem o deny-all dele, escrito à parte.
-endif::[]
-* **Cada gateway custa um pod de Envoy**, e um jeito de ser publicado -- aqui,
-  uma `Route` por hostname.
-* **As policies de plataforma se repetem por gateway:** `deny-all`, TLS, DNS e
-  telemetria. A `TelemetryPolicy`, nesta release, só aceita `Gateway` como
-  alvo -- não aceita rota.
-
-Separar vale quando o **público** é outro: parceiros que se identificam por
-certificado (o xref:extra-parceiro-certificado.adoc[Extra sobre isso] sobe um
-gateway próprio justamente para não mexer na borda de todo mundo), interno
-contra externo, ou para reduzir o raio de alcance de um erro -- trocar o
-certificado de um gateway afeta todas as APIs que estão atrás dele.
-
-Compartilhar vale quando o argumento é de plataforma: um teto escrito uma vez,
-herdado por todas as rotas, com as exceções declaradas em cada uma.
-
-== Connectivity Link e Service Mesh: onde um termina e o outro começa
-
-Os dois produtos escrevem no mesmo Envoy, e por isso a pergunta "há
-sobreposição?" é justa. Há -- em três lugares, e só neles:
-
-[cols="2,2,2",options="header"]
-|===
-| a pergunta | Service Mesh | Connectivity Link
-
-| para qual **versão** vai a chamada
-| `VirtualService`, `DestinationRule`
-| —
-
-| **quem fala com quem** dentro do cluster
-| `AuthorizationPolicy` sobre identidade mTLS
-| —
-
-| o canal entre os serviços é cifrado
-| `PeerAuthentication`
-| —
-
-| **quem entra** pela borda
-| `AuthorizationPolicy`, `RequestAuthentication` (JWT)
-| `AuthPolicy`: chave de API, OIDC, e a identidade do **consumidor**
-  ◆ *sobreposição*
-
-| **quanto** cada um pode chamar
-| limite local do Envoy, sem API de produto
-| `RateLimitPolicy` e `PlanPolicy`, por plano comercial ◆ *sobreposição*
-
-| que **métrica** o tráfego gera
-| `Telemetry` do Istio
-| `TelemetryPolicy`, com a dimensão de parceiro ◆ *sobreposição*
-
-| o **certificado** da borda
-| o listener aponta para um Secret
-| `TLSPolicy` cria e renova esse Secret (parte xref:m1-08-certificado.adoc[{p-certificado}])
-
-| o **nome DNS** da borda
-| —
-| `DNSPolicy`
-
-| **plano comercial, chave, portal do consumidor**
-| —
-| `APIProduct`, `APIKey`, e o portal do desenvolvedor
-|===
-
-Nos três pontos marcados, a regra prática é simples: **decida em um lugar
-só**. Uma `AuthorizationPolicy` do Istio e uma `AuthPolicy` do Connectivity
-Link sobre a mesma rota funcionam ao mesmo tempo, e uma recusa passa a ter
-duas origens possíveis -- exatamente o que a parte
-xref:m3-03-negado.adoc[{p-negado}] ensina a separar.
-
-A divisão que este workshop usa: **a borda é do Connectivity Link, o
-leste-oeste é do Service Mesh.**
-
-=== Preciso do Service Mesh instalado para ter o Gateway do Connectivity Link?
-
-ifndef::foco_rhcl[]
-**Neste cluster, sim. No produto, não.** O Connectivity Link **não implementa
-Gateway API**: ele não traz `GatewayClass` nenhuma, e precisa de um provedor
-que a implemente. Aqui o provedor é o Service Mesh -- a classe em uso tem como
-controlador `istio.io/gateway-controller`. Quem materializa o pod do gateway é
-o Service Mesh; o Connectivity Link **anexa políticas** a ele.
-endif::[]
-ifdef::foco_rhcl[]
-**Não.** O Connectivity Link **não implementa Gateway API**: precisa de um
-provedor que a implemente, e anexa políticas ao Gateway que esse provedor
-materializa. Aqui o provedor é o Gateway API do próprio OpenShift. A
-xref:leitura-instalacao.adoc[leitura seguinte] mostra isso no cluster, e diz o
-que se perde sem o Service Mesh.
-endif::[]
-
-Dá para ver isso no nome dos próprios controladores do operador, no log:
-
-[source,text]
-----
-kuadrant-operator.IstioExtensionReconciler.buildWasmConfigs
-kuadrant-operator.AuthorinoIstioIntegrationReconciler
-----
-
-E o veículo das policies é um objeto do Istio, o `EnvoyFilter`. Sem um
-provedor de Gateway API no cluster, as policies do Connectivity Link ficam
-sem onde se anexar.
-
-ifndef::foco_rhcl[]
-NOTE: O contrário não é verdade: o Service Mesh roda sozinho, sem o
-Connectivity Link -- o `bookinfo-gateway` acima é a prova. E a combinação
-suportada de versões dos dois produtos sai da
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação
-do Connectivity Link^], não daqui.
-endif::[]
-
-=== E o Gateway nativo do OpenShift, o `openshift-default`?
-
-É o outro provedor possível, e dispensa instalar o Service Mesh. A partir do
-OpenShift 4.19 a plataforma traz a própria implementação de Gateway API, e o
-Connectivity Link 1.4 é suportado sobre ela.
-
-[cols="1,2",options="header"]
-|===
-| | provedor nativo (`openshift-default`)
-
-| `GatewayClass`
-| `openshift-default`, com controlador `openshift.io/gateway-controller/v1`
-
-| onde mora o `Gateway`
-| em `openshift-ingress`, junto com os dos outros times -- não num namespace
-  de cada dono, como aqui
-
-| como é publicado
-| o `Service` nasce do tipo `LoadBalancer`. Num cluster sem balanceador de
-  nuvem, isso pede o MetalLB. `ClusterIP` com uma `Route` na frente, que é o
-  desenho deste workshop, não é o caminho suportado ali
-
-| convivência com o Service Mesh 2.x
-| não há. Com uma assinatura do Service Mesh 2.x ativa, a instalação do
-  provedor **falha** quando a `GatewayClass` é criada, e `Gateway` e
-  `HTTPRoute` ficam sem efeito. No 4.19 a falha é silenciosa; do 4.20 em
-  diante o operador `ingress` aparece `Degraded`
-
-| convivência com o Service Mesh 3
-| os dois sobem lado a lado, cada um com o seu `istiod` e a **sua autoridade
-  certificadora**. Um Gateway nativo não fala mTLS com uma carga do
-  Service Mesh enquanto os dois não confiarem na mesma raiz
-|===
-
-ifdef::foco_rhcl[]
-[IMPORTANT]
-====
-**Este ambiente usa o provedor nativo, com duas escolhas de laboratório.** O
-Gateway de cada participante mora no namespace dele, e não em
-`openshift-ingress`; e é publicado por `ClusterIP` com uma `Route` na frente,
-porque o cluster da turma não tem balanceador. As duas funcionam -- é o que
-você usa nesta sessão -- e as duas estão **fora** do desenho que a tabela acima
-descreve como suportado. Num projeto real, siga o da documentação.
-====
-
-endif::[]
-O que **não muda** de um provedor para o outro são as policies: `AuthPolicy`,
-`RateLimitPolicy`, `TLSPolicy` e as demais são do Connectivity Link e se
-escrevem do mesmo jeito. Tudo o que o {m1} mostra vale nos dois.
-
-O que muda é a topologia, e com ela quem pode o quê. A policy só aponta para
-um recurso do **próprio namespace**: com todos os Gateways em
-`openshift-ingress`, as policies de Gateway de todos os times moram juntas, e
-a separação entre quem as edita passa a ser por RBAC, não por namespace.
-
-ifndef::foco_rhcl[]
-NOTE: Este cluster não tem a classe `openshift-default` -- confira com
-`oc get gatewayclass`. A escolha pelo Service Mesh 3 como provedor foi por
-causa do {m2}, que depende dele. Quem precisa só da borda pode ficar com
-o provedor nativo.
-endif::[]
-ifdef::foco_rhcl[]
-NOTE: Este cluster usa o provedor nativo -- confira com `oc get gatewayclass`:
-o controller das duas classes é `openshift.io/gateway-controller/v1`. A
-classe se chama `istio` por escolha deste ambiente, para os manifests valerem
-iguais nas duas formas de instalar.
-endif::[]
-
 == O que isso prova
 
 A diferença que sustenta este workshop não é "um objeto mais novo". É a
@@ -427,3 +161,17 @@ diz o que vale em cada um.
 
 https://gateway-api.sigs.k8s.io/[Gateway API^]
 · https://docs.redhat.com/en/documentation/openshift_container_platform/4.22/html/ingress_and_load_balancing/configuring-gateway-api[Gateway API no OpenShift^]
+
+.Para ir além
+[%collapsible]
+====
+* **Um gateway, ou vários?** -- a leitura
+  xref:leitura-multitenancy.adoc[{p-multitenancy}multi-tenancy] diz quando
+  separar e quando compartilhar, e o que uma policy de Gateway custa por
+  gateway.
+* **Connectivity Link e Service Mesh escrevem no mesmo Envoy** -- onde um
+  termina e o outro começa está na leitura
+  xref:papel-ossm.adoc[{p-papel-ossm}o papel do Service Mesh].
+* **O provedor de Gateway API** -- qual este ambiente usa, e o que muda com o
+  outro, está na xref:leitura-instalacao.adoc[Fase 1], seção 2.
+====

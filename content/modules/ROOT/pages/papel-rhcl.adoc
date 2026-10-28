@@ -65,6 +65,6 @@ chega ao primeiro serviço -- e a partir dali é o assunto desta sessão.
 == Onde praticar
 
 Na sessão de Connectivity Link, ou na completa. A
-xref:sessoes.adoc[página das sessões] diz o que cada uma cobre, e a
+xref:fronteiras.adoc[página das sessões] diz o que cada uma cobre, e a
 xref:fronteiras.adoc[página das três fronteiras] mostra os três produtos numa
 requisição só.

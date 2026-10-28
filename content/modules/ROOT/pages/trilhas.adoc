@@ -57,11 +57,11 @@ completo da sessão fica em link:/[Todas as páginas,window=_top].
 | link:/basico/[abrir,window=_top]
 | **Intermediário** · ~2h45 | quem vai operar a esteira e a borda no dia a dia
 | link:/intermediario/[abrir,window=_top]
-| **Avançado** · ~6h30 | a sessão inteira, com os Extras
+| **Avançado** · ~6h23 | a sessão inteira, com os Extras
 | link:/avancado/[abrir,window=_top]
-| **Infra** · ~2h11 | quem opera a plataforma: instalação, borda, certificado, DNS, alerta
+| **Infra** · ~2h06 | quem opera a plataforma: instalação, borda, certificado, DNS, alerta
 | link:/infra/[abrir,window=_top]
-| **Desenvolvedor** · ~3h17 | quem publica a API: rota, policy, planos, versões, esteira
+| **Desenvolvedor** · ~3h16 | quem publica a API: rota, policy, planos, versões, esteira
 | link:/desenvolvedor/[abrir,window=_top]
 | **Operações** · ~1h38 | quem responde pela borda: número, diagnóstico, alerta, auditoria
 | link:/operacoes/[abrir,window=_top]
@@ -94,17 +94,17 @@ endif::[]
 
 | <<avancado,**Avançado**>>
 | quem quer a sessão inteira, com a Fase 7 e os Extras
-| ~6h30
+| ~6h23
 
 | <<infra,**Infra**>>
 | o time de plataforma: como ela foi instalada, a borda inteira, o DNS, a
   queda e o alerta, multi-tenancy e Service Mesh
-| ~2h11
+| ~2h06
 
 | <<desenvolvedor,**Desenvolvedor**>>
 | o time da aplicação: publicar a API, dar identidade ao consumidor, o produto
   inteiro, a esteira, gRPC e Postman
-| ~3h17
+| ~3h16
 
 | <<operacoes,**Operações**>>
 | quem responde pela borda no dia a dia: o número de negócio, a Fase 6 inteira,
@@ -118,7 +118,7 @@ endif::[]
 **Para quem:** quem tem meia hora e quer sair dizendo o que o Connectivity Link
 faz, com a prova na tela.
 
-. xref:index.adoc[Sobre este workshop] · ~4 min*
+. xref:index.adoc[Sobre este workshop] · ~3 min*
 . xref:acessos.adoc[Seus acessos] · ~3 min*
 . xref:00-preparacao.adoc[Preparação] · 5 min
 . xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
@@ -127,7 +127,7 @@ faz, com a prova na tela.
 . xref:m1-05-negocio.adoc[{p-negocio} Isso vira número] · 4 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 
-**Soma:** ~38 min.
+**Soma:** ~37 min.
 
 **O que fica de fora, e por quê:** a Fase 1 (a plataforma já está no ar e o
 Mapa resume os tipos de policy), a publicação de uma API (a {p-exposta} -- aqui
@@ -198,19 +198,16 @@ são o maior bloco desta trilha: quem estiver sem tempo pode pular para a
 {p-fonte} e fica dentro de ~2h15.
 
 [[avancado]]
-== Avançado -- ~6h30
+== Avançado -- ~6h23
 
 **Para quem:** quem quer a sessão inteira, na ordem em que o menu a conta: da
 plataforma instalada ao que vem depois, com os Extras.
 
 Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 
-. xref:index.adoc[Sobre este workshop] · ~4 min*
-. xref:sessoes.adoc[As sessões deste workshop] · ~3 min*
-. xref:fronteiras.adoc[As três fronteiras] · ~5 min*
-. xref:historia.adoc[A história por trás deste workshop] · ~5 min*
-. xref:aplicacao.adoc[A aplicação e as APIs] · ~6 min*
-. xref:leitura-ingresso.adoc[De onde o projeto parte: Route, Ingress e Gateway API] · ~10 min
+. xref:index.adoc[Sobre este workshop] · ~3 min*
+. xref:historia.adoc[A história e a aplicação] · ~6 min*
+. xref:fronteiras.adoc[As três fronteiras] · ~4 min*
 . xref:acessos.adoc[Seus acessos] · ~3 min*
 . xref:00-preparacao.adoc[Preparação] · 5 min
 . xref:leitura-instalacao.adoc[Como a plataforma foi instalada] · ~20 min
@@ -220,6 +217,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:m1-03-precedencia.adoc[{p-precedencia} Precedência de policies] · 4 min
 . xref:m1-04-papeis.adoc[{p-papeis} Quem pode o quê] · 7 min
 . xref:m1-08-certificado.adoc[{p-certificado} O certificado tem dono?] · 10 min
+. xref:leitura-ingresso.adoc[Leitura: de onde o projeto parte -- Route, Ingress e Gateway API] · ~10 min
 . xref:m1-06-exposta.adoc[{p-exposta} De aberta a governada] · 10 min
 . xref:extra-dns.adoc[{p-dns}O nome também é policy (DNS)] · ~8 min
 . xref:m1-07-identidade.adoc[{p-identidade} Chave ou identidade] · 8 min
@@ -259,7 +257,7 @@ Siga o menu do início ao fim. A lista abaixo é o menu com os tempos:
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 . xref:referencias.adoc[Materiais de referência] · ~3 min*
 
-**Soma:** ~391 min (6h31), sem contar as três páginas de ambiente
+**Soma:** ~383 min (6h23), sem contar as três páginas de ambiente
 (xref:ambiente-conferir.adoc[Conferir], xref:se-algo-nao-responder.adoc[Se algo
 não responder], xref:ambiente-recomecar.adoc[Recomeçar]), que se consultam
 quando precisar.
@@ -270,15 +268,14 @@ leitura e opcionais e podem ficar para depois que o ambiente for devolvido --
 só os Extras precisam do cluster.
 
 [[infra]]
-== Infra -- ~2h11
+== Infra -- ~2h06
 
 **Para quem:** o time de plataforma -- quem instala, quem é dono do Gateway, do
 certificado e do nome, e quem responde quando um componente cai.
 
-. xref:index.adoc[Sobre este workshop] · ~4 min*
-. xref:sessoes.adoc[As sessões deste workshop] · ~3 min*
-. xref:fronteiras.adoc[As três fronteiras] · ~5 min*
-. xref:aplicacao.adoc[A aplicação e as APIs] · ~6 min*
+. xref:index.adoc[Sobre este workshop] · ~3 min*
+. xref:historia.adoc[A história e a aplicação] · ~6 min*
+. xref:fronteiras.adoc[As três fronteiras] · ~4 min*
 . xref:acessos.adoc[Seus acessos] · ~3 min*
 . xref:00-preparacao.adoc[Preparação] · 5 min
 . xref:leitura-instalacao.adoc[Como a plataforma foi instalada] · ~20 min
@@ -297,7 +294,7 @@ certificado e do nome, e quem responde quando um componente cai.
 . xref:papel-ossm.adoc[{p-papel-ossm}O papel do Service Mesh] · ~5 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 
-**Soma:** ~131 min (2h11).
+**Soma:** ~126 min (2h06).
 
 **O que fica de fora, e por quê:** a publicação da API, a identidade e a Fase 4
 inteira -- são do time da aplicação e do produto, e a plataforma já as deixa
@@ -309,14 +306,14 @@ laboratório de DNS sobe o próprio projeto e a própria rota --, e o da
 próprias rajadas. Nenhuma das duas depende de estado deixado por outra parte.
 
 [[desenvolvedor]]
-== Desenvolvedor -- ~3h17
+== Desenvolvedor -- ~3h16
 
 **Para quem:** o time da aplicação -- quem publica a API, escolhe como o
 consumidor se identifica, transforma a API em produto e propõe a mudança pela
 esteira.
 
-. xref:index.adoc[Sobre este workshop] · ~4 min*
-. xref:aplicacao.adoc[A aplicação e as APIs] · ~6 min*
+. xref:index.adoc[Sobre este workshop] · ~3 min*
+. xref:historia.adoc[A história e a aplicação] · ~6 min*
 . xref:acessos.adoc[Seus acessos] · ~3 min*
 . xref:00-preparacao.adoc[Preparação] · 5 min
 . xref:mapa-policies.adoc[O Connectivity Link em uma página] · ~5 min
@@ -338,7 +335,7 @@ esteira.
 . xref:esteira-bateria.adoc[A bateria da borda] · ~10 min
 . xref:99-encerramento.adoc[Encerramento] · ~5 min*
 
-**Soma:** ~197 min (3h17).
+**Soma:** ~196 min (3h16).
 
 **O que fica de fora, e por quê:** a Fase 1 (a plataforma é do outro time; o
 Mapa dá o vocabulário), os papéis, o certificado e o DNS (trilha Infra), a Fase

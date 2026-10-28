@@ -105,6 +105,112 @@ plataforma prende ao Gateway e que vale onde a rota não declarou a sua.
 O Limitador conta as requisições por namespace e por policy. O limite de um
 time não consome o do outro, e zerar os contadores de um não mexe nos demais.
 
+== Um gateway, ou vários?
+
+ifndef::foco_rhcl[]
+O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
+e um Service de Envoy próprios. Neste cluster há três, e eles não são iguais:
+endif::[]
+ifdef::foco_rhcl[]
+O `Gateway` é **um objeto por porta de entrada**, e cada um vira um Deployment
+e um Service de Envoy próprios. No seu ambiente há dois, no mesmo projeto:
+endif::[]
+
+[cols="2,2,2",options="header"]
+|===
+| Gateway | namespace | governado pelo Connectivity Link?
+
+| `prod-web`
+| `ingress-gateway`
+| **sim** -- é a borda do workshop
+
+| `echo-web`
+| `ingress-gateway`
+| **sim** -- é a borda da API com OIDC da parte {p-identidade}
+
+ifndef::foco_rhcl[]
+| `bookinfo-gateway`
+| `bookinfo`
+| **não** -- Service Mesh puro, como o upstream do Istio o escreveu
+endif::[]
+|===
+
+ifndef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+oc get gatewayclass
+oc get gateway -A
+oc get envoyfilter -A | grep kuadrant
+----
+
+Os três são da mesma `GatewayClass istio`. Mas os `EnvoyFilter` que o
+Connectivity Link gera existem **só** no namespace dos dois primeiros -- e é
+neles que mora o wasm que chama o Authorino e o Limitador:
+endif::[]
+ifdef::foco_rhcl[]
+[source,bash,role="execute"]
+----
+oc get gateway -n ingress-gateway
+oc get envoyfilter -n ingress-gateway
+----
+
+Os dois são da mesma `GatewayClass istio`, e cada um tem os seus
+`EnvoyFilter` gerados pelo Connectivity Link: é neles que mora o wasm que
+chama o Authorino e o Limitador.
+endif::[]
+
+[source,bash,role="execute"]
+----
+oc exec -n ingress-gateway deploy/prod-web-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
+----
+
+ifdef::foco_rhcl[]
+A resposta é `1`: o filtro está no listener. **Um gateway vira "do
+Connectivity Link" ao receber uma policy**, e não por ser de outro tipo -- um
+Gateway da mesma classe que nunca recebeu policy responderia `0`.
+endif::[]
+ifndef::foco_rhcl[]
+A resposta é `1`: o filtro está no listener. Num Gateway da mesma classe que
+nunca recebeu policy -- o `bookinfo-gateway` das amostras do Istio, onde o
+ambiente as tem -- a mesma pergunta responde `0`:
+
+[source,bash]
+----
+oc exec -n bookinfo deploy/bookinfo-gateway-istio -c istio-proxy --   pilot-agent request GET 'config_dump?resource=dynamic_listeners' | grep -c kuadrant_wasm_shim
+----
+
+Este segundo comando é para ler, não para rodar: as amostras ficam fora do seu
+ambiente. **Um gateway vira "do Connectivity Link" ao receber uma policy**, e
+não por ser de outro tipo.
+endif::[]
+
+Três consequências práticas:
+
+* **O teto não atravessa gateways.** O `prod-web-deny-all` da parte
+  xref:m1-01-fechada.adoc[{p-fechada}] vale para as rotas anexadas ao `prod-web`, e
+  para mais nenhuma.
+ifndef::foco_rhcl[]
+  Foi por isso que as amostras do Istio subiram com gateway
+  próprio: uma rota delas pendurada no `prod-web` nasceria negada.
+endif::[]
+ifdef::foco_rhcl[]
+  O `echo-web` tem o deny-all dele, escrito à parte.
+endif::[]
+* **Cada gateway custa um pod de Envoy**, e um jeito de ser publicado -- aqui,
+  uma `Route` por hostname.
+* **As policies de plataforma se repetem por gateway:** `deny-all`, TLS, DNS e
+  telemetria. A `TelemetryPolicy`, nesta release, só aceita `Gateway` como
+  alvo -- não aceita rota.
+
+Separar vale quando o **público** é outro: parceiros que se identificam por
+certificado (o xref:extra-parceiro-certificado.adoc[Extra sobre isso] sobe um
+gateway próprio justamente para não mexer na borda de todo mundo), interno
+contra externo, ou para reduzir o raio de alcance de um erro -- trocar o
+certificado de um gateway afeta todas as APIs que estão atrás dele.
+
+Compartilhar vale quando o argumento é de plataforma: um teto escrito uma vez,
+herdado por todas as rotas, com as exceções declaradas em cada uma.
+
 == O que fica para o OpenShift
 
 O produto governa a borda. Três coisas ele deixa para a plataforma por baixo:

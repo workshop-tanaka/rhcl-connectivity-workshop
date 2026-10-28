@@ -1,20 +1,15 @@
 include::partial$numeros.adoc[]
 = A solução de conectividade: as três fronteiras
 :navtitle: As três fronteiras
+:page-aliases: sessoes.adoc
 :page-trilhas: Avançado · Infra
 
 include::partial$trilha.adoc[]
 
 Uma aplicação distribuída tem três fronteiras, e cada uma é governada por um
-produto diferente. Este workshop tem uma sessão para cada produto e uma que
-percorre os três*; em qualquer delas, esta página é o mapa.
-
-[.small]#* Em preparação, como a sessão de Service Mesh -- ver
-xref:sessoes.adoc[As sessões deste workshop].#
-
-Confundir as três é a origem de boa parte das dúvidas que aparecem depois:
-pedir ao produto de uma fronteira o que é de outra. Vale ler antes de começar,
-e voltar aqui quando a pergunta for *"e isso, quem resolve?"*.
+produto diferente. Confundir as três é a origem de boa parte das dúvidas que
+aparecem depois: pedir ao produto de uma fronteira o que é de outra. Esta
+página é o mapa; volte aqui quando a pergunta for *"e isso, quem resolve?"*.
 
 include::partial$diagrama.adoc[]
 
@@ -32,7 +27,7 @@ flowchart LR
     T --> H[hotels]
     T --> C[cars]
   end
-  subgraph SI["ENTRE SITES · Service Interconnect (em breve)"]
+  subgraph SI["ENTRE SITES · Service Interconnect"]
     DB[("banco<br/>quando fica fora do cluster")]
   end
   P -->|HTTPS| G
@@ -42,91 +37,74 @@ flowchart LR
   C -.-> DB
 ....
 
-[cols="1,2,2",options="header"]
+[cols="1,2,2,2",options="header"]
 |===
-| fronteira | quem atravessa | quem governa
+| fronteira | quem atravessa | quem governa | o que ele **não** sabe
 
 | **norte-sul**
 | o tráfego que vem de **fora** para a aplicação: parceiros, clientes, outros
   sistemas
 | **Red Hat Connectivity Link**
+  (https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[documentação^]):
+  autenticação, limite por plano comercial, telemetria por consumidor
+| o que acontece depois que a chamada entrou
 
 | **leste-oeste**
 | o tráfego **entre os serviços** da aplicação, dentro do cluster
 | **Red Hat OpenShift Service Mesh**
+  (https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[documentação^]):
+  identidade por serviço (mTLS), autorização entre eles, divisão de tráfego
+  entre versões
+| quem é o cliente comercial do outro lado da borda -- para ele, tudo que vem
+  do Gateway é "o Gateway"
 
 | **entre sites**
 | o que a aplicação precisa alcançar e que **não roda no cluster** -- um banco
   em RHEL, um serviço em outra nuvem
 | **Red Hat Service Interconnect**
+  (https://docs.redhat.com/en/documentation/red_hat_service_interconnect[documentação^]):
+  um túnel mútuo entre sites, sem VPN e sem expor o recurso
+| política: ele resolve conectividade, não governança
 |===
 
-Neste ambiente o banco roda **dentro** do cluster: a terceira fronteira ainda
-não está montada aqui. Ela aparece no desenho porque é parte do raciocínio, e é
-ifndef::foco_rhcl[]
-o assunto do xref:m4-00-intro.adoc[{m4}], em preparação.
-endif::[]
 ifdef::foco_rhcl[]
-o assunto da xref:papel-rhsi.adoc[leitura sobre o papel do Service
-Interconnect].
+[IMPORTANT]
+====
+**Esta é a sessão de Red Hat Connectivity Link**, e aqui ele roda sozinho, sem
+Service Mesh por baixo -- a xref:leitura-instalacao.adoc[Fase 1] mostra como.
+O percurso é o da borda, da plataforma instalada à operação. Os outros dois
+produtos não são praticados; a Fase 7 traz uma leitura curta sobre cada um
+(xref:papel-ossm.adoc[{p-papel-ossm}o Service Mesh],
+xref:papel-rhsi.adoc[{p-papel-rhsi}o Service Interconnect]) dizendo o que ele
+resolve e em que ponto desta mesma aplicação entraria. Neste ambiente o banco
+roda dentro do cluster: a terceira fronteira está no desenho porque é parte do
+raciocínio, não porque esteja montada.
+====
 endif::[]
-
-A xref:sessoes.adoc[página das sessões] diz qual destas fronteiras o seu
-ambiente pratica, e onde estão as leituras sobre as outras.
-
-== Por que a divisão importa na prática
-
-Cada produto responde uma pergunta que os outros dois **não** respondem.
-
-=== Connectivity Link: quem entra, e em quais condições
-
-Autenticação, limite por plano comercial, telemetria por consumidor. Ele opera
-na porta de entrada -- e para ele todo chamador é externo, identificado por uma
-credencial.
-
-O que ele **não** sabe: o que acontece depois que a chamada entrou. Uma vez
-passada a borda, ele não tem mais opinião.
-
-https://docs.redhat.com/en/documentation/red_hat_connectivity_link/1.4[Documentação^]
-ifndef::foco_rhcl[]
-· Módulo xref:m1-00-intro.adoc[1] inteiro, e o diagnóstico do
-xref:m3-00-intro.adoc[{m3}]
+ifdef::foco_ossm[]
+[IMPORTANT]
+====
+**Esta é a sessão de Red Hat OpenShift Service Mesh.** O percurso é o do
+tráfego entre os serviços: identidade, autorização, promoção de versão e
+rastreio.
+====
 endif::[]
-ifdef::foco_rhcl[]
-· nesta sessão: da xref:leitura-instalacao.adoc[fase 1] à
-xref:m3-00-intro.adoc[fase 6]
+ifdef::foco_rhsi[]
+[IMPORTANT]
+====
+**Esta é a sessão de Red Hat Service Interconnect.** O módulo prático ainda
+não existe neste ambiente; o que há aqui é a proposta dele e as leituras que o
+situam.
+====
 endif::[]
-
-=== Service Mesh: quem fala com quem, entre os serviços
-
-Identidade por serviço (mTLS), autorização entre eles, divisão de tráfego entre
-versões, e a instrumentação que produz traces sem tocar no código.
-
-O que ele **não** sabe: quem é o cliente comercial do outro lado da borda. Para
-o Service Mesh, tudo que vem do Gateway é *"o Gateway"*.
-
-https://docs.redhat.com/en/documentation/red_hat_openshift_service_mesh/[Documentação^]
-ifndef::foco_rhcl[]
-· Módulo xref:m2-00-intro.adoc[2]
-endif::[]
-ifdef::foco_rhcl[]
-· fora desta sessão: xref:papel-ossm.adoc[o papel do Service Mesh]
-endif::[]
-
-=== Service Interconnect: como alcançar o que ficou fora
-
-Um túnel mútuo entre sites, sem VPN, sem abrir porta de entrada e sem expor o
-recurso na internet. Quem fica de fora continua de fora -- e mesmo assim é
-alcançável.
-
-O que ele **não** faz: política. Ele resolve conectividade, não governança.
-
-https://docs.redhat.com/en/documentation/red_hat_service_interconnect[Documentação^]
-ifndef::foco_rhcl[]
-· Módulo xref:m4-00-intro.adoc[4], em breve
-endif::[]
-ifdef::foco_rhcl[]
-· fora desta sessão: xref:papel-rhsi.adoc[o papel do Service Interconnect]
+ifndef::foco_rhcl,foco_ossm,foco_rhsi[]
+[IMPORTANT]
+====
+**Esta é a sessão completa.** Os módulos dos três produtos estão no menu, na
+ordem em que uma requisição os atravessa. Neste ambiente o banco roda dentro
+do cluster: a terceira fronteira é o assunto do xref:m4-00-intro.adoc[{m4}],
+em preparação.
+====
 endif::[]
 
 == As três juntas, numa chamada só
@@ -143,3 +121,39 @@ Vale guardar esta sequência, porque ela é o desenho inteiro em quatro linhas:
 
 Uma requisição, três fronteiras, três produtos. E nenhum deles exigiu mudança
 na aplicação.
+
+.Mais detalhes: as quatro sessões deste workshop
+[%collapsible]
+====
+O workshop existe em quatro sessões. Três são dedicadas a um produto, para
+quem veio por ele; a quarta percorre os três juntos. O ambiente que você
+recebeu foi montado para uma delas, e o menu ao lado mostra só o que pertence
+a ela. A primeira seção do menu é a mesma nas quatro, de propósito: cada sessão
+fecha sozinha.
+
+[cols="2,3,3",options="header"]
+|===
+| sessão | a pergunta que ela responde | o que você pratica
+
+| **Connectivity Link**
+| quem pode chamar a minha API, quanto, e como eu provo isso?
+| um projeto de borda do começo ao fim, em fases: a plataforma, a borda, a
+  primeira API, a API como produto, a esteira e a operação
+
+| **Service Mesh**
+| depois que a chamada entrou, quem pode falar com quem lá dentro?
+| o tráfego entre os serviços, e o rastreio de uma requisição salto a salto
+  (em preparação)
+
+| **Service Interconnect**
+| e o que a aplicação precisa e que não roda neste cluster?
+| em preparação
+
+| **Completa**
+| como as três respostas se encaixam numa requisição só?
+| tudo acima, mais as partes que só fazem sentido com dois produtos lado a
+  lado (em preparação)
+|===
+
+A que está pronta para turma é a de Connectivity Link.
+====

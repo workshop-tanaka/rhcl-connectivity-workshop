@@ -2,13 +2,8 @@
 // o bloco comum e as secoes finais ficam fora.
 .A solução de conectividade
 * xref:index.adoc[Sobre este workshop]
-* xref:sessoes.adoc[As sessões deste workshop]
+* xref:historia.adoc[A história e a aplicação]
 * xref:fronteiras.adoc[As três fronteiras]
-* xref:historia.adoc[A história por trás deste workshop]
-* xref:aplicacao.adoc[A aplicação e as APIs]
-ifdef::foco_rhcl[]
-* xref:leitura-ingresso.adoc[De onde o projeto parte: Route, Ingress e Gateway API]
-endif::[]
 * xref:acessos.adoc[Seus acessos]
 * xref:00-preparacao.adoc[Preparação]
 ifdef::trilhas[]
@@ -140,6 +135,7 @@ ifdef::trilha_avancado[]
 * xref:m1-08-certificado.adoc[2.4 O certificado tem dono?]
 
 .Fase 3 — A primeira API
+* xref:leitura-ingresso.adoc[Leitura: de onde o projeto parte]
 * xref:m1-06-exposta.adoc[3.1 De aberta a governada]
 * xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
 * xref:m1-07-identidade.adoc[3.3 Chave ou identidade]
@@ -317,6 +313,7 @@ ifdef::foco_rhcl[]
 * xref:m1-08-certificado.adoc[2.4 O certificado tem dono?]
 
 .Fase 3 — A primeira API
+* xref:leitura-ingresso.adoc[Leitura: de onde o projeto parte]
 * xref:m1-06-exposta.adoc[3.1 De aberta a governada]
 * xref:extra-dns.adoc[3.2 O nome também é policy (DNS)]
 * xref:m1-07-identidade.adoc[3.3 Chave ou identidade]

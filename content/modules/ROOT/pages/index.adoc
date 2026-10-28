@@ -20,8 +20,9 @@ entrada.
 endif::[]
 ifdef::foco_rhcl[]
 É essa camada que esta sessão constrói, na ordem em que um projeto real a
-constrói: a plataforma, a borda, a primeira API, a API como produto, e a
-operação.
+constrói: a plataforma, a borda, a primeira API, a API como produto, a esteira
+e a operação. O binário da aplicação é o mesmo do primeiro ao último
+exercício: a xref:historia.adoc[história] diz por que isso é a tese inteira.
 endif::[]
 
 [NOTE]
@@ -85,7 +86,7 @@ fazer na ordem, ou escolher pelo que interessa ao seu dia.
 |===
 
 A xref:fronteiras.adoc[página das três fronteiras] apresenta os três produtos
-e a fronteira de cada um, e a xref:sessoes.adoc[página das sessões] diz qual
+e a fronteira de cada um, e a xref:fronteiras.adoc[página das sessões] diz qual
 deles o seu ambiente pratica: o workshop existe em sessões dedicadas a um
 produto e numa sessão completa, e o menu mostra só o que pertence à sua.
 
@@ -191,17 +192,8 @@ produz a sensação de que algo foi pulado.
 As figuras do guia mostram o caminho da console; quem está no terminal pode
 usá-las só para conferir o que a tela mostraria naquele ponto.
 
-== O ambiente
-
-Este cluster foi criado do zero para você. Tudo que o conteúdo cita -- hosts,
-chaves, endereços -- foi lido do cluster no momento em que ele nasceu, nunca
-copiado de um arquivo.
-
-Os seus endereços e as suas chaves estão em xref:acessos.adoc[Seus acessos].
-
-include::partial$aviso-versoes.adoc[]
-
 '''
 
+Os seus endereços e as suas chaves estão em xref:acessos.adoc[Seus acessos].
 Comece pela xref:00-preparacao.adoc[Preparação].
 

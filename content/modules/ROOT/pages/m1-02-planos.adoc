@@ -201,6 +201,28 @@ Se todos continuarem respondendo, espere alguns segundos e insista no Azul: a
 janela do limite é curta, e quem vai devagar não a estoura.
 ====
 
+.Mais detalhes: onde a chave do parceiro fica, e por que isso importa
+[%collapsible]
+====
+O portal é Angular com renderização no servidor. O navegador chama
+`/api/getcities` no **próprio servidor Node do portal**, e é esse servidor que
+chama a API de viagens acrescentando a chave.
+
+[source,text]
+----
+navegador  ->  servidor do portal  ->  API de viagens
+                    (a chave entra aqui)
+----
+
+**A chave nunca chega ao navegador.** Ninguém a copia do DevTools. É como um
+portal de parceiro real se comporta, e é o motivo de a chave ser uma
+credencial de **sistema**, não de pessoa. E **não há CORS envolvido**: o
+navegador só conversa com a origem do próprio portal. Uma página que chamasse
+a API direto do navegador precisaria que a API autorizasse a origem -- e isso
+também se resolve na borda, com dois cabeçalhos no `HTTPRoute`, sem tocar na
+aplicação.
+====
+
 .Mais detalhes: por que o portal mostra uma mensagem em vez de quebrar
 [%collapsible]
 ====

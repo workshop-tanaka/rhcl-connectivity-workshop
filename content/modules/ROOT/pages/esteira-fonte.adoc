@@ -16,6 +16,29 @@ funcionando. É a `PlanPolicy` dela que a esteira passa a aplicar.
 Nesta parte você não muda nada. Só lê: o que a esteira aplica, de onde, e se o
 que está no cluster é o que está no Git.
 
+.Antes de ler: onde a configuração vive, até aqui
+[%collapsible]
+====
+Tudo o que as fases anteriores citaram está **no cluster**, e cada página
+trouxe o comando que o mostra -- `oc get planpolicy travels-plans -n
+travel-agency -o yaml` é o objeto em vigor, com o status que a plataforma
+escreveu nele. Os mesmos objetos existem como arquivo no terminal:
+
+[source,bash,role="execute"]
+----
+ls base/
+----
+
+`base/policies-*` é a camada de policies: AuthPolicy, PlanPolicy e
+TelemetryPolicy. Duas coisas não estão lá, de propósito: o `Gateway prod-web`
+é *gerado* no provisionamento, porque o hostname depende do cluster; e o que
+está em `platform-reference/` (os operators, o Gateway, o monitoramento, os
+portais) é a plataforma que o workshop *pressupõe*, não o que ele governa.
+
+Até aqui, arquivo e cluster eram duas cópias que ninguém conferia. É isso que
+esta fase muda: a partir de agora o arquivo, num repositório, é a fonte.
+====
+
 == Passo 1 -- o que a esteira está aplicando
 
 [source,bash,role="execute perfil-dev"]

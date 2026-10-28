@@ -22,6 +22,16 @@ O terminal **já abre dentro do repositório** -- e as duas abas, `Terminal` e
 `Terminal 2`, abrem no mesmo lugar. Tudo daqui em diante roda daí. Os scripts descobrem
 hostname, chaves e rotas do cluster na hora -- não há nada para configurar e
 nada para baixar.
+
+[source,bash,role="execute"]
+----
+oc whoami
+----
+
+A resposta é uma identidade de serviço (`system:serviceaccount:...`), e não o
+seu usuário. É de propósito: o terminal trabalha *por* você sem guardar a sua
+senha, e é essa identidade que tem as permissões que os comandos do workshop
+usam. Não a troque.
 endif::[]
 ifdef::perfis[]
 O terminal **já abre dentro do repositório**. Os scripts descobrem hostname,
@@ -112,6 +122,31 @@ Infra. Na `Terminal Dev`, `system:serviceaccount:travel-agency-...:dev` é o
 Dev. Agora clique no segundo bloco com a aba `Terminal Infra` aberta: é a
 pergunta acima que aparece.
 
+As duas são identidades de serviço, e não o seu usuário: o terminal trabalha
+*por* você sem guardar a sua senha, e são elas que têm as permissões que os
+comandos do workshop usam. Não as troque com `oc login` -- o seu usuário da
+console enxerga só o seu ambiente, e os scripts precisam ler também a
+plataforma.
+
+ifeval::["{senha_console}" != ""]
+.Quer ver a sua identidade pessoal no terminal?
+[%collapsible]
+====
+Entre num arquivo de sessão *à parte*, que não mexe na sessão do terminal:
+
+[source,bash,role="execute",subs="attributes+"]
+----
+KUBECONFIG=/tmp/eu.kubeconfig oc login -u {usuario_console} -p '{senha_console}' \
+  --server=https://kubernetes.default.svc \
+  --certificate-authority=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+KUBECONFIG=/tmp/eu.kubeconfig oc whoami
+----
+
+O segundo comando responde com o seu usuário. Repare no `KUBECONFIG=` na
+frente dos dois: sem ele, o `oc login` substituiria a sessão do terminal.
+====
+endif::[]
+
 Quando uma página pede ao perfil errado uma ação que não é dele, de
 propósito, o erro vem anunciado assim:
 
@@ -122,57 +157,6 @@ A recusa é o resultado. Leia a mensagem: ela diz **quem** tentou e **o que**
 foi negado.
 ====
 endif::[]
-
-=== Onde a configuração vive
-
-A configuração que as partes citam está **no cluster**, e cada página traz o
-comando que a mostra -- por exemplo:
-
-[source,bash,role="execute"]
-----
-oc get planpolicy travels-plans -n travel-agency -o yaml
-----
-
-O que você lê assim é o objeto em vigor, com o status que a plataforma
-escreveu nele. Os mesmos objetos existem como arquivo no terminal, para quem
-quiser ver como foram declarados:
-
-[source,bash,role="execute"]
-----
-ls base/
-----
-
-[cols="2,3",options="header"]
-|===
-| Diretório | O que tem
-
-| `base/policies-*`
-| a camada de policies -- AuthPolicy, PlanPolicy e TelemetryPolicy
-ifndef::foco_rhcl[]
-
-| `base/mesh/`
-| VirtualService, DestinationRule, PeerAuthentication e AuthorizationPolicy
-endif::[]
-|===
-
-[NOTE]
-====
-Duas coisas que você **não** vai encontrar como arquivo, e é de propósito:
-
-* **o `Gateway prod-web`** é *gerado* no provisionamento, porque o hostname
-  depende do cluster -- fixá-lo num manifesto quebraria o próximo ambiente.
-  Veja o objeto real com `oc get gateway prod-web -n ingress-gateway -o yaml`.
-ifndef::foco_rhcl[]
-* **o que está em `platform-reference/`** (Istio, Tempo, Grafana, o circuit breaker
-  da parte {p-resiliencia}) é a plataforma que a demo *pressupõe*, não o que ela governa.
-  Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
-endif::[]
-ifdef::foco_rhcl[]
-* **o que está em `platform-reference/`** (os operators, o Gateway, o
-  monitoramento, os portais) é a plataforma que o workshop *pressupõe*, não o
-  que ele governa. Está no terminal, em `/home/lab-user/rhcl-connectivity-demo`.
-endif::[]
-====
 
 ifdef::foco_rhcl[]
 == 2. Veja pronto, antes de começar
@@ -218,7 +202,5 @@ ifndef::foco_rhcl[]
 Pronto. Siga para o xref:m1-01-fechada.adoc[Módulo 1].
 endif::[]
 ifdef::foco_rhcl[]
-Pronto. Siga para a xref:leitura-instalacao.adoc[Fase 1]. Se pulou a
-xref:leitura-ingresso.adoc[leitura sobre Route, Ingress e Gateway API], que diz
-de onde este projeto parte, ela leva dez minutos e vale antes da Fase 3.
+Pronto. Siga para a xref:leitura-instalacao.adoc[Fase 1].
 endif::[]

@@ -24,7 +24,9 @@ contrato -- nesses casos a pergunta muda de "qual sistema é esse?" para **"quem
 
 São credenciais diferentes, e o Connectivity Link trata as duas. Este ambiente
 já tem as duas no ar, em **dois Gateways da mesma classe**, um por público: a
-API de viagens no `prod-web`, a `echo-api` no `echo-web`.
+API de viagens no `prod-web`, e uma segunda aplicação, bem menor, no
+`echo-web`: a `echo-api`, que devolve o que recebe e existe só para este
+contraste -- autenticação por **identidade** (OIDC) em vez de chave de API.
 
 == Terminal
 
