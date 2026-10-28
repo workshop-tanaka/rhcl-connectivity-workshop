@@ -218,9 +218,10 @@ navegador  ->  servidor do portal  ->  API de viagens
 portal de parceiro real se comporta, e é o motivo de a chave ser uma
 credencial de **sistema**, não de pessoa. E **não há CORS envolvido**: o
 navegador só conversa com a origem do próprio portal. Uma página que chamasse
-a API direto do navegador precisaria que a API autorizasse a origem -- e isso
-também se resolve na borda, com dois cabeçalhos no `HTTPRoute`, sem tocar na
-aplicação.
+a API direto do navegador precisaria que a borda autorizasse a origem e
+respondesse ao *preflight* `OPTIONS` -- que hoje, sem chave, leva `401` como
+qualquer chamada. Esta edição não cobre esse caso; é um dos itens do roteiro
+das próximas.
 ====
 
 .Mais detalhes: por que o portal mostra uma mensagem em vez de quebrar
