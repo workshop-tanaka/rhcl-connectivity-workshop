@@ -374,6 +374,14 @@ Saia (*Log out*), entre como `{usuario_console_plataforma}` e abra:
 | o recurso que liga o Connectivity Link: **um** por cluster, atendendo a
   todos os Gateways. Em *Conditions*, o estado do plano de controle inteiro
 
+| {openshift_console_url}/kuadrant/apikeys/all-namespaces[My API Keys^]
+| as chaves da turma inteira -- dono, produto e plano de cada uma -- com a
+  coluna *API Key* vazia: o valor mora no `Secret`, que este login não lê
+
+| {openshift_console_url}/kuadrant/apikey-approvals/all-namespaces[API Key Approvals^]
+| a fila de pedidos de chave de todos os participantes. Ver, ela vê;
+  aprovar, não -- o botão exige um verbo que o papel não tem
+
 | {openshift_console_url}/k8s/ns/kuadrant-system/secrets[Secrets^]
 | *Restricted access* -- nem a plataforma, por esta tela, lê as chaves
 |===
