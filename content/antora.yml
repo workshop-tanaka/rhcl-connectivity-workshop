@@ -1,5 +1,5 @@
 name: modules
-title: Connectivity Link Workshop - edição 1.1
+title: Connectivity Link Workshop - edição 1.2
 version: ~
 nav:
   - modules/ROOT/nav.adoc
@@ -57,4 +57,4 @@ asciidoc:
     # ambiente). Muda so no corte de uma edicao (tags v*), nao a cada onda;
     # a onda (workshop-v*) e o build, e fica em demo_ref. O CI confere que os
     # dois titulos terminam com ela.
-    edicao: "1.1"
+    edicao: "1.2"
