@@ -473,11 +473,11 @@ o `oc wait` esperou.
 ifdef::perfis[]
   O perfil Dev não lê este projeto: a tela nasce vazia para `{usuario_console_dev}`.
 endif::[]
-. A aba *All Policies* mostra `echo-exposta-authpolicy` e `echo-exposta-plans`
-  com o estado de cada uma -- mas a segunda aparece como **RateLimitPolicy**:
-  é a que o operador gerou da sua `PlanPolicy`, com o mesmo nome. A
-  `PlanPolicy` que você aplicou está na aba **Plan**, e a `AuthPolicy` na
-  aba **Auth**.
+. A aba *All Policies* mostra **três** linhas, as três *Enforced*: a
+  `AuthPolicy` e a `PlanPolicy` que você aplicou, e uma `RateLimitPolicy`
+  também chamada `echo-exposta-plans` -- é o que o operador gerou da sua
+  `PlanPolicy`, e é ela que o Gateway executa. Nos primeiros minutos depois
+  do `oc apply` a lista pode vir com menos linhas; recarregue a página.
 . O desenho das peças -- a rota presa ao Gateway, e as duas policies presas à
   rota -- sai do terminal, com o `bash scripts/topologia.sh` da parte
   {p-precedencia}. A *Policy Topology* da console responde *Access Denied*
