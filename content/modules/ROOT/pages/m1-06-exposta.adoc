@@ -473,11 +473,16 @@ o `oc wait` esperou.
 ifdef::perfis[]
   O perfil Dev não lê este projeto: a tela nasce vazia para `{usuario_console_dev}`.
 endif::[]
-. A lista mostra as duas policies desta parte, `echo-exposta-authpolicy` e
-  `echo-exposta-plans`, com o estado de cada uma.
-. O desenho das peças está na
-  {openshift_console_url}/kuadrant/policy-topology/ns/echo-exposta[Policy Topology do projeto^]:
-  a rota presa ao Gateway, e as duas policies presas à rota.
+. A aba *All Policies* mostra `echo-exposta-authpolicy` e `echo-exposta-plans`
+  com o estado de cada uma -- mas a segunda aparece como **RateLimitPolicy**:
+  é a que o operador gerou da sua `PlanPolicy`, com o mesmo nome. A
+  `PlanPolicy` que você aplicou está na aba **Plan**, e a `AuthPolicy` na
+  aba **Auth**.
+. O desenho das peças -- a rota presa ao Gateway, e as duas policies presas à
+  rota -- sai do terminal, com o `bash scripts/topologia.sh` da parte
+  {p-precedencia}. A *Policy Topology* da console responde *Access Denied*
+  ao seu login: ela desenha o mapa do cluster inteiro, que é de quem opera a
+  plataforma (parte {p-papeis}).
 . Sem o link: no menu da console, *Connectivity Link → Policies*, e escolha o
   projeto `echo-exposta`.
 ====

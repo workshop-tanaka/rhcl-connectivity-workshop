@@ -281,8 +281,8 @@ quatro telas, cada uma com o mesmo recado:
 
 | {openshift_console_url}/kuadrant/policy-topology/ns/travel-agency[Policy Topology^]
 | *Access Denied*, e a console diz o que falta: ler o `ConfigMap topology` de
-  `kuadrant-system`, o mapa da plataforma inteira -- o mesmo que o seu perfil
-  Infra recebe, como você verá logo abaixo
+  `kuadrant-system`, o mapa da plataforma inteira. O seu perfil Infra recebe
+  a mesma recusa: esse mapa abre com o terceiro login, logo abaixo
 |===
 
 É a mesma regra do terminal, aplicada à tela: uma pessoa, dois papéis, e o
